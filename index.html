@@ -1,0 +1,2023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>InstantDash — Excel to Dashboard</title>
+<meta name="author" content="Anil Sharma, Former General Manager, Central Bank of India">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+/* ============================================================
+   InstantDash — design tokens
+   Palette: charcoal text, amber-gold primary, cream background,
+   rust secondary, white cards. See "How to Customize" at bottom
+   of the chat reply for exactly which variables to edit.
+   ============================================================ */
+:root{
+  --ink:#0E0E10;
+  --amber:#F5B301;
+  --cream:#F4EDE2;
+  --rust:#E2582B;
+  --card:#FFFFFF;
+  --muted:#7A756C;
+  --line:#E7E0D2;
+  --good:#2E7D5B;
+  --warn:#C97A0C;
+  --bad:#C43D3D;
+  --radius:12px;
+  --shadow:0 2px 10px rgba(14,14,16,.06), 0 1px 2px rgba(14,14,16,.04);
+  --shadow-hover:0 10px 28px rgba(14,14,16,.10);
+  --chart-1:#F5B301;
+  --chart-2:#E2582B;
+  --chart-3:#2E4057;
+  --chart-4:#5B8C5A;
+  --chart-5:#8E5572;
+  --chart-6:#3A7CA5;
+  --chart-7:#D4A5A5;
+  --chart-8:#6B4F4F;
+}
+[data-theme="dark"]{
+  --ink:#F2EFE9;
+  --cream:#15151A;
+  --card:#1E1E24;
+  --muted:#A5A099;
+  --line:#333138;
+  --shadow:0 2px 10px rgba(0,0,0,.35);
+  --shadow-hover:0 10px 28px rgba(0,0,0,.5);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--cream); color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  min-height:100vh; transition:background .25s ease,color .25s ease;
+}
+h1,h2,h3,h4,.brand,.kpi-value,.chart-title{font-family:'Poppins',sans-serif;}
+a{color:inherit;}
+button{font-family:inherit; cursor:pointer;}
+::selection{background:var(--amber); color:var(--ink);}
+
+/* ---------- top bar ---------- */
+.topbar{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 22px; background:var(--card); border-bottom:1px solid var(--line);
+  position:sticky; top:0; z-index:50; box-shadow:var(--shadow);
+}
+.brand{display:flex; align-items:center; gap:10px; font-weight:700; font-size:19px;}
+.brand .dot{width:11px; height:11px; border-radius:3px; background:var(--amber); box-shadow:2px 2px 0 var(--rust);}
+.privacy-badge{
+  font-size:12.5px; background:var(--cream); border:1px solid var(--line); color:var(--muted);
+  padding:5px 10px; border-radius:20px; display:flex; align-items:center; gap:6px;
+}
+.topbar-right{display:flex; align-items:center; gap:10px;}
+.icon-btn{
+  width:38px; height:38px; border-radius:10px; border:1px solid var(--line); background:var(--card);
+  display:flex; align-items:center; justify-content:center; font-size:17px; transition:.15s;
+}
+.icon-btn:hover{border-color:var(--amber); box-shadow:var(--shadow-hover); transform:translateY(-1px);}
+
+.wrap{max-width:1320px; margin:0 auto; padding:20px;}
+
+/* ---------- empty state ---------- */
+.empty-state{
+  text-align:center; padding:60px 20px; background:var(--card); border:2px dashed var(--line);
+  border-radius:var(--radius); margin-top:16px; transition:.2s;
+}
+.empty-state.drag{border-color:var(--amber); background:rgba(245,179,1,.06);}
+.empty-state svg{width:120px; height:120px; margin-bottom:10px;}
+.empty-state h2{font-size:24px; margin:6px 0;}
+.empty-state p{color:var(--muted); max-width:460px; margin:6px auto 20px;}
+.btn{
+  display:inline-flex; align-items:center; gap:8px; background:var(--amber); color:var(--ink);
+  border:none; padding:11px 20px; border-radius:9px; font-weight:600; font-size:14.5px;
+  box-shadow:var(--shadow); transition:.15s;
+}
+.btn:hover{transform:translateY(-1px); box-shadow:var(--shadow-hover);}
+.btn.secondary{background:var(--card); border:1px solid var(--line); color:var(--ink);}
+.btn.rust{background:var(--rust); color:#fff;}
+.btn.small{padding:7px 12px; font-size:13px;}
+.btn:disabled{opacity:.5; cursor:not-allowed; transform:none;}
+input[type=file]{display:none;}
+
+/* ---------- sheet bar / header row control ---------- */
+.controlbar{
+  display:flex; flex-wrap:wrap; gap:10px; align-items:center; background:var(--card);
+  border:1px solid var(--line); border-radius:var(--radius); padding:12px 14px; margin-top:14px; box-shadow:var(--shadow);
+}
+.controlbar label{font-size:13px; color:var(--muted); display:flex; align-items:center; gap:6px;}
+select, .input{
+  background:var(--cream); border:1px solid var(--line); color:var(--ink); border-radius:7px;
+  padding:7px 10px; font-size:13.5px;
+}
+[data-theme="dark"] select, [data-theme="dark"] .input{background:#26262E;}
+
+/* ---------- spinner ---------- */
+.loading{display:flex; flex-direction:column; align-items:center; gap:10px; padding:60px 0;}
+.spinner{width:44px; height:44px; border-radius:50%; border:4px solid var(--line); border-top-color:var(--amber); animation:spin 0.8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ---------- quick nav (mobile section jump) ---------- */
+.quicknav{display:none;}
+@media(max-width:640px){
+  .quicknav{
+    display:flex; gap:8px; overflow-x:auto; -webkit-overflow-scrolling:touch;
+    position:sticky; top:57px; z-index:40; background:var(--cream);
+    padding:8px 2px; margin:0 -12px 4px; padding-left:12px; padding-right:12px;
+    border-bottom:1px solid var(--line);
+  }
+  .quicknav a{
+    flex:0 0 auto; font-size:12.5px; font-weight:600; color:var(--muted);
+    background:var(--card); border:1px solid var(--line); padding:7px 12px; border-radius:20px;
+    text-decoration:none; scroll-snap-align:start;
+  }
+  .quicknav a:active{background:var(--amber); color:var(--ink); border-color:var(--amber);}
+}
+
+/* ---------- section headers ---------- */
+.section-title{display:flex; align-items:center; justify-content:space-between; margin:26px 0 12px;}
+.section-title h2{font-size:19px; margin:0; display:flex; align-items:center; gap:8px;}
+.section-title .hint{font-size:12.5px; color:var(--muted); font-weight:400;}
+
+/* ---------- KPI cards ---------- */
+.kpi-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:14px;}
+.kpi-card{
+  background:var(--card); border-radius:var(--radius); padding:16px 18px; box-shadow:var(--shadow);
+  border-top:4px solid var(--amber); transition:.15s;
+}
+.kpi-card:hover{transform:translateY(-2px); box-shadow:var(--shadow-hover);}
+.kpi-value{font-size:24px; font-weight:800; line-height:1.15;}
+.kpi-label{font-size:12.5px; color:var(--muted); margin-top:4px;}
+.kpi-sub{font-size:11.5px; color:var(--muted); margin-top:2px;}
+
+/* ---------- filter bar ---------- */
+.filterbar{
+  background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:14px;
+  display:flex; flex-wrap:wrap; gap:10px; align-items:flex-end; box-shadow:var(--shadow);
+}
+.filter-item{display:flex; flex-direction:column; gap:4px; min-width:160px;}
+.filter-item label{font-size:11.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.03em;}
+.ms-box{position:relative;}
+.ms-toggle{width:100%; text-align:left; background:var(--cream); border:1px solid var(--line); border-radius:7px; padding:7px 10px; font-size:13px;}
+.ms-panel{
+  display:none; position:absolute; z-index:40; top:calc(100% + 4px); left:0; background:var(--card);
+  border:1px solid var(--line); border-radius:9px; box-shadow:var(--shadow-hover); padding:8px; max-height:220px; overflow:auto; min-width:220px;
+}
+.ms-panel.open{display:block;}
+.ms-panel label{display:flex; align-items:center; gap:7px; font-size:13px; padding:4px 4px; text-transform:none; color:var(--ink);}
+.ms-panel input{margin:0;}
+
+/* ---------- chart grid ---------- */
+.chart-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+@media(max-width:860px){.chart-grid{grid-template-columns:1fr;}}
+.chart-card{
+  background:var(--card); border-radius:var(--radius); padding:16px; box-shadow:var(--shadow); transition:.15s;
+  display:flex; flex-direction:column; min-width:0;
+}
+.chart-card:hover{box-shadow:var(--shadow-hover);}
+.chart-head{display:flex; align-items:flex-start; justify-content:space-between; gap:8px; margin-bottom:8px;}
+.chart-title{font-size:14.5px; font-weight:600; line-height:1.3;}
+.chart-actions{display:flex; gap:6px; flex-wrap:wrap;}
+.chart-actions select{font-size:12px; padding:5px 7px;}
+.chart-actions button{font-size:12px; padding:5px 7px; background:var(--cream); border:1px solid var(--line); border-radius:6px;}
+.chart-body{position:relative; height:280px;}
+.chart-controls-row{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; border-top:1px dashed var(--line); padding-top:8px;}
+
+/* ---------- data quality ---------- */
+.dq-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:14px;}
+.dq-card{background:var(--card); border-radius:var(--radius); padding:14px 16px; box-shadow:var(--shadow);}
+.dq-card h4{margin:0 0 8px; font-size:13.5px;}
+.dq-row{display:flex; justify-content:space-between; font-size:12.5px; padding:4px 0; border-bottom:1px solid var(--line);}
+.dq-row:last-child{border-bottom:none;}
+.pill{display:inline-block; padding:1px 8px; border-radius:20px; font-size:11px; font-weight:600;}
+.pill.bad{background:rgba(196,61,61,.14); color:var(--bad);}
+.pill.warn{background:rgba(201,122,12,.14); color:var(--warn);}
+.pill.good{background:rgba(46,125,91,.14); color:var(--good);}
+
+/* ---------- data profile ---------- */
+.profile-table{width:100%; border-collapse:collapse; font-size:12.5px;}
+.profile-table th, .profile-table td{padding:8px 10px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top;}
+.profile-table th{color:var(--muted); font-weight:600; font-size:11.5px; text-transform:uppercase;}
+.role-badge{padding:2px 8px; border-radius:20px; font-size:11px; font-weight:600;}
+.role-Measure{background:rgba(245,179,1,.18); color:#8a6100;}
+.role-Dimension{background:rgba(58,124,165,.16); color:#255473;}
+.role-HighCard{background:rgba(142,85,114,.16); color:#7a3b5c;}
+.role-Identifier{background:rgba(122,117,108,.16); color:#57534b;}
+.role-Time{background:rgba(226,88,43,.16); color:#a3441f;}
+
+details.collapsible{background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); padding:0; overflow:hidden;}
+details.collapsible>summary{list-style:none; cursor:pointer; padding:14px 18px; font-weight:600; display:flex; align-items:center; justify-content:between; gap:8px;}
+details.collapsible>summary::-webkit-details-marker{display:none;}
+details.collapsible>summary:before{content:"▸"; margin-right:8px; transition:.15s;}
+details.collapsible[open]>summary:before{transform:rotate(90deg);}
+.collapsible-body{padding:0 18px 18px; overflow-x:auto;}
+
+/* ---------- data table ---------- */
+.table-toolbar{display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between; margin-bottom:10px;}
+.datatable-wrap{overflow:auto; max-height:520px; border:1px solid var(--line); border-radius:10px;}
+table.dt{width:100%; border-collapse:collapse; font-size:12.5px;}
+table.dt th{position:sticky; top:0; background:var(--card); border-bottom:2px solid var(--line); padding:8px 10px; text-align:left; cursor:pointer; white-space:nowrap;}
+table.dt td{padding:7px 10px; border-bottom:1px solid var(--line); white-space:nowrap;}
+table.dt tr:hover td{background:rgba(245,179,1,.06);}
+.pager{display:flex; align-items:center; gap:8px; justify-content:flex-end; margin-top:8px; font-size:13px;}
+
+/* ---------- Ask Your Data ---------- */
+.ask-fab{
+  position:fixed; right:20px; bottom:20px; z-index:80; width:58px; height:58px; border-radius:50%;
+  background:var(--amber); box-shadow:0 6px 20px rgba(0,0,0,.25); border:none; font-size:24px;
+  display:flex; align-items:center; justify-content:center; transition:.15s;
+}
+.ask-fab:hover{transform:scale(1.06);}
+.ask-panel{
+  position:fixed; right:20px; bottom:88px; z-index:80; width:min(400px, 92vw); max-height:min(640px,78vh);
+  background:var(--card); border-radius:16px; box-shadow:0 16px 40px rgba(0,0,0,.28); border:1px solid var(--line);
+  display:none; flex-direction:column; overflow:hidden;
+}
+.ask-panel.open{display:flex;}
+.ask-head{padding:14px 16px; background:linear-gradient(135deg,var(--amber),var(--rust)); color:#1a1200; display:flex; align-items:center; justify-content:space-between;}
+.ask-head strong{font-family:'Poppins',sans-serif; font-size:15px;}
+.ask-head button{background:rgba(0,0,0,.15); border:none; color:inherit; width:26px; height:26px; border-radius:50%;}
+.ask-body{flex:1; overflow-y:auto; padding:14px; display:flex; flex-direction:column; gap:10px; background:var(--cream);}
+.ask-msg{max-width:88%; padding:9px 12px; border-radius:12px; font-size:13.5px; line-height:1.45;}
+.ask-msg.user{align-self:flex-end; background:var(--amber); color:#1a1200; border-bottom-right-radius:3px;}
+.ask-msg.bot{align-self:flex-start; background:var(--card); border:1px solid var(--line); border-bottom-left-radius:3px; white-space:pre-line;}
+.ask-msg.bot ul{margin:6px 0 0 18px; padding:0;}
+.ask-suggest{display:flex; flex-wrap:wrap; gap:6px; padding:0 14px 10px; background:var(--cream);}
+.ask-suggest button{font-size:11.5px; padding:5px 9px; background:var(--card); border:1px solid var(--line); border-radius:20px; color:var(--muted);}
+.ask-input-row{display:flex; gap:8px; padding:10px; border-top:1px solid var(--line); background:var(--card);}
+.ask-input-row input{flex:1; border:1px solid var(--line); border-radius:20px; padding:9px 14px; background:var(--cream); color:var(--ink); font-size:13.5px;}
+.ask-input-row button{width:38px; height:38px; border-radius:50%; border:none; background:var(--amber); display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+.ask-input-row button.mic.listening{background:var(--rust); color:#fff; animation:pulse 1s infinite;}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(226,88,43,.5);}70%{box-shadow:0 0 0 10px rgba(226,88,43,0);}100%{box-shadow:0 0 0 0 rgba(226,88,43,0);}}
+
+.msg-banner{padding:12px 16px; border-radius:10px; font-size:13.5px; margin-bottom:12px; display:flex; gap:8px; align-items:flex-start;}
+.msg-banner.info{background:rgba(58,124,165,.1); border:1px solid rgba(58,124,165,.3);}
+.msg-banner.warn{background:rgba(201,122,12,.1); border:1px solid rgba(201,122,12,.3);}
+.msg-banner.error{background:rgba(196,61,61,.1); border:1px solid rgba(196,61,61,.3);}
+
+.builder-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:10px;}
+.modal-overlay{position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:90; display:none; align-items:center; justify-content:center; padding:16px;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--card); border-radius:14px; padding:20px; width:min(640px,96vw); max-height:88vh; overflow:auto; box-shadow:var(--shadow-hover);}
+.modal h3{margin-top:0;}
+.modal-close{float:right; background:none; border:none; font-size:20px; color:var(--muted);}
+
+footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding:30px 10px 40px;}
+
+@media print{
+  .topbar,.filterbar,.controlbar,.ask-fab,.ask-panel,.chart-actions,.chart-controls-row,.table-toolbar,.pager,footer,#addChartBtn,#pivotBtn{display:none !important;}
+  body{background:#fff;}
+  .chart-grid{grid-template-columns:1fr 1fr;}
+  .chart-card, .kpi-card{box-shadow:none; border:1px solid #ddd;}
+}
+@media(max-width:640px){
+  .kpi-grid{grid-template-columns:repeat(auto-fit,minmax(140px,1fr));}
+  .wrap{padding:12px 12px 90px;}
+  .privacy-badge span.txt{display:none;}
+  .ask-panel{right:8px; left:8px; width:auto;}
+  .ask-fab{right:14px; bottom:14px;}
+  .chart-body{height:250px;}
+  .filterbar{flex-wrap:nowrap; overflow-x:auto; -webkit-overflow-scrolling:touch; scroll-snap-type:x proximity;}
+  .filterbar .filter-item{min-width:150px; flex:0 0 auto; scroll-snap-align:start;}
+  .filterbar #resetFiltersBtn{flex:0 0 auto;}
+  .icon-btn, .btn, .ms-toggle, select, .input{min-height:40px;}
+  .icon-btn{width:40px; height:40px;}
+  .btn.small{min-height:36px;}
+  table.dt th, table.dt td{padding:9px 8px;}
+  .section-title h2{font-size:17px;}
+  .section-title{flex-wrap:wrap; gap:8px;}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><span class="dot"></span> InstantDash</div>
+  <div class="topbar-right">
+    <div class="privacy-badge">🔒 <span class="txt">Your data never leaves your computer</span></div>
+    <button class="icon-btn" id="helpToggle" title="Help &amp; guide">❓</button>
+    <button class="icon-btn" id="settingsToggle" title="Dashboard settings">⚙️</button>
+    <button class="icon-btn" id="themeToggle" title="Toggle dark mode">🌙</button>
+  </div>
+</div>
+
+<div class="wrap" id="mainWrap">
+
+  <!-- EMPTY STATE / UPLOAD -->
+  <div class="empty-state" id="emptyState">
+    <svg viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="30" y="30" width="140" height="100" rx="10" fill="#F4EDE2" stroke="#E2582B" stroke-width="3"/>
+      <rect x="46" y="50" width="35" height="18" rx="3" fill="#F5B301"/>
+      <rect x="88" y="50" width="35" height="18" rx="3" fill="#E2582B" opacity=".85"/>
+      <rect x="46" y="74" width="35" height="40" rx="3" fill="#0E0E10" opacity=".08"/>
+      <rect x="88" y="90" width="35" height="24" rx="3" fill="#0E0E10" opacity=".08"/>
+      <path d="M55 108 L65 92 L75 100 L88 78" stroke="#E2582B" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="150" cy="40" r="14" fill="#F5B301"/>
+      <path d="M144 40 l4 4 8-8" stroke="#0E0E10" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <h2>Turn any spreadsheet into a dashboard</h2>
+    <p>Drop an Excel or CSV file below. InstantDash reads it in your browser, profiles every column, and builds KPIs and charts automatically — nothing is ever uploaded anywhere.</p>
+    <button class="btn" id="browseBtn">📂 Browse for a file</button>
+    <div style="margin-top:10px; font-size:12px; color:var(--muted);">or drag &amp; drop a .xlsx, .xls or .csv file anywhere on this page</div>
+    <input type="file" id="fileInput" accept=".xlsx,.xls,.csv">
+  </div>
+
+  <!-- LOADING -->
+  <div class="loading" id="loadingState" style="display:none;">
+    <div class="spinner"></div>
+    <div id="loadingText">Reading file…</div>
+  </div>
+
+  <!-- MESSAGES -->
+  <div id="messages"></div>
+
+  <!-- APP CONTENT (hidden until data loaded) -->
+  <div id="appContent" style="display:none;">
+
+    <div class="controlbar">
+      <label>📄 Sheet:
+        <select id="sheetSelect"></select>
+      </label>
+      <label>Header is on row:
+        <select id="headerRowSelect"></select>
+      </label>
+      <span id="fileMeta" style="font-size:12px; color:var(--muted); margin-left:auto;"></span>
+      <button class="btn secondary small" id="newFileBtn">↻ Load different file</button>
+    </div>
+
+    <nav class="quicknav" id="quickNav">
+      <a href="#kpiGrid">Overview</a>
+      <a href="#chartGrid">Dashboard</a>
+      <a href="#dataQualitySection">Quality</a>
+      <a href="#profileTable">Profile</a>
+      <a href="#rawDataSection">Data</a>
+    </nav>
+
+    <div class="section-title"><h2>Overview</h2></div>
+    <div class="kpi-grid" id="kpiGrid"></div>
+
+    <div class="section-title"><h2>Filters</h2><span class="hint" id="filterHint"></span></div>
+    <div class="filterbar" id="filterBar">
+      <button class="btn secondary small" id="resetFiltersBtn">Reset filters</button>
+    </div>
+
+    <div class="section-title">
+      <h2>Dashboard</h2>
+      <div style="display:flex; gap:8px;">
+        <button class="btn secondary small" id="pivotBtn">🧮 Pivot table</button>
+        <button class="btn secondary small" id="addChartBtn">➕ Add chart</button>
+      </div>
+    </div>
+    <div class="chart-grid" id="chartGrid"></div>
+
+    <div id="dataQualitySection">
+      <div class="section-title"><h2>Data quality</h2></div>
+      <div class="dq-grid" id="dqGrid"></div>
+    </div>
+
+    <div class="section-title"><h2>Data profile</h2></div>
+    <details class="collapsible">
+      <summary>Click to expand — see how every column was understood, and override anything</summary>
+      <div class="collapsible-body">
+        <table class="profile-table" id="profileTable"></table>
+      </div>
+    </details>
+
+    <div id="rawDataSection">
+      <div class="section-title">
+        <h2>Raw data</h2>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="btn secondary small" id="exportCsvBtn">⬇ Filtered CSV</button>
+          <button class="btn secondary small" id="exportFullCsvBtn">⬇ Full CSV</button>
+          <button class="btn secondary small" id="exportDashboardPngBtn">🖼 Dashboard PNG</button>
+          <button class="btn secondary small" id="printBtn">🖨 Print / Save as PDF</button>
+          <button class="btn secondary small" id="copyInsightsBtn">📋 Copy insight summary</button>
+        </div>
+      </div>
+      <div class="table-toolbar">
+        <input type="text" class="input" id="tableSearch" placeholder="Search rows…" style="min-width:220px;">
+        <span id="rowCountLabel" style="font-size:12.5px; color:var(--muted);"></span>
+      </div>
+      <div class="datatable-wrap"><table class="dt" id="dataTable"></table></div>
+      <div class="pager" id="pager"></div>
+    </div>
+  </div>
+
+  <footer class="app-footer">InstantDash — built for Anil Sharma · runs 100% locally in your browser</footer>
+</div>
+
+<!-- Ask Your Data floating widget -->
+<button class="ask-fab" id="askFab" title="Ask Your Data about this dashboard">💬</button>
+<div class="ask-panel" id="askPanel">
+  <div class="ask-head">
+    <strong>💬 Ask Your Data</strong>
+    <button id="askClose">✕</button>
+  </div>
+  <div class="ask-body" id="askBody"></div>
+  <div class="ask-suggest" id="askSuggest"></div>
+  <div class="ask-input-row">
+    <button class="mic" id="askMic" title="Ask by voice">🎤</button>
+    <input type="text" id="askInput" placeholder="e.g. What drove the change in sales?">
+    <button id="askSend" title="Send">➤</button>
+  </div>
+</div>
+
+<!-- Add chart modal -->
+<div class="modal-overlay" id="addChartModal">
+  <div class="modal">
+    <button class="modal-close" data-close>✕</button>
+    <h3>Build a chart</h3>
+    <div class="builder-grid">
+      <label>X axis / Group by<select id="bXAxis"></select></label>
+      <label>Y axis / Measure<select id="bYAxis"></select></label>
+      <label>Aggregation<select id="bAgg">
+        <option value="sum">Sum</option><option value="avg">Average</option>
+        <option value="count">Count</option><option value="distinct">Distinct count</option>
+        <option value="min">Min</option><option value="max">Max</option>
+      </select></label>
+      <label>Chart type<select id="bType">
+        <option value="bar">Bar</option><option value="line">Line</option>
+        <option value="doughnut">Donut</option><option value="scatter">Scatter</option>
+        <option value="horizontalBar">Horizontal bar</option>
+      </select></label>
+    </div>
+    <div style="text-align:right; margin-top:16px;">
+      <button class="btn" id="buildChartBtn">Add chart to dashboard</button>
+    </div>
+  </div>
+</div>
+
+<!-- Pivot modal -->
+<div class="modal-overlay" id="pivotModal">
+  <div class="modal">
+    <button class="modal-close" data-close>✕</button>
+    <h3>Pivot table builder</h3>
+    <div class="builder-grid">
+      <label>Rows<select id="pRows"></select></label>
+      <label>Columns<select id="pCols"><option value="">(none)</option></select></label>
+      <label>Values<select id="pVals"></select></label>
+      <label>Aggregation<select id="pAgg">
+        <option value="sum">Sum</option><option value="avg">Average</option>
+        <option value="count">Count</option><option value="min">Min</option><option value="max">Max</option>
+      </select></label>
+    </div>
+    <div style="text-align:right; margin:12px 0; display:flex; gap:8px; justify-content:flex-end;">
+      <button class="btn secondary small" id="exportPivotCsvBtn">⬇ Export pivot CSV</button>
+      <button class="btn" id="runPivotBtn">Generate pivot</button>
+    </div>
+    <div class="datatable-wrap" style="max-height:400px;"><table class="dt" id="pivotResultTable"></table></div>
+  </div>
+</div>
+
+<!-- Settings modal -->
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal">
+    <button class="modal-close" data-close>✕</button>
+    <h3>⚙ Dashboard settings</h3>
+    <div class="builder-grid">
+      <label>Number format
+        <select id="setNumberFormat">
+          <option value="indian">Indian (1,25,000)</option>
+          <option value="international">International (125,000)</option>
+        </select>
+      </label>
+      <label>Currency symbol
+        <select id="setCurrency">
+          <option value="">None</option>
+          <option value="₹">₹ Rupee</option>
+          <option value="$">$ Dollar</option>
+          <option value="€">€ Euro</option>
+          <option value="£">£ Pound</option>
+        </select>
+      </label>
+      <label>Decimal places
+        <select id="setDecimals">
+          <option value="0">0</option><option value="1">1</option>
+          <option value="2">2</option><option value="3">3</option>
+        </select>
+      </label>
+      <label>Date format
+        <select id="setDateFormat">
+          <option value="dmy">DD/MM/YYYY</option>
+          <option value="iso">YYYY-MM-DD</option>
+        </select>
+      </label>
+      <label>Max chart categories
+        <select id="setMaxCategories">
+          <option value="5">Top 5</option><option value="10">Top 10</option>
+          <option value="15">Top 15</option><option value="20">Top 20</option>
+        </select>
+      </label>
+      <label>Default aggregation (Add chart)
+        <select id="setDefaultAgg">
+          <option value="sum">Sum</option><option value="avg">Average</option>
+          <option value="count">Count</option><option value="min">Min</option><option value="max">Max</option>
+        </select>
+      </label>
+    </div>
+    <div style="margin-top:14px; display:flex; flex-direction:column; gap:8px;">
+      <label style="display:flex; align-items:center; gap:8px; font-size:13.5px;"><input type="checkbox" id="setShowDQ"> Show Data quality section</label>
+      <label style="display:flex; align-items:center; gap:8px; font-size:13.5px;"><input type="checkbox" id="setShowRaw"> Show Raw data section</label>
+    </div>
+    <div style="text-align:right; margin-top:16px;">
+      <button class="btn" id="applySettingsBtn">Apply settings</button>
+    </div>
+  </div>
+</div>
+
+<!-- Help modal -->
+<div class="modal-overlay" id="helpModal">
+  <div class="modal">
+    <button class="modal-close" data-close>✕</button>
+    <h3>❓ Help &amp; guide</h3>
+    <div style="font-size:13.5px; line-height:1.65;">
+      <p><strong>1. How to upload a file</strong><br>Drag a .xlsx, .xls or .csv file anywhere on the page, or use "Browse for a file." Nothing is uploaded to a server — all parsing happens in your browser tab.</p>
+      <p><strong>2. How header detection works</strong><br>InstantDash scans the first 10 rows and picks the row most likely to be a header — mostly text, with the rows beneath it consistently filled in. You can override this with the "Header is on row" dropdown once a file is loaded.</p>
+      <p><strong>3. How columns are classified</strong><br>Every column is typed as Number, Date, Text/Category, or Boolean, then given a role (below) based on how many unique values it has and its name.</p>
+      <p><strong>4. What is a Measure?</strong><br>A numeric column that isn't an ID — something you'd sum or average, like Sales, Quantity, or Balance.</p>
+      <p><strong>5. What is a Dimension?</strong><br>A text or boolean column with 15 or fewer unique values — good for grouping and filtering, like Region or Status.</p>
+      <p><strong>6. What is High Cardinality?</strong><br>A text column with 16–50 unique values, like Product Name. Usable in charts, but only as a "Top N + Others" view to stay readable.</p>
+      <p><strong>7. How filters work</strong><br>Every Dimension gets a multi-select filter; every Date column gets a from/to range. All KPIs, charts, and the data table update live as you change them.</p>
+      <p><strong>8. How charts are selected</strong><br>Based on what's in your profile: date+measure → line chart, dimension+measure → bar chart, small dimension → donut, high-cardinality+measure → Top N bar, two measures → scatter, one measure alone → histogram, two dimensions+measure → stacked bar.</p>
+      <p><strong>9. How to create a pivot</strong><br>Click "Pivot table," choose Rows, Columns (optional), Values, and an aggregation, then "Generate pivot." Totals are always recalculated from the underlying records — never by adding up averages, minimums, or maximums.</p>
+      <p><strong>10. What "Ask Your Data" can answer</strong><br>It reads the same profile and aggregates already on your screen and explains them in plain language — contributors to a change, rankings by category, totals and averages. It does not use an external AI model; it's a local, rule-based reader of your numbers, so it can't reason beyond your columns.</p>
+      <p><strong>11. Privacy</strong><br>Your file is read entirely in your browser's memory. It is never sent anywhere, and closing the tab clears it.</p>
+      <p><strong>12. Supported file formats</strong><br>.xlsx, .xls, and .csv, including multi-sheet workbooks (use the sheet selector).</p>
+      <p><strong>13. Large-file limitations</strong><br>InstantDash stays responsive up to roughly 100,000 rows by aggregating before charting and paginating the data table. Files beyond ~200,000 rows will show a warning and may feel slower.</p>
+      <p><strong>14. Troubleshooting</strong><br>If a chart looks wrong, check the Data profile panel — you can manually override any column's detected type. If numbers look off, check currency/thousands formatting in your source file, or adjust decimals/number format in Settings.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ================================================================
+   InstantDash — Excel to Dashboard
+   All logic lives in this one file. Sections below, in order:
+   1. State & constants
+   2. File ingest (SheetJS) + header detection + number/date cleaning
+   3. Column profiling & role classification
+   4. Dashboard generation (KPIs + chart selection rules)
+   5. Filtering engine
+   6. Chart rendering & controls (Chart.js)
+   7. Data quality panel
+   8. Data table (sort/search/paginate)
+   9. Add-chart builder + Pivot table
+   10. Export (PNG / CSV / print / insight summary)
+   11. Ask Your Data (rule-based local Q&A + voice input — NOT an LLM)
+   12. Dark mode + misc UI wiring
+   ================================================================ */
+
+// ---------- 1. STATE ----------
+const STATE = {
+  workbook: null,
+  sheetName: null,
+  headerRow: 0,          // 0-indexed row that holds headers, within the raw sheet rows
+  rawRows: [],           // full 2D array from the current sheet (AOA)
+  columns: [],           // [{name, index}]
+  data: [],              // array of row objects, keyed by column name
+  profile: {},           // colName -> profile object
+  filters: {},           // colName -> {type:'multiselect'|'daterange', ...}
+  filteredData: [],
+  charts: [],            // [{id, type, config, chartInstance}]
+  chartIdSeq: 1,
+  table: {sortCol:null, sortDir:1, search:'', page:1, pageSize:50},
+  darkMode:false,
+  MAX_HIGH_CARD: 50,
+  MAX_DIMENSION: 15,
+  settings:{
+    numberFormat:'indian',   // 'indian' (1,25,000) or 'international' (125,000)
+    currency:'',             // '', '₹','$','€','£'
+    decimals:2,
+    dateFormat:'dmy',        // 'dmy' (31/12/2025) or 'iso' (2025-12-31)
+    maxCategories:10,        // "Top N, rest as Others" charts
+    defaultAgg:'sum',
+    showDataQuality:true,
+    showRawData:true
+  }
+};
+
+const PALETTE = ['--chart-1','--chart-2','--chart-3','--chart-4','--chart-5','--chart-6','--chart-7','--chart-8']
+  .map(v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim());
+
+function cssVar(name){return getComputedStyle(document.documentElement).getPropertyValue(name).trim();}
+
+function fmtNum(n, opts={}){
+  if(n===null || n===undefined || isNaN(n)) return '—';
+  const s=STATE.settings;
+  const cur = opts.noCurrency? '' : (s.currency||'');
+  const abs=Math.abs(n);
+  const decimals = opts.decimals!==undefined? opts.decimals : s.decimals;
+  const locale = s.numberFormat==='indian' ? 'en-IN' : 'en-US';
+  if(opts.compact && abs>=1000){
+    if(s.numberFormat==='indian'){
+      if(abs>=10000000) return cur+(n/10000000).toFixed(2)+' Cr';
+      if(abs>=100000) return cur+(n/100000).toFixed(2)+' L';
+      if(abs>=1000) return cur+(n/1000).toFixed(1)+'K';
+    } else {
+      if(abs>=1000000000) return cur+(n/1000000000).toFixed(2)+'B';
+      if(abs>=1000000) return cur+(n/1000000).toFixed(2)+'M';
+      if(abs>=1000) return cur+(n/1000).toFixed(1)+'K';
+    }
+  }
+  return cur+n.toLocaleString(locale,{maximumFractionDigits:decimals});
+}
+function formatDate(d){
+  if(!d || isNaN(d)) return '—';
+  if(STATE.settings.dateFormat==='iso') return d.toISOString().slice(0,10);
+  return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear();
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+function showMessage(text, kind='info'){
+  const box=document.getElementById('messages');
+  const el=document.createElement('div');
+  el.className='msg-banner '+kind;
+  el.innerHTML=(kind==='error'?'⚠️ ':kind==='warn'?'⚠️ ':'ℹ️ ')+text;
+  box.appendChild(el);
+  return el;
+}
+function clearMessages(){document.getElementById('messages').innerHTML='';}
+
+// ---------- 2. FILE INGEST ----------
+const fileInput=document.getElementById('fileInput');
+const emptyState=document.getElementById('emptyState');
+const loadingState=document.getElementById('loadingState');
+const loadingText=document.getElementById('loadingText');
+const appContent=document.getElementById('appContent');
+
+document.getElementById('browseBtn').addEventListener('click',()=>fileInput.click());
+fileInput.addEventListener('change',e=>{if(e.target.files[0]) handleFile(e.target.files[0]);});
+
+['dragover','dragenter'].forEach(ev=>document.body.addEventListener(ev,e=>{
+  e.preventDefault(); emptyState.classList.add('drag');
+}));
+['dragleave','drop'].forEach(ev=>document.body.addEventListener(ev,e=>{
+  e.preventDefault(); if(ev==='drop'){emptyState.classList.remove('drag');}
+}));
+document.body.addEventListener('drop',e=>{
+  e.preventDefault();
+  const f=e.dataTransfer.files && e.dataTransfer.files[0];
+  if(f) handleFile(f);
+});
+
+document.getElementById('newFileBtn').addEventListener('click',()=>{
+  appContent.style.display='none';
+  emptyState.style.display='block';
+  clearMessages();
+  destroyAllCharts();
+});
+
+function handleFile(file){
+  clearMessages();
+  emptyState.style.display='none';
+  loadingState.style.display='flex';
+  loadingText.textContent='Reading "'+file.name+'"…';
+  const reader=new FileReader();
+  reader.onerror=()=>{
+    fail('Could not read this file. It may be corrupted or open in another program.');
+  };
+  reader.onload=(e)=>{
+    try{
+      const data=new Uint8Array(e.target.result);
+      let wb;
+      try{
+        wb=XLSX.read(data,{type:'array', cellDates:true, cellNF:false, cellText:false});
+      }catch(errInner){
+        fail('This file could not be opened. It may be password-protected, corrupted, or not a valid Excel/CSV file.');
+        return;
+      }
+      if(!wb.SheetNames || wb.SheetNames.length===0){
+        fail('This workbook has no sheets to read.');
+        return;
+      }
+      STATE.workbook=wb;
+      populateSheetSelect(wb.SheetNames);
+      loadSheet(wb.SheetNames[0]);
+    }catch(err){
+      console.error(err);
+      fail('Something went wrong opening this file: '+err.message);
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function fail(msg){
+  loadingState.style.display='none';
+  emptyState.style.display='block';
+  showMessage(msg,'error');
+}
+
+function populateSheetSelect(names){
+  const sel=document.getElementById('sheetSelect');
+  sel.innerHTML=names.map(n=>`<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join('');
+  sel.onchange=()=>loadSheet(sel.value);
+}
+
+function loadSheet(name){
+  loadingState.style.display='flex';
+  loadingText.textContent='Parsing sheet "'+name+'"…';
+  setTimeout(()=>{ // let the spinner paint before heavy work
+    try{
+      STATE.sheetName=name;
+      const ws=STATE.workbook.Sheets[name];
+      let aoa=XLSX.utils.sheet_to_json(ws,{header:1, raw:true, defval:null, blankrows:false});
+      // strip fully blank rows/cols defensively (blankrows:false already helps)
+      aoa=aoa.filter(r=>r.some(c=>c!==null && c!==undefined && String(c).trim()!==''));
+      if(aoa.length===0){
+        fail('This sheet appears to be empty.');
+        return;
+      }
+      // remove fully blank columns
+      const colCount=Math.max(...aoa.map(r=>r.length));
+      const keepCols=[];
+      for(let c=0;c<colCount;c++){
+        const hasData=aoa.some(r=> r[c]!==null && r[c]!==undefined && String(r[c]).trim()!=='');
+        if(hasData) keepCols.push(c);
+      }
+      aoa=aoa.map(r=>keepCols.map(c=>r[c]!==undefined?r[c]:null));
+      STATE.rawRows=aoa;
+
+      if(aoa.length>200000){
+        showMessage('This file has over 200,000 rows. InstantDash will sample and aggregate to stay responsive, but very large files may feel slower.','warn');
+      }
+
+      const headerIdx=detectHeaderRow(aoa);
+      populateHeaderRowSelect(aoa, headerIdx);
+      buildFromHeaderRow(headerIdx);
+    }catch(err){
+      console.error(err);
+      fail('Could not parse this sheet: '+err.message);
+    }
+  },30);
+}
+
+// Smart header detection: scan first 10 rows, score each as a header candidate.
+function detectHeaderRow(aoa){
+  const scanLimit=Math.min(10, aoa.length-1);
+  let bestIdx=0, bestScore=-Infinity;
+  for(let i=0;i<=scanLimit;i++){
+    const row=aoa[i];
+    if(!row) continue;
+    const nonEmpty=row.filter(c=>c!==null && c!==undefined && String(c).trim()!=='');
+    if(nonEmpty.length===0) continue;
+    const textCount=nonEmpty.filter(c=>typeof c==='string' && isNaN(parseCleanNumber(c)) ).length;
+    const textRatio=textCount/nonEmpty.length;
+    // consistency of the rows beneath: sample up to 5 rows after this one
+    let consistency=0, sampleRows=0;
+    for(let k=i+1;k<Math.min(i+6,aoa.length);k++){
+      const below=aoa[k];
+      if(!below) continue;
+      sampleRows++;
+      const typedCells=below.filter(c=>c!==null && c!==undefined && String(c).trim()!=='').length;
+      if(typedCells>=Math.ceil(nonEmpty.length*0.4)) consistency++;
+    }
+    const consistencyRatio= sampleRows? consistency/sampleRows : 0;
+    const fillRatio= nonEmpty.length/row.length;
+    const score= textRatio*2 + consistencyRatio*1.5 + fillRatio*0.5 - (i*0.05); // slight preference for earlier rows
+    if(score>bestScore){bestScore=score; bestIdx=i;}
+  }
+  return bestIdx;
+}
+
+function populateHeaderRowSelect(aoa, detectedIdx){
+  const sel=document.getElementById('headerRowSelect');
+  const max=Math.min(10, aoa.length-1);
+  let opts='';
+  for(let i=0;i<=max;i++){
+    opts+=`<option value="${i}" ${i===detectedIdx?'selected':''}>Row ${i+1}${i===detectedIdx?' (auto-detected)':''}</option>`;
+  }
+  sel.innerHTML=opts;
+  sel.onchange=()=>buildFromHeaderRow(parseInt(sel.value,10));
+}
+
+// clean a raw cell into a number if possible: strips currency symbols, thousands
+// separators (incl. Indian 1,25,000 style), trailing %, and (500)-style negatives.
+function parseCleanNumber(val){
+  if(typeof val==='number') return val;
+  if(val===null||val===undefined) return NaN;
+  let s=String(val).trim();
+  if(s==='') return NaN;
+  let neg=false;
+  if(/^\(.*\)$/.test(s)){ neg=true; s=s.slice(1,-1); }
+  s=s.replace(/[₹$€£,\s]/g,'');
+  let isPct=false;
+  if(s.endsWith('%')){isPct=true; s=s.slice(0,-1);}
+  if(s==='' || isNaN(Number(s))) return NaN;
+  let n=Number(s);
+  if(neg) n=-n;
+  if(isPct) n=n/100;
+  return n;
+}
+
+function buildFromHeaderRow(headerIdx){
+  STATE.headerRow=headerIdx;
+  const aoa=STATE.rawRows;
+  const headerRaw=aoa[headerIdx]||[];
+  const bodyRows=aoa.slice(headerIdx+1);
+
+  if(bodyRows.length===0){
+    loadingState.style.display='none';
+    emptyState.style.display='none';
+    appContent.style.display='none';
+    showMessage('This sheet has headers but no data rows beneath them.','warn');
+    return;
+  }
+
+  // build unique column names
+  const seen={};
+  const columns=headerRaw.map((h,i)=>{
+    let name=(h===null||h===undefined||String(h).trim()==='') ? ('Column '+(i+1)) : String(h).trim();
+    if(seen[name]!==undefined){ seen[name]++; name=name+' ('+seen[name]+')'; } else { seen[name]=0; }
+    return {name, index:i};
+  });
+  if(columns.length===1){
+    showMessage('This file only has a single column, so charts will be limited — InstantDash will still show a frequency breakdown and the raw data.','info');
+  }
+  STATE.columns=columns;
+
+  // build row objects with type-cleaned values
+  const data=bodyRows.map(r=>{
+    const o={};
+    columns.forEach(col=>{
+      let v=r[col.index];
+      if(v===undefined) v=null;
+      o[col.name]=v;
+    });
+    return o;
+  });
+  STATE.data=data;
+
+  profileColumns();
+  renderFileMeta();
+  buildFilters();
+  applyFiltersAndRender(true);
+
+  loadingState.style.display='none';
+  emptyState.style.display='none';
+  appContent.style.display='block';
+}
+
+function renderFileMeta(){
+  document.getElementById('fileMeta').textContent =
+    STATE.data.length.toLocaleString('en-IN')+' rows × '+STATE.columns.length+' columns';
+}
+
+// ---------- 3. COLUMN PROFILING ----------
+function profileColumns(){
+  const profile={};
+  const nRows=STATE.data.length;
+  STATE.columns.forEach(col=>{
+    const name=col.name;
+    const rawVals=STATE.data.map(r=>r[name]);
+    const nonNull=rawVals.filter(v=>v!==null && v!==undefined && String(v).trim()!=='');
+    const missing=nRows-nonNull.length;
+
+    // detect boolean
+    const boolLike=nonNull.length>0 && nonNull.every(v=>{
+      const s=String(v).trim().toLowerCase();
+      return ['true','false','yes','no','y','n','0','1'].includes(s) && !(typeof v==='number' && v!==0 && v!==1);
+    });
+
+    // detect date: either JS Date objects (from cellDates:true) or parseable date strings
+    const dateVals=nonNull.map(v=>{
+      if(v instanceof Date && !isNaN(v)) return v;
+      if(typeof v==='string'){
+        const d=new Date(v);
+        if(!isNaN(d) && /\d{2,4}[-\/]\d{1,2}[-\/]\d{1,4}|\b\d{4}\b/.test(v)) return d;
+      }
+      return null;
+    });
+    const dateRatio = nonNull.length? dateVals.filter(Boolean).length/nonNull.length : 0;
+    const isDate = dateRatio>0.8 && !boolLike;
+
+    // detect numeric
+    const numVals=nonNull.map(v=>parseCleanNumber(v));
+    const numRatio= nonNull.length? numVals.filter(v=>!isNaN(v)).length/nonNull.length : 0;
+    const isNumeric = numRatio>0.8 && !isDate && !boolLike;
+
+    const uniqueSet=new Set(nonNull.map(v=> v instanceof Date? v.getTime(): String(v).trim().toLowerCase()));
+    const uniqueCount=uniqueSet.size;
+
+    let type='Text/Category';
+    if(boolLike) type='Boolean';
+    else if(isDate) type='Date';
+    else if(isNumeric) type='Number';
+
+    const p={name, type, count:nRows, missing, missingPct: nRows? (missing/nRows*100):0, unique:uniqueCount};
+
+    if(type==='Number'){
+      const nums=numVals.filter(v=>!isNaN(v));
+      p.min=nums.length?Math.min(...nums):null;
+      p.max=nums.length?Math.max(...nums):null;
+      p.sum=nums.reduce((a,b)=>a+b,0);
+      p.mean=nums.length? p.sum/nums.length : null;
+      const sorted=[...nums].sort((a,b)=>a-b);
+      p.median= sorted.length? (sorted.length%2? sorted[(sorted.length-1)/2] : (sorted[sorted.length/2-1]+sorted[sorted.length/2])/2) : null;
+      // std dev for outlier detection
+      const variance = nums.length? nums.reduce((a,b)=>a+Math.pow(b-p.mean,2),0)/nums.length : 0;
+      p.std=Math.sqrt(variance);
+      p.outliers = nums.filter(v=>Math.abs(v-p.mean)>3*p.std).length;
+      p.mixedTypeSuspect = numRatio<1 && numRatio>0.8; // some numbers stored as text mixed in
+    }
+    if(type==='Date'){
+      const dts=dateVals.filter(Boolean);
+      p.minDate=dts.length? new Date(Math.min(...dts.map(d=>d.getTime()))):null;
+      p.maxDate=dts.length? new Date(Math.max(...dts.map(d=>d.getTime()))):null;
+    }
+    if(type==='Text/Category' || type==='Boolean'){
+      const freq={};
+      nonNull.forEach(v=>{const s=String(v).trim(); freq[s]=(freq[s]||0)+1;});
+      p.topValues=Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,10);
+    }
+
+    // role classification
+    const lname=name.toLowerCase();
+    const looksLikeId=/(^|[\s_])(id|code|no\.?|number|invoice|phone|mobile|email|uuid|ref)([\s_]|$)/.test(lname);
+    const nearRowCount = nRows>0 && uniqueCount/nRows>0.9;
+    let role;
+    if(type==='Date') role='Time';
+    else if(type==='Number'){
+      role = (nearRowCount || looksLikeId) ? 'Identifier' : 'Measure';
+    } else { // text/category or boolean
+      if(looksLikeId || nearRowCount) role='Identifier';
+      else if(uniqueCount<=STATE.MAX_DIMENSION) role='Dimension';
+      else if(uniqueCount<=STATE.MAX_HIGH_CARD) role='HighCard';
+      else role='Identifier'; // too many uniques to be useful, treat like an ID for charting purposes
+    }
+    p.role=role;
+    p.constant = uniqueCount<=1 && nonNull.length>0;
+    p.duplicateFlagged=false;
+    profile[name]=p;
+  });
+  STATE.profile=profile;
+  renderProfileTable();
+}
+
+function renderProfileTable(){
+  const tbl=document.getElementById('profileTable');
+  let html='<thead><tr><th>Column</th><th>Detected type</th><th>Role</th><th>Unique</th><th>Missing</th><th>Details</th><th>Override</th></tr></thead><tbody>';
+  STATE.columns.forEach(col=>{
+    const p=STATE.profile[col.name];
+    let details='';
+    if(p.type==='Number') details=`min ${fmtNum(p.min)} · max ${fmtNum(p.max)} · mean ${fmtNum(p.mean)} · median ${fmtNum(p.median)}`;
+    else if(p.type==='Date') details=`${p.minDate?formatDate(p.minDate):'—'} → ${p.maxDate?formatDate(p.maxDate):'—'}`;
+    else details=(p.topValues||[]).slice(0,3).map(t=>`${escapeHtml(t[0])} (${t[1]})`).join(', ');
+    const roleClass='role-'+(p.role==='HighCard'?'HighCard':p.role);
+    html+=`<tr>
+      <td><strong>${escapeHtml(col.name)}</strong></td>
+      <td>${p.type}</td>
+      <td><span class="role-badge ${roleClass}">${p.role==='HighCard'?'High-card dim':p.role}</span></td>
+      <td>${p.unique.toLocaleString('en-IN')}</td>
+      <td>${p.missing? p.missingPct.toFixed(1)+'%':'0%'}</td>
+      <td style="max-width:260px; overflow:hidden; text-overflow:ellipsis;">${details}</td>
+      <td>
+        <select class="typeOverride" data-col="${escapeHtml(col.name)}">
+          <option value="Number" ${p.type==='Number'?'selected':''}>Number</option>
+          <option value="Date" ${p.type==='Date'?'selected':''}>Date</option>
+          <option value="Text/Category" ${p.type==='Text/Category'?'selected':''}>Text/Category</option>
+          <option value="Boolean" ${p.type==='Boolean'?'selected':''}>Boolean</option>
+        </select>
+      </td>
+    </tr>`;
+  });
+  html+='</tbody>';
+  tbl.innerHTML=html;
+  tbl.querySelectorAll('.typeOverride').forEach(sel=>{
+    sel.addEventListener('change',()=>{
+      overrideColumnType(sel.dataset.col, sel.value);
+    });
+  });
+}
+
+function overrideColumnType(colName, newType){
+  const p=STATE.profile[colName];
+  p.type=newType;
+  // recompute role simply based on new type
+  const nRows=STATE.data.length;
+  const nonNull=STATE.data.map(r=>r[colName]).filter(v=>v!==null&&v!==undefined&&String(v).trim()!=='');
+  const uniqueCount=new Set(nonNull.map(v=>String(v).trim().toLowerCase())).size;
+  if(newType==='Date'){ p.role='Time'; }
+  else if(newType==='Number'){ p.role = uniqueCount/nRows>0.9? 'Identifier':'Measure'; }
+  else { p.role = uniqueCount<=STATE.MAX_DIMENSION? 'Dimension' : (uniqueCount<=STATE.MAX_HIGH_CARD? 'HighCard':'Identifier'); }
+  buildFilters();
+  applyFiltersAndRender(true);
+}
+
+// ---------- helpers to get typed value for a row/col ----------
+function getNumeric(row,col){ const v=row[col]; return parseCleanNumber(v); }
+function getDateVal(row,col){
+  const v=row[col];
+  if(v instanceof Date) return v;
+  if(typeof v==='string'){ const d=new Date(v); if(!isNaN(d)) return d; }
+  return null;
+}
+
+// ---------- 5. FILTERS ----------
+function buildFilters(){
+  const bar=document.getElementById('filterBar');
+  bar.querySelectorAll('.filter-item').forEach(e=>e.remove());
+  STATE.filters={};
+  STATE.columns.forEach(col=>{
+    const p=STATE.profile[col.name];
+    if(p.role==='Dimension' || p.role==='HighCard' || p.type==='Boolean'){
+      const values=[...new Set(STATE.data.map(r=>r[col.name]).filter(v=>v!==null&&v!==undefined&&String(v).trim()!==''))].map(String);
+      values.sort();
+      if(values.length<2) return;
+      STATE.filters[col.name]={type:'multiselect', values, selected:new Set(values)};
+      addMultiSelectFilter(col.name, values);
+    } else if(p.type==='Date'){
+      const dts=STATE.data.map(r=>getDateVal(r,col.name)).filter(Boolean);
+      if(dts.length===0) return;
+      const min=new Date(Math.min(...dts.map(d=>d.getTime())));
+      const max=new Date(Math.max(...dts.map(d=>d.getTime())));
+      STATE.filters[col.name]={type:'daterange', min, max, from:min, to:max};
+      addDateRangeFilter(col.name, min, max);
+    }
+  });
+  if(Object.keys(STATE.filters).length===0){
+    document.getElementById('filterHint').textContent='No categorical or date columns to filter on.';
+  } else {
+    document.getElementById('filterHint').textContent=Object.keys(STATE.filters).length+' filterable column(s)';
+  }
+}
+
+function addMultiSelectFilter(colName, values){
+  const bar=document.getElementById('filterBar');
+  const item=document.createElement('div');
+  item.className='filter-item';
+  const uid='ms_'+colName.replace(/\W/g,'_');
+  item.innerHTML=`
+    <label>${escapeHtml(colName)}</label>
+    <div class="ms-box">
+      <button type="button" class="ms-toggle" id="${uid}_toggle">All (${values.length})</button>
+      <div class="ms-panel" id="${uid}_panel">
+        <label style="font-weight:600;"><input type="checkbox" checked data-all> Select all</label>
+        ${values.map(v=>`<label><input type="checkbox" checked value="${escapeHtml(v)}"> ${escapeHtml(v)}</label>`).join('')}
+      </div>
+    </div>`;
+  bar.insertBefore(item, document.getElementById('resetFiltersBtn'));
+  const toggle=item.querySelector('.ms-toggle');
+  const panel=item.querySelector('.ms-panel');
+  toggle.addEventListener('click',(e)=>{
+    e.stopPropagation();
+    document.querySelectorAll('.ms-panel.open').forEach(p=>{if(p!==panel)p.classList.remove('open');});
+    panel.classList.toggle('open');
+  });
+  document.addEventListener('click',(e)=>{ if(!item.contains(e.target)) panel.classList.remove('open'); });
+  const allBox=panel.querySelector('[data-all]');
+  const boxes=[...panel.querySelectorAll('input[type=checkbox]:not([data-all])')];
+  function updateSelection(){
+    const selected=new Set(boxes.filter(b=>b.checked).map(b=>b.value));
+    STATE.filters[colName].selected=selected;
+    toggle.textContent = selected.size===values.length? `All (${values.length})` : (selected.size===0? 'None selected' : `${selected.size} of ${values.length} selected`);
+    applyFiltersAndRender();
+  }
+  allBox.addEventListener('change',()=>{ boxes.forEach(b=>b.checked=allBox.checked); updateSelection(); });
+  boxes.forEach(b=>b.addEventListener('change',()=>{
+    allBox.checked = boxes.every(x=>x.checked);
+    updateSelection();
+  }));
+}
+
+function addDateRangeFilter(colName, min, max){
+  const bar=document.getElementById('filterBar');
+  const item=document.createElement('div');
+  item.className='filter-item';
+  const toISO=d=>d.toISOString().slice(0,10);
+  item.innerHTML=`
+    <label>${escapeHtml(colName)} (date range)</label>
+    <div style="display:flex; gap:6px;">
+      <input type="date" class="input" value="${toISO(min)}" min="${toISO(min)}" max="${toISO(max)}" id="from_${colName.replace(/\W/g,'_')}">
+      <input type="date" class="input" value="${toISO(max)}" min="${toISO(min)}" max="${toISO(max)}" id="to_${colName.replace(/\W/g,'_')}">
+    </div>`;
+  bar.insertBefore(item, document.getElementById('resetFiltersBtn'));
+  const fromEl=item.querySelector('#from_'+colName.replace(/\W/g,'_'));
+  const toEl=item.querySelector('#to_'+colName.replace(/\W/g,'_'));
+  function update(){
+    STATE.filters[colName].from=new Date(fromEl.value);
+    STATE.filters[colName].to=new Date(toEl.value+'T23:59:59');
+    applyFiltersAndRender();
+  }
+  fromEl.addEventListener('change',update);
+  toEl.addEventListener('change',update);
+}
+
+document.getElementById('resetFiltersBtn').addEventListener('click',()=>{
+  buildFilters();
+  applyFiltersAndRender();
+});
+
+function applyFiltersAndRender(rebuildCharts){
+  let rows=STATE.data;
+  Object.entries(STATE.filters).forEach(([colName,f])=>{
+    if(f.type==='multiselect'){
+      rows=rows.filter(r=>{
+        const v=r[colName];
+        if(v===null||v===undefined||String(v).trim()==='') return true; // don't drop blanks aggressively
+        return f.selected.has(String(v));
+      });
+    } else if(f.type==='daterange'){
+      rows=rows.filter(r=>{
+        const d=getDateVal(r,colName);
+        if(!d) return true;
+        return d>=f.from && d<=f.to;
+      });
+    }
+  });
+  STATE.filteredData=rows;
+  renderKPIs();
+  if(rebuildCharts){ chooseAndBuildCharts(); }
+  else { updateAllCharts(); }
+  renderDataQuality();
+  STATE.table.page=1;
+  renderDataTable();
+}
+
+// ---------- ROLE HELPERS ----------
+function measuresList(){ return STATE.columns.filter(c=>STATE.profile[c.name].role==='Measure').map(c=>c.name); }
+function dimensionsList(){ return STATE.columns.filter(c=>STATE.profile[c.name].role==='Dimension').map(c=>c.name); }
+function highCardList(){ return STATE.columns.filter(c=>STATE.profile[c.name].role==='HighCard').map(c=>c.name); }
+function timeList(){ return STATE.columns.filter(c=>STATE.profile[c.name].role==='Time').map(c=>c.name); }
+
+// ---------- 4. KPI CARDS ----------
+function renderKPIs(){
+  const rows=STATE.filteredData;
+  const grid=document.getElementById('kpiGrid');
+  const cards=[];
+  cards.push({label:'Total rows', value:rows.length.toLocaleString('en-IN'), sub:STATE.data.length!==rows.length? `of ${STATE.data.length.toLocaleString('en-IN')} total`:''});
+
+  const meas=measuresList().slice(0,3);
+  meas.forEach(m=>{
+    const nums=rows.map(r=>getNumeric(r,m)).filter(v=>!isNaN(v));
+    const sum=nums.reduce((a,b)=>a+b,0);
+    const avg=nums.length? sum/nums.length:0;
+    cards.push({label:'Total '+m, value:fmtNum(sum,{compact:true}), sub:'avg '+fmtNum(avg,{compact:true})});
+  });
+
+  const dims=dimensionsList().concat(highCardList());
+  if(dims.length){
+    const primary=dims[0];
+    const uniq=new Set(rows.map(r=>r[primary]).filter(v=>v!==null&&v!==undefined&&v!=='')).size;
+    cards.push({label:'Unique '+primary, value:uniq.toLocaleString('en-IN'), sub:''});
+  }
+  const tcols=timeList();
+  if(tcols.length){
+    const t=tcols[0];
+    const dts=rows.map(r=>getDateVal(r,t)).filter(Boolean);
+    if(dts.length){
+      const min=new Date(Math.min(...dts.map(d=>d.getTime())));
+      const max=new Date(Math.max(...dts.map(d=>d.getTime())));
+      cards.push({label:t+' range', value:formatDate(min)+' – '+formatDate(max), sub:''});
+    }
+  }
+  grid.innerHTML=cards.slice(0,6).map(c=>`
+    <div class="kpi-card">
+      <div class="kpi-value">${c.value}</div>
+      <div class="kpi-label">${escapeHtml(c.label)}</div>
+      ${c.sub?`<div class="kpi-sub">${escapeHtml(c.sub)}</div>`:''}
+    </div>`).join('');
+}
+
+// ---------- aggregation engine used by charts, pivot & Ask Your Data ----------
+function aggregate(rows, groupCol, measureCol, agg){
+  const groups={};
+  rows.forEach(r=>{
+    let key = groupCol? r[groupCol] : '__all__';
+    if(key===null||key===undefined||String(key).trim()==='') key='(blank)';
+    if(groupCol && (STATE.profile[groupCol]||{}).type==='Date'){
+      const d=getDateVal(r,groupCol);
+      key = d? dateBucketKey(d, timeGrainFor(rows,groupCol)) : '(blank)';
+    } else {
+      key=String(key);
+    }
+    if(!groups[key]) groups[key]=[];
+    groups[key].push(r);
+  });
+  const out=Object.entries(groups).map(([key,grp])=>{
+    let value;
+    if(agg==='count') value=grp.length;
+    else if(agg==='distinct') value=new Set(grp.map(r=>r[measureCol])).size;
+    else {
+      const nums=grp.map(r=>getNumeric(r,measureCol)).filter(v=>!isNaN(v));
+      if(agg==='sum') value=nums.reduce((a,b)=>a+b,0);
+      else if(agg==='avg') value= nums.length? nums.reduce((a,b)=>a+b,0)/nums.length:0;
+      else if(agg==='min') value= nums.length? Math.min(...nums):0;
+      else if(agg==='max') value= nums.length? Math.max(...nums):0;
+      else value=nums.reduce((a,b)=>a+b,0);
+    }
+    return {key, value, n:grp.length};
+  });
+  return out;
+}
+
+function timeGrainFor(rows, dateCol){
+  const dts=rows.map(r=>getDateVal(r,dateCol)).filter(Boolean);
+  if(dts.length<2) return 'month';
+  const min=Math.min(...dts.map(d=>d.getTime())), max=Math.max(...dts.map(d=>d.getTime()));
+  const spanDays=(max-min)/(1000*3600*24);
+  if(spanDays<=62) return 'day';
+  if(spanDays<=1100) return 'month';
+  return 'year';
+}
+function dateBucketKey(d, grain){
+  if(grain==='day') return d.toISOString().slice(0,10);
+  if(grain==='year') return String(d.getFullYear());
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+}
+function sortBucketKeys(keys, grain){
+  return [...keys].sort();
+}
+
+// ---------- 6. CHART SELECTION & RENDERING ----------
+function destroyAllCharts(){
+  STATE.charts.forEach(c=>{ if(c.chartInstance) c.chartInstance.destroy(); });
+  STATE.charts=[];
+  document.getElementById('chartGrid').innerHTML='';
+}
+
+function chooseAndBuildCharts(){
+  destroyAllCharts();
+  const measures=measuresList();
+  const dims=dimensionsList();
+  const highCards=highCardList();
+  const times=timeList();
+  const specs=[];
+
+  // 1. Date + measure -> line over time (auto grain)
+  if(times.length && measures.length){
+    specs.push({kind:'line', x:times[0], y:measures[0], agg:'sum', title:`Total ${measures[0]} by ${times[0]}`});
+    if(measures[1]) specs.push({kind:'line', x:times[0], y:measures[1], agg:'sum', title:`Total ${measures[1]} by ${times[0]}`});
+  }
+  // 2. Dimension + measure -> bar sorted desc
+  dims.slice(0,2).forEach((d,i)=>{
+    if(measures[i]!==undefined || measures[0]!==undefined){
+      const m=measures[i]||measures[0];
+      specs.push({kind:'bar', x:d, y:m, agg:'sum', title:`Total ${m} by ${d}`, sort:'desc'});
+    }
+  });
+  // 3. Dimension with 2-6 uniques -> donut of share of total
+  dims.filter(d=>STATE.profile[d].unique>=2 && STATE.profile[d].unique<=6).slice(0,1).forEach(d=>{
+    const m=measures[0];
+    specs.push({kind:'doughnut', x:d, y:m||null, agg: m?'sum':'count', title: m? `${m} share by ${d}`:`Row share by ${d}`});
+  });
+  // 4. High-cardinality dim + measure -> top10 horizontal bar
+  if(highCards.length && measures.length){
+    specs.push({kind:'bar', x:highCards[0], y:measures[0], agg:'sum', title:`Top ${STATE.settings.maxCategories} ${highCards[0]} by ${measures[0]}`, top10:true, horizontal:true});
+  }
+  // 5. Two measures -> scatter
+  if(measures.length>=2){
+    specs.push({kind:'scatter', x:measures[0], y:measures[1], title:`${measures[1]} vs ${measures[0]}`});
+  }
+  // 6. A measure alone -> histogram
+  if(measures.length && specs.length<8){
+    specs.push({kind:'histogram', x:measures[0], title:`Distribution of ${measures[0]}`});
+  }
+  // 7. Two dimensions + measure -> stacked bar
+  if(dims.length>=2 && measures.length){
+    specs.push({kind:'stacked', x:dims[0], stack:dims[1], y:measures[0], agg:'sum', title:`${measures[0]} by ${dims[0]} & ${dims[1]}`});
+  }
+  // 8. Only text columns, no measures -> frequency counts
+  if(measures.length===0){
+    (dims.length?dims:highCards).slice(0,4).forEach(d=>{
+      specs.push({kind:'bar', x:d, y:null, agg:'count', title:`Row count by ${d}`, top10: STATE.profile[d].role==='HighCard'});
+    });
+    if(specs.length===0){
+      showMessage('This file has no usable numeric column, so InstantDash is showing frequency charts of the categorical columns instead.','info');
+    }
+  }
+
+  // De-dupe, cap 4-8
+  const seenTitles=new Set();
+  const finalSpecs=specs.filter(s=>{ if(seenTitles.has(s.title)) return false; seenTitles.add(s.title); return true; }).slice(0,8);
+
+  if(finalSpecs.length===0){
+    document.getElementById('chartGrid').innerHTML='<div class="chart-card">Not enough distinct data to build charts automatically. Try the "Add chart" button above.</div>';
+    return;
+  }
+  finalSpecs.forEach(spec=>createChartCard(spec));
+}
+
+function createChartCard(spec, custom){
+  const id='chart_'+(STATE.chartIdSeq++);
+  const grid=document.getElementById('chartGrid');
+  const card=document.createElement('div');
+  card.className='chart-card';
+  card.id=id+'_card';
+  const measOptions=measuresList().map(m=>`<option value="${escapeHtml(m)}" ${m===spec.y?'selected':''}>${escapeHtml(m)}</option>`).join('');
+  const dimOptions=dimensionsList().concat(highCardList()).concat(timeList()).map(d=>`<option value="${escapeHtml(d)}" ${d===spec.x?'selected':''}>${escapeHtml(d)}</option>`).join('');
+  card.innerHTML=`
+    <div class="chart-head">
+      <div class="chart-title">${escapeHtml(spec.title)}</div>
+      <div class="chart-actions">
+        <button data-act="png" title="Download PNG">⬇</button>
+        <button data-act="remove" title="Remove chart">✕</button>
+      </div>
+    </div>
+    <div class="chart-body"><canvas id="${id}_canvas"></canvas></div>
+    <div class="chart-controls-row">
+      <select class="ctrlType">
+        <option value="bar" ${spec.kind==='bar'?'selected':''}>Bar</option>
+        <option value="line" ${spec.kind==='line'?'selected':''}>Line</option>
+        <option value="doughnut" ${spec.kind==='doughnut'?'selected':''}>Donut</option>
+        <option value="scatter" ${spec.kind==='scatter'?'selected':''}>Scatter</option>
+      </select>
+      <select class="ctrlMeasure">${measOptions}</select>
+      <select class="ctrlDim">${dimOptions}</select>
+    </div>`;
+  grid.appendChild(card);
+
+  const entry={id, spec:{...spec}, chartInstance:null, canvasId:id+'_canvas', card};
+  STATE.charts.push(entry);
+  renderChart(entry);
+
+  card.querySelector('[data-act="png"]').addEventListener('click',()=>{
+    const link=document.createElement('a');
+    link.download=(spec.title||'chart').replace(/[^\w]+/g,'_')+'.png';
+    link.href=entry.chartInstance.toBase64Image();
+    link.click();
+  });
+  card.querySelector('[data-act="remove"]').addEventListener('click',()=>{
+    entry.chartInstance && entry.chartInstance.destroy();
+    card.remove();
+    STATE.charts=STATE.charts.filter(c=>c.id!==id);
+  });
+  card.querySelector('.ctrlType').addEventListener('change',(e)=>{ entry.spec.kind=e.target.value; renderChart(entry); });
+  card.querySelector('.ctrlMeasure').addEventListener('change',(e)=>{ entry.spec.y=e.target.value; renderChart(entry); });
+  card.querySelector('.ctrlDim').addEventListener('change',(e)=>{ entry.spec.x=e.target.value; renderChart(entry); });
+}
+
+function updateAllCharts(){ STATE.charts.forEach(renderChart); }
+
+function buildChartDataset(spec){
+  const rows=STATE.filteredData;
+  if(spec.kind==='scatter'){
+    const pts=rows.map(r=>({x:getNumeric(r,spec.x), y:getNumeric(r,spec.y)})).filter(p=>!isNaN(p.x)&&!isNaN(p.y));
+    const sample = pts.length>3000? pts.filter((_,i)=>i%Math.ceil(pts.length/3000)===0) : pts;
+    return {type:'scatter', datasets:[{label:spec.y+' vs '+spec.x, data:sample, backgroundColor:cssVar('--amber')}]};
+  }
+  if(spec.kind==='histogram'){
+    const nums=rows.map(r=>getNumeric(r,spec.x)).filter(v=>!isNaN(v));
+    if(nums.length===0) return {type:'bar', labels:[], datasets:[{data:[]}]};
+    const min=Math.min(...nums), max=Math.max(...nums);
+    const bins=10; const width=(max-min)/bins || 1;
+    const counts=new Array(bins).fill(0);
+    nums.forEach(v=>{ let idx=Math.floor((v-min)/width); if(idx>=bins) idx=bins-1; if(idx<0) idx=0; counts[idx]++; });
+    const labels=counts.map((_,i)=> fmtNum(min+i*width,{compact:true})+'–'+fmtNum(min+(i+1)*width,{compact:true}));
+    return {type:'bar', labels, datasets:[{label:'Count', data:counts, backgroundColor:cssVar('--amber')}]};
+  }
+  if(spec.kind==='stacked'){
+    const stackVals=[...new Set(rows.map(r=>r[spec.stack]).filter(v=>v!==null&&v!==undefined&&v!==''))].map(String).slice(0,8);
+    const xVals=[...new Set(rows.map(r=>r[spec.x]).filter(v=>v!==null&&v!==undefined&&v!==''))].map(String);
+    const xTop = xVals.length>15 ? aggregate(rows, spec.x, spec.y, spec.agg||'sum').sort((a,b)=>b.value-a.value).slice(0,15).map(o=>o.key) : xVals;
+    const datasets=stackVals.map((sv,i)=>{
+      const data=xTop.map(xv=>{
+        const subset=rows.filter(r=>String(r[spec.x])===xv && String(r[spec.stack])===sv);
+        const nums=subset.map(r=>getNumeric(r,spec.y)).filter(v=>!isNaN(v));
+        return nums.reduce((a,b)=>a+b,0);
+      });
+      return {label:sv, data, backgroundColor:PALETTE[i%PALETTE.length]};
+    });
+    return {type:'bar', labels:xTop, datasets, stacked:true};
+  }
+  // default: aggregate by group
+  let agg=aggregate(rows, spec.x, spec.y, spec.agg||'sum');
+  if(spec.x && (STATE.profile[spec.x]||{}).type==='Date'){
+    agg=agg.sort((a,b)=> a.key<b.key? -1:1);
+  } else if(spec.sort==='desc' || spec.top10){
+    agg=agg.sort((a,b)=>b.value-a.value);
+  }
+  let others=null;
+  const topN=STATE.settings.maxCategories||10;
+  if(spec.top10 && agg.length>topN){
+    const rest=agg.slice(topN);
+    others={key:'Others', value:rest.reduce((a,b)=>a+b.value,0)};
+    agg=agg.slice(0,topN).concat([others]);
+  }
+  const labels=agg.map(a=>a.key);
+  const values=agg.map(a=>a.value);
+  const bg = spec.kind==='doughnut'? labels.map((_,i)=>PALETTE[i%PALETTE.length]) : cssVar('--amber');
+  return {type: spec.kind==='doughnut'?'doughnut':(spec.horizontal?'bar':spec.kind), labels, datasets:[{label:spec.y? (spec.agg==='count'?'Count':spec.y) : 'Count', data:values, backgroundColor:bg, borderColor:spec.kind==='line'?cssVar('--rust'):undefined, borderRadius: spec.kind==='bar'?6:0, tension:.3}], horizontal:spec.horizontal};
+}
+
+function renderChart(entry){
+  const spec=entry.spec;
+  const ds=buildChartDataset(spec);
+  const ctx=document.getElementById(entry.canvasId);
+  if(!ctx) return;
+  if(entry.chartInstance) entry.chartInstance.destroy();
+  const isDark=STATE.darkMode;
+  const gridColor= isDark? 'rgba(255,255,255,.08)':'rgba(0,0,0,.06)';
+  const textColor= isDark? '#D8D4CC':'#4a453f';
+  const common={
+    responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{display: ds.type==='doughnut' || (ds.datasets && ds.datasets.length>1), labels:{color:textColor, boxWidth:12, font:{size:11}}},
+      tooltip:{callbacks:{label:(c)=>{
+        if(ds.type==='scatter') return `(${fmtNum(c.parsed.x)}, ${fmtNum(c.parsed.y)})`;
+        return `${c.dataset.label}: ${fmtNum(c.parsed.y!==undefined?c.parsed.y:c.parsed)}`;
+      }}}
+    },
+    scales: ds.type==='doughnut'? {} : {
+      x:{ stacked:!!ds.stacked, ticks:{color:textColor, font:{size:10}, maxRotation:40}, grid:{color:gridColor} },
+      y:{ stacked:!!ds.stacked, ticks:{color:textColor, font:{size:10}}, grid:{color:gridColor} }
+    }
+  };
+  const config={
+    type: ds.type,
+    data: ds.type==='scatter'? {datasets:ds.datasets} : {labels:ds.labels, datasets:ds.datasets},
+    options: spec.horizontal? {...common, indexAxis:'y'} : common
+  };
+  entry.chartInstance=new Chart(ctx.getContext('2d'), config);
+}
+
+// ---------- 7. DATA QUALITY ----------
+function renderDataQuality(){
+  const grid=document.getElementById('dqGrid');
+  const rows=STATE.filteredData;
+  const cards=[];
+
+  // missing values
+  const missCols=STATE.columns.map(c=>({name:c.name, pct:STATE.profile[c.name].missingPct})).filter(c=>c.pct>0).sort((a,b)=>b.pct-a.pct);
+  cards.push({title:'Missing values', body: missCols.length? missCols.slice(0,8).map(c=>
+      `<div class="dq-row"><span>${escapeHtml(c.name)}</span><span class="pill ${c.pct>10?'bad':'warn'}">${c.pct.toFixed(1)}%</span></div>`).join('')
+      : '<div class="dq-row"><span>No missing values found</span><span class="pill good">Clean</span></div>'});
+
+  // duplicate rows
+  const seen=new Set(); let dupCount=0;
+  rows.forEach(r=>{ const key=JSON.stringify(r); if(seen.has(key)) dupCount++; else seen.add(key); });
+  cards.push({title:'Duplicate rows', body:`<div class="dq-row"><span>Fully duplicate rows</span><span class="pill ${dupCount>0?'warn':'good'}">${dupCount}</span></div>`});
+
+  // mixed-type columns
+  const mixed=STATE.columns.filter(c=>STATE.profile[c.name].mixedTypeSuspect);
+  cards.push({title:'Mixed-type columns', body: mixed.length? mixed.map(c=>`<div class="dq-row"><span>${escapeHtml(c.name)}</span><span class="pill warn">check formatting</span></div>`).join('') : '<div class="dq-row"><span>No mixed-type columns detected</span><span class="pill good">Clean</span></div>'});
+
+  // outliers
+  const outlierCols=STATE.columns.filter(c=>STATE.profile[c.name].type==='Number' && STATE.profile[c.name].outliers>0);
+  cards.push({title:'Outliers (beyond 3σ)', body: outlierCols.length? outlierCols.map(c=>`<div class="dq-row"><span>${escapeHtml(c.name)}</span><span class="pill warn">${STATE.profile[c.name].outliers} values</span></div>`).join('') : '<div class="dq-row"><span>No extreme outliers detected</span><span class="pill good">Clean</span></div>'});
+
+  // constant columns
+  const constCols=STATE.columns.filter(c=>STATE.profile[c.name].constant);
+  cards.push({title:'Constant columns', body: constCols.length? constCols.map(c=>`<div class="dq-row"><span>${escapeHtml(c.name)}</span><span class="pill warn">same value everywhere</span></div>`).join('') : '<div class="dq-row"><span>No constant columns</span><span class="pill good">Clean</span></div>'});
+
+  grid.innerHTML=cards.map(c=>`<div class="dq-card"><h4>${c.title}</h4>${c.body}</div>`).join('');
+}
+
+// ---------- 8. DATA TABLE ----------
+document.getElementById('tableSearch').addEventListener('input',(e)=>{
+  STATE.table.search=e.target.value.toLowerCase();
+  STATE.table.page=1;
+  renderDataTable();
+});
+
+function renderDataTable(){
+  const rows=STATE.filteredData;
+  let filtered=rows;
+  if(STATE.table.search){
+    filtered=rows.filter(r=>STATE.columns.some(c=>String(r[c.name]??'').toLowerCase().includes(STATE.table.search)));
+  }
+  if(STATE.table.sortCol){
+    const col=STATE.table.sortCol, dir=STATE.table.sortDir;
+    const isNum=STATE.profile[col] && STATE.profile[col].type==='Number';
+    const isDate=STATE.profile[col] && STATE.profile[col].type==='Date';
+    filtered=[...filtered].sort((a,b)=>{
+      let av=a[col], bv=b[col];
+      if(isNum){av=parseCleanNumber(av); bv=parseCleanNumber(bv); if(isNaN(av))av=-Infinity; if(isNaN(bv))bv=-Infinity;}
+      else if(isDate){av=getDateVal(a,col); bv=getDateVal(b,col); av=av?av.getTime():-Infinity; bv=bv?bv.getTime():-Infinity;}
+      else {av=String(av??''); bv=String(bv??'');}
+      if(av<bv) return -1*dir; if(av>bv) return 1*dir; return 0;
+    });
+  }
+  const total=filtered.length;
+  const pageSize=STATE.table.pageSize;
+  const pages=Math.max(1, Math.ceil(total/pageSize));
+  if(STATE.table.page>pages) STATE.table.page=pages;
+  const start=(STATE.table.page-1)*pageSize;
+  const pageRows=filtered.slice(start, start+pageSize);
+
+  const tbl=document.getElementById('dataTable');
+  let thead='<thead><tr>'+STATE.columns.map(c=>{
+    const active=STATE.table.sortCol===c.name;
+    const arrow=active? (STATE.table.sortDir===1?' ▲':' ▼') : '';
+    return `<th data-col="${escapeHtml(c.name)}">${escapeHtml(c.name)}${arrow}</th>`;
+  }).join('')+'</tr></thead>';
+  let tbody='<tbody>'+pageRows.map(r=>'<tr>'+STATE.columns.map(c=>{
+    let v=r[c.name];
+    if(v instanceof Date) v=formatDate(v);
+    else if(v===null||v===undefined) v='';
+    return `<td>${escapeHtml(v)}</td>`;
+  }).join('')+'</tr>').join('')+'</tbody>';
+  tbl.innerHTML=thead+tbody;
+  tbl.querySelectorAll('th').forEach(th=>{
+    th.addEventListener('click',()=>{
+      const col=th.dataset.col;
+      if(STATE.table.sortCol===col) STATE.table.sortDir*=-1;
+      else { STATE.table.sortCol=col; STATE.table.sortDir=1; }
+      renderDataTable();
+    });
+  });
+
+  document.getElementById('rowCountLabel').textContent=`Showing ${pageRows.length? start+1:0}–${Math.min(start+pageSize,total)} of ${total.toLocaleString('en-IN')} row(s)`;
+  const pager=document.getElementById('pager');
+  pager.innerHTML=`
+    <button class="btn secondary small" ${STATE.table.page<=1?'disabled':''} id="prevPage">‹ Prev</button>
+    <span>Page ${STATE.table.page} of ${pages}</span>
+    <button class="btn secondary small" ${STATE.table.page>=pages?'disabled':''} id="nextPage">Next ›</button>`;
+  const prevBtn=document.getElementById('prevPage'), nextBtn=document.getElementById('nextPage');
+  if(prevBtn) prevBtn.addEventListener('click',()=>{STATE.table.page--; renderDataTable();});
+  if(nextBtn) nextBtn.addEventListener('click',()=>{STATE.table.page++; renderDataTable();});
+
+  STATE._lastFilteredForExport=filtered;
+}
+
+// ---------- 9. ADD CHART BUILDER + PIVOT ----------
+const addChartModal=document.getElementById('addChartModal');
+document.getElementById('addChartBtn').addEventListener('click',()=>{
+  const allCols=STATE.columns.map(c=>c.name);
+  document.getElementById('bXAxis').innerHTML=allCols.map(n=>`<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join('');
+  document.getElementById('bYAxis').innerHTML=allCols.map(n=>`<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join('');
+  document.getElementById('bAgg').value=STATE.settings.defaultAgg;
+  addChartModal.classList.add('open');
+});
+document.getElementById('buildChartBtn').addEventListener('click',()=>{
+  const x=document.getElementById('bXAxis').value;
+  const y=document.getElementById('bYAxis').value;
+  const agg=document.getElementById('bAgg').value;
+  const type=document.getElementById('bType').value;
+  const horizontal = type==='horizontalBar';
+  const kind = horizontal? 'bar': type;
+  const aggLabel={sum:'Sum',avg:'Average',count:'Count',distinct:'Distinct count',min:'Min',max:'Max'}[agg];
+  createChartCard({kind, x, y, agg, title:`${aggLabel} of ${y} by ${x}`, horizontal, sort:'desc'});
+  addChartModal.classList.remove('open');
+});
+
+const pivotModal=document.getElementById('pivotModal');
+document.getElementById('pivotBtn').addEventListener('click',()=>{
+  const allCols=STATE.columns.map(c=>c.name);
+  document.getElementById('pRows').innerHTML=allCols.map(n=>`<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join('');
+  document.getElementById('pCols').innerHTML='<option value="">(none)</option>'+allCols.map(n=>`<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join('');
+  document.getElementById('pVals').innerHTML=allCols.map(n=>`<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join('');
+  document.getElementById('pivotResultTable').innerHTML='';
+  pivotModal.classList.add('open');
+});
+document.getElementById('runPivotBtn').addEventListener('click',()=>{
+  const rowsCol=document.getElementById('pRows').value;
+  const colsCol=document.getElementById('pCols').value;
+  const valCol=document.getElementById('pVals').value;
+  const agg=document.getElementById('pAgg').value;
+  buildPivot(rowsCol,colsCol,valCol,agg);
+});
+
+function pivotCompute(rows, valCol, agg){
+  if(agg==='count') return rows.length;
+  const nums=rows.map(r=>getNumeric(r,valCol)).filter(v=>!isNaN(v));
+  if(agg==='sum') return nums.reduce((a,b)=>a+b,0);
+  if(agg==='avg') return nums.length? nums.reduce((a,b)=>a+b,0)/nums.length:0;
+  if(agg==='min') return nums.length? Math.min(...nums):0;
+  if(agg==='max') return nums.length? Math.max(...nums):0;
+  return 0;
+}
+// IMPORTANT: totals are never obtained by summing the displayed cell values.
+// Sum and Count are additive across cells, but Average / Min / Max are NOT —
+// e.g. Average(A)=100, Average(B)=200 does not make the grand total 300.
+// So every total (row total, column total, grand total) is recomputed
+// directly from its own set of underlying records, for every aggregation type.
+function buildPivot(rowsCol,colsCol,valCol,agg){
+  const data=STATE.filteredData;
+  const rowVals=[...new Set(data.map(r=>String(r[rowsCol]??'(blank)')))].sort();
+  const colVals=colsCol? [...new Set(data.map(r=>String(r[colsCol]??'(blank)')))].sort() : ['Value'];
+  let html='<thead><tr><th>'+escapeHtml(rowsCol)+'</th>'+colVals.map(c=>`<th>${escapeHtml(c)}</th>`).join('')+'<th>Total</th></tr></thead><tbody>';
+
+  rowVals.forEach(rv=>{
+    const rowSubset=data.filter(r=>String(r[rowsCol]??'(blank)')===rv);
+    const cells=colVals.map(cv=>{
+      const subset=colsCol? rowSubset.filter(r=>String(r[colsCol]??'(blank)')===cv) : rowSubset;
+      const val=pivotCompute(subset, valCol, agg);
+      return `<td>${fmtNum(val,{compact:true})}</td>`;
+    });
+    // row total: recomputed from ALL records in this row, not by summing the cells above
+    const rowTotal=pivotCompute(rowSubset, valCol, agg);
+    html+=`<tr><td><strong>${escapeHtml(rv)}</strong></td>${cells.join('')}<td><strong>${fmtNum(rowTotal,{compact:true})}</strong></td></tr>`;
+  });
+
+  // column totals: recomputed from ALL records in that column, not by summing cells
+  const colTotals=colVals.map(cv=>{
+    const colSubset=colsCol? data.filter(r=>String(r[colsCol]??'(blank)')===cv) : data;
+    return pivotCompute(colSubset, valCol, agg);
+  });
+  // grand total: recomputed from every record currently in view
+  const grandTotal=pivotCompute(data, valCol, agg);
+  html+=`<tr><td><strong>Total</strong></td>${colTotals.map(t=>`<td><strong>${fmtNum(t,{compact:true})}</strong></td>`).join('')}<td><strong>${fmtNum(grandTotal,{compact:true})}</strong></td></tr>`;
+  html+='</tbody>';
+  document.getElementById('pivotResultTable').innerHTML=html;
+  STATE._lastPivot={rowsCol,colsCol,valCol,agg,rowVals,colVals};
+}
+
+const settingsModal=document.getElementById('settingsModal');
+const helpModal=document.getElementById('helpModal');
+const allModals=[addChartModal,pivotModal,settingsModal,helpModal];
+document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>{
+  allModals.forEach(m=>m.classList.remove('open'));
+}));
+allModals.forEach(m=>m.addEventListener('click',(e)=>{ if(e.target===m) m.classList.remove('open'); }));
+
+document.getElementById('helpToggle').addEventListener('click',()=>helpModal.classList.add('open'));
+
+document.getElementById('settingsToggle').addEventListener('click',()=>{
+  const s=STATE.settings;
+  document.getElementById('setNumberFormat').value=s.numberFormat;
+  document.getElementById('setCurrency').value=s.currency;
+  document.getElementById('setDecimals').value=String(s.decimals);
+  document.getElementById('setDateFormat').value=s.dateFormat;
+  document.getElementById('setMaxCategories').value=String(s.maxCategories);
+  document.getElementById('setDefaultAgg').value=s.defaultAgg;
+  document.getElementById('setShowDQ').checked=s.showDataQuality;
+  document.getElementById('setShowRaw').checked=s.showRawData;
+  settingsModal.classList.add('open');
+});
+
+document.getElementById('applySettingsBtn').addEventListener('click',()=>{
+  const s=STATE.settings;
+  s.numberFormat=document.getElementById('setNumberFormat').value;
+  s.currency=document.getElementById('setCurrency').value;
+  s.decimals=parseInt(document.getElementById('setDecimals').value,10);
+  s.dateFormat=document.getElementById('setDateFormat').value;
+  s.maxCategories=parseInt(document.getElementById('setMaxCategories').value,10);
+  s.defaultAgg=document.getElementById('setDefaultAgg').value;
+  s.showDataQuality=document.getElementById('setShowDQ').checked;
+  s.showRawData=document.getElementById('setShowRaw').checked;
+
+  document.getElementById('dataQualitySection').style.display = s.showDataQuality? '' : 'none';
+  document.getElementById('rawDataSection').style.display = s.showRawData? '' : 'none';
+
+  settingsModal.classList.remove('open');
+  if(STATE.data.length){
+    renderKPIs();
+    chooseAndBuildCharts();
+    renderDataQuality();
+    renderDataTable();
+    renderProfileTable();
+  }
+});
+
+// ---------- 10. EXPORT ----------
+document.getElementById('exportCsvBtn').addEventListener('click',()=>{
+  const rows=STATE._lastFilteredForExport || STATE.filteredData;
+  const header=STATE.columns.map(c=>c.name);
+  const csvRows=[header.join(',')];
+  rows.forEach(r=>{
+    csvRows.push(header.map(h=>{
+      let v=r[h];
+      if(v instanceof Date) v=formatDate(v);
+      v=(v===null||v===undefined)?'':String(v);
+      if(v.includes(',')||v.includes('"')||v.includes('\n')) v='"'+v.replace(/"/g,'""')+'"';
+      return v;
+    }).join(','));
+  });
+  downloadText(csvRows.join('\n'),'instantdash_export.csv','text/csv');
+});
+function downloadText(content,filename,mime){
+  const blob=new Blob([content],{type:mime});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download=filename; a.click();
+  URL.revokeObjectURL(url);
+}
+document.getElementById('exportFullCsvBtn').addEventListener('click',()=>{
+  const rows=STATE.data; // unfiltered, every row loaded from the sheet
+  const header=STATE.columns.map(c=>c.name);
+  const csvRows=[header.join(',')];
+  rows.forEach(r=>{
+    csvRows.push(header.map(h=>{
+      let v=r[h];
+      if(v instanceof Date) v=formatDate(v);
+      v=(v===null||v===undefined)?'':String(v);
+      if(v.includes(',')||v.includes('"')||v.includes('\n')) v='"'+v.replace(/"/g,'""')+'"';
+      return v;
+    }).join(','));
+  });
+  downloadText(csvRows.join('\n'),'instantdash_full_export.csv','text/csv');
+});
+
+document.getElementById('exportPivotCsvBtn').addEventListener('click',()=>{
+  const p=STATE._lastPivot;
+  if(!p){ showMessage('Generate a pivot first, then export it.','info'); return; }
+  const data=STATE.filteredData;
+  const lines=[[p.rowsCol, ...p.colVals, 'Total'].join(',')];
+  p.rowVals.forEach(rv=>{
+    const rowSubset=data.filter(r=>String(r[p.rowsCol]??'(blank)')===rv);
+    const cells=p.colVals.map(cv=>{
+      const subset=p.colsCol? rowSubset.filter(r=>String(r[p.colsCol]??'(blank)')===cv) : rowSubset;
+      return pivotCompute(subset,p.valCol,p.agg);
+    });
+    const rowTotal=pivotCompute(rowSubset,p.valCol,p.agg);
+    lines.push([rv, ...cells, rowTotal].join(','));
+  });
+  const colTotals=p.colVals.map(cv=>{
+    const colSubset=p.colsCol? data.filter(r=>String(r[p.colsCol]??'(blank)')===cv) : data;
+    return pivotCompute(colSubset,p.valCol,p.agg);
+  });
+  lines.push(['Total', ...colTotals, pivotCompute(data,p.valCol,p.agg)].join(','));
+  downloadText(lines.join('\n'),'instantdash_pivot.csv','text/csv');
+});
+
+document.getElementById('exportDashboardPngBtn').addEventListener('click',async ()=>{
+  const btn=document.getElementById('exportDashboardPngBtn');
+  const old=btn.textContent; btn.textContent='Rendering…'; btn.disabled=true;
+  try{
+    const target=document.getElementById('appContent');
+    const canvas=await html2canvas(target,{backgroundColor: STATE.darkMode? '#15151A':'#F4EDE2', scale:2, useCORS:true});
+    const link=document.createElement('a');
+    link.download='instantdash_dashboard.png';
+    link.href=canvas.toDataURL('image/png');
+    link.click();
+  }catch(err){
+    showMessage('Could not render the dashboard to an image: '+err.message,'error');
+  }
+  btn.textContent=old; btn.disabled=false;
+});
+
+document.getElementById('printBtn').addEventListener('click',()=>window.print());
+
+document.getElementById('copyInsightsBtn').addEventListener('click',()=>{
+  const text=generateInsightSummary();
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn=document.getElementById('copyInsightsBtn');
+    const old=btn.textContent; btn.textContent='✓ Copied!';
+    setTimeout(()=>btn.textContent=old,1500);
+  });
+});
+
+function generateInsightSummary(){
+  const rows=STATE.filteredData;
+  const lines=[`InstantDash summary — ${STATE.sheetName} (${rows.length.toLocaleString('en-IN')} rows)`];
+  measuresList().slice(0,5).forEach(m=>{
+    const nums=rows.map(r=>getNumeric(r,m)).filter(v=>!isNaN(v));
+    const sum=nums.reduce((a,b)=>a+b,0);
+    lines.push(`• Total ${m}: ${fmtNum(sum)} (avg ${fmtNum(sum/(nums.length||1))})`);
+  });
+  const tcols=timeList();
+  if(tcols.length){
+    const dts=rows.map(r=>getDateVal(r,tcols[0])).filter(Boolean);
+    if(dts.length) lines.push(`• ${tcols[0]} range: ${formatDate(new Date(Math.min(...dts)))} to ${formatDate(new Date(Math.max(...dts)))}`);
+  }
+  dimensionsList().slice(0,2).forEach(d=>{
+    if(measuresList()[0]){
+      const agg=aggregate(rows,d,measuresList()[0],'sum').sort((a,b)=>b.value-a.value);
+      if(agg[0]) lines.push(`• Top ${d} by ${measuresList()[0]}: ${agg[0].key} (${fmtNum(agg[0].value,{compact:true})})`);
+    }
+  });
+  return lines.join('\n');
+}
+
+// ---------- 11. ASK AI (local, rule-based — no API key, no server) ----------
+const askFab=document.getElementById('askFab');
+const askPanel=document.getElementById('askPanel');
+const askBody=document.getElementById('askBody');
+const askInput=document.getElementById('askInput');
+askFab.addEventListener('click',()=>{
+  askPanel.classList.toggle('open');
+  if(askPanel.classList.contains('open') && askBody.children.length===0){
+    askBotSay("Hi! I read the numbers already in your current dashboard view and describe them in plain language — totals, rankings by category, and the biggest contributor to a change over time. I'm a local, rule-based reader of your data, not an AI model, so I can point out patterns but I can't diagnose causes outside your columns. Try one of the questions below, type your own, or tap the mic to ask by voice.");
+    renderAskSuggestions();
+  }
+});
+document.getElementById('askClose').addEventListener('click',()=>askPanel.classList.remove('open'));
+
+function askBotSay(html){
+  const el=document.createElement('div');
+  el.className='ask-msg bot';
+  el.innerHTML=html;
+  askBody.appendChild(el);
+  askBody.scrollTop=askBody.scrollHeight;
+}
+function askUserSay(text){
+  const el=document.createElement('div');
+  el.className='ask-msg user';
+  el.textContent=text;
+  askBody.appendChild(el);
+  askBody.scrollTop=askBody.scrollHeight;
+}
+function renderAskSuggestions(){
+  const box=document.getElementById('askSuggest');
+  const m=measuresList()[0];
+  const t=timeList()[0];
+  const d=dimensionsList()[0]||highCardList()[0];
+  const suggestions=[];
+  if(m && t) suggestions.push(`What contributed most to the change in ${m}?`);
+  if(m && d) suggestions.push(`Which ${d} contributes most to ${m}?`);
+  if(m) suggestions.push(`Which areas may offer the biggest opportunity for ${m}?`);
+  suggestions.push('Summarize this dashboard');
+  box.innerHTML=suggestions.map(s=>`<button type="button">${escapeHtml(s)}</button>`).join('');
+  box.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{ askInput.value=b.textContent; sendAskQuestion(); }));
+}
+
+document.getElementById('askSend').addEventListener('click',sendAskQuestion);
+askInput.addEventListener('keydown',(e)=>{ if(e.key==='Enter') sendAskQuestion(); });
+
+function sendAskQuestion(){
+  const q=askInput.value.trim();
+  if(!q) return;
+  askUserSay(q);
+  askInput.value='';
+  setTimeout(()=>{ askBotSay(answerQuestion(q)); },250);
+}
+
+// ---- voice input (Web Speech API, en-IN) ----
+let recognizer=null, listening=false;
+const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+const askMic=document.getElementById('askMic');
+if(SpeechRec){
+  recognizer=new SpeechRec();
+  recognizer.lang='en-IN';
+  recognizer.interimResults=false;
+  recognizer.maxAlternatives=1;
+  recognizer.onresult=(e)=>{
+    const transcript=e.results[0][0].transcript;
+    askInput.value=transcript;
+    sendAskQuestion();
+  };
+  recognizer.onend=()=>{ listening=false; askMic.classList.remove('listening'); };
+  recognizer.onerror=()=>{ listening=false; askMic.classList.remove('listening'); };
+  askMic.addEventListener('click',()=>{
+    if(listening){ recognizer.stop(); return; }
+    listening=true; askMic.classList.add('listening');
+    try{ recognizer.start(); }catch(err){ listening=false; askMic.classList.remove('listening'); }
+  });
+} else {
+  askMic.addEventListener('click',()=>{
+    askBotSay("Voice input isn't supported in this browser. Chrome on desktop or Android works best — you can still type your question below.");
+  });
+}
+
+// ---- the local "reasoning" over profiled + filtered data ----
+function findColumnMention(q, candidates){
+  const lq=q.toLowerCase();
+  let best=null, bestLen=0;
+  candidates.forEach(c=>{
+    const lc=c.toLowerCase();
+    if(lq.includes(lc) && lc.length>bestLen){ best=c; bestLen=lc.length; }
+  });
+  return best;
+}
+
+function answerQuestion(q){
+  const lq=q.toLowerCase();
+  const rows=STATE.filteredData;
+  const measures=measuresList();
+  const dims=dimensionsList().concat(highCardList());
+  const times=timeList();
+  if(measures.length===0){
+    return "I don't see a numeric column in this file to analyze trends on, but I can tell you about the categories present. Try asking, for example, \"which " + (dims[0]||'category') + " appears most often?\"";
+  }
+  const mentionedMeasure=findColumnMention(q,measures)||measures[0];
+  const mentionedDim=findColumnMention(q,dims);
+  const mentionedTime=findColumnMention(q,times)||times[0];
+
+  // "summarize"
+  if(/summar/.test(lq)){
+    return generateInsightSummary().replace(/\n/g,'\n');
+  }
+
+  // "why did X drop/decrease/fall" or "increase/rise/grow"
+  if(/(why|reason).*(drop|decrease|fall|declin|down|low)/.test(lq) || /(drop|decrease|fall|declin).*(why|reason)?/.test(lq) && /why/.test(lq)){
+    return explainTrend(mentionedMeasure, mentionedTime, mentionedDim, 'decrease');
+  }
+  if(/(why|reason).*(increase|rise|grow|up|high)/.test(lq)){
+    return explainTrend(mentionedMeasure, mentionedTime, mentionedDim, 'increase');
+  }
+  // generic "why did X change"
+  if(/why/.test(lq) && /change|trend|behav/.test(lq)){
+    return explainTrend(mentionedMeasure, mentionedTime, mentionedDim, 'either');
+  }
+
+  // "how can i increase / improve / raise / grow <measure>"
+  if(/(how (can|do|might) i|how to|ways? to|what should).*(increase|improve|raise|grow|boost|reduce|lower|cut|decrease)/.test(lq) || /(increase|improve|raise|boost|reduce|lower|cut)/.test(lq)){
+    const direction = /(reduce|lower|cut|decrease)/.test(lq) ? 'decrease' : 'increase';
+    return suggestLevers(mentionedMeasure, mentionedDim, direction);
+  }
+
+  // "which X drives/most/highest/top"
+  if(/(which|what|top|highest|most|best|worst|lowest)/.test(lq)){
+    const dimForRank = mentionedDim || dims[0];
+    if(dimForRank){
+      return rankDimension(mentionedMeasure, dimForRank);
+    }
+  }
+
+  // total / sum
+  if(/(total|sum)/.test(lq)){
+    const nums=rows.map(r=>getNumeric(r,mentionedMeasure)).filter(v=>!isNaN(v));
+    const sum=nums.reduce((a,b)=>a+b,0);
+    return `The total ${mentionedMeasure} across the current filtered view (${rows.length.toLocaleString('en-IN')} rows) is ${fmtNum(sum)}.`;
+  }
+  // average
+  if(/(average|avg|mean)/.test(lq)){
+    const nums=rows.map(r=>getNumeric(r,mentionedMeasure)).filter(v=>!isNaN(v));
+    const avg=nums.length? nums.reduce((a,b)=>a+b,0)/nums.length:0;
+    return `The average ${mentionedMeasure} is ${fmtNum(avg)}.`;
+  }
+
+  // fallback: give an overview of the mentioned measure
+  const nums=rows.map(r=>getNumeric(r,mentionedMeasure)).filter(v=>!isNaN(v));
+  const sum=nums.reduce((a,b)=>a+b,0);
+  const avg=nums.length? sum/nums.length:0;
+  let out=`Here's what I can see for ${mentionedMeasure}: total ${fmtNum(sum)}, average ${fmtNum(avg)} across ${rows.length.toLocaleString('en-IN')} rows.`;
+  if(mentionedTime) out+=` I can also explain the trend over ${mentionedTime}, or tell you which ${dims[0]||'category'} contributes the most — just ask.`;
+  return out;
+}
+
+function explainTrend(measure, timeCol, dimCol, direction){
+  const rows=STATE.filteredData;
+  if(!timeCol){
+    return `I don't see a date column to analyze a trend for ${measure}. I can still tell you which category contributes the most if you ask "which category drives ${measure}?"`;
+  }
+  const grain=timeGrainFor(rows,timeCol);
+  const agg=aggregate(rows,timeCol,measure,'sum').sort((a,b)=>a.key<b.key?-1:1);
+  if(agg.length<2){
+    return `There isn't enough of a time span in the current filtered data to compare periods for ${measure}.`;
+  }
+  const last=agg[agg.length-1], prev=agg[agg.length-2];
+  const delta=last.value-prev.value;
+  const pct = prev.value!==0 ? (delta/Math.abs(prev.value)*100) : null;
+  const actualDir = delta>=0? 'increase':'decrease';
+  let lines=[];
+  lines.push(`${measure} ${actualDir === 'increase' ? 'rose' : 'fell'} from ${fmtNum(prev.value,{compact:true})} in ${prev.key} to ${fmtNum(last.value,{compact:true})} in ${last.key}` + (pct!==null? ` (${pct>=0?'+':''}${pct.toFixed(1)}%).` : '.'));
+
+  // find which dimension category contributed most to the change
+  const candidateDim = dimCol || dimensionsList()[0] || highCardList()[0];
+  if(candidateDim){
+    const lastRows=rows.filter(r=>{ const d=getDateVal(r,timeCol); return d && dateBucketKey(d,grain)===last.key; });
+    const prevRows=rows.filter(r=>{ const d=getDateVal(r,timeCol); return d && dateBucketKey(d,grain)===prev.key; });
+    const lastByDim=aggregate(lastRows,candidateDim,measure,'sum');
+    const prevByDim=aggregate(prevRows,candidateDim,measure,'sum');
+    const prevMap=Object.fromEntries(prevByDim.map(o=>[o.key,o.value]));
+    const diffs=lastByDim.map(o=>({key:o.key, diff:o.value-(prevMap[o.key]||0)}))
+      .sort((a,b)=> actualDir==='increase'? b.diff-a.diff : a.diff-b.diff);
+    const top=diffs[0];
+    if(top && Math.abs(top.diff)>0){
+      lines.push(`The largest single contributor to that ${actualDir} was "${top.key}" in ${candidateDim}, which changed by ${fmtNum(top.diff,{compact:true})} between the two periods. This identifies where the change is concentrated — it doesn't by itself explain why that category moved; that needs context this file may not contain.`);
+    }
+  }
+  lines.push(`To dig further: open the filters above and narrow the date range or ${candidateDim||'a category'} to isolate this, or ask me "which ${candidateDim||'category'} contributes most to ${measure}?"`);
+  return lines.join('\n');
+}
+
+function rankDimension(measure, dimCol){
+  const rows=STATE.filteredData;
+  const agg=aggregate(rows,dimCol,measure,'sum').sort((a,b)=>b.value-a.value);
+  if(agg.length===0) return `I couldn't find enough data in ${dimCol} to rank against ${measure}.`;
+  const top=agg.slice(0,3);
+  const total=agg.reduce((a,b)=>a+b.value,0);
+  const share= total!==0? (top[0].value/total*100):0;
+  let out=`By total ${measure}, "${top[0].key}" ranks highest in ${dimCol} with ${fmtNum(top[0].value,{compact:true})}`+(total? ` (${share.toFixed(1)}% of the total)`:'')+'.';
+  if(top.length>1) out+=`\nNext: `+top.slice(1).map(t=>`${t.key} (${fmtNum(t.value,{compact:true})})`).join(', ')+'.';
+  return out;
+}
+
+// Deliberately framed as "where might the opportunity be", not "how do I fix it" —
+// the underlying data (an average, a total) can't tell us about volume, market
+// mix, pricing power, or anything not present in the file, so the response says
+// so explicitly rather than reading like management advice.
+function suggestLevers(measure, dimCol, direction){
+  const rows=STATE.filteredData;
+  const dims=dimensionsList().concat(highCardList());
+  const candidateDim = dimCol || dims[0];
+  let lines=[`Here's where the data suggests the biggest ${direction==='increase'?'opportunity':'concentration to review'} for ${measure} may be — treat this as a starting hypothesis to investigate, not a conclusion:`];
+  if(candidateDim){
+    const agg=aggregate(rows,candidateDim,measure, direction==='increase'?'avg':'sum').sort((a,b)=>direction==='increase'? a.value-b.value : b.value-a.value);
+    if(agg.length>=2){
+      if(direction==='increase'){
+        const weakest=agg[0], strongest=agg[agg.length-1];
+        lines.push(`• "${weakest.key}" has the lowest average ${measure} (${fmtNum(weakest.value,{compact:true})}) in ${candidateDim}, versus "${strongest.key}" at ${fmtNum(strongest.value,{compact:true})}. This gap is worth investigating — it could reflect volume, conversion, pricing, product mix, or a different market; the data here doesn't say which.`);
+      } else {
+        const heaviest=agg[0];
+        lines.push(`• "${heaviest.key}" accounts for the largest share of total ${measure} (${fmtNum(heaviest.value,{compact:true})}) in ${candidateDim} — that concentration is the first place to look, though whether it's worth reducing depends on context outside this file.`);
+      }
+    }
+  }
+  const otherMeasures=measuresList().filter(m=>m!==measure);
+  if(otherMeasures.length){
+    lines.push(`• It may also help to compare ${measure} against ${otherMeasures[0]} — try the scatter chart or "Add chart" to plot them against each other and look for a relationship.`);
+  }
+  const times=timeList();
+  if(times.length){
+    lines.push(`• Check whether this varies by ${times[0]} — ask me "what contributed most to the change in ${measure}?" to see the trend and its biggest contributor.`);
+  }
+  lines.push(`This is a pattern read from the columns in this file, not business advice for your operations — use it as a starting point for further investigation, not a recommendation.`);
+  return lines.join('\n');
+}
+
+// ---------- 12. DARK MODE + MISC ----------
+document.getElementById('themeToggle').addEventListener('click',()=>{
+  STATE.darkMode=!STATE.darkMode;
+  document.documentElement.setAttribute('data-theme', STATE.darkMode?'dark':'light');
+  document.getElementById('themeToggle').textContent=STATE.darkMode?'☀️':'🌙';
+  updateAllCharts();
+});
+
+// keep panels tidy on resize
+window.addEventListener('resize',()=>{ /* Chart.js is responsive by default */ });
+</script>
+</body>
+</html>
