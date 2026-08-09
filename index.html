@@ -51,7 +51,7 @@
   --shadow-hover:0 10px 28px rgba(0,0,0,.5);
 }
 *{box-sizing:border-box;}
-html,body{margin:0;padding:0;}
+html,body{margin:0;padding:0; max-width:100%; overflow-x:hidden;}
 body{
   background:var(--cream); color:var(--ink);
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
@@ -161,6 +161,16 @@ select, .input{
 }
 .filter-item{display:flex; flex-direction:column; gap:4px; min-width:160px;}
 .filter-item label{font-size:11.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.03em;}
+.chip-row{display:flex; flex-wrap:wrap; gap:6px; margin-top:10px;}
+.chip-row:empty{margin-top:0;}
+.chip{
+  display:inline-flex; align-items:center; gap:6px; background:var(--card); border:1px solid var(--amber);
+  color:var(--ink); font-size:12px; padding:5px 6px 5px 10px; border-radius:20px; max-width:100%;
+}
+.chip .chip-x{
+  background:var(--amber); color:var(--ink); border:none; border-radius:50%; width:18px; height:18px;
+  font-size:12px; line-height:1; display:flex; align-items:center; justify-content:center; flex-shrink:0; padding:0;
+}
 .ms-box{position:relative;}
 .ms-toggle{width:100%; text-align:left; background:var(--cream); border:1px solid var(--line); border-radius:7px; padding:7px 10px; font-size:13px;}
 .ms-panel{
@@ -191,6 +201,7 @@ select, .input{
 .dq-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:14px;}
 .dq-card{background:var(--card); border-radius:var(--radius); padding:14px 16px; box-shadow:var(--shadow);}
 .dq-card h4{margin:0 0 8px; font-size:13.5px;}
+.dq-scope{font-weight:400; color:var(--muted); font-size:11px;}
 .dq-row{display:flex; justify-content:space-between; font-size:12.5px; padding:4px 0; border-bottom:1px solid var(--line);}
 .dq-row:last-child{border-bottom:none;}
 .pill{display:inline-block; padding:1px 8px; border-radius:20px; font-size:11px; font-weight:600;}
@@ -224,6 +235,16 @@ table.dt th{position:sticky; top:0; background:var(--card); border-bottom:2px so
 table.dt td{padding:7px 10px; border-bottom:1px solid var(--line); white-space:nowrap;}
 table.dt tr:hover td{background:rgba(245,179,1,.06);}
 .pager{display:flex; align-items:center; gap:8px; justify-content:flex-end; margin-top:8px; font-size:13px;}
+.mobile-only-inline{display:none;}
+.card-view{display:flex; flex-direction:column; gap:10px;}
+.data-card{background:var(--card); border:1px solid var(--line); border-radius:10px; padding:12px 14px; box-shadow:var(--shadow);}
+.data-card-row{display:flex; justify-content:space-between; gap:10px; font-size:12.5px; padding:4px 0; border-bottom:1px solid var(--line);}
+.data-card-row:last-child{border-bottom:none;}
+.data-card-row .k{color:var(--muted); flex-shrink:0;}
+.data-card-row .v{text-align:right; word-break:break-word;}
+@media(max-width:640px){
+  .mobile-only-inline{display:inline-flex;}
+}
 
 /* ---------- Ask Your Data ---------- */
 .ask-fab{
@@ -290,6 +311,11 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
   table.dt th, table.dt td{padding:9px 8px;}
   .section-title h2{font-size:17px;}
   .section-title{flex-wrap:wrap; gap:8px;}
+  .chip{padding:7px 6px 7px 12px; font-size:12.5px;}
+  .chip .chip-x{width:24px; height:24px; font-size:13px;}
+  .modal{padding:16px;}
+  .builder-grid{grid-template-columns:1fr;}
+  .datatable-wrap{max-height:60vh;}
 }
 </style>
 </head>
@@ -298,7 +324,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 <div class="topbar">
   <div class="brand"><span class="dot"></span> InstantDash</div>
   <div class="topbar-right">
-    <div class="privacy-badge">🔒 <span class="txt">Your data never leaves your computer</span></div>
+    <div class="privacy-badge">🔒 <span class="txt">Processed locally — not uploaded to any server</span></div>
     <button class="icon-btn" id="helpToggle" title="Help &amp; guide">❓</button>
     <button class="icon-btn" id="settingsToggle" title="Dashboard settings">⚙️</button>
     <button class="icon-btn" id="themeToggle" title="Toggle dark mode">☀️</button>
@@ -346,7 +372,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
         <select id="headerRowSelect"></select>
       </label>
       <span id="fileMeta" style="font-size:12px; color:var(--muted); margin-left:auto;"></span>
-      <button class="btn secondary small" id="newFileBtn">↻ Load different file</button>
+      <button class="btn secondary small" id="newFileBtn">↻ Clear data / load different file</button>
     </div>
 
     <nav class="quicknav" id="quickNav">
@@ -364,6 +390,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
     <div class="filterbar" id="filterBar">
       <button class="btn secondary small" id="resetFiltersBtn">Reset filters</button>
     </div>
+    <div class="chip-row" id="activeFilterChips"></div>
 
     <div class="section-title">
       <h2>Dashboard</h2>
@@ -391,18 +418,21 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
       <div class="section-title">
         <h2>Raw data</h2>
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
-          <button class="btn secondary small" id="exportCsvBtn">⬇ Filtered CSV</button>
-          <button class="btn secondary small" id="exportFullCsvBtn">⬇ Full CSV</button>
-          <button class="btn secondary small" id="exportDashboardPngBtn">🖼 Dashboard PNG</button>
+          <button class="btn secondary small" id="exportCsvBtn">📤 Filtered CSV</button>
+          <button class="btn secondary small" id="exportFullCsvBtn">📤 Full CSV</button>
+          <button class="btn secondary small" id="exportDashboardPngBtn">📤 Dashboard PNG</button>
           <button class="btn secondary small" id="printBtn">🖨 Print / Save as PDF</button>
-          <button class="btn secondary small" id="copyInsightsBtn">📋 Copy insight summary</button>
+          <button class="btn secondary small" id="copyInsightsBtn">📋 Copy summary</button>
+          <button class="btn secondary small" id="shareInsightsBtn">📤 Share summary</button>
         </div>
       </div>
       <div class="table-toolbar">
         <input type="text" class="input" id="tableSearch" placeholder="Search rows…" style="min-width:220px;">
         <span id="rowCountLabel" style="font-size:12.5px; color:var(--muted);"></span>
+        <button class="btn secondary small mobile-only-inline" id="tableViewToggle">☰ Card view</button>
       </div>
-      <div class="datatable-wrap"><table class="dt" id="dataTable"></table></div>
+      <div class="datatable-wrap" id="datatableWrap"><table class="dt" id="dataTable"></table></div>
+      <div class="card-view" id="dataCards" style="display:none;"></div>
       <div class="pager" id="pager"></div>
     </div>
   </div>
@@ -414,13 +444,13 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 <button class="ask-fab" id="askFab" title="Ask Your Data about this dashboard">💬</button>
 <div class="ask-panel" id="askPanel">
   <div class="ask-head">
-    <strong>💬 Ask Your Data</strong>
+    <div><strong>💬 Ask Your Data</strong><div style="font-size:10.5px; opacity:.85; font-weight:400;">Local analysis — not generative AI</div></div>
     <button id="askClose">✕</button>
   </div>
   <div class="ask-body" id="askBody"></div>
   <div class="ask-suggest" id="askSuggest"></div>
   <div class="ask-input-row">
-    <button class="mic" id="askMic" title="Ask by voice">🎤</button>
+    <button class="mic" id="askMic" title="Ask by voice (uses your browser's speech recognition service)">🎤</button>
     <input type="text" id="askInput" placeholder="e.g. What drove the change in sales?">
     <button id="askSend" title="Send">➤</button>
   </div>
@@ -462,11 +492,12 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
       <label>Values<select id="pVals"></select></label>
       <label>Aggregation<select id="pAgg">
         <option value="sum">Sum</option><option value="avg">Average</option>
-        <option value="count">Count</option><option value="min">Min</option><option value="max">Max</option>
+        <option value="count">Count</option><option value="distinct">Distinct count</option>
+        <option value="min">Min</option><option value="max">Max</option><option value="median">Median</option>
       </select></label>
     </div>
     <div style="text-align:right; margin:12px 0; display:flex; gap:8px; justify-content:flex-end;">
-      <button class="btn secondary small" id="exportPivotCsvBtn">⬇ Export pivot CSV</button>
+      <button class="btn secondary small" id="exportPivotCsvBtn">📤 Share/export pivot CSV</button>
       <button class="btn" id="runPivotBtn">Generate pivot</button>
     </div>
     <div class="datatable-wrap" style="max-height:400px;"><table class="dt" id="pivotResultTable"></table></div>
@@ -518,6 +549,12 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
           <option value="count">Count</option><option value="min">Min</option><option value="max">Max</option>
         </select>
       </label>
+      <label>Outlier detection method
+        <select id="setOutlierMethod">
+          <option value="iqr">IQR (recommended)</option>
+          <option value="sigma">±3 standard deviations</option>
+        </select>
+      </label>
     </div>
     <div style="margin-top:14px; display:flex; flex-direction:column; gap:8px;">
       <label style="display:flex; align-items:center; gap:8px; font-size:13.5px;"><input type="checkbox" id="setShowDQ"> Show Data quality section</label>
@@ -544,8 +581,8 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
       <p><strong>7. How filters work</strong><br>Every Dimension gets a multi-select filter; every Date column gets a from/to range. All KPIs, charts, and the data table update live as you change them.</p>
       <p><strong>8. How charts are selected</strong><br>Based on what's in your profile: date+measure → line chart, dimension+measure → bar chart, small dimension → donut, high-cardinality+measure → Top N bar, two measures → scatter, one measure alone → histogram, two dimensions+measure → stacked bar.</p>
       <p><strong>9. How to create a pivot</strong><br>Click "Pivot table," choose Rows, Columns (optional), Values, and an aggregation, then "Generate pivot." Totals are always recalculated from the underlying records — never by adding up averages, minimums, or maximums.</p>
-      <p><strong>10. What "Ask Your Data" can answer</strong><br>It reads the same profile and aggregates already on your screen and explains them in plain language — contributors to a change, rankings by category, totals and averages. It does not use an external AI model; it's a local, rule-based reader of your numbers, so it can't reason beyond your columns.</p>
-      <p><strong>11. Privacy</strong><br>Your file is read entirely in your browser's memory. It is never sent anywhere, and closing the tab clears it.</p>
+      <p><strong>10. What "Ask Your Data — Local Analysis" can answer</strong><br>It reads the same profile and aggregates already on your screen — always from the <em>currently filtered</em> data — and explains them in plain language: contributors to a change, rankings by category, totals and averages. It does not use an external AI model; it's a local, rule-based reader of your numbers, so it can't reason beyond your columns. It can identify the largest contributor to a change, not necessarily the reason behind it — correlation shown in your data is not the same as a confirmed cause. Note: if you use the microphone button, the audio is processed by your browser or device's built-in speech-to-text service (e.g. Apple's or Google's), which is not guaranteed to be fully on-device — typed questions stay entirely local.</p>
+      <p><strong>11. Privacy</strong><br>Your spreadsheet is processed locally in your browser. InstantDash does not upload your spreadsheet to a server. It's held in your browser's memory only, and closing the tab clears it. (The page itself — its code, fonts, and the spreadsheet-reading library — loads from the internet the first time you open it, the same as any webpage; it's your file's contents that never get sent anywhere. If voice input is used with "Ask Your Data," that audio is processed by your browser/device's built-in speech recognition service, which may not be entirely local — see note 10.)</p>
       <p><strong>12. Supported file formats</strong><br>.xlsx, .xls, and .csv, including multi-sheet workbooks (use the sheet selector).</p>
       <p><strong>13. Large-file limitations</strong><br>InstantDash stays responsive up to roughly 100,000 rows by aggregating before charting and paginating the data table. Files beyond ~200,000 rows will show a warning and may feel slower.</p>
       <p><strong>14. Troubleshooting</strong><br>If a chart looks wrong, check the Data profile panel — you can manually override any column's detected type. If numbers look off, check currency/thousands formatting in your source file, or adjust decimals/number format in Settings.</p>
@@ -601,7 +638,7 @@ const STATE = {
   filteredData: [],
   charts: [],            // [{id, spec, canvas, card}]
   chartIdSeq: 1,
-  table: {sortCol:null, sortDir:1, search:'', page:1, pageSize:50},
+  table: {sortCol:null, sortDir:1, search:'', page:1, pageSize:50, viewMode: (window.matchMedia && window.matchMedia('(max-width:640px)').matches)? 'card':'table'},
   darkMode:true,
   MAX_HIGH_CARD: 50,
   MAX_DIMENSION: 15,
@@ -613,6 +650,7 @@ const STATE = {
     maxCategories:10,        // "Top N, rest as Others" charts
     defaultAgg:'sum',
     showDataQuality:true,
+    outlierMethod:'iqr',     // 'iqr' (default, robust) or 'sigma' (±3σ)
     showRawData:true
   }
 };
@@ -642,9 +680,19 @@ function fmtNum(n, opts={}){
   }
   return cur+n.toLocaleString(locale,{maximumFractionDigits:decimals});
 }
+// Always build date strings from local calendar components (getFullYear/
+// getMonth/getDate), never toISOString(). toISOString() converts to UTC
+// first — for India (UTC+5:30) a local midnight becomes 18:30 the previous
+// day in UTC, so slicing it back to YYYY-MM-DD silently shows the WRONG
+// calendar date. This bit filter date-range pickers and daily chart
+// grouping until fixed here.
+function toLocalISODate(d){
+  if(!d || isNaN(d)) return '';
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
 function formatDate(d){
   if(!d || isNaN(d)) return '—';
-  if(STATE.settings.dateFormat==='iso') return d.toISOString().slice(0,10);
+  if(STATE.settings.dateFormat==='iso') return toLocalISODate(d);
   return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear();
 }
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
@@ -658,6 +706,31 @@ function showMessage(text, kind='info'){
   return el;
 }
 function clearMessages(){document.getElementById('messages').innerHTML='';}
+
+// Near-empty trailing rows (likely footer/disclaimer text) are flagged, not
+// silently deleted — this banner lets the person review and decide.
+function showNearEmptyRowBanner(count){
+  const box=document.getElementById('messages');
+  const el=document.createElement('div');
+  el.className='msg-banner warn';
+  el.id='nearEmptyBanner';
+  el.innerHTML=`<div>⚠️ Found ${count} row(s) with almost no data filled in — these often turn out to be footer or disclaimer text rather than real records. They're currently included in the dashboard below.
+    <div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
+      <button class="btn small rust" id="removeNearEmptyBtn">Remove them</button>
+      <button class="btn secondary small" id="keepNearEmptyBtn">Keep them / review in Raw data</button>
+    </div></div>`;
+  box.appendChild(el);
+  document.getElementById('removeNearEmptyBtn').addEventListener('click',()=>{
+    STATE.data=STATE.data.filter(o=>!o.__nearEmptyFooter);
+    el.remove();
+    showMessage('Removed the near-empty rows.','info');
+    profileColumns(); buildFilters(); applyFiltersAndRender(true);
+  });
+  document.getElementById('keepNearEmptyBtn').addEventListener('click',()=>{
+    el.remove();
+    showMessage('Keeping those rows — you can find and remove them later by searching the Raw data table below.','info');
+  });
+}
 
 // ---------- 2. FILE INGEST ----------
 const fileInput=document.getElementById('fileInput');
@@ -765,7 +838,7 @@ function loadSheet(name){
       STATE.rawRows=aoa;
 
       if(aoa.length>200000){
-        showMessage('This file has over 200,000 rows. InstantDash will sample and aggregate to stay responsive, but very large files may feel slower.','warn');
+        showMessage('This file has over 200,000 rows. KPIs, charts, and the pivot table are calculated from the full dataset (not sampled) — only the scatter chart caps at 3,000 plotted points for performance, and the raw data table is paginated. Very large files may still feel slower to load and filter.','warn');
       }
 
       const headerIdx=detectHeaderRow(aoa);
@@ -908,17 +981,17 @@ function buildFromHeaderRow(headerIdx){
     return o;
   });
 
-  // Drop near-empty rows that are almost certainly leftover footer/disclaimer
-  // lines (e.g. "* Statement downloaded by...", "END OF STATEMENT...") rather
-  // than real records — a genuine data row in a multi-column file essentially
-  // never has just one field filled in. Only trims a small minority of rows,
-  // so it won't gut a legitimately sparse dataset.
+  // Rows with almost no data filled in (e.g. "* Statement downloaded by...",
+  // "END OF STATEMENT...") are usually leftover footer/disclaimer lines
+  // rather than real records — but rather than silently deleting them,
+  // they're flagged and the person is asked to review and choose, since an
+  // automatic silent delete could be wrong for a genuinely sparse dataset.
   if(columns.length>=3){
-    const nonBlankCount=o=>Object.values(o).filter(v=>v!==null&&v!==undefined&&String(v).trim()!=='').length;
+    const nonBlankCount=o=>STATE.columns.filter(c=>{ const v=o[c.name]; return v!==null&&v!==undefined&&String(v).trim()!==''; }).length;
     const junkRows=data.filter(o=>nonBlankCount(o)<=1);
     if(junkRows.length>0 && junkRows.length<=Math.max(5, data.length*0.05)){
-      data=data.filter(o=>nonBlankCount(o)>1);
-      showMessage(`Removed ${junkRows.length} near-empty trailing row(s) that looked like footer or disclaimer text rather than data.`,'info');
+      junkRows.forEach(o=>{ o.__nearEmptyFooter=true; });
+      showNearEmptyRowBanner(junkRows.length);
     }
   }
   STATE.data=data;
@@ -944,9 +1017,20 @@ function profileColumns(){
   const nRows=STATE.data.length;
   STATE.columns.forEach(col=>{
     const name=col.name;
+    const lname=name.toLowerCase();
     const rawVals=STATE.data.map(r=>r[name]);
     const nonNull=rawVals.filter(v=>v!==null && v!==undefined && String(v).trim()!=='');
     const missing=nRows-nonNull.length;
+
+    // Header-name hints computed up front so type detection (not just role
+    // classification) can use them — e.g. a column named "Account Number"
+    // should never be read as a Date even if a few values happen to look
+    // like DD/MM/YY, and a column named "PAN"/"Cheque No" should never be
+    // treated as a numeric Measure just because it's mostly digits.
+    const looksLikeId=/(^|[\s_])(id|code|no\.?|number|invoice|phone|mobile|account|acct|uuid|ref|pin|pan\b|cheque|ifsc)([\s_]|$)/.test(lname);
+    const looksLikeTime=/(^|[\s_])(date|month|year|fy|quarter|qtr|period)([\s_]|$)/.test(lname);
+    const looksLikePercent=/(%|percent|\brate\b|margin|growth)/.test(lname);
+    const looksLikeMeasure=/(sales|revenue|purchase|expense|profit|asset|liabilit|amount|quantity|qty|balance|debit|credit|price|cost|value|total|turnover|income|interest|commission|premium)/.test(lname);
 
     // detect boolean
     const boolLike=nonNull.length>0 && nonNull.every(v=>{
@@ -954,10 +1038,13 @@ function profileColumns(){
       return ['true','false','yes','no','y','n','0','1'].includes(s) && !(typeof v==='number' && v!==0 && v!==1);
     });
 
-    // detect date: either JS Date objects (from cellDates:true) or parseable date strings
+    // detect date: either JS Date objects (from cellDates:true) or parseable
+    // date strings — but never for a column whose name clearly identifies
+    // it as an account/ID/code/PIN field, even if some values coincidentally
+    // parse as dates (e.g. a 6-digit PIN like "12-03-45").
     const dateVals=nonNull.map(v=>parseFlexibleDate(v));
     const dateRatio = nonNull.length? dateVals.filter(Boolean).length/nonNull.length : 0;
-    const isDate = dateRatio>0.8 && !boolLike;
+    const isDate = dateRatio>0.8 && !boolLike && !looksLikeId;
 
     // detect numeric
     const numVals=nonNull.map(v=>parseCleanNumber(v));
@@ -982,11 +1069,26 @@ function profileColumns(){
       p.mean=nums.length? p.sum/nums.length : null;
       const sorted=[...nums].sort((a,b)=>a-b);
       p.median= sorted.length? (sorted.length%2? sorted[(sorted.length-1)/2] : (sorted[sorted.length/2-1]+sorted[sorted.length/2])/2) : null;
-      // std dev for outlier detection
+      // Outliers: IQR method by default (Q1 - 1.5*IQR to Q3 + 1.5*IQR), which
+      // is more robust to skewed financial data than a fixed ±3σ band; 3σ
+      // remains available as an alternate view in the Data Quality panel.
+      const q=(arr,p)=>{ if(arr.length===0) return null; const idx=(arr.length-1)*p; const lo=Math.floor(idx), hi=Math.ceil(idx); return arr[lo]+(arr[hi]-arr[lo])*(idx-lo); };
+      const q1=q(sorted,0.25), q3=q(sorted,0.75);
+      const iqr = (q1!==null && q3!==null)? q3-q1 : 0;
+      p.iqrLow=q1-1.5*iqr; p.iqrHigh=q3+1.5*iqr;
+      p.outliersIQR = nums.filter(v=>v<p.iqrLow || v>p.iqrHigh).length;
       const variance = nums.length? nums.reduce((a,b)=>a+Math.pow(b-p.mean,2),0)/nums.length : 0;
       p.std=Math.sqrt(variance);
-      p.outliers = nums.filter(v=>Math.abs(v-p.mean)>3*p.std).length;
+      p.outliers3Sigma = nums.filter(v=>Math.abs(v-p.mean)>3*p.std).length;
+      p.outliers = p.outliersIQR; // default method shown in the UI
       p.mixedTypeSuspect = numRatio<1 && numRatio>0.8; // some numbers stored as text mixed in
+      // Percentage columns: values were written with a "%" suffix (already
+      // converted to a 0-1 fraction by parseCleanNumber) OR the column name
+      // says rate/margin/growth/%. Flagged so KPIs/charts/pivot can show
+      // "25%" instead of "0.25", and avoid the meaningless "sum of a
+      // percentage column" metric.
+      const pctSuffixRatio = nonNull.length? nonNull.filter(v=>typeof v==='string' && /%\s*$/.test(v.trim())).length/nonNull.length : 0;
+      p.isPercentage = looksLikePercent || pctSuffixRatio>0.5;
     }
     if(type==='Date'){
       const dts=dateVals.filter(Boolean);
@@ -999,16 +1101,20 @@ function profileColumns(){
       p.topValues=Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,10);
     }
 
-    // role classification
-    const lname=name.toLowerCase();
-    const looksLikeId=/(^|[\s_])(id|code|no\.?|number|invoice|phone|mobile|email|uuid|ref)([\s_]|$)/.test(lname);
+    // role classification. Note: a numeric column is only treated as an
+    // Identifier when its NAME says so (id/code/account/...) — high
+    // uniqueness alone is not used for numbers, because a genuine
+    // continuous measure (e.g. a running Balance) is often unique on
+    // almost every row too; penalizing that would misfile real measures
+    // as identifiers and silently drop them from every chart and KPI.
     const nearRowCount = nRows>0 && uniqueCount/nRows>0.9;
     let role;
     if(type==='Date') role='Time';
     else if(type==='Number'){
-      role = (nearRowCount || looksLikeId) ? 'Identifier' : 'Measure';
+      role = looksLikeId && !looksLikeMeasure ? 'Identifier' : 'Measure';
     } else { // text/category or boolean
-      if(looksLikeId || nearRowCount) role='Identifier';
+      if(looksLikeTime && uniqueCount<=STATE.MAX_HIGH_CARD) role='Dimension'; // Month/FY/Quarter columns
+      else if(looksLikeId || nearRowCount) role='Identifier';
       else if(uniqueCount<=STATE.MAX_DIMENSION) role='Dimension';
       else if(uniqueCount<=STATE.MAX_HIGH_CARD) role='HighCard';
       else role='Identifier'; // too many uniques to be useful, treat like an ID for charting purposes
@@ -1149,7 +1255,7 @@ function addDateRangeFilter(colName, min, max){
   const bar=document.getElementById('filterBar');
   const item=document.createElement('div');
   item.className='filter-item';
-  const toISO=d=>d.toISOString().slice(0,10);
+  const toISO=toLocalISODate;
   item.innerHTML=`
     <label>${escapeHtml(colName)} (date range)</label>
     <div style="display:flex; gap:6px;">
@@ -1160,7 +1266,11 @@ function addDateRangeFilter(colName, min, max){
   const fromEl=item.querySelector('#from_'+colName.replace(/\W/g,'_'));
   const toEl=item.querySelector('#to_'+colName.replace(/\W/g,'_'));
   function update(){
-    STATE.filters[colName].from=new Date(fromEl.value);
+    // Append an explicit local time-of-day rather than passing a bare
+    // "YYYY-MM-DD" string — a date-only ISO string is parsed as UTC
+    // midnight by the JS spec, which silently shifts the boundary by
+    // 5:30 for India. Adding a time component forces local parsing.
+    STATE.filters[colName].from=new Date(fromEl.value+'T00:00:00');
     STATE.filters[colName].to=new Date(toEl.value+'T23:59:59');
     applyFiltersAndRender();
   }
@@ -1195,8 +1305,45 @@ function applyFiltersAndRender(rebuildCharts){
   if(rebuildCharts){ chooseAndBuildCharts(); }
   else { updateAllCharts(); }
   renderDataQuality();
+  renderActiveFilterChips();
   STATE.table.page=1;
   renderDataTable();
+}
+
+// Shows each active (non-default) filter as a removable chip, so it's
+// obvious at a glance what's currently narrowing the view on a phone
+// without having to open every dropdown to check.
+function renderActiveFilterChips(){
+  const box=document.getElementById('activeFilterChips');
+  if(!box) return;
+  const chips=[];
+  Object.entries(STATE.filters).forEach(([colName,f])=>{
+    if(f.type==='multiselect' && f.selected.size<f.values.length){
+      const label = f.selected.size<=2? [...f.selected].join(', ') : `${f.selected.size} of ${f.values.length}`;
+      chips.push({colName, text:`${colName}: ${label}`, clear:()=>{
+        f.selected=new Set(f.values);
+        const toggle=document.getElementById('ms_'+colName.replace(/\W/g,'_')+'_toggle');
+        const panel=document.getElementById('ms_'+colName.replace(/\W/g,'_')+'_panel');
+        if(panel) panel.querySelectorAll('input[type=checkbox]').forEach(b=>b.checked=true);
+        if(toggle) toggle.textContent=`All (${f.values.length})`;
+      }});
+    } else if(f.type==='daterange' && (f.from.getTime()!==f.min.getTime() || f.to.getTime()!==f.max.getTime())){
+      chips.push({colName, text:`${colName}: ${formatDate(f.from)} – ${formatDate(f.to)}`, clear:()=>{
+        f.from=f.min; f.to=f.max;
+        const suffix=colName.replace(/\W/g,'_');
+        const fromEl=document.getElementById('from_'+suffix), toEl=document.getElementById('to_'+suffix);
+        if(fromEl) fromEl.value=toLocalISODate(f.min);
+        if(toEl) toEl.value=toLocalISODate(f.max);
+      }});
+    }
+  });
+  box.innerHTML=chips.map((c,i)=>`<span class="chip">${escapeHtml(c.text)}<button type="button" class="chip-x" data-i="${i}" title="Clear this filter">✕</button></span>`).join('');
+  box.querySelectorAll('.chip-x').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      chips[parseInt(btn.dataset.i,10)].clear();
+      applyFiltersAndRender();
+    });
+  });
 }
 
 // ---------- ROLE HELPERS ----------
@@ -1206,6 +1353,19 @@ function highCardList(){ return STATE.columns.filter(c=>STATE.profile[c.name].ro
 function timeList(){ return STATE.columns.filter(c=>STATE.profile[c.name].role==='Time').map(c=>c.name); }
 
 // ---------- 4. KPI CARDS ----------
+function fmtPercent(v, decimals){
+  if(v===null||v===undefined||isNaN(v)) return '—';
+  decimals = decimals!==undefined? decimals : STATE.settings.decimals;
+  return (v*100).toFixed(decimals)+'%';
+}
+// Formats a measure's value the right way for its type: percentage columns
+// as "25.0%" (never a meaningless sum), everything else as a normal number.
+function fmtMeasure(v, colName, opts={}){
+  const p=STATE.profile[colName];
+  if(p && p.isPercentage) return fmtPercent(v, opts.decimals);
+  return fmtNum(v, opts);
+}
+
 function renderKPIs(){
   const rows=STATE.filteredData;
   const grid=document.getElementById('kpiGrid');
@@ -1215,9 +1375,16 @@ function renderKPIs(){
   const meas=measuresList().slice(0,3);
   meas.forEach(m=>{
     const nums=rows.map(r=>getNumeric(r,m)).filter(v=>!isNaN(v));
-    const sum=nums.reduce((a,b)=>a+b,0);
-    const avg=nums.length? sum/nums.length:0;
-    cards.push({label:'Total '+m, value:fmtNum(sum,{compact:true}), sub:'avg '+fmtNum(avg,{compact:true})});
+    const isPct=(STATE.profile[m]||{}).isPercentage;
+    const avg=nums.length? nums.reduce((a,b)=>a+b,0)/nums.length : 0;
+    if(isPct){
+      // Summing a column of percentages (e.g. individual growth rates)
+      // produces a number with no real meaning — only the average does.
+      cards.push({label:'Average '+m, value:fmtPercent(avg), sub:nums.length? `across ${nums.length.toLocaleString('en-IN')} rows`:''});
+    } else {
+      const sum=nums.reduce((a,b)=>a+b,0);
+      cards.push({label:'Total '+m, value:fmtNum(sum,{compact:true}), sub:'avg '+fmtNum(avg,{compact:true})});
+    }
   });
 
   const dims=dimensionsList().concat(highCardList());
@@ -1286,7 +1453,7 @@ function timeGrainFor(rows, dateCol){
   return 'year';
 }
 function dateBucketKey(d, grain){
-  if(grain==='day') return d.toISOString().slice(0,10);
+  if(grain==='day') return toLocalISODate(d);
   if(grain==='year') return String(d.getFullYear());
   return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
 }
@@ -1307,27 +1474,33 @@ function chooseAndBuildCharts(){
   const highCards=highCardList();
   const times=timeList();
   const specs=[];
+  // Percentage-type measures (Rate/Margin/Growth/% columns) get averaged,
+  // never summed — "sum of a percentage" isn't a meaningful number — and
+  // labelled "Average" instead of "Total" to match.
+  const aggFor=m=> (STATE.profile[m]||{}).isPercentage ? 'avg' : 'sum';
+  const verbFor=m=> (STATE.profile[m]||{}).isPercentage ? 'Average' : 'Total';
 
   // 1. Date + measure -> line over time (auto grain)
   if(times.length && measures.length){
-    specs.push({kind:'line', x:times[0], y:measures[0], agg:'sum', title:`Total ${measures[0]} by ${times[0]}`});
-    if(measures[1]) specs.push({kind:'line', x:times[0], y:measures[1], agg:'sum', title:`Total ${measures[1]} by ${times[0]}`});
+    specs.push({kind:'line', x:times[0], y:measures[0], agg:aggFor(measures[0]), title:`${verbFor(measures[0])} ${measures[0]} by ${times[0]}`});
+    if(measures[1]) specs.push({kind:'line', x:times[0], y:measures[1], agg:aggFor(measures[1]), title:`${verbFor(measures[1])} ${measures[1]} by ${times[0]}`});
   }
   // 2. Dimension + measure -> bar sorted desc
   dims.slice(0,2).forEach((d,i)=>{
     if(measures[i]!==undefined || measures[0]!==undefined){
       const m=measures[i]||measures[0];
-      specs.push({kind:'bar', x:d, y:m, agg:'sum', title:`Total ${m} by ${d}`, sort:'desc'});
+      specs.push({kind:'bar', x:d, y:m, agg:aggFor(m), title:`${verbFor(m)} ${m} by ${d}`, sort:'desc'});
     }
   });
   // 3. Dimension with 2-6 uniques -> donut of share of total
   dims.filter(d=>STATE.profile[d].unique>=2 && STATE.profile[d].unique<=6).slice(0,1).forEach(d=>{
-    const m=measures[0];
+    const m=measures.find(mm=>!(STATE.profile[mm]||{}).isPercentage) || measures[0]; // avoid a "share of total %" donut, which is meaningless for a percentage column
     specs.push({kind:'doughnut', x:d, y:m||null, agg: m?'sum':'count', title: m? `${m} share by ${d}`:`Row share by ${d}`});
   });
   // 4. High-cardinality dim + measure -> top10 horizontal bar
   if(highCards.length && measures.length){
-    specs.push({kind:'bar', x:highCards[0], y:measures[0], agg:'sum', title:`Top ${STATE.settings.maxCategories} ${highCards[0]} by ${measures[0]}`, top10:true, horizontal:true});
+    const m=measures[0];
+    specs.push({kind:'bar', x:highCards[0], y:m, agg:aggFor(m), title:`Top ${STATE.settings.maxCategories} ${highCards[0]} by ${verbFor(m)} ${m}`, top10:true, horizontal:true});
   }
   // 5. Two measures -> scatter
   if(measures.length>=2){
@@ -1339,7 +1512,8 @@ function chooseAndBuildCharts(){
   }
   // 7. Two dimensions + measure -> stacked bar
   if(dims.length>=2 && measures.length){
-    specs.push({kind:'stacked', x:dims[0], stack:dims[1], y:measures[0], agg:'sum', title:`${measures[0]} by ${dims[0]} & ${dims[1]}`});
+    const m=measures.find(mm=>!(STATE.profile[mm]||{}).isPercentage) || measures[0]; // stacking percentages isn't meaningful either
+    specs.push({kind:'stacked', x:dims[0], stack:dims[1], y:m, agg:'sum', title:`${m} by ${dims[0]} & ${dims[1]}`});
   }
   // 8. Only text columns, no measures -> frequency counts
   if(measures.length===0){
@@ -1397,10 +1571,7 @@ function createChartCard(spec, custom){
   renderChart(entry);
 
   card.querySelector('[data-act="png"]').addEventListener('click',()=>{
-    const link=document.createElement('a');
-    link.download=(spec.title||'chart').replace(/[^\w]+/g,'_')+'.png';
-    link.href=canvas.toDataURL('image/png');
-    link.click();
+    canvasToShareOrDownload(canvas, (spec.title||'chart').replace(/[^\w]+/g,'_')+'.png', spec.title||'InstantDash chart');
   });
   card.querySelector('[data-act="remove"]').addEventListener('click',()=>{
     card.remove();
@@ -1417,8 +1588,9 @@ function buildChartDataset(spec){
   const rows=STATE.filteredData;
   if(spec.kind==='scatter'){
     const pts=rows.map(r=>({x:getNumeric(r,spec.x), y:getNumeric(r,spec.y)})).filter(p=>!isNaN(p.x)&&!isNaN(p.y));
-    const sample = pts.length>3000? pts.filter((_,i)=>i%Math.ceil(pts.length/3000)===0) : pts;
-    return {type:'scatter', datasets:[{label:spec.y+' vs '+spec.x, data:sample, backgroundColor:cssVar('--amber')}]};
+    const sampled = pts.length>3000;
+    const sample = sampled? pts.filter((_,i)=>i%Math.ceil(pts.length/3000)===0) : pts;
+    return {type:'scatter', datasets:[{label:spec.y+' vs '+spec.x, data:sample, backgroundColor:cssVar('--amber')}], sampled, sampledFrom:pts.length, sampledTo:sample.length};
   }
   if(spec.kind==='histogram'){
     const nums=rows.map(r=>getNumeric(r,spec.x)).filter(v=>!isNaN(v));
@@ -1461,7 +1633,7 @@ function buildChartDataset(spec){
   const labels=agg.map(a=>a.key);
   const values=agg.map(a=>a.value);
   const bg = spec.kind==='doughnut'? labels.map((_,i)=>PALETTE[i%PALETTE.length]) : cssVar('--amber');
-  return {type: spec.kind==='doughnut'?'doughnut':(spec.horizontal?'bar':spec.kind), labels, datasets:[{label:spec.y? (spec.agg==='count'?'Count':spec.y) : 'Count', data:values, backgroundColor:bg, borderColor:spec.kind==='line'?cssVar('--rust'):undefined}], horizontal:spec.horizontal};
+  return {type: spec.kind==='doughnut'?'doughnut':(spec.horizontal?'bar':spec.kind), labels, datasets:[{label:spec.y? (spec.agg==='count'?'Count':spec.y) : 'Count', data:values, backgroundColor:bg, borderColor:spec.kind==='line'?cssVar('--rust'):undefined}], horizontal:spec.horizontal, isPercentage: spec.y? !!(STATE.profile[spec.y]||{}).isPercentage : false};
 }
 
 /* ================================================================
@@ -1534,8 +1706,10 @@ const MiniChart=(function(){
   function render(canvas, ds, spec, isDark){
     const {ctx,w,h}=setupCanvas(canvas);
     canvas._hit=[]; // hit regions for tooltip: {x,y,w,h,label,value,color} or {cx,cy,r,label,value}
+    canvas._isPercentage=!!ds.isPercentage; // read by the hover tooltip
     const textColor= isDark? '#D8D4CC':'#4a453f';
     const gridColor= isDark? 'rgba(255,255,255,.10)':'rgba(0,0,0,.08)';
+    const fmtVal = ds.isPercentage? (v=>fmtPercent(v)) : (v=>fmtNum(v,{compact:true}));
     ctx.clearRect(0,0,w,h);
     ctx.font='11px -apple-system,BlinkMacSystemFont,sans-serif';
     ctx.textBaseline='middle';
@@ -1571,7 +1745,7 @@ const MiniChart=(function(){
         const xOf=v=> plotL + (v-scale.min)/((scale.max-scale.min)||1) * plotW;
         ctx.strokeStyle=gridColor; ctx.lineWidth=1;
         ctx.textAlign='center'; ctx.fillStyle=textColor;
-        scale.ticks.forEach(t=>{ const x=xOf(t); ctx.beginPath(); ctx.moveTo(x,plotT); ctx.lineTo(x,plotB); ctx.stroke(); ctx.fillText(fmtNum(t,{compact:true}), x, plotB+10); });
+        scale.ticks.forEach(t=>{ const x=xOf(t); ctx.beginPath(); ctx.moveTo(x,plotT); ctx.lineTo(x,plotB); ctx.stroke(); ctx.fillText(fmtVal(t), x, plotB+10); });
         const bandH=plotH/labels.length, barH=Math.min(22,bandH*0.6);
         labels.forEach((lab,i)=>{
           const yc=plotT+bandH*i+bandH/2;
@@ -1594,7 +1768,7 @@ const MiniChart=(function(){
       const plotW=plotR-plotL, plotH=plotB-plotT;
       const yOf=v=> plotB - (v-scale.min)/((scale.max-scale.min)||1) * plotH;
       ctx.strokeStyle=gridColor; ctx.lineWidth=1; ctx.fillStyle=textColor; ctx.textAlign='right';
-      scale.ticks.forEach(t=>{ const y=yOf(t); ctx.beginPath(); ctx.moveTo(plotL,y); ctx.lineTo(plotR,y); ctx.stroke(); ctx.fillText(fmtNum(t,{compact:true}), plotL-6, y); });
+      scale.ticks.forEach(t=>{ const y=yOf(t); ctx.beginPath(); ctx.moveTo(plotL,y); ctx.lineTo(plotR,y); ctx.stroke(); ctx.fillText(fmtVal(t), plotL-6, y); });
 
       if(datasets.length>1){
         let lx=plotL; ctx.textAlign='left';
@@ -1666,7 +1840,7 @@ const MiniChart=(function(){
       const xOf=i=> labels.length===1? (plotL+plotW/2) : plotL + (i/(labels.length-1))*plotW;
       const yOf=v=> plotB - (v-scale.min)/((scale.max-scale.min)||1) * plotH;
       ctx.strokeStyle=gridColor; ctx.lineWidth=1; ctx.fillStyle=textColor; ctx.textAlign='right';
-      scale.ticks.forEach(t=>{ const y=yOf(t); ctx.beginPath(); ctx.moveTo(plotL,y); ctx.lineTo(plotR,y); ctx.stroke(); ctx.fillText(fmtNum(t,{compact:true}), plotL-6, y); });
+      scale.ticks.forEach(t=>{ const y=yOf(t); ctx.beginPath(); ctx.moveTo(plotL,y); ctx.lineTo(plotR,y); ctx.stroke(); ctx.fillText(fmtVal(t), plotL-6, y); });
       ctx.strokeStyle=d.borderColor||cssVar('--rust'); ctx.lineWidth=2.5; ctx.beginPath();
       values.forEach((v,i)=>{ const x=xOf(i), y=yOf(v); if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y); });
       ctx.stroke();
@@ -1773,7 +1947,7 @@ const MiniChart=(function(){
       const mx=clientX-rect.left, my=clientY-rect.top;
       const hit=findHit(mx,my);
       if(hit){
-        const valTxt = hit.value===null? '' : ': '+fmtNum(hit.value,{compact:true});
+        const valTxt = hit.value===null? '' : ': '+(canvas._isPercentage? fmtPercent(hit.value) : fmtNum(hit.value,{compact:true}));
         const pctTxt = hit.pct!==undefined? ` (${hit.pct.toFixed(1)}%)`:'';
         showTooltip(clientX, clientY, `<strong>${escapeHtml(String(hit.label))}</strong>${escapeHtml(valTxt)}${pctTxt}`);
       } else hideTooltip();
@@ -1795,6 +1969,13 @@ function renderChart(entry){
   if(!canvas) return;
   MiniChart.render(canvas, ds, spec, STATE.darkMode);
   MiniChart.attachInteraction(canvas);
+  // Be explicit on-chart whenever points are actually sampled for display —
+  // don't claim sampling anywhere it isn't really happening (only scatter
+  // plots sample; bars/lines/pivots always aggregate the full dataset).
+  const titleEl=entry.card && entry.card.querySelector('.chart-title');
+  if(titleEl){
+    titleEl.textContent = spec.title + (ds.sampled? ` (showing ${ds.sampledTo.toLocaleString('en-IN')} of ${ds.sampledFrom.toLocaleString('en-IN')} points, sampled)` : '');
+  }
 }
 
 // Redraw all charts responsively when the viewport changes size (e.g.
@@ -1806,33 +1987,42 @@ window.addEventListener('resize',()=>{
 });
 
 // ---------- 7. DATA QUALITY ----------
+// Missing/mixed-type/outlier/constant stats come from the column PROFILE,
+// which is computed once from the entire dataset (recomputing it on every
+// filter change would be expensive and would also be a strange metric —
+// "10% missing" should mean 10% of the whole file, not of whatever slice
+// happens to be filtered in right now). Duplicate-row count, on the other
+// hand, is checked against whatever's currently filtered in, since that's
+// the rows actually being looked at. Both are labelled explicitly below
+// so this distinction is visible rather than assumed.
 function renderDataQuality(){
   const grid=document.getElementById('dqGrid');
   const rows=STATE.filteredData;
   const cards=[];
+  const outlierMethod=STATE.settings.outlierMethod||'iqr';
 
-  // missing values
+  // missing values (entire dataset)
   const missCols=STATE.columns.map(c=>({name:c.name, pct:STATE.profile[c.name].missingPct})).filter(c=>c.pct>0).sort((a,b)=>b.pct-a.pct);
-  cards.push({title:'Missing values', body: missCols.length? missCols.slice(0,8).map(c=>
+  cards.push({title:'Missing values <span class="dq-scope">· entire dataset</span>', body: missCols.length? missCols.slice(0,8).map(c=>
       `<div class="dq-row"><span>${escapeHtml(c.name)}</span><span class="pill ${c.pct>10?'bad':'warn'}">${c.pct.toFixed(1)}%</span></div>`).join('')
       : '<div class="dq-row"><span>No missing values found</span><span class="pill good">Clean</span></div>'});
 
-  // duplicate rows
+  // duplicate rows (current filtered view)
   const seen=new Set(); let dupCount=0;
   rows.forEach(r=>{ const key=JSON.stringify(r); if(seen.has(key)) dupCount++; else seen.add(key); });
-  cards.push({title:'Duplicate rows', body:`<div class="dq-row"><span>Fully duplicate rows</span><span class="pill ${dupCount>0?'warn':'good'}">${dupCount}</span></div>`});
+  cards.push({title:'Duplicate rows <span class="dq-scope">· current filtered view</span>', body:`<div class="dq-row"><span>Fully duplicate rows</span><span class="pill ${dupCount>0?'warn':'good'}">${dupCount}</span></div>`});
 
-  // mixed-type columns
+  // mixed-type columns (entire dataset)
   const mixed=STATE.columns.filter(c=>STATE.profile[c.name].mixedTypeSuspect);
-  cards.push({title:'Mixed-type columns', body: mixed.length? mixed.map(c=>`<div class="dq-row"><span>${escapeHtml(c.name)}</span><span class="pill warn">check formatting</span></div>`).join('') : '<div class="dq-row"><span>No mixed-type columns detected</span><span class="pill good">Clean</span></div>'});
+  cards.push({title:'Mixed-type columns <span class="dq-scope">· entire dataset</span>', body: mixed.length? mixed.map(c=>`<div class="dq-row"><span>${escapeHtml(c.name)}</span><span class="pill warn">check formatting</span></div>`).join('') : '<div class="dq-row"><span>No mixed-type columns detected</span><span class="pill good">Clean</span></div>'});
 
-  // outliers
-  const outlierCols=STATE.columns.filter(c=>STATE.profile[c.name].type==='Number' && STATE.profile[c.name].outliers>0);
-  cards.push({title:'Outliers (beyond 3σ)', body: outlierCols.length? outlierCols.map(c=>`<div class="dq-row"><span>${escapeHtml(c.name)}</span><span class="pill warn">${STATE.profile[c.name].outliers} values</span></div>`).join('') : '<div class="dq-row"><span>No extreme outliers detected</span><span class="pill good">Clean</span></div>'});
+  // potential outliers (entire dataset) — IQR by default, 3σ optional via Settings
+  const outlierCols=STATE.columns.filter(c=>{ const p=STATE.profile[c.name]; return p.type==='Number' && (outlierMethod==='sigma'? p.outliers3Sigma : p.outliersIQR)>0; });
+  cards.push({title:`Potential outliers <span class="dq-scope">· entire dataset · ${outlierMethod==='sigma'? '±3σ':'IQR'} method</span>`, body: outlierCols.length? outlierCols.map(c=>{ const p=STATE.profile[c.name]; const n=outlierMethod==='sigma'?p.outliers3Sigma:p.outliersIQR; return `<div class="dq-row"><span>${escapeHtml(c.name)}</span><span class="pill warn">${n} value(s)</span></div>`; }).join('') : '<div class="dq-row"><span>No potential outliers detected</span><span class="pill good">Clean</span></div>'});
 
-  // constant columns
+  // constant columns (entire dataset)
   const constCols=STATE.columns.filter(c=>STATE.profile[c.name].constant);
-  cards.push({title:'Constant columns', body: constCols.length? constCols.map(c=>`<div class="dq-row"><span>${escapeHtml(c.name)}</span><span class="pill warn">same value everywhere</span></div>`).join('') : '<div class="dq-row"><span>No constant columns</span><span class="pill good">Clean</span></div>'});
+  cards.push({title:'Constant columns <span class="dq-scope">· entire dataset</span>', body: constCols.length? constCols.map(c=>`<div class="dq-row"><span>${escapeHtml(c.name)}</span><span class="pill warn">same value everywhere</span></div>`).join('') : '<div class="dq-row"><span>No constant columns</span><span class="pill good">Clean</span></div>'});
 
   grid.innerHTML=cards.map(c=>`<div class="dq-card"><h4>${c.title}</h4>${c.body}</div>`).join('');
 }
@@ -1843,8 +2033,19 @@ document.getElementById('tableSearch').addEventListener('input',(e)=>{
   STATE.table.page=1;
   renderDataTable();
 });
+document.getElementById('tableViewToggle').addEventListener('click',()=>{
+  STATE.table.viewMode = STATE.table.viewMode==='table'? 'card' : 'table';
+  applyTableViewMode();
+});
+function applyTableViewMode(){
+  const isCard=STATE.table.viewMode==='card';
+  document.getElementById('datatableWrap').style.display = isCard? 'none':'';
+  document.getElementById('dataCards').style.display = isCard? '':'none';
+  document.getElementById('tableViewToggle').textContent = isCard? '☰ Table view' : '☰ Card view';
+}
 
 function renderDataTable(){
+  applyTableViewMode();
   const rows=STATE.filteredData;
   let filtered=rows;
   if(STATE.table.search){
@@ -1890,6 +2091,22 @@ function renderDataTable(){
       renderDataTable();
     });
   });
+
+  // Card view — an alternative to the wide table for narrow screens, where
+  // each row becomes a stacked field:value card instead of a horizontally-
+  // scrolling row. Built from the same pageRows so it's always in sync.
+  const cardsEl=document.getElementById('dataCards');
+  if(cardsEl){
+    cardsEl.innerHTML=pageRows.map(r=>{
+      const fields=STATE.columns.map(c=>{
+        let v=r[c.name];
+        if(v instanceof Date) v=formatDate(v);
+        else if(v===null||v===undefined||v==='') v='—';
+        return `<div class="data-card-row"><span class="k">${escapeHtml(c.name)}</span><span class="v">${escapeHtml(v)}</span></div>`;
+      }).join('');
+      return `<div class="data-card">${fields}</div>`;
+    }).join('') || '<div class="data-card">No rows match the current filters/search.</div>';
+  }
 
   document.getElementById('rowCountLabel').textContent=`Showing ${pageRows.length? start+1:0}–${Math.min(start+pageSize,total)} of ${total.toLocaleString('en-IN')} row(s)`;
   const pager=document.getElementById('pager');
@@ -1942,36 +2159,54 @@ document.getElementById('runPivotBtn').addEventListener('click',()=>{
   buildPivot(rowsCol,colsCol,valCol,agg);
 });
 
+// Empty groups (a row/column combination with zero matching records) return
+// null for Average/Min/Max/Median — there is no average of nothing, and
+// showing 0 would look like a real zero value rather than "no data here".
+// Count and Sum correctly stay 0 for an empty group (sum of nothing is 0).
 function pivotCompute(rows, valCol, agg){
   if(agg==='count') return rows.length;
+  if(agg==='distinct') return new Set(rows.map(r=>r[valCol])).size;
   const nums=rows.map(r=>getNumeric(r,valCol)).filter(v=>!isNaN(v));
   if(agg==='sum') return nums.reduce((a,b)=>a+b,0);
-  if(agg==='avg') return nums.length? nums.reduce((a,b)=>a+b,0)/nums.length:0;
-  if(agg==='min') return nums.length? Math.min(...nums):0;
-  if(agg==='max') return nums.length? Math.max(...nums):0;
+  if(agg==='avg') return nums.length? nums.reduce((a,b)=>a+b,0)/nums.length : null;
+  if(agg==='min') return nums.length? Math.min(...nums) : null;
+  if(agg==='max') return nums.length? Math.max(...nums) : null;
+  if(agg==='median'){
+    if(nums.length===0) return null;
+    const s=[...nums].sort((a,b)=>a-b);
+    return s.length%2? s[(s.length-1)/2] : (s[s.length/2-1]+s[s.length/2])/2;
+  }
   return 0;
 }
+function pivotFmt(val, colName){
+  if(val===null || val===undefined) return '—';
+  return fmtMeasure(val, colName, {compact:true});
+}
 // IMPORTANT: totals are never obtained by summing the displayed cell values.
-// Sum and Count are additive across cells, but Average / Min / Max are NOT —
-// e.g. Average(A)=100, Average(B)=200 does not make the grand total 300.
-// So every total (row total, column total, grand total) is recomputed
-// directly from its own set of underlying records, for every aggregation type.
+// Sum and Count are additive across cells, but Average / Min / Max / Median
+// are NOT — e.g. Average(A)=100, Average(B)=200 does not make the grand
+// total 300. So every total (row total, column total, grand total) is
+// recomputed directly from its own set of underlying records, for every
+// aggregation type.
 function buildPivot(rowsCol,colsCol,valCol,agg){
   const data=STATE.filteredData;
   const rowVals=[...new Set(data.map(r=>String(r[rowsCol]??'(blank)')))].sort();
   const colVals=colsCol? [...new Set(data.map(r=>String(r[colsCol]??'(blank)')))].sort() : ['Value'];
-  let html='<thead><tr><th>'+escapeHtml(rowsCol)+'</th>'+colVals.map(c=>`<th>${escapeHtml(c)}</th>`).join('')+'<th>Total</th></tr></thead><tbody>';
+  const showPctOfTotal = agg==='sum' || agg==='count';
+  const grandTotal=pivotCompute(data, valCol, agg);
+  let html='<thead><tr><th>'+escapeHtml(rowsCol)+'</th>'+colVals.map(c=>`<th>${escapeHtml(c)}</th>`).join('')+'<th>Total</th>'+(showPctOfTotal?'<th>% of total</th>':'')+'</tr></thead><tbody>';
 
   rowVals.forEach(rv=>{
     const rowSubset=data.filter(r=>String(r[rowsCol]??'(blank)')===rv);
     const cells=colVals.map(cv=>{
       const subset=colsCol? rowSubset.filter(r=>String(r[colsCol]??'(blank)')===cv) : rowSubset;
       const val=pivotCompute(subset, valCol, agg);
-      return `<td>${fmtNum(val,{compact:true})}</td>`;
+      return `<td>${pivotFmt(val,valCol)}</td>`;
     });
     // row total: recomputed from ALL records in this row, not by summing the cells above
     const rowTotal=pivotCompute(rowSubset, valCol, agg);
-    html+=`<tr><td><strong>${escapeHtml(rv)}</strong></td>${cells.join('')}<td><strong>${fmtNum(rowTotal,{compact:true})}</strong></td></tr>`;
+    const pctCell = showPctOfTotal? `<td>${grandTotal? (rowTotal/grandTotal*100).toFixed(1)+'%':'—'}</td>` : '';
+    html+=`<tr><td><strong>${escapeHtml(rv)}</strong></td>${cells.join('')}<td><strong>${pivotFmt(rowTotal,valCol)}</strong></td>${pctCell}</tr>`;
   });
 
   // column totals: recomputed from ALL records in that column, not by summing cells
@@ -1979,9 +2214,7 @@ function buildPivot(rowsCol,colsCol,valCol,agg){
     const colSubset=colsCol? data.filter(r=>String(r[colsCol]??'(blank)')===cv) : data;
     return pivotCompute(colSubset, valCol, agg);
   });
-  // grand total: recomputed from every record currently in view
-  const grandTotal=pivotCompute(data, valCol, agg);
-  html+=`<tr><td><strong>Total</strong></td>${colTotals.map(t=>`<td><strong>${fmtNum(t,{compact:true})}</strong></td>`).join('')}<td><strong>${fmtNum(grandTotal,{compact:true})}</strong></td></tr>`;
+  html+=`<tr><td><strong>Total</strong></td>${colTotals.map(t=>`<td><strong>${pivotFmt(t,valCol)}</strong></td>`).join('')}<td><strong>${pivotFmt(grandTotal,valCol)}</strong></td>${showPctOfTotal?'<td><strong>100%</strong></td>':''}</tr>`;
   html+='</tbody>';
   document.getElementById('pivotResultTable').innerHTML=html;
   STATE._lastPivot={rowsCol,colsCol,valCol,agg,rowVals,colVals};
@@ -2005,6 +2238,7 @@ document.getElementById('settingsToggle').addEventListener('click',()=>{
   document.getElementById('setDateFormat').value=s.dateFormat;
   document.getElementById('setMaxCategories').value=String(s.maxCategories);
   document.getElementById('setDefaultAgg').value=s.defaultAgg;
+  document.getElementById('setOutlierMethod').value=s.outlierMethod;
   document.getElementById('setShowDQ').checked=s.showDataQuality;
   document.getElementById('setShowRaw').checked=s.showRawData;
   settingsModal.classList.add('open');
@@ -2018,6 +2252,7 @@ document.getElementById('applySettingsBtn').addEventListener('click',()=>{
   s.dateFormat=document.getElementById('setDateFormat').value;
   s.maxCategories=parseInt(document.getElementById('setMaxCategories').value,10);
   s.defaultAgg=document.getElementById('setDefaultAgg').value;
+  s.outlierMethod=document.getElementById('setOutlierMethod').value;
   s.showDataQuality=document.getElementById('setShowDQ').checked;
   s.showRawData=document.getElementById('setShowRaw').checked;
 
@@ -2035,48 +2270,72 @@ document.getElementById('applySettingsBtn').addEventListener('click',()=>{
 });
 
 // ---------- 10. EXPORT ----------
+// Single reusable CSV builder used by every export (filtered, full, and
+// pivot) so escaping behaves identically everywhere: commas, quotes, and
+// embedded line breaks are all handled the same way in one place.
+function toCsvCell(v){
+  if(v instanceof Date) v=formatDate(v);
+  v=(v===null||v===undefined)?'':String(v);
+  if(v.includes(',')||v.includes('"')||v.includes('\n')) v='"'+v.replace(/"/g,'""')+'"';
+  return v;
+}
+function rowsToCsv(header, rows, accessor){
+  const lines=[header.map(toCsvCell).join(',')];
+  rows.forEach(r=> lines.push(header.map(h=>toCsvCell(accessor(r,h))).join(',')));
+  return lines.join('\n');
+}
+
 document.getElementById('exportCsvBtn').addEventListener('click',()=>{
   const rows=STATE._lastFilteredForExport || STATE.filteredData;
   const header=STATE.columns.map(c=>c.name);
-  const csvRows=[header.join(',')];
-  rows.forEach(r=>{
-    csvRows.push(header.map(h=>{
-      let v=r[h];
-      if(v instanceof Date) v=formatDate(v);
-      v=(v===null||v===undefined)?'':String(v);
-      if(v.includes(',')||v.includes('"')||v.includes('\n')) v='"'+v.replace(/"/g,'""')+'"';
-      return v;
-    }).join(','));
-  });
-  downloadText(csvRows.join('\n'),'instantdash_export.csv','text/csv');
+  shareOrDownloadText(rowsToCsv(header, rows, (r,h)=>r[h]), 'instantdash_export.csv','text/csv','InstantDash export');
 });
+
+// On phones, prefer the native share sheet (Mail, WhatsApp, Save to Files,
+// AirDrop, etc.) via the Web Share API. If the browser/device doesn't
+// support sharing files (e.g. most desktop browsers), it falls back to a
+// normal download — the file still ends up saved either way.
 function downloadText(content,filename,mime){
   const blob=new Blob([content],{type:mime});
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a'); a.href=url; a.download=filename; a.click();
   URL.revokeObjectURL(url);
 }
+async function shareOrDownloadBlob(blob, filename, title){
+  try{
+    const file=new File([blob], filename, {type:blob.type});
+    if(navigator.canShare && navigator.canShare({files:[file]})){
+      await navigator.share({files:[file], title: title||filename});
+      return;
+    }
+  }catch(err){
+    if(err && err.name==='AbortError') return; // person cancelled the share sheet — not an error
+  }
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download=filename; a.click();
+  URL.revokeObjectURL(url);
+}
+function shareOrDownloadText(content, filename, mime, title){
+  return shareOrDownloadBlob(new Blob([content],{type:mime}), filename, title);
+}
+function canvasToShareOrDownload(canvas, filename, title){
+  canvas.toBlob(blob=>{ if(blob) shareOrDownloadBlob(blob, filename, title); }, 'image/png');
+}
+
 document.getElementById('exportFullCsvBtn').addEventListener('click',()=>{
   const rows=STATE.data; // unfiltered, every row loaded from the sheet
   const header=STATE.columns.map(c=>c.name);
-  const csvRows=[header.join(',')];
-  rows.forEach(r=>{
-    csvRows.push(header.map(h=>{
-      let v=r[h];
-      if(v instanceof Date) v=formatDate(v);
-      v=(v===null||v===undefined)?'':String(v);
-      if(v.includes(',')||v.includes('"')||v.includes('\n')) v='"'+v.replace(/"/g,'""')+'"';
-      return v;
-    }).join(','));
-  });
-  downloadText(csvRows.join('\n'),'instantdash_full_export.csv','text/csv');
+  shareOrDownloadText(rowsToCsv(header, rows, (r,h)=>r[h]), 'instantdash_full_export.csv','text/csv','InstantDash full export');
 });
 
 document.getElementById('exportPivotCsvBtn').addEventListener('click',()=>{
   const p=STATE._lastPivot;
   if(!p){ showMessage('Generate a pivot first, then export it.','info'); return; }
   const data=STATE.filteredData;
-  const lines=[[p.rowsCol, ...p.colVals, 'Total'].join(',')];
+  const showPct = p.agg==='sum' || p.agg==='count';
+  const grandTotal=pivotCompute(data,p.valCol,p.agg);
+  const header=[p.rowsCol, ...p.colVals, 'Total'].concat(showPct? ['% of total']:[]);
+  const lines=[header.map(toCsvCell).join(',')];
   p.rowVals.forEach(rv=>{
     const rowSubset=data.filter(r=>String(r[p.rowsCol]??'(blank)')===rv);
     const cells=p.colVals.map(cv=>{
@@ -2084,14 +2343,15 @@ document.getElementById('exportPivotCsvBtn').addEventListener('click',()=>{
       return pivotCompute(subset,p.valCol,p.agg);
     });
     const rowTotal=pivotCompute(rowSubset,p.valCol,p.agg);
-    lines.push([rv, ...cells, rowTotal].join(','));
+    const pctCell = showPct? [grandTotal? (rowTotal/grandTotal*100).toFixed(1)+'%':'']:[];
+    lines.push([rv, ...cells, rowTotal, ...pctCell].map(toCsvCell).join(','));
   });
   const colTotals=p.colVals.map(cv=>{
     const colSubset=p.colsCol? data.filter(r=>String(r[p.colsCol]??'(blank)')===cv) : data;
     return pivotCompute(colSubset,p.valCol,p.agg);
   });
-  lines.push(['Total', ...colTotals, pivotCompute(data,p.valCol,p.agg)].join(','));
-  downloadText(lines.join('\n'),'instantdash_pivot.csv','text/csv');
+  lines.push(['Total', ...colTotals, grandTotal, ...(showPct?['100%']:[])].map(toCsvCell).join(','));
+  shareOrDownloadText(lines.join('\n'),'instantdash_pivot.csv','text/csv','InstantDash pivot table');
 });
 
 document.getElementById('exportDashboardPngBtn').addEventListener('click',async ()=>{
@@ -2106,10 +2366,7 @@ document.getElementById('exportDashboardPngBtn').addEventListener('click',async 
   try{
     const target=document.getElementById('appContent');
     const canvas=await html2canvas(target,{backgroundColor: STATE.darkMode? '#15151A':'#F4EDE2', scale:2, useCORS:true});
-    const link=document.createElement('a');
-    link.download='instantdash_dashboard.png';
-    link.href=canvas.toDataURL('image/png');
-    link.click();
+    canvasToShareOrDownload(canvas, 'instantdash_dashboard.png', 'InstantDash dashboard');
   }catch(err){
     showMessage('Could not render the dashboard to an image: '+err.message,'error');
   }
@@ -2125,6 +2382,15 @@ document.getElementById('copyInsightsBtn').addEventListener('click',()=>{
     const old=btn.textContent; btn.textContent='✓ Copied!';
     setTimeout(()=>btn.textContent=old,1500);
   });
+});
+document.getElementById('shareInsightsBtn').addEventListener('click', async ()=>{
+  const text=generateInsightSummary();
+  if(navigator.share){
+    try{ await navigator.share({title:'InstantDash summary', text}); return; }
+    catch(err){ if(err && err.name==='AbortError') return; }
+  }
+  // no share support (most desktop browsers) — fall back to clipboard
+  navigator.clipboard.writeText(text).then(()=>{ showMessage('Sharing isn\'t supported in this browser — the summary was copied instead, so you can paste it into an email or chat.','info'); });
 });
 
 function generateInsightSummary(){
