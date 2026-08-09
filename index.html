@@ -228,9 +228,17 @@ select, .input{
 .clean-option .co-title{font-weight:600; font-size:13.5px;}
 .clean-option .co-desc{font-size:12px; color:var(--muted); margin-top:2px;}
 @media print{
-  .modal-overlay{position:static !important; background:none !important;}
-  .modal{box-shadow:none !important; max-height:none !important; overflow:visible !important;}
-  #reportModal:not(.printing-report){display:none !important;}
+  body.printing-report > *:not(#reportModal){display:none !important;}
+  body.printing-report #reportModal{
+    display:block !important; position:static !important; background:none !important; padding:0;
+  }
+  body.printing-report #reportModal .modal{
+    box-shadow:none !important; max-height:none !important; overflow:visible !important;
+    max-width:100%; margin:0; padding:0;
+  }
+  body.printing-report #reportModal .modal-close,
+  body.printing-report #reportModal #reportPrintBtn,
+  body.printing-report #reportModal #reportShareBtn{display:none !important;}
 }
 .dq-row{display:flex; justify-content:space-between; font-size:12.5px; padding:4px 0; border-bottom:1px solid var(--line);}
 .dq-row:last-child{border-bottom:none;}
@@ -360,14 +368,14 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
   <div class="brand"><span class="dot"></span> InstantDash</div>
   <div class="topbar-right">
     <div class="privacy-badge">🔒 <span class="txt">Processed locally — not uploaded to any server</span></div>
-    <button class="icon-btn" id="shareTopBtn" title="Share dashboard" style="display:none;">📤</button>
-    <button class="icon-btn" id="helpToggle" title="Help &amp; guide">❓</button>
-    <button class="icon-btn" id="settingsToggle" title="Dashboard settings">⚙️</button>
-    <button class="icon-btn" id="themeToggle" title="Toggle dark mode">☀️</button>
+    <button class="icon-btn" id="shareTopBtn" title="Share dashboard" aria-label="Share dashboard as an image" style="display:none;">📤</button>
+    <button class="icon-btn" id="helpToggle" title="Help &amp; guide" aria-label="Open help and guide">❓</button>
+    <button class="icon-btn" id="settingsToggle" title="Dashboard settings" aria-label="Open dashboard settings">⚙️</button>
+    <button class="icon-btn" id="themeToggle" title="Toggle dark mode" aria-label="Toggle dark mode">☀️</button>
   </div>
 </div>
 
-<div class="wrap" id="mainWrap">
+<div class="wrap" id="mainWrap" role="main">
 
   <!-- EMPTY STATE / UPLOAD -->
   <div class="empty-state" id="emptyState">
@@ -395,7 +403,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
   </div>
 
   <!-- MESSAGES -->
-  <div id="messages"></div>
+  <div id="messages" aria-live="polite" role="status"></div>
 
   <!-- APP CONTENT (hidden until data loaded) -->
   <div id="appContent" style="display:none;">
@@ -411,7 +419,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
       <button class="btn secondary small" id="newFileBtn">↻ Clear data / load different file</button>
     </div>
 
-    <nav class="quicknav" id="quickNav">
+    <nav class="quicknav" id="quickNav" aria-label="Jump to section">
       <a href="#kpiGrid">Overview</a>
       <a href="#execInsightsCard">Insights</a>
       <a href="#chartGrid">Dashboard</a>
@@ -492,25 +500,25 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </div>
 
 <!-- Ask Your Data floating widget -->
-<button class="ask-fab" id="askFab" title="Ask Your Data about this dashboard">💬</button>
+<button class="ask-fab" id="askFab" title="Ask Your Data about this dashboard" aria-label="Open Ask Your Data panel">💬</button>
 <div class="ask-panel" id="askPanel">
   <div class="ask-head">
     <div><strong>💬 Ask Your Data</strong><div style="font-size:10.5px; opacity:.85; font-weight:400;">Local analysis — not generative AI</div></div>
-    <button id="askClose">✕</button>
+    <button id="askClose" aria-label="Close Ask Your Data panel">✕</button>
   </div>
   <div class="ask-body" id="askBody"></div>
   <div class="ask-suggest" id="askSuggest"></div>
   <div class="ask-input-row">
     <button class="mic" id="askMic" title="Ask by voice (uses your browser's speech recognition service)">🎤</button>
     <input type="text" id="askInput" placeholder="e.g. What drove the change in sales?">
-    <button id="askSend" title="Send">➤</button>
+    <button id="askSend" title="Send" aria-label="Send question">➤</button>
   </div>
 </div>
 
 <!-- Add chart modal -->
 <div class="modal-overlay" id="addChartModal">
   <div class="modal">
-    <button class="modal-close" data-close>✕</button>
+    <button class="modal-close" data-close aria-label="Close dialog">✕</button>
     <h3>Build a chart</h3>
     <div class="builder-grid">
       <label>X axis / Group by<select id="bXAxis"></select></label>
@@ -535,7 +543,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 <!-- Pivot modal -->
 <div class="modal-overlay" id="pivotModal">
   <div class="modal">
-    <button class="modal-close" data-close>✕</button>
+    <button class="modal-close" data-close aria-label="Close dialog">✕</button>
     <h3>Pivot table builder</h3>
     <div class="builder-grid">
       <label>Rows<select id="pRows"></select></label>
@@ -558,7 +566,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 <!-- Compare modal -->
 <div class="modal-overlay" id="compareModal">
   <div class="modal">
-    <button class="modal-close" data-close>✕</button>
+    <button class="modal-close" data-close aria-label="Close dialog">✕</button>
     <h3>⚖ Compare</h3>
     <p style="font-size:12.5px; color:var(--muted); margin-top:-6px;">Compares two periods or two categories using the currently filtered data. Values, change, and % change are calculated directly — nothing here is an estimate.</p>
     <div class="builder-grid">
@@ -574,7 +582,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 <!-- Management report modal -->
 <div class="modal-overlay" id="reportModal">
   <div class="modal" style="max-width:760px;">
-    <button class="modal-close" data-close>✕</button>
+    <button class="modal-close" data-close aria-label="Close dialog">✕</button>
     <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px; flex-wrap:wrap;">
       <h3 style="margin-bottom:2px;">📋 Management Report</h3>
       <div style="display:flex; gap:8px; flex-wrap:wrap;">
@@ -589,7 +597,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 <!-- Save/Load dashboard config -->
 <div class="modal-overlay" id="loadConfigModal">
   <div class="modal">
-    <button class="modal-close" data-close>✕</button>
+    <button class="modal-close" data-close aria-label="Close dialog">✕</button>
     <h3>📂 Apply saved dashboard</h3>
     <div id="loadConfigBody" style="font-size:13.5px;"></div>
     <div style="text-align:right; margin-top:16px; display:flex; gap:8px; justify-content:flex-end;">
@@ -602,7 +610,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 <!-- Data cleaning assistant -->
 <div class="modal-overlay" id="cleanModal">
   <div class="modal">
-    <button class="modal-close" data-close>✕</button>
+    <button class="modal-close" data-close aria-label="Close dialog">✕</button>
     <h3>🧹 Data Cleaning Assistant</h3>
     <p style="font-size:12.5px; color:var(--muted); margin-top:-6px;">These only change the in-app copy of your data for this session — your original file on disk is never modified. Review each option before applying.</p>
     <div id="cleanOptionsBody" style="display:flex; flex-direction:column; gap:10px;"></div>
@@ -613,7 +621,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 <!-- Settings modal -->
 <div class="modal-overlay" id="settingsModal">
   <div class="modal">
-    <button class="modal-close" data-close>✕</button>
+    <button class="modal-close" data-close aria-label="Close dialog">✕</button>
     <h3>⚙ Dashboard settings</h3>
     <div class="builder-grid">
       <label>Number format
@@ -675,7 +683,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 <!-- Help modal -->
 <div class="modal-overlay" id="helpModal">
   <div class="modal">
-    <button class="modal-close" data-close>✕</button>
+    <button class="modal-close" data-close aria-label="Close dialog">✕</button>
     <h3>❓ Help &amp; guide</h3>
     <div style="font-size:13.5px; line-height:1.65;">
       <p><strong>1. How to upload a file</strong><br>Drag a .xlsx, .xls or .csv file anywhere on the page, or use "Browse for a file." Nothing is uploaded to a server — all parsing happens in your browser tab.</p>
@@ -1445,7 +1453,7 @@ function renderActiveFilterChips(){
       }});
     }
   });
-  box.innerHTML=chips.map((c,i)=>`<span class="chip">${escapeHtml(c.text)}<button type="button" class="chip-x" data-i="${i}" title="Clear this filter">✕</button></span>`).join('');
+  box.innerHTML=chips.map((c,i)=>`<span class="chip">${escapeHtml(c.text)}<button type="button" class="chip-x" data-i="${i}" title="Clear this filter" aria-label="Clear filter: ${escapeHtml(c.text)}">✕</button></span>`).join('');
   box.querySelectorAll('.chip-x').forEach(btn=>{
     btn.addEventListener('click',()=>{
       chips[parseInt(btn.dataset.i,10)].clear();
@@ -1472,6 +1480,17 @@ function fmtMeasure(v, colName, opts={}){
   const p=STATE.profile[colName];
   if(p && p.isPercentage) return fmtPercent(v, opts.decimals);
   return fmtNum(v, opts);
+}
+
+// Shared by the Data Quality panel, Executive Insights, and the Management
+// Report so all three always agree with whatever outlier method is
+// currently selected in Settings, instead of some of them silently
+// defaulting to IQR regardless of what the person chose.
+function outlierMethodLabel(){ return STATE.settings.outlierMethod==='sigma'? '±3σ':'IQR'; }
+function outlierCountFor(colName){
+  const p=STATE.profile[colName];
+  if(!p || p.type!=='Number') return 0;
+  return STATE.settings.outlierMethod==='sigma'? p.outliers3Sigma : p.outliersIQR;
 }
 
 function renderKPIs(){
@@ -1563,7 +1582,8 @@ function showExplainPopover(anchorEl, measure, dimHint){
 // it claims a cause. Phrasing deliberately avoids "because"/"due to".
 function generateExecutiveInsights(){
   const rows=STATE.filteredData;
-  const insights=[];
+  const insights=[];       // higher-priority: context, trends, top performers, risk flags
+  const secondary=[];      // lower-priority: bottom performers — only shown if room remains
   if(rows.length===0) return insights;
   const measures=measuresList();
   const dims=dimensionsList().concat(highCardList());
@@ -1598,7 +1618,7 @@ function generateExecutiveInsights(){
       }
       if(agg.length>=2){
         const bottom=agg[agg.length-1];
-        insights.push({icon:'🔻', text:`"${bottom.key}" is the lowest ${d} by ${m}, at ${fmtMeasure(bottom.value,m,{compact:true})}.`});
+        secondary.push({icon:'🔻', text:`"${bottom.key}" is the lowest ${d} by ${m}, at ${fmtMeasure(bottom.value,m,{compact:true})}.`});
       }
     });
   });
@@ -1617,18 +1637,26 @@ function generateExecutiveInsights(){
     }
   });
 
-  // data quality highlights (facts about the entire dataset, labelled as such)
+  // data quality highlights (facts about the entire dataset, labelled as
+  // such, and using whichever outlier method is currently set in Settings
+  // so this always agrees with the Data Quality panel below it).
   const missCols=STATE.columns.map(c=>({name:c.name, pct:STATE.profile[c.name].missingPct})).filter(c=>c.pct>10).sort((a,b)=>b.pct-a.pct);
   if(missCols.length){
     insights.push({icon:'❓', text:`${missCols[0].name} has ${missCols[0].pct.toFixed(0)}% missing values in the entire dataset${missCols.length>1? ` (and ${missCols.length-1} other column(s) also exceed 10% missing)`:''}.`});
   }
-  const outlierCols=STATE.columns.filter(c=>{ const p=STATE.profile[c.name]; return p.type==='Number' && p.outliers>0; });
+  const outlierCols=STATE.columns.filter(c=>outlierCountFor(c.name)>0);
   if(outlierCols.length){
-    const worst=outlierCols.sort((a,b)=>STATE.profile[b.name].outliers-STATE.profile[a.name].outliers)[0];
-    insights.push({icon:'🔎', text:`${worst.name} has ${STATE.profile[worst.name].outliers} potential outlier value(s) (IQR method, entire dataset) worth a manual look.`});
+    const worst=outlierCols.sort((a,b)=>outlierCountFor(b.name)-outlierCountFor(a.name))[0];
+    insights.push({icon:'🔎', text:`${worst.name} has ${outlierCountFor(worst.name)} potential outlier value(s) (${outlierMethodLabel()} method, entire dataset) worth a manual look.`});
   }
 
-  return insights;
+  // Kept genuinely "executive" (concise) rather than exhaustive. Trends,
+  // top performers, concentration, and data-quality flags all take
+  // priority; "lowest performer" call-outs only fill remaining space,
+  // since they're the least critical of what's generated here.
+  const CAP=8;
+  const combined=insights.concat(secondary.slice(0, Math.max(0,CAP-insights.length)));
+  return combined.slice(0,CAP);
 }
 
 function renderExecutiveInsights(){
@@ -1880,20 +1908,21 @@ function createChartCard(spec, custom){
     <div class="chart-head">
       <div class="chart-title">${escapeHtml(spec.title)}</div>
       <div class="chart-actions">
-        <button data-act="png" title="Download PNG">⬇</button>
-        <button data-act="remove" title="Remove chart">✕</button>
+        <button data-act="explain" title="Explain this chart" aria-label="Explain this chart">🔍</button>
+        <button data-act="png" title="Download or share as PNG" aria-label="Download or share this chart as an image">⬇</button>
+        <button data-act="remove" title="Remove chart" aria-label="Remove this chart">✕</button>
       </div>
     </div>
-    <div class="chart-body"><canvas id="${id}_canvas"></canvas></div>
+    <div class="chart-body"><canvas id="${id}_canvas" role="img" aria-label="${escapeHtml(spec.title)} chart"></canvas></div>
     <div class="chart-controls-row">
-      <select class="ctrlType">
+      <select class="ctrlType" aria-label="Chart type">
         <option value="bar" ${spec.kind==='bar'?'selected':''}>Bar</option>
         <option value="line" ${spec.kind==='line'?'selected':''}>Line</option>
         <option value="doughnut" ${spec.kind==='doughnut'?'selected':''}>Donut</option>
         <option value="scatter" ${spec.kind==='scatter'?'selected':''}>Scatter</option>
       </select>
-      <select class="ctrlMeasure">${measOptions}</select>
-      <select class="ctrlDim">${dimOptions}</select>
+      <select class="ctrlMeasure" aria-label="Measure">${measOptions}</select>
+      <select class="ctrlDim" aria-label="Group by">${dimOptions}</select>
     </div>`;
   grid.appendChild(card);
 
@@ -1902,6 +1931,15 @@ function createChartCard(spec, custom){
   STATE.charts.push(entry);
   renderChart(entry);
 
+  card.querySelector('[data-act="explain"]').addEventListener('click',(e)=>{
+    if(!entry.spec.y){ showMessage('This chart has no measure to explain (it\'s a row-count chart).','info'); return; }
+    // Only pass spec.x as the "which category" hint when it actually IS a
+    // category — for line charts spec.x is the time axis, and passing that
+    // through would make the contributor breakdown re-group by dates
+    // instead of a real dimension.
+    const dimHint = (STATE.profile[entry.spec.x]||{}).role==='Time' ? null : entry.spec.x;
+    showExplainPopover(e.currentTarget, entry.spec.y, dimHint);
+  });
   card.querySelector('[data-act="png"]').addEventListener('click',()=>{
     canvasToShareOrDownload(canvas, (spec.title||'chart').replace(/[^\w]+/g,'_')+'.png', spec.title||'InstantDash chart');
   });
@@ -2370,7 +2408,6 @@ function renderDataQuality(){
   const grid=document.getElementById('dqGrid');
   const rows=STATE.filteredData;
   const cards=[];
-  const outlierMethod=STATE.settings.outlierMethod||'iqr';
 
   // missing values (entire dataset)
   const missCols=STATE.columns.map(c=>({name:c.name, pct:STATE.profile[c.name].missingPct})).filter(c=>c.pct>0).sort((a,b)=>b.pct-a.pct);
@@ -2388,8 +2425,8 @@ function renderDataQuality(){
   cards.push({title:'Mixed-type columns <span class="dq-scope">· entire dataset</span>', body: mixed.length? mixed.map(c=>`<div class="dq-row"><span>${escapeHtml(c.name)}</span><span class="pill warn">check formatting</span></div>`).join('') : '<div class="dq-row"><span>No mixed-type columns detected</span><span class="pill good">Clean</span></div>'});
 
   // potential outliers (entire dataset) — IQR by default, 3σ optional via Settings
-  const outlierCols=STATE.columns.filter(c=>{ const p=STATE.profile[c.name]; return p.type==='Number' && (outlierMethod==='sigma'? p.outliers3Sigma : p.outliersIQR)>0; });
-  cards.push({title:`Potential outliers <span class="dq-scope">· entire dataset · ${outlierMethod==='sigma'? '±3σ':'IQR'} method</span>`, body: outlierCols.length? outlierCols.map(c=>{ const p=STATE.profile[c.name]; const n=outlierMethod==='sigma'?p.outliers3Sigma:p.outliersIQR; return `<div class="dq-row"><span>${escapeHtml(c.name)}</span><span class="pill warn">${n} value(s)</span></div>`; }).join('') : '<div class="dq-row"><span>No potential outliers detected</span><span class="pill good">Clean</span></div>'});
+  const outlierCols=STATE.columns.filter(c=>outlierCountFor(c.name)>0);
+  cards.push({title:`Potential outliers <span class="dq-scope">· entire dataset · ${outlierMethodLabel()} method</span>`, body: outlierCols.length? outlierCols.map(c=>`<div class="dq-row"><span>${escapeHtml(c.name)}</span><span class="pill warn">${outlierCountFor(c.name)} value(s)</span></div>`).join('') : '<div class="dq-row"><span>No potential outliers detected</span><span class="pill good">Clean</span></div>'});
 
   // constant columns (entire dataset)
   const constCols=STATE.columns.filter(c=>STATE.profile[c.name].constant);
@@ -2489,7 +2526,9 @@ document.getElementById('applyCleaningBtn').addEventListener('click',()=>{
   const results=[];
   checked.forEach(id=>{ const o=opts.find(x=>x.id===id); if(o) results.push(o.title+': '+o.apply()); });
   cleanModal.classList.remove('open');
-  profileColumns(); buildFilters(); applyFiltersAndRender(true);
+  profileColumns();
+  rebuildFilterUIFromState(); // re-profile changed values (e.g. standardized categories), but keep whatever filters the person already had set rather than resetting to "select all"
+  applyFiltersAndRender(true);
   showMessage('Cleaning applied — '+results.join('; ')+'. This only changed the in-app copy; your original file is untouched.','info');
 });
 
@@ -2535,8 +2574,8 @@ function buildManagementReportHTML(){
   const attn=[];
   const missCols=STATE.columns.filter(c=>STATE.profile[c.name].missingPct>10);
   if(missCols.length) attn.push(`${missCols.length} column(s) have more than 10% missing values: ${missCols.map(c=>c.name).join(', ')}.`);
-  const outlierCols=STATE.columns.filter(c=>STATE.profile[c.name].type==='Number' && STATE.profile[c.name].outliers>0);
-  if(outlierCols.length) attn.push(`${outlierCols.length} numeric column(s) contain potential outliers (IQR method): ${outlierCols.map(c=>c.name).join(', ')}.`);
+  const outlierCols=STATE.columns.filter(c=>outlierCountFor(c.name)>0);
+  if(outlierCols.length) attn.push(`${outlierCols.length} numeric column(s) contain potential outliers (${outlierMethodLabel()} method): ${outlierCols.map(c=>c.name).join(', ')}.`);
   const constCols=STATE.columns.filter(c=>STATE.profile[c.name].constant);
   if(constCols.length) attn.push(`${constCols.length} column(s) have the same value in every row: ${constCols.map(c=>c.name).join(', ')}.`);
   const seenR=new Set(); let dupN=0; STATE.data.forEach(r=>{ const k=JSON.stringify(r); if(seenR.has(k)) dupN++; else seenR.add(k); });
@@ -2551,10 +2590,13 @@ document.getElementById('reportBtn').addEventListener('click',()=>{
   reportModal.classList.add('open');
 });
 document.getElementById('reportPrintBtn').addEventListener('click',()=>{
-  reportModal.classList.add('printing-report');
+  document.body.classList.add('printing-report');
   window.print();
-  setTimeout(()=>reportModal.classList.remove('printing-report'),500);
+  // afterprint is the reliable signal on desktop; the timeout is a fallback
+  // for mobile print flows that don't always fire it consistently.
+  setTimeout(()=>document.body.classList.remove('printing-report'), 3000);
 });
+window.addEventListener('afterprint',()=>{ document.body.classList.remove('printing-report'); });
 document.getElementById('reportShareBtn').addEventListener('click',()=>{
   const text='InstantDash Management Report\n'+document.getElementById('reportBody').innerText;
   shareOrDownloadText(text, 'instantdash_management_report.txt', 'text/plain', 'InstantDash Management Report');
@@ -2722,6 +2764,9 @@ function populateCompareOptions(){
   }
   aSel.innerHTML=options.map((o,i)=>`<option value="${escapeHtml(o)}" ${i===options.length-2?'selected':''}>${escapeHtml(o)}</option>`).join('');
   bSel.innerHTML=options.map((o,i)=>`<option value="${escapeHtml(o)}" ${i===options.length-1?'selected':''}>${escapeHtml(o)}</option>`).join('');
+  const runBtn=document.getElementById('runCompareBtn');
+  runBtn.disabled = options.length<2;
+  runBtn.title = options.length<2? 'Not enough distinct values in the current filtered view to compare — try widening your filters.' : '';
 }
 document.getElementById('runCompareBtn').addEventListener('click',()=>{
   const [kind,col]=document.getElementById('cmpBy').value.split(':');
@@ -2866,11 +2911,20 @@ function applyDashboardConfig(config){
 // reuses the exact same builder used on first load, so behaviour matches.
 function rebuildFilterUIFromState(){
   const savedFilters=STATE.filters;
-  buildFilters(); // rebuilds STATE.filters fresh from the data...
+  buildFilters(); // rebuilds STATE.filters fresh from the (possibly changed) data...
   Object.entries(savedFilters).forEach(([col,f])=>{
-    if(STATE.filters[col] && STATE.filters[col].type===f.type){
-      if(f.type==='multiselect') STATE.filters[col].selected=f.selected;
-      else { STATE.filters[col].from=f.from; STATE.filters[col].to=f.to; }
+    const nf=STATE.filters[col];
+    if(!nf || nf.type!==f.type) return;
+    if(f.type==='multiselect'){
+      // Validate old selections against the freshly rebuilt value list —
+      // if cleaning (e.g. casing standardization) changed the underlying
+      // text, a stale selected value would otherwise silently exclude
+      // every row now using the new spelling instead of matching them.
+      const stillValid=new Set([...f.selected].filter(v=>nf.values.includes(v)));
+      nf.selected = stillValid.size? stillValid : new Set(nf.values);
+    } else {
+      nf.from = f.from<nf.min? nf.min : (f.from>nf.max? nf.max : f.from);
+      nf.to = f.to>nf.max? nf.max : (f.to<nf.min? nf.min : f.to);
     }
   });
   // sync the visible controls to the restored selections
@@ -2963,6 +3017,40 @@ document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',
   allModals.forEach(m=>m.classList.remove('open'));
 }));
 allModals.forEach(m=>m.addEventListener('click',(e)=>{ if(e.target===m) m.classList.remove('open'); }));
+
+// ---------- ACCESSIBILITY: modal dialogs ----------
+// Applied generically to every modal rather than one at a time: marks each
+// as an ARIA dialog, closes on Escape, and moves keyboard focus into the
+// dialog when it opens (returning focus to whatever triggered it when it
+// closes) so keyboard/screen-reader users aren't dropped into a page with
+// no indication a dialog appeared.
+let _lastFocusedBeforeModal=null;
+allModals.forEach(m=>{
+  m.setAttribute('role','dialog');
+  m.setAttribute('aria-modal','true');
+  const heading=m.querySelector('h3');
+  if(heading){ if(!heading.id) heading.id=m.id+'_heading'; m.setAttribute('aria-labelledby', heading.id); }
+});
+document.addEventListener('keydown',(e)=>{
+  if(e.key==='Escape'){
+    const open=allModals.find(m=>m.classList.contains('open'));
+    if(open){ open.classList.remove('open'); if(_lastFocusedBeforeModal) _lastFocusedBeforeModal.focus(); }
+  }
+});
+new MutationObserver((mutations)=>{
+  mutations.forEach(mut=>{
+    const m=mut.target;
+    if(!(m instanceof HTMLElement) || !allModals.includes(m)) return;
+    if(m.classList.contains('open')){
+      _lastFocusedBeforeModal=document.activeElement;
+      const focusable=m.querySelector('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+      if(focusable) setTimeout(()=>focusable.focus(),0);
+    } else if(_lastFocusedBeforeModal && document.body.contains(_lastFocusedBeforeModal)){
+      _lastFocusedBeforeModal.focus();
+      _lastFocusedBeforeModal=null;
+    }
+  });
+}).observe(document.body, {attributes:true, attributeFilter:['class'], subtree:true});
 
 document.getElementById('helpToggle').addEventListener('click',()=>helpModal.classList.add('open'));
 
@@ -3372,8 +3460,10 @@ function explainTrend(measure, timeCol, dimCol, direction){
   if(!timeCol){
     return `I don't see a date column to analyze a trend for ${measure}. I can still tell you which category contributes the most if you ask "which category drives ${measure}?"`;
   }
+  const isPct=(STATE.profile[measure]||{}).isPercentage;
+  const aggType=isPct?'avg':'sum';
   const grain=timeGrainFor(rows,timeCol);
-  const agg=aggregate(rows,timeCol,measure,'sum').sort((a,b)=>a.key<b.key?-1:1);
+  const agg=aggregate(rows,timeCol,measure,aggType).sort((a,b)=>a.key<b.key?-1:1);
   if(agg.length<2){
     return `There isn't enough of a time span in the current filtered data to compare periods for ${measure}.`;
   }
@@ -3382,21 +3472,21 @@ function explainTrend(measure, timeCol, dimCol, direction){
   const pct = prev.value!==0 ? (delta/Math.abs(prev.value)*100) : null;
   const actualDir = delta>=0? 'increase':'decrease';
   let lines=[];
-  lines.push(`${measure} ${actualDir === 'increase' ? 'rose' : 'fell'} from ${fmtNum(prev.value,{compact:true})} in ${prev.key} to ${fmtNum(last.value,{compact:true})} in ${last.key}` + (pct!==null? ` (${pct>=0?'+':''}${pct.toFixed(1)}%).` : '.'));
+  lines.push(`${measure} ${actualDir === 'increase' ? 'rose' : 'fell'} from ${fmtMeasure(prev.value,measure,{compact:true})} in ${prev.key} to ${fmtMeasure(last.value,measure,{compact:true})} in ${last.key}` + (pct!==null? ` (${pct>=0?'+':''}${pct.toFixed(1)}%).` : '.'));
 
   // find which dimension category contributed most to the change
   const candidateDim = dimCol || dimensionsList()[0] || highCardList()[0];
   if(candidateDim){
     const lastRows=rows.filter(r=>{ const d=getDateVal(r,timeCol); return d && dateBucketKey(d,grain)===last.key; });
     const prevRows=rows.filter(r=>{ const d=getDateVal(r,timeCol); return d && dateBucketKey(d,grain)===prev.key; });
-    const lastByDim=aggregate(lastRows,candidateDim,measure,'sum');
-    const prevByDim=aggregate(prevRows,candidateDim,measure,'sum');
+    const lastByDim=aggregate(lastRows,candidateDim,measure,aggType);
+    const prevByDim=aggregate(prevRows,candidateDim,measure,aggType);
     const prevMap=Object.fromEntries(prevByDim.map(o=>[o.key,o.value]));
     const diffs=lastByDim.map(o=>({key:o.key, diff:o.value-(prevMap[o.key]||0)}))
       .sort((a,b)=> actualDir==='increase'? b.diff-a.diff : a.diff-b.diff);
     const top=diffs[0];
     if(top && Math.abs(top.diff)>0){
-      lines.push(`The largest single contributor to that ${actualDir} was "${top.key}" in ${candidateDim}, which changed by ${fmtNum(top.diff,{compact:true})} between the two periods. This identifies where the change is concentrated — it doesn't by itself explain why that category moved; that needs context this file may not contain.`);
+      lines.push(`The largest single contributor to that ${actualDir} was "${top.key}" in ${candidateDim}, which changed by ${fmtMeasure(top.diff,measure,{compact:true})} between the two periods${isPct? ' (average, not summed, since this is a percentage column)':''}. This identifies where the change is concentrated — it doesn't by itself explain why that category moved; that needs context this file may not contain.`);
     }
   }
   lines.push(`To dig further: open the filters above and narrow the date range or ${candidateDim||'a category'} to isolate this, or ask me "which ${candidateDim||'category'} contributes most to ${measure}?"`);
@@ -3501,16 +3591,25 @@ function suggestLevers(measure, dimCol, direction){
   const rows=STATE.filteredData;
   const dims=dimensionsList().concat(highCardList());
   const candidateDim = dimCol || dims[0];
+  const isPct=(STATE.profile[measure]||{}).isPercentage;
   let lines=[`Here's where the data suggests the biggest ${direction==='increase'?'opportunity':'concentration to review'} for ${measure} may be — treat this as a starting hypothesis to investigate, not a conclusion:`];
   if(candidateDim){
-    const agg=aggregate(rows,candidateDim,measure, direction==='increase'?'avg':'sum').sort((a,b)=>direction==='increase'? a.value-b.value : b.value-a.value);
+    // "increase" direction always looks at the average (lowest performer is
+    // the opportunity); "decrease" looks at share of total, which isn't a
+    // meaningful concept for a percentage-type column, so that falls back
+    // to average there too.
+    const aggType = direction==='increase' || isPct ? 'avg' : 'sum';
+    const agg=aggregate(rows,candidateDim,measure, aggType).sort((a,b)=>direction==='increase'? a.value-b.value : b.value-a.value);
     if(agg.length>=2){
       if(direction==='increase'){
         const weakest=agg[0], strongest=agg[agg.length-1];
-        lines.push(`• "${weakest.key}" has the lowest average ${measure} (${fmtNum(weakest.value,{compact:true})}) in ${candidateDim}, versus "${strongest.key}" at ${fmtNum(strongest.value,{compact:true})}. This gap is worth investigating — it could reflect volume, conversion, pricing, product mix, or a different market; the data here doesn't say which.`);
+        lines.push(`• "${weakest.key}" has the lowest average ${measure} (${fmtMeasure(weakest.value,measure,{compact:true})}) in ${candidateDim}, versus "${strongest.key}" at ${fmtMeasure(strongest.value,measure,{compact:true})}. This gap is worth investigating — it could reflect volume, conversion, pricing, product mix, or a different market; the data here doesn't say which.`);
+      } else if(isPct){
+        const heaviest=agg[0];
+        lines.push(`• "${heaviest.key}" has the highest average ${measure} (${fmtMeasure(heaviest.value,measure,{compact:true})}) in ${candidateDim} — that's the first place to look, though whether it's worth reducing depends on context outside this file.`);
       } else {
         const heaviest=agg[0];
-        lines.push(`• "${heaviest.key}" accounts for the largest share of total ${measure} (${fmtNum(heaviest.value,{compact:true})}) in ${candidateDim} — that concentration is the first place to look, though whether it's worth reducing depends on context outside this file.`);
+        lines.push(`• "${heaviest.key}" accounts for the largest share of total ${measure} (${fmtMeasure(heaviest.value,measure,{compact:true})}) in ${candidateDim} — that concentration is the first place to look, though whether it's worth reducing depends on context outside this file.`);
       }
     }
   }
