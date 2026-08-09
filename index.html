@@ -9,9 +9,8 @@
 <meta name="description" content="InstantDash — Excel to Dashboard, developed by Anil Sharma">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';document.head.appendChild(s);"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';document.head.appendChild(s);"></script>
 <style>
 /* ============================================================
    InstantDash — design tokens
@@ -563,7 +562,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
    3. Column profiling & role classification
    4. Dashboard generation (KPIs + chart selection rules)
    5. Filtering engine
-   6. Chart rendering & controls (Chart.js)
+   6. Chart rendering & controls (built-in canvas engine, no external lib)
    7. Data quality panel
    8. Data table (sort/search/paginate)
    9. Add-chart builder + Pivot table
@@ -571,6 +570,23 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
    11. Ask Your Data (rule-based local Q&A + voice input — NOT an LLM)
    12. Dark mode + misc UI wiring
    ================================================================ */
+
+// ---------- 0. LIBRARY READINESS ----------
+// The CDN scripts in <head> have an onerror fallback to a second CDN, but a
+// dynamically-injected fallback <script> loads asynchronously — so instead of
+// assuming SheetJS is ready by the time this code runs, every
+// place that needs them polls briefly first. This keeps a slow or partially
+// blocked connection from crashing the whole app instead of just one feature.
+function waitFor(checkFn, {timeoutMs=6000, intervalMs=150}={}){
+  return new Promise((resolve)=>{
+    const start=Date.now();
+    (function poll(){
+      if(checkFn()) return resolve(true);
+      if(Date.now()-start>=timeoutMs) return resolve(false);
+      setTimeout(poll, intervalMs);
+    })();
+  });
+}
 
 // ---------- 1. STATE ----------
 const STATE = {
@@ -583,7 +599,7 @@ const STATE = {
   profile: {},           // colName -> profile object
   filters: {},           // colName -> {type:'multiselect'|'daterange', ...}
   filteredData: [],
-  charts: [],            // [{id, type, config, chartInstance}]
+  charts: [],            // [{id, spec, canvas, card}]
   chartIdSeq: 1,
   table: {sortCol:null, sortDir:1, search:'', page:1, pageSize:50},
   darkMode:true,
@@ -672,10 +688,16 @@ document.getElementById('newFileBtn').addEventListener('click',()=>{
   destroyAllCharts();
 });
 
-function handleFile(file){
+async function handleFile(file){
   clearMessages();
   emptyState.style.display='none';
   loadingState.style.display='flex';
+  loadingText.textContent='Loading InstantDash\'s spreadsheet engine…';
+  const xlsxReady=await waitFor(()=>typeof XLSX!=='undefined');
+  if(!xlsxReady){
+    fail('The spreadsheet engine could not load — this usually means a slow or restricted internet connection. Please check your connection and reload the page, then try again.');
+    return;
+  }
   loadingText.textContent='Reading "'+file.name+'"…';
   const reader=new FileReader();
   reader.onerror=()=>{
@@ -802,6 +824,32 @@ function populateHeaderRowSelect(aoa, detectedIdx){
   sel.onchange=()=>buildFromHeaderRow(parseInt(sel.value,10));
 }
 
+// Flexible date parser: tries native Date first, then falls back to explicit
+// day-first parsing (DD/MM/YYYY, DD-MM-YYYY, DD/MM/YY) since that's the
+// convention in Indian banking documents — JS's native Date constructor
+// misreads "21/1/23" as an invalid month rather than 21 Jan 2023. A 2-digit
+// year below 70 is read as 20xx, otherwise 19xx (the standard convention).
+function parseFlexibleDate(v){
+  if(v instanceof Date) return isNaN(v)? null : v;
+  if(typeof v!=='string') return null;
+  const s=v.trim();
+  if(s==='') return null;
+  const native=new Date(s);
+  if(!isNaN(native) && /\d{4}/.test(s)) return native; // trust native parse when it has a clear 4-digit year
+  const m=s.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})$/);
+  if(m){
+    let [, d, mo, y] = m;
+    d=parseInt(d,10); mo=parseInt(mo,10); y=parseInt(y,10);
+    if(y<100) y = y<70 ? 2000+y : 1900+y;
+    if(mo>=1 && mo<=12 && d>=1 && d<=31){
+      const dt=new Date(y, mo-1, d);
+      if(dt.getMonth()===mo-1) return dt; // guards against JS date rollover on invalid days
+    }
+  }
+  if(!isNaN(native)) return native;
+  return null;
+}
+
 // clean a raw cell into a number if possible: strips currency symbols, thousands
 // separators (incl. Indian 1,25,000 style), trailing %, (500)-style negatives,
 // and Indian bank-statement CR/DR balance suffixes (e.g. "2,41,406.49 CR").
@@ -907,14 +955,7 @@ function profileColumns(){
     });
 
     // detect date: either JS Date objects (from cellDates:true) or parseable date strings
-    const dateVals=nonNull.map(v=>{
-      if(v instanceof Date && !isNaN(v)) return v;
-      if(typeof v==='string'){
-        const d=new Date(v);
-        if(!isNaN(d) && /\d{2,4}[-\/]\d{1,2}[-\/]\d{1,4}|\b\d{4}\b/.test(v)) return d;
-      }
-      return null;
-    });
+    const dateVals=nonNull.map(v=>parseFlexibleDate(v));
     const dateRatio = nonNull.length? dateVals.filter(Boolean).length/nonNull.length : 0;
     const isDate = dateRatio>0.8 && !boolLike;
 
@@ -1034,10 +1075,7 @@ function overrideColumnType(colName, newType){
 // ---------- helpers to get typed value for a row/col ----------
 function getNumeric(row,col){ const v=row[col]; return parseCleanNumber(v); }
 function getDateVal(row,col){
-  const v=row[col];
-  if(v instanceof Date) return v;
-  if(typeof v==='string'){ const d=new Date(v); if(!isNaN(d)) return d; }
-  return null;
+  return parseFlexibleDate(row[col]);
 }
 
 // ---------- 5. FILTERS ----------
@@ -1258,7 +1296,6 @@ function sortBucketKeys(keys, grain){
 
 // ---------- 6. CHART SELECTION & RENDERING ----------
 function destroyAllCharts(){
-  STATE.charts.forEach(c=>{ if(c.chartInstance) c.chartInstance.destroy(); });
   STATE.charts=[];
   document.getElementById('chartGrid').innerHTML='';
 }
@@ -1354,18 +1391,18 @@ function createChartCard(spec, custom){
     </div>`;
   grid.appendChild(card);
 
-  const entry={id, spec:{...spec}, chartInstance:null, canvasId:id+'_canvas', card};
+  const canvas=card.querySelector('canvas');
+  const entry={id, spec:{...spec}, canvas, card};
   STATE.charts.push(entry);
   renderChart(entry);
 
   card.querySelector('[data-act="png"]').addEventListener('click',()=>{
     const link=document.createElement('a');
     link.download=(spec.title||'chart').replace(/[^\w]+/g,'_')+'.png';
-    link.href=entry.chartInstance.toBase64Image();
+    link.href=canvas.toDataURL('image/png');
     link.click();
   });
   card.querySelector('[data-act="remove"]').addEventListener('click',()=>{
-    entry.chartInstance && entry.chartInstance.destroy();
     card.remove();
     STATE.charts=STATE.charts.filter(c=>c.id!==id);
   });
@@ -1424,38 +1461,349 @@ function buildChartDataset(spec){
   const labels=agg.map(a=>a.key);
   const values=agg.map(a=>a.value);
   const bg = spec.kind==='doughnut'? labels.map((_,i)=>PALETTE[i%PALETTE.length]) : cssVar('--amber');
-  return {type: spec.kind==='doughnut'?'doughnut':(spec.horizontal?'bar':spec.kind), labels, datasets:[{label:spec.y? (spec.agg==='count'?'Count':spec.y) : 'Count', data:values, backgroundColor:bg, borderColor:spec.kind==='line'?cssVar('--rust'):undefined, borderRadius: spec.kind==='bar'?6:0, tension:.3}], horizontal:spec.horizontal};
+  return {type: spec.kind==='doughnut'?'doughnut':(spec.horizontal?'bar':spec.kind), labels, datasets:[{label:spec.y? (spec.agg==='count'?'Count':spec.y) : 'Count', data:values, backgroundColor:bg, borderColor:spec.kind==='line'?cssVar('--rust'):undefined}], horizontal:spec.horizontal};
 }
+
+/* ================================================================
+   MINI CHART — built-in canvas rendering engine, no external library.
+   This exists specifically because relying on a CDN for charts turned
+   out to be unreliable in the field (blocked by content blockers /
+   restricted networks), so charts now never depend on the internet
+   after the page itself has loaded — same principle as the rest of
+   this app. Supports bar (incl. stacked/horizontal), line, doughnut,
+   and scatter, with a lightweight hover tooltip and PNG export via
+   the canvas's own toDataURL (also no external dependency).
+   ================================================================ */
+const MiniChart=(function(){
+  let tooltipEl=null;
+  function tooltip(){
+    if(!tooltipEl){
+      tooltipEl=document.createElement('div');
+      tooltipEl.style.cssText='position:fixed; pointer-events:none; z-index:200; background:var(--ink); color:var(--cream); font-size:11.5px; padding:5px 9px; border-radius:6px; opacity:0; transition:opacity .1s; white-space:nowrap; box-shadow:0 4px 12px rgba(0,0,0,.25);';
+      document.body.appendChild(tooltipEl);
+    }
+    return tooltipEl;
+  }
+  function showTooltip(x,y,html){
+    const t=tooltip(); t.innerHTML=html; t.style.opacity='1';
+    t.style.left=Math.min(x+12, window.innerWidth-t.offsetWidth-10)+'px';
+    t.style.top=Math.max(y-32,8)+'px';
+  }
+  function hideTooltip(){ if(tooltipEl) tooltipEl.style.opacity='0'; }
+
+  function setupCanvas(canvas){
+    const parent=canvas.parentElement;
+    const rect=parent.getBoundingClientRect();
+    const dpr=window.devicePixelRatio||1;
+    const w=Math.max(60, Math.floor(rect.width));
+    const h=Math.max(60, Math.floor(rect.height));
+    canvas.style.width=w+'px'; canvas.style.height=h+'px';
+    canvas.width=Math.round(w*dpr); canvas.height=Math.round(h*dpr);
+    const ctx=canvas.getContext('2d');
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    return {ctx,w,h};
+  }
+  function niceNum(range, round){
+    if(range<=0) return 1;
+    const exp=Math.floor(Math.log10(range));
+    const frac=range/Math.pow(10,exp);
+    let nice;
+    if(round){ nice = frac<1.5?1: frac<3?2: frac<7?5:10; }
+    else { nice = frac<=1?1: frac<=2?2: frac<=5?5:10; }
+    return nice*Math.pow(10,exp);
+  }
+  function niceScale(min,max,maxTicks){
+    maxTicks=maxTicks||5;
+    if(min>0) min=0;
+    if(min===max) max = max===0?1:max+Math.abs(max)*0.1;
+    const range=niceNum(max-min,false);
+    const step=niceNum(range/(maxTicks-1),true)||1;
+    const niceMin=Math.floor(min/step)*step;
+    const niceMax=Math.ceil(max/step)*step;
+    const ticks=[];
+    for(let v=niceMin; v<=niceMax+step*1e-6; v+=step) ticks.push(Math.round(v*1e6)/1e6);
+    return {min:niceMin,max:niceMax,ticks,step};
+  }
+  function truncateLabel(ctx,label,maxW){
+    if(ctx.measureText(label).width<=maxW) return label;
+    let s=label;
+    while(s.length>1 && ctx.measureText(s+'…').width>maxW) s=s.slice(0,-1);
+    return s+'…';
+  }
+
+  function render(canvas, ds, spec, isDark){
+    const {ctx,w,h}=setupCanvas(canvas);
+    canvas._hit=[]; // hit regions for tooltip: {x,y,w,h,label,value,color} or {cx,cy,r,label,value}
+    const textColor= isDark? '#D8D4CC':'#4a453f';
+    const gridColor= isDark? 'rgba(255,255,255,.10)':'rgba(0,0,0,.08)';
+    ctx.clearRect(0,0,w,h);
+    ctx.font='11px -apple-system,BlinkMacSystemFont,sans-serif';
+    ctx.textBaseline='middle';
+
+    if(ds.type==='doughnut') return renderDoughnut(ctx,w,h,ds,textColor);
+    if(ds.type==='scatter') return renderScatter(ctx,w,h,ds,textColor,gridColor);
+    if(ds.type==='line') return renderLine(ctx,w,h,ds,textColor,gridColor);
+    return renderBar(ctx,w,h,ds,textColor,gridColor,!!spec.horizontal,canvas);
+
+    function renderBar(ctx,w,h,ds,textColor,gridColor,horizontal,canvas){
+      const labels=ds.labels||[]; const datasets=ds.datasets||[];
+      const stacked=!!ds.stacked;
+      const legendH= datasets.length>1? 24:0;
+      if(labels.length===0){ emptyMsg(ctx,w,h,textColor); return; }
+
+      let maxVal=-Infinity, minVal=0;
+      labels.forEach((_,i)=>{
+        if(stacked){
+          let pos=0,neg=0;
+          datasets.forEach(d=>{ const v=d.data[i]||0; if(v>=0) pos+=v; else neg+=v; });
+          maxVal=Math.max(maxVal,pos); minVal=Math.min(minVal,neg);
+        } else {
+          datasets.forEach(d=>{ const v=d.data[i]||0; maxVal=Math.max(maxVal,v); minVal=Math.min(minVal,v); });
+        }
+      });
+      if(!isFinite(maxVal)) maxVal=1;
+      const scale=niceScale(minVal,maxVal,5);
+
+      if(horizontal){
+        const padding={top:12+legendH, right:20, bottom:16, left:96};
+        const plotL=padding.left, plotR=w-padding.right, plotT=padding.top, plotB=h-padding.bottom;
+        const plotW=plotR-plotL, plotH=plotB-plotT;
+        const xOf=v=> plotL + (v-scale.min)/((scale.max-scale.min)||1) * plotW;
+        ctx.strokeStyle=gridColor; ctx.lineWidth=1;
+        ctx.textAlign='center'; ctx.fillStyle=textColor;
+        scale.ticks.forEach(t=>{ const x=xOf(t); ctx.beginPath(); ctx.moveTo(x,plotT); ctx.lineTo(x,plotB); ctx.stroke(); ctx.fillText(fmtNum(t,{compact:true}), x, plotB+10); });
+        const bandH=plotH/labels.length, barH=Math.min(22,bandH*0.6);
+        labels.forEach((lab,i)=>{
+          const yc=plotT+bandH*i+bandH/2;
+          ctx.fillStyle=textColor; ctx.textAlign='right';
+          ctx.fillText(truncateLabel(ctx,String(lab),padding.left-14), plotL-10, yc);
+          const v=datasets[0].data[i]||0;
+          const x0=xOf(Math.min(0,v)), x1=xOf(Math.max(0,v));
+          const color=datasets[0].backgroundColor;
+          ctx.fillStyle=color; ctx.fillRect(x0, yc-barH/2, Math.max(1,x1-x0), barH);
+          canvas._hit.push({x:x0,y:yc-barH/2,w:Math.max(1,x1-x0),h:barH,label:lab,value:v,color});
+        });
+        return;
+      }
+
+      // vertical bar (grouped or stacked)
+      const longestLabel=Math.max(...labels.map(l=>String(l).length));
+      const rotate = labels.length>6 || longestLabel>10;
+      const padding={top:12+legendH, right:16, bottom: rotate?54:30, left:52};
+      const plotL=padding.left, plotR=w-padding.right, plotT=padding.top, plotB=h-padding.bottom;
+      const plotW=plotR-plotL, plotH=plotB-plotT;
+      const yOf=v=> plotB - (v-scale.min)/((scale.max-scale.min)||1) * plotH;
+      ctx.strokeStyle=gridColor; ctx.lineWidth=1; ctx.fillStyle=textColor; ctx.textAlign='right';
+      scale.ticks.forEach(t=>{ const y=yOf(t); ctx.beginPath(); ctx.moveTo(plotL,y); ctx.lineTo(plotR,y); ctx.stroke(); ctx.fillText(fmtNum(t,{compact:true}), plotL-6, y); });
+
+      if(datasets.length>1){
+        let lx=plotL; ctx.textAlign='left';
+        datasets.forEach(d=>{ ctx.fillStyle=d.backgroundColor; ctx.fillRect(lx,4,10,10); ctx.fillStyle=textColor; ctx.fillText(d.label||'',lx+14,9); lx+=14+ctx.measureText(d.label||'').width+16; });
+      }
+
+      const bandW=plotW/labels.length;
+      const groupCount= stacked?1:datasets.length;
+      const barW=Math.min(bandW*0.7/groupCount, 46);
+      labels.forEach((lab,i)=>{
+        const bandCenter=plotL+bandW*i+bandW/2;
+        if(stacked){
+          let cumPos=0, cumNeg=0;
+          datasets.forEach(d=>{
+            const v=d.data[i]||0;
+            if(v>=0){
+              const y0=yOf(cumPos), y1=yOf(cumPos+v);
+              ctx.fillStyle=d.backgroundColor; ctx.fillRect(bandCenter-barW/2, y1, barW, y0-y1);
+              canvas._hit.push({x:bandCenter-barW/2,y:y1,w:barW,h:y0-y1,label:lab+' · '+d.label,value:v,color:d.backgroundColor});
+              cumPos+=v;
+            } else {
+              const y0=yOf(cumNeg), y1=yOf(cumNeg+v);
+              ctx.fillStyle=d.backgroundColor; ctx.fillRect(bandCenter-barW/2, y0, barW, y1-y0);
+              canvas._hit.push({x:bandCenter-barW/2,y:y0,w:barW,h:y1-y0,label:lab+' · '+d.label,value:v,color:d.backgroundColor});
+              cumNeg+=v;
+            }
+          });
+        } else {
+          datasets.forEach((d,di)=>{
+            const v=d.data[i]||0;
+            const x=bandCenter - (groupCount*barW)/2 + di*barW;
+            const y0=yOf(Math.min(0,v)), y1=yOf(Math.max(0,v));
+            ctx.fillStyle=d.backgroundColor;
+            const rh=Math.max(1,y0-y1);
+            ctx.beginPath();
+            const r=Math.min(5, barW/2, rh/2);
+            roundRectTop(ctx, x, y1, barW, rh, r);
+            ctx.fill();
+            canvas._hit.push({x,y:y1,w:barW,h:rh,label: datasets.length>1? lab+' · '+d.label : lab, value:v, color:d.backgroundColor});
+          });
+        }
+        // x-axis label
+        ctx.fillStyle=textColor;
+        if(rotate){
+          ctx.save(); ctx.translate(bandCenter, plotB+8); ctx.rotate(-Math.PI/5); ctx.textAlign='right';
+          ctx.fillText(truncateLabel(ctx,String(lab),90), 0, 0); ctx.restore();
+        } else {
+          ctx.textAlign='center'; ctx.fillText(truncateLabel(ctx,String(lab),bandW-4), bandCenter, plotB+14);
+        }
+      });
+    }
+
+    function roundRectTop(ctx,x,y,w,h,r){
+      r=Math.max(0,Math.min(r, w/2, h));
+      ctx.moveTo(x, y+h); ctx.lineTo(x, y+r); ctx.arcTo(x,y,x+r,y,r);
+      ctx.lineTo(x+w-r,y); ctx.arcTo(x+w,y,x+w,y+r,r); ctx.lineTo(x+w,y+h); ctx.closePath();
+    }
+
+    function renderLine(ctx,w,h,ds,textColor,gridColor){
+      const labels=ds.labels||[]; const d=(ds.datasets||[])[0];
+      if(!d || labels.length===0){ emptyMsg(ctx,w,h,textColor); return; }
+      const values=d.data;
+      const min=Math.min(0,...values), max=Math.max(...values,0);
+      const scale=niceScale(min,max,5);
+      const rotate = labels.length>7;
+      const padding={top:12, right:20, bottom: rotate?54:30, left:52};
+      const plotL=padding.left, plotR=w-padding.right, plotT=padding.top, plotB=h-padding.bottom;
+      const plotW=plotR-plotL, plotH=plotB-plotT;
+      const xOf=i=> labels.length===1? (plotL+plotW/2) : plotL + (i/(labels.length-1))*plotW;
+      const yOf=v=> plotB - (v-scale.min)/((scale.max-scale.min)||1) * plotH;
+      ctx.strokeStyle=gridColor; ctx.lineWidth=1; ctx.fillStyle=textColor; ctx.textAlign='right';
+      scale.ticks.forEach(t=>{ const y=yOf(t); ctx.beginPath(); ctx.moveTo(plotL,y); ctx.lineTo(plotR,y); ctx.stroke(); ctx.fillText(fmtNum(t,{compact:true}), plotL-6, y); });
+      ctx.strokeStyle=d.borderColor||cssVar('--rust'); ctx.lineWidth=2.5; ctx.beginPath();
+      values.forEach((v,i)=>{ const x=xOf(i), y=yOf(v); if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y); });
+      ctx.stroke();
+      values.forEach((v,i)=>{
+        const x=xOf(i), y=yOf(v);
+        ctx.fillStyle=d.borderColor||cssVar('--rust');
+        ctx.beginPath(); ctx.arc(x,y,3,0,Math.PI*2); ctx.fill();
+        canvas._hit && canvas._hit.push({cx:x,cy:y,r:8,label:labels[i],value:v,color:d.borderColor||cssVar('--rust')});
+        ctx.fillStyle=textColor;
+        const lab=String(labels[i]);
+        if(rotate){ ctx.save(); ctx.translate(x, plotB+8); ctx.rotate(-Math.PI/5); ctx.textAlign='right'; ctx.fillText(truncateLabel(ctx,lab,90),0,0); ctx.restore(); }
+        else if(i%Math.ceil(labels.length/8||1)===0){ ctx.textAlign='center'; ctx.fillText(truncateLabel(ctx,lab,plotW/labels.length-2), x, plotB+14); }
+      });
+    }
+
+    function renderScatter(ctx,w,h,ds,textColor,gridColor){
+      const pts=(ds.datasets[0]||{}).data||[];
+      if(pts.length===0){ emptyMsg(ctx,w,h,textColor); return; }
+      const xs=pts.map(p=>p.x), ys=pts.map(p=>p.y);
+      const xScale=niceScale(Math.min(0,...xs),Math.max(...xs),5);
+      const yScale=niceScale(Math.min(0,...ys),Math.max(...ys),5);
+      const padding={top:12,right:16,bottom:30,left:56};
+      const plotL=padding.left, plotR=w-padding.right, plotT=padding.top, plotB=h-padding.bottom;
+      const plotW=plotR-plotL, plotH=plotB-plotT;
+      const xOf=v=> plotL + (v-xScale.min)/((xScale.max-xScale.min)||1)*plotW;
+      const yOf=v=> plotB - (v-yScale.min)/((yScale.max-yScale.min)||1)*plotH;
+      ctx.strokeStyle=gridColor; ctx.lineWidth=1; ctx.fillStyle=textColor;
+      ctx.textAlign='right';
+      yScale.ticks.forEach(t=>{ const y=yOf(t); ctx.beginPath(); ctx.moveTo(plotL,y); ctx.lineTo(plotR,y); ctx.stroke(); ctx.fillText(fmtNum(t,{compact:true}), plotL-6, y); });
+      ctx.textAlign='center';
+      xScale.ticks.forEach(t=>{ const x=xOf(t); ctx.fillText(fmtNum(t,{compact:true}), x, plotB+14); });
+      const color=ds.datasets[0].backgroundColor||cssVar('--amber');
+      ctx.fillStyle=color;
+      pts.forEach(p=>{
+        const x=xOf(p.x), y=yOf(p.y);
+        ctx.beginPath(); ctx.globalAlpha=0.75; ctx.arc(x,y,3.5,0,Math.PI*2); ctx.fill(); ctx.globalAlpha=1;
+        canvas._hit.push({cx:x,cy:y,r:6,label:`(${fmtNum(p.x,{compact:true})}, ${fmtNum(p.y,{compact:true})})`,value:null,color});
+      });
+    }
+
+    function renderDoughnut(ctx,w,h,ds,textColor){
+      const labels=ds.labels||[]; const d=(ds.datasets||[])[0];
+      if(!d || labels.length===0){ emptyMsg(ctx,w,h,textColor); return; }
+      const values=d.data, colors=Array.isArray(d.backgroundColor)? d.backgroundColor : labels.map((_,i)=>PALETTE[i%PALETTE.length]);
+      const total=values.reduce((a,b)=>a+b,0)||1;
+      const legendW=Math.min(150, w*0.4);
+      const cx=(w-legendW)/2, cy=h/2, r=Math.min(cx,cy)-14;
+      let start=-Math.PI/2;
+      values.forEach((v,i)=>{
+        const angle=(v/total)*Math.PI*2;
+        ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,r,start,start+angle); ctx.closePath();
+        ctx.fillStyle=colors[i%colors.length]; ctx.fill();
+        canvas._hit.push({cx, cy, r, angleStart:start, angleEnd:start+angle, label:labels[i], value:v, pct:(v/total*100), color:colors[i%colors.length]});
+        start+=angle;
+      });
+      ctx.globalCompositeOperation='destination-out';
+      ctx.beginPath(); ctx.arc(cx,cy,r*0.55,0,Math.PI*2); ctx.fill();
+      ctx.globalCompositeOperation='source-over';
+      // legend
+      ctx.textAlign='left'; ctx.font='11px -apple-system,sans-serif';
+      let ly=h/2 - (labels.length*18)/2;
+      const lx=w-legendW+8;
+      labels.forEach((lab,i)=>{
+        ctx.fillStyle=colors[i%colors.length]; ctx.fillRect(lx, ly, 10, 10);
+        ctx.fillStyle=textColor;
+        const pct=(values[i]/total*100).toFixed(0);
+        ctx.fillText(truncateLabel(ctx,`${lab} (${pct}%)`, legendW-24), lx+14, ly+5);
+        ly+=18;
+      });
+    }
+
+    function emptyMsg(ctx,w,h,textColor){
+      ctx.fillStyle=textColor; ctx.textAlign='center';
+      ctx.fillText('Not enough data to chart', w/2, h/2);
+    }
+  }
+
+  function attachInteraction(canvas){
+    if(canvas._miniChartBound) return;
+    canvas._miniChartBound=true;
+    const findHit=(mx,my)=>{
+      const hits=canvas._hit||[];
+      for(let i=hits.length-1;i>=0;i--){
+        const hRegion=hits[i];
+        if(hRegion.cx!==undefined){
+          if(hRegion.angleStart!==undefined){
+            const dx=mx-hRegion.cx, dy=my-hRegion.cy, dist=Math.sqrt(dx*dx+dy*dy);
+            if(dist<=hRegion.r && dist>=hRegion.r*0.55){
+              let ang=Math.atan2(dy,dx); if(ang<-Math.PI/2) ang+=Math.PI*2;
+              if(ang>=hRegion.angleStart && ang<=hRegion.angleEnd) return hRegion;
+            }
+          } else {
+            const dx=mx-hRegion.cx, dy=my-hRegion.cy;
+            if(Math.sqrt(dx*dx+dy*dy)<=hRegion.r) return hRegion;
+          }
+        } else if(mx>=hRegion.x && mx<=hRegion.x+hRegion.w && my>=hRegion.y && my<=hRegion.y+hRegion.h){
+          return hRegion;
+        }
+      }
+      return null;
+    };
+    function handleMove(clientX, clientY){
+      const rect=canvas.getBoundingClientRect();
+      const mx=clientX-rect.left, my=clientY-rect.top;
+      const hit=findHit(mx,my);
+      if(hit){
+        const valTxt = hit.value===null? '' : ': '+fmtNum(hit.value,{compact:true});
+        const pctTxt = hit.pct!==undefined? ` (${hit.pct.toFixed(1)}%)`:'';
+        showTooltip(clientX, clientY, `<strong>${escapeHtml(String(hit.label))}</strong>${escapeHtml(valTxt)}${pctTxt}`);
+      } else hideTooltip();
+    }
+    canvas.addEventListener('mousemove', e=>handleMove(e.clientX,e.clientY));
+    canvas.addEventListener('mouseleave', hideTooltip);
+    canvas.addEventListener('touchstart', e=>{ const t=e.touches[0]; if(t) handleMove(t.clientX,t.clientY); }, {passive:true});
+    canvas.addEventListener('touchmove', e=>{ const t=e.touches[0]; if(t) handleMove(t.clientX,t.clientY); }, {passive:true});
+    canvas.addEventListener('touchend', hideTooltip);
+  }
+
+  return {render, attachInteraction};
+})();
 
 function renderChart(entry){
   const spec=entry.spec;
   const ds=buildChartDataset(spec);
-  const ctx=document.getElementById(entry.canvasId);
-  if(!ctx) return;
-  if(entry.chartInstance) entry.chartInstance.destroy();
-  const isDark=STATE.darkMode;
-  const gridColor= isDark? 'rgba(255,255,255,.08)':'rgba(0,0,0,.06)';
-  const textColor= isDark? '#D8D4CC':'#4a453f';
-  const common={
-    responsive:true, maintainAspectRatio:false,
-    plugins:{ legend:{display: ds.type==='doughnut' || (ds.datasets && ds.datasets.length>1), labels:{color:textColor, boxWidth:12, font:{size:11}}},
-      tooltip:{callbacks:{label:(c)=>{
-        if(ds.type==='scatter') return `(${fmtNum(c.parsed.x)}, ${fmtNum(c.parsed.y)})`;
-        return `${c.dataset.label}: ${fmtNum(c.parsed.y!==undefined?c.parsed.y:c.parsed)}`;
-      }}}
-    },
-    scales: ds.type==='doughnut'? {} : {
-      x:{ stacked:!!ds.stacked, ticks:{color:textColor, font:{size:10}, maxRotation:40}, grid:{color:gridColor} },
-      y:{ stacked:!!ds.stacked, ticks:{color:textColor, font:{size:10}}, grid:{color:gridColor} }
-    }
-  };
-  const config={
-    type: ds.type,
-    data: ds.type==='scatter'? {datasets:ds.datasets} : {labels:ds.labels, datasets:ds.datasets},
-    options: spec.horizontal? {...common, indexAxis:'y'} : common
-  };
-  entry.chartInstance=new Chart(ctx.getContext('2d'), config);
+  const canvas=entry.canvas || document.getElementById(entry.canvasId);
+  if(!canvas) return;
+  MiniChart.render(canvas, ds, spec, STATE.darkMode);
+  MiniChart.attachInteraction(canvas);
 }
+
+// Redraw all charts responsively when the viewport changes size (e.g.
+// rotating the phone) — debounced so it doesn't redraw on every pixel.
+let _resizeTimer=null;
+window.addEventListener('resize',()=>{
+  clearTimeout(_resizeTimer);
+  _resizeTimer=setTimeout(updateAllCharts, 200);
+});
 
 // ---------- 7. DATA QUALITY ----------
 function renderDataQuality(){
@@ -1749,6 +2097,12 @@ document.getElementById('exportPivotCsvBtn').addEventListener('click',()=>{
 document.getElementById('exportDashboardPngBtn').addEventListener('click',async ()=>{
   const btn=document.getElementById('exportDashboardPngBtn');
   const old=btn.textContent; btn.textContent='Rendering…'; btn.disabled=true;
+  const ready=await waitFor(()=>typeof html2canvas!=='undefined', {timeoutMs:4000});
+  if(!ready){
+    showMessage('The image-export library could not load — check your internet connection and try again.','warn');
+    btn.textContent=old; btn.disabled=false;
+    return;
+  }
   try{
     const target=document.getElementById('appContent');
     const canvas=await html2canvas(target,{backgroundColor: STATE.darkMode? '#15151A':'#F4EDE2', scale:2, useCORS:true});
@@ -2042,7 +2396,6 @@ document.getElementById('themeToggle').addEventListener('click',()=>{
 });
 
 // keep panels tidy on resize
-window.addEventListener('resize',()=>{ /* Chart.js is responsive by default */ });
 </script>
 </body>
 </html>
