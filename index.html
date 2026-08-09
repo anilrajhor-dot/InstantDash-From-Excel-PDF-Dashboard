@@ -325,6 +325,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
   <div class="brand"><span class="dot"></span> InstantDash</div>
   <div class="topbar-right">
     <div class="privacy-badge">🔒 <span class="txt">Processed locally — not uploaded to any server</span></div>
+    <button class="icon-btn" id="shareTopBtn" title="Share dashboard" style="display:none;">📤</button>
     <button class="icon-btn" id="helpToggle" title="Help &amp; guide">❓</button>
     <button class="icon-btn" id="settingsToggle" title="Dashboard settings">⚙️</button>
     <button class="icon-btn" id="themeToggle" title="Toggle dark mode">☀️</button>
@@ -757,6 +758,7 @@ document.body.addEventListener('drop',e=>{
 document.getElementById('newFileBtn').addEventListener('click',()=>{
   appContent.style.display='none';
   emptyState.style.display='block';
+  document.getElementById('shareTopBtn').style.display='none';
   clearMessages();
   destroyAllCharts();
 });
@@ -1004,6 +1006,7 @@ function buildFromHeaderRow(headerIdx){
   loadingState.style.display='none';
   emptyState.style.display='none';
   appContent.style.display='block';
+  document.getElementById('shareTopBtn').style.display='';
 }
 
 function renderFileMeta(){
@@ -2319,7 +2322,12 @@ function shareOrDownloadText(content, filename, mime, title){
   return shareOrDownloadBlob(new Blob([content],{type:mime}), filename, title);
 }
 function canvasToShareOrDownload(canvas, filename, title){
-  canvas.toBlob(blob=>{ if(blob) shareOrDownloadBlob(blob, filename, title); }, 'image/png');
+  return new Promise((resolve)=>{
+    canvas.toBlob(blob=>{
+      if(blob) shareOrDownloadBlob(blob, filename, title).then(resolve).catch(resolve);
+      else resolve();
+    }, 'image/png');
+  });
 }
 
 document.getElementById('exportFullCsvBtn').addEventListener('click',()=>{
@@ -2354,23 +2362,32 @@ document.getElementById('exportPivotCsvBtn').addEventListener('click',()=>{
   shareOrDownloadText(lines.join('\n'),'instantdash_pivot.csv','text/csv','InstantDash pivot table');
 });
 
-document.getElementById('exportDashboardPngBtn').addEventListener('click',async ()=>{
-  const btn=document.getElementById('exportDashboardPngBtn');
-  const old=btn.textContent; btn.textContent='Rendering…'; btn.disabled=true;
+// Shared by both the Raw Data "Dashboard PNG" button and the top-bar share
+// icon, so there's one code path for "share the whole dashboard."
+async function shareDashboardPng(triggerBtn){
+  const busyIcon = triggerBtn.tagName==='BUTTON' && triggerBtn.classList.contains('icon-btn');
+  const old = busyIcon? triggerBtn.textContent : triggerBtn.textContent;
+  if(busyIcon) triggerBtn.textContent='⏳'; else triggerBtn.textContent='Rendering…';
+  triggerBtn.disabled=true;
   const ready=await waitFor(()=>typeof html2canvas!=='undefined', {timeoutMs:4000});
   if(!ready){
     showMessage('The image-export library could not load — check your internet connection and try again.','warn');
-    btn.textContent=old; btn.disabled=false;
+    triggerBtn.textContent=old; triggerBtn.disabled=false;
     return;
   }
   try{
     const target=document.getElementById('appContent');
     const canvas=await html2canvas(target,{backgroundColor: STATE.darkMode? '#15151A':'#F4EDE2', scale:2, useCORS:true});
-    canvasToShareOrDownload(canvas, 'instantdash_dashboard.png', 'InstantDash dashboard');
+    await canvasToShareOrDownload(canvas, 'instantdash_dashboard.png', 'InstantDash dashboard');
   }catch(err){
     showMessage('Could not render the dashboard to an image: '+err.message,'error');
   }
-  btn.textContent=old; btn.disabled=false;
+  triggerBtn.textContent=old; triggerBtn.disabled=false;
+}
+document.getElementById('exportDashboardPngBtn').addEventListener('click',(e)=>shareDashboardPng(e.currentTarget));
+document.getElementById('shareTopBtn').addEventListener('click',(e)=>{
+  if(!STATE.data.length){ showMessage('Load a spreadsheet first, then you can share the dashboard.','info'); return; }
+  shareDashboardPng(e.currentTarget);
 });
 
 document.getElementById('printBtn').addEventListener('click',()=>window.print());
