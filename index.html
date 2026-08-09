@@ -2506,7 +2506,46 @@ function findColumnMention(q, candidates){
   return best;
 }
 
+// Product/how-to questions ("how do I export", "how do I clear data") are
+// NOT data questions — there's no measure or dimension in them for the
+// pattern-matching below to latch onto, so without this check they used to
+// fall through to a data-analysis fallback and return an irrelevant answer
+// about some measure's average. This is checked first and handles app
+// usage directly; only unmatched questions continue to data analysis.
+function answerAppHelpQuestion(q){
+  const lq=q.toLowerCase();
+  const isHowTo = /(how (do|can|to)|where (is|can|do)|what.*button|is there a way)/.test(lq);
+
+  if(/(export|share|download|save).*(email|whatsapp|mail)/.test(lq) || /(email|whatsapp).*(export|share|send)/.test(lq) || (isHowTo && /(email|whatsapp)/.test(lq))){
+    return `To share via email or WhatsApp: scroll to the "Raw data" section and tap any of the 📤 buttons (Filtered CSV, Full CSV, Dashboard PNG, or Share summary) — on your phone this opens the native share sheet where WhatsApp, Mail, Messages, AirDrop, and Save to Files all show up directly. Each chart also has its own 📤 download/share button. This needs the page loaded over https:// (e.g. GitHub Pages) — opening the raw file locally may fall back to a plain download instead of the share sheet.`;
+  }
+  if(/(clear|reset|remove|delete).*(data|file|spreadsheet)/.test(lq) || (isHowTo && /(clear|load (a )?different|new file|start over)/.test(lq))){
+    return `Tap "↻ Clear data / load different file" in the control bar near the top of the dashboard — it resets everything back to the upload screen. "Reset filters" (further down, in the Filters section) only clears filters, not the loaded data.`;
+  }
+  if(/(dark mode|light mode|theme)/.test(lq)){
+    return `Tap the ☀️/🌙 icon in the top-right of the page to switch between dark and light mode. It opens in dark mode by default.`;
+  }
+  if(/pivot/.test(lq) && isHowTo){
+    return `Tap "🧮 Pivot table" above the charts, choose Rows, Columns (optional), Values, and an aggregation, then "Generate pivot." There's a dedicated CSV export button for the pivot result too.`;
+  }
+  if(/(add|create|build).*chart/.test(lq)){
+    return `Tap "➕ Add chart" above the dashboard — pick an X axis, Y axis/measure, aggregation, and chart type, then add it to the dashboard. Every auto-generated chart also has its own type/measure/dimension dropdowns if you just want to reshape an existing one.`;
+  }
+  if(/(print|pdf)/.test(lq)){
+    return `Tap "🖨 Print / Save as PDF" in the Raw data section — it uses your browser's print dialog, where you can choose "Save as PDF" as the destination.`;
+  }
+  if(/(setting|currency|number format|decimal|date format)/.test(lq) && isHowTo){
+    return `Tap the ⚙️ icon in the top-right to open Settings — number format, currency symbol, decimals, date format, chart category limits, and which sections are shown all live there.`;
+  }
+  if(/(you|yourself|ask your data|this (feature|tool|assistant)).*(work|can (you|it) do|answer)/.test(lq) || /what (can|do) you (do|answer)/.test(lq)){
+    return `I read the numbers already on your dashboard — totals, averages, rankings by category, and the biggest contributor to a change over time — and explain them in plain language. I'm local and rule-based, not a general AI, so I can't answer questions about the app itself beyond what's covered here, and I can't reason about anything outside your spreadsheet's columns. For "how do I..." questions about the app (exporting, filters, settings, etc.), tap the ❓ icon for the full guide.`;
+  }
+  return null;
+}
+
 function answerQuestion(q){
+  const appHelp=answerAppHelpQuestion(q);
+  if(appHelp) return appHelp;
   const lq=q.toLowerCase();
   const rows=STATE.filteredData;
   const measures=measuresList();
