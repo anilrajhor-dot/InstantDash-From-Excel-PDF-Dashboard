@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 <title>InstantDash — Excel to Dashboard</title>
-<meta name="author" content="Anil Sharma, Former General Manager, Central Bank of India">
+<meta name="author" content="Developed by Anil Sharma, Former General Manager, Central Bank of India">
+<meta name="application-name" content="InstantDash">
+<meta name="description" content="InstantDash — Excel to Dashboard, developed by Anil Sharma">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -300,7 +302,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
     <div class="privacy-badge">🔒 <span class="txt">Your data never leaves your computer</span></div>
     <button class="icon-btn" id="helpToggle" title="Help &amp; guide">❓</button>
     <button class="icon-btn" id="settingsToggle" title="Dashboard settings">⚙️</button>
-    <button class="icon-btn" id="themeToggle" title="Toggle dark mode">🌙</button>
+    <button class="icon-btn" id="themeToggle" title="Toggle dark mode">☀️</button>
   </div>
 </div>
 
@@ -406,7 +408,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
     </div>
   </div>
 
-  <footer class="app-footer">InstantDash — built for Anil Sharma · runs 100% locally in your browser</footer>
+  <footer class="app-footer">InstantDash — developed by Anil Sharma · runs 100% locally in your browser</footer>
 </div>
 
 <!-- Ask Your Data floating widget -->
@@ -584,7 +586,7 @@ const STATE = {
   charts: [],            // [{id, type, config, chartInstance}]
   chartIdSeq: 1,
   table: {sortCol:null, sortDir:1, search:'', page:1, pageSize:50},
-  darkMode:false,
+  darkMode:true,
   MAX_HIGH_CARD: 50,
   MAX_DIMENSION: 15,
   settings:{
@@ -754,15 +756,22 @@ function loadSheet(name){
   },30);
 }
 
-// Smart header detection: scan first 10 rows, score each as a header candidate.
+// Smart header detection: scans up to the first 40 rows (real-world bank
+// statements and reports often have 10-20 banner/letterhead rows before the
+// real header), scoring each as a header candidate. A row with only a single
+// filled cell (a banner line, an address, a title) is almost never a real
+// multi-column header, so it's skipped as a candidate unless the sheet
+// genuinely only has one column.
 function detectHeaderRow(aoa){
-  const scanLimit=Math.min(10, aoa.length-1);
+  const scanLimit=Math.min(40, aoa.length-1);
+  const singleColSheet = aoa.every(r=>r.filter(c=>c!==null&&c!==undefined&&String(c).trim()!=='').length<=1);
   let bestIdx=0, bestScore=-Infinity;
   for(let i=0;i<=scanLimit;i++){
     const row=aoa[i];
     if(!row) continue;
     const nonEmpty=row.filter(c=>c!==null && c!==undefined && String(c).trim()!=='');
     if(nonEmpty.length===0) continue;
+    if(nonEmpty.length<2 && !singleColSheet) continue; // banner/title line, not a header
     const textCount=nonEmpty.filter(c=>typeof c==='string' && isNaN(parseCleanNumber(c)) ).length;
     const textRatio=textCount/nonEmpty.length;
     // consistency of the rows beneath: sample up to 5 rows after this one
@@ -776,7 +785,7 @@ function detectHeaderRow(aoa){
     }
     const consistencyRatio= sampleRows? consistency/sampleRows : 0;
     const fillRatio= nonEmpty.length/row.length;
-    const score= textRatio*2 + consistencyRatio*1.5 + fillRatio*0.5 - (i*0.05); // slight preference for earlier rows
+    const score= textRatio*2 + consistencyRatio*1.5 + fillRatio*0.5 - (i*0.02); // mild preference for earlier rows
     if(score>bestScore){bestScore=score; bestIdx=i;}
   }
   return bestIdx;
@@ -784,7 +793,7 @@ function detectHeaderRow(aoa){
 
 function populateHeaderRowSelect(aoa, detectedIdx){
   const sel=document.getElementById('headerRowSelect');
-  const max=Math.min(10, aoa.length-1);
+  const max=Math.min(40, aoa.length-1);
   let opts='';
   for(let i=0;i<=max;i++){
     opts+=`<option value="${i}" ${i===detectedIdx?'selected':''}>Row ${i+1}${i===detectedIdx?' (auto-detected)':''}</option>`;
@@ -794,7 +803,8 @@ function populateHeaderRowSelect(aoa, detectedIdx){
 }
 
 // clean a raw cell into a number if possible: strips currency symbols, thousands
-// separators (incl. Indian 1,25,000 style), trailing %, and (500)-style negatives.
+// separators (incl. Indian 1,25,000 style), trailing %, (500)-style negatives,
+// and Indian bank-statement CR/DR balance suffixes (e.g. "2,41,406.49 CR").
 function parseCleanNumber(val){
   if(typeof val==='number') return val;
   if(val===null||val===undefined) return NaN;
@@ -802,6 +812,7 @@ function parseCleanNumber(val){
   if(s==='') return NaN;
   let neg=false;
   if(/^\(.*\)$/.test(s)){ neg=true; s=s.slice(1,-1); }
+  s=s.trim().replace(/\s*(CR|DR)\s*$/i,(m)=>{ if(/^DR$/i.test(m.trim())) neg=true; return ''; });
   s=s.replace(/[₹$€£,\s]/g,'');
   let isPct=false;
   if(s.endsWith('%')){isPct=true; s=s.slice(0,-1);}
@@ -839,7 +850,7 @@ function buildFromHeaderRow(headerIdx){
   STATE.columns=columns;
 
   // build row objects with type-cleaned values
-  const data=bodyRows.map(r=>{
+  let data=bodyRows.map(r=>{
     const o={};
     columns.forEach(col=>{
       let v=r[col.index];
@@ -848,6 +859,20 @@ function buildFromHeaderRow(headerIdx){
     });
     return o;
   });
+
+  // Drop near-empty rows that are almost certainly leftover footer/disclaimer
+  // lines (e.g. "* Statement downloaded by...", "END OF STATEMENT...") rather
+  // than real records — a genuine data row in a multi-column file essentially
+  // never has just one field filled in. Only trims a small minority of rows,
+  // so it won't gut a legitimately sparse dataset.
+  if(columns.length>=3){
+    const nonBlankCount=o=>Object.values(o).filter(v=>v!==null&&v!==undefined&&String(v).trim()!=='').length;
+    const junkRows=data.filter(o=>nonBlankCount(o)<=1);
+    if(junkRows.length>0 && junkRows.length<=Math.max(5, data.length*0.05)){
+      data=data.filter(o=>nonBlankCount(o)>1);
+      showMessage(`Removed ${junkRows.length} near-empty trailing row(s) that looked like footer or disclaimer text rather than data.`,'info');
+    }
+  }
   STATE.data=data;
 
   profileColumns();
