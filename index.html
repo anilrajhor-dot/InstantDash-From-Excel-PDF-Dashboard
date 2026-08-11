@@ -154,6 +154,23 @@ select, .input{
 .kpi-label{font-size:12.5px; color:var(--muted); margin-top:4px;}
 .kpi-sub{font-size:11.5px; color:var(--muted); margin-top:2px;}
 
+
+/* ---------- Universal KPI Engine ---------- */
+.kpi-toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 10px;}
+.kpi-badge{display:inline-flex;align-items:center;padding:4px 8px;border-radius:999px;border:1px solid var(--line);font-size:11px;background:var(--card);color:var(--muted);}
+.kpi-badge.high{border-color:#4caf50;color:#2e7d32}.kpi-badge.medium{border-color:#f0ad4e;color:#a45b00}.kpi-badge.low{border-color:#d66;color:#a33}
+.kpi-card .kpi-meta{font-size:10.5px;color:var(--muted);margin-top:6px;line-height:1.35}
+.kpi-card .kpi-formula{font-size:10.5px;color:var(--muted);margin-top:3px;line-height:1.35}
+.kpi-card .kpi-explain{margin-top:8px;background:none;border:0;padding:0;color:var(--muted);font-size:11px;cursor:pointer;text-decoration:underline}
+.kpi-card.kpi-derived{border-top-color:var(--chart-3,var(--amber));}
+.kpi-card.kpi-warning{border-top-color:var(--warn,var(--amber));}
+.kpi-mapping-wrap{overflow:auto;max-height:520px;border:1px solid var(--line);border-radius:var(--radius);background:var(--card);}
+.kpi-mapping-table{width:100%;border-collapse:collapse;font-size:12px;min-width:900px}
+.kpi-mapping-table th,.kpi-mapping-table td{padding:8px 9px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.kpi-mapping-table th{position:sticky;top:0;background:var(--card);z-index:1}
+.kpi-mapping-table select{max-width:260px}
+.kpi-empty{padding:14px;color:var(--muted);background:var(--card);border:1px dashed var(--line);border-radius:var(--radius)}
+
 /* ---------- filter bar ---------- */
 .filterbar{
   background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:14px;
@@ -421,6 +438,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 
     <nav class="quicknav" id="quickNav" aria-label="Jump to section">
       <a href="#kpiGrid">Overview</a>
+      <a href="#kpiMappingBody">KPI Mapping</a>
       <a href="#execInsightsCard">Insights</a>
       <a href="#chartGrid">Dashboard</a>
       <a href="#dataQualitySection">Quality</a>
@@ -438,6 +456,19 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
       </div>
     </div>
     <div class="kpi-grid" id="kpiGrid"></div>
+
+
+    <div class="section-title"><h2>🧠 KPI Mapping &amp; Data Dictionary</h2>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+        <span class="hint" id="kpiDepartmentHint"></span>
+        <select id="kpiDepartmentSelect" aria-label="KPI department" class="input" style="max-width:190px;padding:6px 8px;">
+          <option value="Auto Detect">Auto Detect</option><option>Management</option><option>Finance</option><option>HR</option><option>Sales / Business</option><option>Marketing</option><option>Operations / Manufacturing</option><option>Procurement</option><option>Supply Chain</option><option>Customer Service</option><option>Project Management</option><option>Banking</option>
+        </select>
+        <button class="btn secondary small" id="customKpiBtn">➕ Custom KPI</button>
+        <button class="btn secondary small" id="showAllKpisBtn">View all KPIs</button>
+      </div>
+    </div>
+    <div id="kpiMappingBody" class="kpi-mapping-wrap"></div>
 
     <div class="section-title"><h2 id="execInsightsCard">📌 Executive Insights</h2><span class="hint">Calculated facts from your current filtered view — not interpretations</span></div>
     <div id="execInsightsBody" class="insights-card"></div>
@@ -537,6 +568,24 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
     <div style="text-align:right; margin-top:16px;">
       <button class="btn" id="buildChartBtn">Add chart to dashboard</button>
     </div>
+  </div>
+</div>
+
+<!-- Custom KPI modal -->
+<div class="modal-overlay" id="customKpiModal">
+  <div class="modal">
+    <button class="modal-close" data-close aria-label="Close dialog">✕</button>
+    <h3>➕ Create custom KPI</h3>
+    <div class="builder-grid">
+      <label>KPI name<input class="input" id="customKpiName" placeholder="e.g. Sales per Employee"></label>
+      <label>Source A<select id="customKpiA"></select></label>
+      <label>Operation<select id="customKpiOp"><option value="direct">Direct</option><option value="add">A + B</option><option value="sub">A − B</option><option value="mul">A × B</option><option value="div">A ÷ B</option></select></label>
+      <label>Source B<select id="customKpiB"></select></label>
+      <label>Aggregation<select id="customKpiAgg"><option value="sum">Sum</option><option value="avg">Average</option><option value="count">Count rows</option></select></label>
+      <label>Unit<select id="customKpiUnit"><option value="number">Number</option><option value="percent">Percentage</option><option value="days">Days</option><option value="hours">Hours</option><option value="ratio">Ratio</option></select></label>
+    </div>
+    <p style="font-size:12px;color:var(--muted)">For percentage KPIs, use a division operation and select Percentage. The KPI is calculated locally from the current filtered data.</p>
+    <div style="text-align:right;margin-top:14px"><button class="btn" id="saveCustomKpiBtn">Save KPI</button></div>
   </div>
 </div>
 
@@ -766,7 +815,11 @@ const STATE = {
     showDataQuality:true,
     outlierMethod:'iqr',     // 'iqr' (default, robust) or 'sigma' (±3σ)
     showRawData:true
-  }
+  },
+  kpiManualMap:{},
+  customKpis:[],
+  kpiDepartment:'Auto Detect',
+  showAllKpis:false
 };
 
 const PALETTE = ['--chart-1','--chart-2','--chart-3','--chart-4','--chart-5','--chart-6','--chart-7','--chart-8']
@@ -874,6 +927,15 @@ document.getElementById('newFileBtn').addEventListener('click',()=>{
   document.getElementById('shareTopBtn').style.display='none';
   clearMessages();
   destroyAllCharts();
+});
+
+document.getElementById('kpiDepartmentSelect').addEventListener('change',e=>{STATE.kpiDepartment=e.target.value;renderKPIs();});
+
+document.getElementById('showAllKpisBtn').addEventListener('click',()=>{
+  STATE.showAllKpis=!STATE.showAllKpis;
+  const b=document.getElementById('showAllKpisBtn');
+  b.textContent=STATE.showAllKpis?'Show priority KPIs':'View all KPIs';
+  renderKPIs();
 });
 
 async function handleFile(file){
@@ -1468,6 +1530,311 @@ function dimensionsList(){ return STATE.columns.filter(c=>STATE.profile[c.name].
 function highCardList(){ return STATE.columns.filter(c=>STATE.profile[c.name].role==='HighCard').map(c=>c.name); }
 function timeList(){ return STATE.columns.filter(c=>STATE.profile[c.name].role==='Time').map(c=>c.name); }
 
+// ---------- 4. UNIVERSAL KPI ENGINE ----------
+// KPI detection is semantic: it uses heading aliases, data type and related
+// columns. Column order is never used as the KPI identity.
+const KPI_DEFS = [
+  // Management / Finance
+  {id:'revenue',name:'Revenue / Sales',dept:'Finance, Management, Sales, Business',cat:'Growth',aliases:['sales','net sales','revenue','revenue from operations','turnover','gross sales'],direct:true,agg:'sum',higher:true},
+  {id:'purchases',name:'Purchases',dept:'Finance, Procurement, Business',cat:'Cost',aliases:['purchases','purchase value','purchase amount','procurement value'],direct:true,agg:'sum'},
+  {id:'cogs',name:'Cost of Goods Sold',dept:'Finance, Business',cat:'Profitability',aliases:['cogs','cost of goods sold','cost of goods','cost of sales'],direct:true,agg:'sum',higher:false},
+  {id:'gross_profit',name:'Gross Profit',dept:'Finance, Management, Business',cat:'Profitability',aliases:['gross profit','gp'],direct:true,agg:'sum',higher:true},
+  {id:'gross_margin',name:'Gross Profit %',dept:'Finance, Management, Business',cat:'Profitability',aliases:['gross profit %','gp %','gross margin','gross profit margin','gp margin'],derived:true,formula:'Gross Profit ÷ Revenue × 100',calc:(ctx)=>ctx.rev?ctx.gp/ctx.rev:null,higher:true,percent:true,needs:['revenue','gross_profit','cogs']},
+  {id:'ebitda',name:'EBITDA',dept:'Finance, Management',cat:'Profitability',aliases:['ebitda','ebitda profit'],direct:true,agg:'sum',higher:true},
+  {id:'ebitda_margin',name:'EBITDA %',dept:'Finance, Management',cat:'Profitability',aliases:['ebitda %','ebitda margin','ebitda margin %'],derived:true,formula:'EBITDA ÷ Revenue × 100',calc:(ctx)=>ctx.rev?ctx.ebitda/ctx.rev:null,higher:true,percent:true,needs:['revenue','ebitda']},
+  {id:'ebit',name:'EBIT',dept:'Finance, Management',cat:'Profitability',aliases:['ebit','operating profit'],direct:true,agg:'sum',higher:true},
+  {id:'net_profit',name:'Net Profit',dept:'Finance, Management, Business',cat:'Profitability',aliases:['net profit','np','profit after tax','pat','net income'],direct:true,agg:'sum',higher:true},
+  {id:'net_margin',name:'Net Profit %',dept:'Finance, Management',cat:'Profitability',aliases:['net profit %','np %','net margin','net margin %','pat margin'],derived:true,formula:'Net Profit ÷ Revenue × 100',calc:(ctx)=>ctx.rev?ctx.np/ctx.rev:null,higher:true,percent:true,needs:['revenue','net_profit']},
+  {id:'operating_cost',name:'Operating Cost',dept:'Finance, Management, Operations',cat:'Cost',aliases:['operating cost','operating costs','operating expenses','opex'],direct:true,agg:'sum',higher:false},
+  {id:'contribution',name:'Contribution',dept:'Finance, Business',cat:'Profitability',aliases:['contribution','contribution profit'],direct:true,agg:'sum',higher:true},
+  {id:'contribution_margin',name:'Contribution Margin %',dept:'Finance, Business',cat:'Profitability',aliases:['contribution margin','contribution margin %'],derived:true,formula:'Contribution ÷ Revenue × 100',calc:(ctx)=>ctx.rev?ctx.contribution/ctx.rev:null,higher:true,percent:true,needs:['revenue','contribution']},
+  {id:'cash',name:'Closing Cash / Cash Balance',dept:'Finance, Management, Banking',cat:'Liquidity',aliases:['cash balance','closing cash','cash in hand','cash and bank','cash & bank','bank balance','closing bank balance'],direct:true,agg:'sum',higher:true},
+  {id:'operating_cash_flow',name:'Operating Cash Flow',dept:'Finance, Management',cat:'Cash Flow',aliases:['operating cash flow','cash flow from operations','cash from operations'],direct:true,agg:'sum',higher:true},
+  {id:'investing_cash_flow',name:'Investing Cash Flow',dept:'Finance, Management',cat:'Cash Flow',aliases:['investing cash flow','cash flow from investing'],direct:true,agg:'sum'},
+  {id:'financing_cash_flow',name:'Financing Cash Flow',dept:'Finance, Management',cat:'Cash Flow',aliases:['financing cash flow','cash flow from financing'],direct:true,agg:'sum'},
+  {id:'net_cash_flow',name:'Net Cash Flow',dept:'Finance, Management',cat:'Cash Flow',aliases:['net cash flow','net change in cash'],direct:true,agg:'sum',higher:true},
+  {id:'current_assets',name:'Current Assets',dept:'Finance, Management',cat:'Liquidity',aliases:['current assets','total current assets'],direct:true,agg:'sum',higher:true},
+  {id:'current_liabilities',name:'Current Liabilities',dept:'Finance, Management',cat:'Liquidity',aliases:['current liabilities','total current liabilities'],direct:true,agg:'sum',higher:false},
+  {id:'working_capital',name:'Working Capital',dept:'Finance, Management',cat:'Liquidity',aliases:['working capital','net working capital'],derived:true,formula:'Current Assets − Current Liabilities',calc:(ctx)=>ctx.ca!==null&&ctx.cl!==null?ctx.ca-ctx.cl:null,needs:['current_assets','current_liabilities']},
+  {id:'current_ratio',name:'Current Ratio',dept:'Finance, Management',cat:'Liquidity',aliases:['current ratio'],derived:true,formula:'Current Assets ÷ Current Liabilities',calc:(ctx)=>ctx.cl?ctx.ca/ctx.cl:null,needs:['current_assets','current_liabilities'],ratio:true,higher:true},
+  {id:'quick_ratio',name:'Quick Ratio',dept:'Finance, Management',cat:'Liquidity',aliases:['quick ratio','acid test ratio'],derived:true,formula:'(Current Assets − Stock) ÷ Current Liabilities',calc:(ctx)=>ctx.cl?(ctx.ca-ctx.stock)/ctx.cl:null,needs:['current_assets','current_liabilities','stock'],ratio:true,higher:true},
+  {id:'debtors',name:'Debtors / Receivables',dept:'Finance, Management, Business',cat:'Working Capital',aliases:['debtors','trade receivables','sundry debtors','accounts receivable','receivables','trade receivable'],direct:true,agg:'sum',higher:false},
+  {id:'creditors',name:'Creditors / Payables',dept:'Finance, Management, Procurement',cat:'Working Capital',aliases:['creditors','trade payables','sundry creditors','accounts payable','payables','trade payable'],direct:true,agg:'sum',higher:false},
+  {id:'stock',name:'Stock / Inventory',dept:'Finance, Operations, Supply Chain, Business',cat:'Working Capital',aliases:['stock','inventory','closing stock','closing inventory','inventory value'],direct:true,agg:'sum',higher:false},
+  {id:'debtor_days',name:'Debtor Days',dept:'Finance, Business',cat:'Efficiency',aliases:['debtor days','debtors days','debtor holding period','receivable days','receivables days','dsо'],derived:true,formula:'Debtors ÷ Revenue × Days',calc:(ctx)=>ctx.rev?ctx.debtors/ctx.rev*ctx.days:null,needs:['debtors','revenue'],unit:'days',lower:true},
+  {id:'creditor_days',name:'Creditor Days',dept:'Finance, Procurement, Business',cat:'Efficiency',aliases:['creditor days','creditors days','creditor holding period','payable days','payables days','dpo'],derived:true,formula:'Creditors ÷ Purchases/COGS × Days',calc:(ctx)=>{const base=ctx.purchases??ctx.cogs;return base?ctx.creditors/base*ctx.days:null},needs:['creditors','purchases','cogs'],unit:'days',lower:true},
+  {id:'stock_days',name:'Stock Holding Days',dept:'Finance, Operations, Supply Chain, Business',cat:'Efficiency',aliases:['stock days','stock holding days','inventory days','inventory holding days','dio'],derived:true,formula:'Stock ÷ COGS × Days',calc:(ctx)=>ctx.cogs?ctx.stock/ctx.cogs*ctx.days:null,needs:['stock','cogs'],unit:'days',lower:true},
+  {id:'revenue_growth',name:'Revenue Growth %',dept:'Management, Finance, Sales, Business',cat:'Growth',aliases:['revenue growth','sales growth','sales growth %','revenue growth %','turnover growth','growth %'],derived:true,formula:'(Current Revenue − Previous Revenue) ÷ Previous Revenue × 100',trend:true,percent:true,higher:true},
+  {id:'profit_growth',name:'Profit Growth %',dept:'Management, Finance, Business',cat:'Growth',aliases:['profit growth','profit growth %','net profit growth'],derived:true,formula:'(Current Profit − Previous Profit) ÷ Previous Profit × 100',trend:true,percent:true,higher:true},
+  {id:'target',name:'Target / Budget',dept:'Management, Sales, Marketing, Operations, Projects',cat:'Target',aliases:['target','sales target','budget','plan','planned','annual target','monthly target'],direct:true,agg:'sum'},
+  {id:'actual',name:'Actual',dept:'Management, Sales, Marketing, Operations, Projects',cat:'Target',aliases:['actual','actual value','actual performance'],direct:true,agg:'sum'},
+  {id:'target_achievement',name:'Target Achievement %',dept:'Management, Sales, Operations, Projects',cat:'Target',aliases:['target achievement','target achievement %','achievement %','target attained %'],derived:true,formula:'Actual ÷ Target × 100',calc:(ctx)=>ctx.target?ctx.actual/ctx.target:null,percent:true,higher:true,needs:['target','actual']},
+  {id:'variance',name:'Variance',dept:'Management, Finance, Sales, Operations, Projects',cat:'Target',aliases:['variance','budget variance','target variance','actual vs budget'],derived:true,formula:'Actual − Target',calc:(ctx)=>ctx.actual!==null&&ctx.target!==null?ctx.actual-ctx.target:null,needs:['target','actual']},
+  {id:'variance_pct',name:'Variance %',dept:'Management, Finance, Sales, Operations, Projects',cat:'Target',aliases:['variance %','budget variance %','target variance %'],derived:true,formula:'(Actual − Target) ÷ Target × 100',calc:(ctx)=>ctx.target?(ctx.actual-ctx.target)/Math.abs(ctx.target):null,percent:true,needs:['target','actual']},
+  {id:'roce',name:'ROCE %',dept:'Finance, Management',cat:'Return',aliases:['roce','return on capital employed','roce %'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'roe',name:'ROE %',dept:'Finance, Management',cat:'Return',aliases:['roe','return on equity','roe %'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'debt_equity',name:'Debt-Equity Ratio',dept:'Finance, Management',cat:'Leverage',aliases:['debt equity ratio','debt-to-equity ratio','debt/equity'],direct:true,agg:'avg',ratio:true},
+  // HR
+  {id:'headcount',name:'Total Employees / Headcount',dept:'HR',cat:'Workforce',aliases:['headcount','employee count','employees','total employees','staff strength','employee strength'],direct:true,agg:'countRows',higher:true},
+  {id:'new_joiners',name:'New Joiners',dept:'HR',cat:'Recruitment',aliases:['new joiners','new hires','new employees','joiners','hires'],direct:true,agg:'sum',higher:true},
+  {id:'exits',name:'Employee Exits',dept:'HR',cat:'Attrition',aliases:['exits','employee exits','leavers','separations','resignations'],direct:true,agg:'sum',higher:false},
+  {id:'attrition',name:'Employee Attrition %',dept:'HR',cat:'Attrition',aliases:['attrition','attrition %','employee attrition','employee attrition %','turnover rate'],direct:true,agg:'avg',percent:true,lower:true},
+  {id:'retention',name:'Retention %',dept:'HR',cat:'Attrition',aliases:['retention','retention %','employee retention'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'attendance',name:'Attendance %',dept:'HR',cat:'Attendance',aliases:['attendance','attendance %','attendance rate'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'absenteeism',name:'Absenteeism %',dept:'HR',cat:'Attendance',aliases:['absenteeism','absenteeism %','absence rate'],direct:true,agg:'avg',percent:true,lower:true},
+  {id:'overtime_hours',name:'Overtime Hours',dept:'HR, Operations',cat:'Attendance',aliases:['overtime hours','ot hours','overtime'],direct:true,agg:'sum',lower:true},
+  {id:'performance_score',name:'Average Performance Score',dept:'HR',cat:'Performance',aliases:['performance score','performance rating','performance rating score','employee performance'],direct:true,agg:'avg',higher:true},
+  {id:'training_hours',name:'Training Hours',dept:'HR',cat:'Training',aliases:['training hours','learning hours','l&d hours'],direct:true,agg:'sum',higher:true},
+  {id:'training_completion',name:'Training Completion %',dept:'HR',cat:'Training',aliases:['training completion','training completion %','course completion %'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'cost_per_hire',name:'Cost per Hire',dept:'HR',cat:'Recruitment',aliases:['cost per hire','cost per recruitment','recruitment cost per hire'],direct:true,agg:'avg',higher:false},
+  {id:'time_to_hire',name:'Time to Hire',dept:'HR',cat:'Recruitment',aliases:['time to hire','time-to-hire','hiring time'],direct:true,agg:'avg',unit:'days',lower:true},
+  {id:'productivity_employee',name:'Productivity per Employee',dept:'HR, Management, Operations',cat:'Productivity',aliases:['productivity per employee','revenue per employee','sales per employee','output per employee','business per employee','profit per employee'],direct:true,agg:'avg',higher:true},
+  // Sales / Business
+  {id:'orders',name:'Number of Orders',dept:'Sales, Business',cat:'Sales',aliases:['orders','number of orders','order count','orders count'],direct:true,agg:'sum',higher:true},
+  {id:'units_sold',name:'Units Sold',dept:'Sales, Business',cat:'Sales',aliases:['units sold','quantity sold','qty sold','units'],direct:true,agg:'sum',higher:true},
+  {id:'average_order_value',name:'Average Order Value',dept:'Sales, Business',cat:'Sales',aliases:['average order value','aov','avg order value'],derived:true,formula:'Revenue ÷ Orders',calc:(ctx)=>ctx.orders?ctx.rev/ctx.orders:null,needs:['revenue','orders'],higher:true},
+  {id:'new_customers',name:'New Customers',dept:'Sales, Marketing, Business',cat:'Customers',aliases:['new customers','new clients','customer additions'],direct:true,agg:'sum',higher:true},
+  {id:'repeat_customers',name:'Repeat Customers',dept:'Sales, Marketing, Business',cat:'Customers',aliases:['repeat customers','returning customers','repeat clients'],direct:true,agg:'sum',higher:true},
+  {id:'conversion_rate',name:'Conversion Rate %',dept:'Sales, Marketing',cat:'Funnel',aliases:['conversion rate','conversion rate %','conversion %','lead conversion %','lead to customer %'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'pipeline_value',name:'Pipeline Value',dept:'Sales, Business',cat:'Pipeline',aliases:['pipeline value','sales pipeline','pipeline amount','opportunity value'],direct:true,agg:'sum',higher:true},
+  {id:'win_rate',name:'Win Rate %',dept:'Sales, Business',cat:'Pipeline',aliases:['win rate','win rate %','deal win rate'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'average_deal_size',name:'Average Deal Size',dept:'Sales, Business',cat:'Pipeline',aliases:['average deal size','avg deal size','average deal value'],direct:true,agg:'avg',higher:true},
+  {id:'sales_cycle',name:'Average Sales Cycle',dept:'Sales, Business',cat:'Pipeline',aliases:['sales cycle','average sales cycle','sales cycle days'],direct:true,agg:'avg',unit:'days',lower:true},
+  {id:'customer_retention',name:'Customer Retention %',dept:'Sales, Marketing, Customer Service',cat:'Customers',aliases:['customer retention','customer retention %'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'cac',name:'Customer Acquisition Cost',dept:'Sales, Marketing',cat:'Customers',aliases:['customer acquisition cost','cac','acquisition cost'],direct:true,agg:'avg',higher:false},
+  {id:'clv',name:'Customer Lifetime Value',dept:'Sales, Marketing',cat:'Customers',aliases:['customer lifetime value','clv','lifetime value'],direct:true,agg:'avg',higher:true},
+  // Marketing
+  {id:'leads',name:'Leads',dept:'Marketing, Sales',cat:'Funnel',aliases:['leads','lead count','marketing leads','total leads'],direct:true,agg:'sum',higher:true},
+  {id:'mql',name:'Marketing Qualified Leads',dept:'Marketing, Sales',cat:'Funnel',aliases:['mql','marketing qualified leads','mqls'],direct:true,agg:'sum',higher:true},
+  {id:'sql',name:'Sales Qualified Leads',dept:'Marketing, Sales',cat:'Funnel',aliases:['sql','sales qualified leads','sqls'],direct:true,agg:'sum',higher:true},
+  {id:'campaign_spend',name:'Campaign Spend',dept:'Marketing',cat:'Campaign',aliases:['campaign spend','marketing spend','campaign cost','ad spend','advertising spend'],direct:true,agg:'sum',higher:false},
+  {id:'campaign_revenue',name:'Campaign Revenue',dept:'Marketing',cat:'Campaign',aliases:['campaign revenue','campaign sales'],direct:true,agg:'sum',higher:true},
+  {id:'roi',name:'Marketing ROI %',dept:'Marketing, Management',cat:'Campaign',aliases:['marketing roi','roi','return on marketing investment'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'roas',name:'ROAS',dept:'Marketing',cat:'Campaign',aliases:['roas','return on ad spend'],direct:true,agg:'avg',ratio:true,higher:true},
+  {id:'cost_per_lead',name:'Cost per Lead',dept:'Marketing',cat:'Funnel',aliases:['cost per lead','cpl'],direct:true,agg:'avg',higher:false},
+  {id:'cost_per_conversion',name:'Cost per Conversion',dept:'Marketing',cat:'Funnel',aliases:['cost per conversion','cpa','cost per acquisition'],direct:true,agg:'avg',higher:false},
+  {id:'impressions',name:'Impressions',dept:'Marketing',cat:'Digital',aliases:['impressions','ad impressions','views served'],direct:true,agg:'sum',higher:true},
+  {id:'clicks',name:'Clicks',dept:'Marketing',cat:'Digital',aliases:['clicks','ad clicks','link clicks'],direct:true,agg:'sum',higher:true},
+  {id:'ctr',name:'CTR %',dept:'Marketing',cat:'Digital',aliases:['ctr','click through rate','click-through rate','ctr %'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'engagement_rate',name:'Engagement Rate %',dept:'Marketing',cat:'Digital',aliases:['engagement rate','engagement rate %','social engagement rate'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'website_visitors',name:'Website Visitors',dept:'Marketing',cat:'Digital',aliases:['website visitors','visitors','unique visitors','site visitors'],direct:true,agg:'sum',higher:true},
+  {id:'bounce_rate',name:'Bounce Rate %',dept:'Marketing',cat:'Digital',aliases:['bounce rate','bounce rate %'],direct:true,agg:'avg',percent:true,lower:true},
+  {id:'email_open_rate',name:'Email Open Rate %',dept:'Marketing',cat:'Email',aliases:['email open rate','email open rate %','open rate'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'email_click_rate',name:'Email Click Rate %',dept:'Marketing',cat:'Email',aliases:['email click rate','email click rate %','email ctr'],direct:true,agg:'avg',percent:true,higher:true},
+  // Operations / Manufacturing
+  {id:'production',name:'Production / Output',dept:'Operations, Manufacturing',cat:'Production',aliases:['production','output','units produced','production quantity','manufacturing output'],direct:true,agg:'sum',higher:true},
+  {id:'production_target',name:'Production Target',dept:'Operations, Manufacturing',cat:'Production',aliases:['production target','output target','production plan'],direct:true,agg:'sum',higher:true},
+  {id:'capacity',name:'Production Capacity',dept:'Operations, Manufacturing',cat:'Efficiency',aliases:['capacity','production capacity','installed capacity'],direct:true,agg:'sum',higher:true},
+  {id:'capacity_utilisation',name:'Capacity Utilisation %',dept:'Operations, Manufacturing',cat:'Efficiency',aliases:['capacity utilisation','capacity utilization','capacity utilisation %','capacity utilization %'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'downtime',name:'Downtime',dept:'Operations, Manufacturing',cat:'Efficiency',aliases:['downtime','machine downtime','downtime hours'],direct:true,agg:'sum',unit:'hours',lower:true},
+  {id:'downtime_pct',name:'Downtime %',dept:'Operations, Manufacturing',cat:'Efficiency',aliases:['downtime %','downtime rate'],direct:true,agg:'avg',percent:true,lower:true},
+  {id:'cost_per_unit',name:'Cost per Unit',dept:'Operations, Manufacturing, Finance',cat:'Cost',aliases:['cost per unit','unit cost','production cost per unit'],direct:true,agg:'avg',higher:false},
+  {id:'rejection_rate',name:'Rejection / Defect Rate %',dept:'Operations, Manufacturing',cat:'Quality',aliases:['rejection rate','rejection rate %','defect rate','defect rate %','rejection %'],direct:true,agg:'avg',percent:true,lower:true},
+  {id:'first_pass_yield',name:'First Pass Yield %',dept:'Operations, Manufacturing',cat:'Quality',aliases:['first pass yield','fpy','first pass yield %'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'rework',name:'Rework %',dept:'Operations, Manufacturing',cat:'Quality',aliases:['rework','rework %','rework rate'],direct:true,agg:'avg',percent:true,lower:true},
+  {id:'on_time_production',name:'On-time Production %',dept:'Operations, Manufacturing',cat:'Delivery',aliases:['on time production','on-time production %','on time production %'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'order_fulfilment',name:'Order Fulfilment %',dept:'Operations, Supply Chain, Customer Service',cat:'Delivery',aliases:['order fulfilment','order fulfillment','order fulfilment %','order fulfillment %'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'cycle_time',name:'Cycle Time',dept:'Operations, Manufacturing',cat:'Efficiency',aliases:['cycle time','production cycle time'],direct:true,agg:'avg',unit:'days',lower:true},
+  {id:'scrap',name:'Scrap',dept:'Operations, Manufacturing',cat:'Quality',aliases:['scrap','scrap quantity','scrap value'],direct:true,agg:'sum',lower:true},
+  {id:'scrap_pct',name:'Scrap %',dept:'Operations, Manufacturing',cat:'Quality',aliases:['scrap %','scrap rate'],direct:true,agg:'avg',percent:true,lower:true},
+  {id:'raw_material',name:'Raw Material',dept:'Manufacturing, Inventory',cat:'Inventory',aliases:['raw material','raw materials','rm stock','raw material stock'],direct:true,agg:'sum',higher:false},
+  {id:'wip',name:'Work in Progress',dept:'Manufacturing, Inventory',cat:'Inventory',aliases:['work in progress','wip','wip stock'],direct:true,agg:'sum'},
+  {id:'finished_goods',name:'Finished Goods',dept:'Manufacturing, Inventory',cat:'Inventory',aliases:['finished goods','finished goods stock','fg stock'],direct:true,agg:'sum'},
+  // Procurement / Supply Chain
+  {id:'supplier_count',name:'Number of Suppliers',dept:'Procurement, Supply Chain',cat:'Suppliers',aliases:['number of suppliers','supplier count','suppliers'],direct:true,agg:'countRows',higher:true},
+  {id:'supplier_lead_time',name:'Supplier Lead Time',dept:'Procurement, Supply Chain',cat:'Suppliers',aliases:['supplier lead time','vendor lead time','lead time'],direct:true,agg:'avg',unit:'days',lower:true},
+  {id:'purchase_price_variance',name:'Purchase Price Variance',dept:'Procurement, Finance',cat:'Cost',aliases:['purchase price variance','ppv','purchase variance'],direct:true,agg:'sum',lower:true},
+  {id:'supplier_otd',name:'Supplier On-time Delivery %',dept:'Procurement, Supply Chain',cat:'Suppliers',aliases:['supplier on time delivery','supplier on-time delivery %','supplier otd','vendor on time delivery'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'supplier_rejection',name:'Supplier Rejection %',dept:'Procurement, Supply Chain',cat:'Quality',aliases:['supplier rejection','supplier rejection %','vendor rejection rate'],direct:true,agg:'avg',percent:true,lower:true},
+  {id:'procurement_savings',name:'Procurement Savings',dept:'Procurement',cat:'Cost',aliases:['procurement savings','purchase savings','cost savings'],direct:true,agg:'sum',higher:true},
+  {id:'contract_compliance',name:'Contract Compliance %',dept:'Procurement',cat:'Compliance',aliases:['contract compliance','contract compliance %'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'pending_po',name:'Pending Purchase Orders',dept:'Procurement',cat:'Orders',aliases:['pending purchase orders','pending po','open purchase orders'],direct:true,agg:'sum',lower:true},
+  // Inventory / Supply Chain
+  {id:'inventory_turnover',name:'Inventory Turnover',dept:'Inventory, Supply Chain, Finance',cat:'Efficiency',aliases:['inventory turnover','stock turnover'],direct:true,agg:'avg',ratio:true,higher:true},
+  {id:'stockout',name:'Stock-out %',dept:'Inventory, Supply Chain',cat:'Inventory',aliases:['stockout','stock-out','stock out %','stockout %'],direct:true,agg:'avg',percent:true,lower:true},
+  {id:'excess_stock',name:'Excess Stock',dept:'Inventory, Supply Chain',cat:'Inventory',aliases:['excess stock','overstock'],direct:true,agg:'sum',lower:true},
+  {id:'slow_moving',name:'Slow Moving Stock',dept:'Inventory, Supply Chain',cat:'Inventory',aliases:['slow moving stock','slow-moving stock'],direct:true,agg:'sum',lower:true},
+  {id:'non_moving',name:'Non-moving Stock',dept:'Inventory, Supply Chain',cat:'Inventory',aliases:['non moving stock','non-moving stock','dead stock'],direct:true,agg:'sum',lower:true},
+  {id:'inventory_accuracy',name:'Inventory Accuracy %',dept:'Inventory, Supply Chain',cat:'Inventory',aliases:['inventory accuracy','inventory accuracy %','stock accuracy'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'warehouse_utilisation',name:'Warehouse Utilisation %',dept:'Inventory, Supply Chain',cat:'Warehouse',aliases:['warehouse utilisation','warehouse utilization','warehouse utilisation %'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'logistics_cost',name:'Logistics Cost',dept:'Supply Chain, Operations',cat:'Logistics',aliases:['logistics cost','logistics expense'],direct:true,agg:'sum',lower:true},
+  {id:'freight_cost',name:'Freight Cost',dept:'Supply Chain, Procurement',cat:'Logistics',aliases:['freight cost','freight expense'],direct:true,agg:'sum',lower:true},
+  {id:'delivery_lead_time',name:'Delivery Lead Time',dept:'Supply Chain',cat:'Delivery',aliases:['delivery lead time','delivery time','shipping lead time'],direct:true,agg:'avg',unit:'days',lower:true},
+  // Customer service
+  {id:'tickets',name:'Total Tickets / Cases',dept:'Customer Service',cat:'Service',aliases:['total tickets','tickets','cases','service tickets','support tickets'],direct:true,agg:'sum',higher:false},
+  {id:'open_tickets',name:'Open Tickets',dept:'Customer Service',cat:'Service',aliases:['open tickets','open cases','pending tickets'],direct:true,agg:'sum',lower:true},
+  {id:'closed_tickets',name:'Closed Tickets',dept:'Customer Service',cat:'Service',aliases:['closed tickets','closed cases','resolved tickets'],direct:true,agg:'sum',higher:true},
+  {id:'resolution_rate',name:'Resolution Rate %',dept:'Customer Service',cat:'Service',aliases:['resolution rate','resolution rate %','ticket resolution %'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'first_response_time',name:'First Response Time',dept:'Customer Service',cat:'Service',aliases:['first response time','first response time hours'],direct:true,agg:'avg',unit:'hours',lower:true},
+  {id:'resolution_time',name:'Average Resolution Time',dept:'Customer Service',cat:'Service',aliases:['average resolution time','resolution time','ticket resolution time'],direct:true,agg:'avg',unit:'hours',lower:true},
+  {id:'sla_compliance',name:'SLA Compliance %',dept:'Customer Service',cat:'Service',aliases:['sla compliance','sla compliance %','sla adherence'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'csat',name:'Customer Satisfaction / CSAT',dept:'Customer Service, Marketing',cat:'Customer',aliases:['csat','customer satisfaction','customer satisfaction score'],direct:true,agg:'avg',higher:true},
+  {id:'nps',name:'NPS',dept:'Customer Service, Marketing, Management',cat:'Customer',aliases:['nps','net promoter score'],direct:true,agg:'avg',higher:true},
+  {id:'complaints',name:'Complaints',dept:'Customer Service',cat:'Customer',aliases:['complaints','customer complaints','complaint count'],direct:true,agg:'sum',lower:true},
+  {id:'complaint_resolution',name:'Complaint Resolution %',dept:'Customer Service',cat:'Customer',aliases:['complaint resolution','complaint resolution %'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'escalations',name:'Escalations',dept:'Customer Service',cat:'Customer',aliases:['escalations','escalated cases'],direct:true,agg:'sum',lower:true},
+  // Projects
+  {id:'projects',name:'Projects',dept:'Project Management, Management',cat:'Projects',aliases:['projects','project count','total projects'],direct:true,agg:'countRows',higher:true},
+  {id:'projects_completed',name:'Projects Completed',dept:'Project Management',cat:'Projects',aliases:['projects completed','completed projects'],direct:true,agg:'sum',higher:true},
+  {id:'projects_delayed',name:'Projects Delayed',dept:'Project Management',cat:'Projects',aliases:['projects delayed','delayed projects'],direct:true,agg:'sum',lower:true},
+  {id:'project_completion',name:'Project Completion %',dept:'Project Management',cat:'Projects',aliases:['project completion','project completion %','completion %'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'schedule_variance',name:'Schedule Variance',dept:'Project Management',cat:'Projects',aliases:['schedule variance','schedule variance days'],direct:true,agg:'sum',lower:true},
+  {id:'cost_variance',name:'Project Cost Variance',dept:'Project Management',cat:'Projects',aliases:['project cost variance','cost variance'],direct:true,agg:'sum',lower:true},
+  {id:'budget_utilisation',name:'Budget Utilisation %',dept:'Project Management, Finance',cat:'Projects',aliases:['budget utilisation','budget utilization','budget utilisation %'],direct:true,agg:'avg',percent:true},
+  {id:'resource_utilisation',name:'Resource Utilisation %',dept:'Project Management, HR, Operations',cat:'Productivity',aliases:['resource utilisation','resource utilization','resource utilisation %'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'task_completion',name:'Task Completion %',dept:'Project Management',cat:'Projects',aliases:['task completion','task completion %'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'overdue_tasks',name:'Overdue Tasks',dept:'Project Management',cat:'Projects',aliases:['overdue tasks','overdue task count'],direct:true,agg:'sum',lower:true},
+  // Banking
+  {id:'deposits',name:'Deposits',dept:'Banking, Finance',cat:'Banking Business',aliases:['deposits','total deposits','deposit business'],direct:true,agg:'sum',higher:true},
+  {id:'casa',name:'CASA',dept:'Banking',cat:'Banking Business',aliases:['casa','casa deposits','current account savings account'],direct:true,agg:'sum',higher:true},
+  {id:'advances',name:'Advances / Loans',dept:'Banking',cat:'Banking Business',aliases:['advances','total advances','loans','loan book','credit outstanding'],direct:true,agg:'sum',higher:true},
+  {id:'credit_growth',name:'Credit Growth %',dept:'Banking',cat:'Banking Business',aliases:['credit growth','credit growth %','advance growth'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'deposit_growth',name:'Deposit Growth %',dept:'Banking',cat:'Banking Business',aliases:['deposit growth','deposit growth %'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'total_business',name:'Total Business',dept:'Banking',cat:'Banking Business',aliases:['total business','total banking business'],direct:true,agg:'sum',higher:true},
+  {id:'cd_ratio',name:'CD Ratio %',dept:'Banking',cat:'Banking Business',aliases:['cd ratio','credit deposit ratio','cd ratio %'],direct:true,agg:'avg',percent:true},
+  {id:'loan_applications',name:'Loan Applications',dept:'Banking',cat:'Credit',aliases:['loan applications','loan application count','applications'],direct:true,agg:'sum',higher:true},
+  {id:'loans_sanctioned',name:'Loans Sanctioned',dept:'Banking',cat:'Credit',aliases:['loans sanctioned','sanctions','sanction count'],direct:true,agg:'sum',higher:true},
+  {id:'sanction_amount',name:'Sanction Amount',dept:'Banking',cat:'Credit',aliases:['sanction amount','sanctioned amount'],direct:true,agg:'sum',higher:true},
+  {id:'disbursement_amount',name:'Disbursement Amount',dept:'Banking',cat:'Credit',aliases:['disbursement amount','amount disbursed','disbursements'],direct:true,agg:'sum',higher:true},
+  {id:'recovery',name:'Recovery',dept:'Banking, Finance',cat:'Credit',aliases:['recovery','loan recovery','collections'],direct:true,agg:'sum',higher:true},
+  {id:'overdues',name:'Overdues',dept:'Banking, Finance',cat:'Credit',aliases:['overdues','overdue amount','overdue loans'],direct:true,agg:'sum',lower:true},
+  {id:'npa',name:'Gross NPA %',dept:'Banking',cat:'Asset Quality',aliases:['gross npa','gross npa %','gnpa'],direct:true,agg:'avg',percent:true,lower:true},
+  {id:'net_npa',name:'Net NPA %',dept:'Banking',cat:'Asset Quality',aliases:['net npa','net npa %','nnpa'],direct:true,agg:'avg',percent:true,lower:true},
+  {id:'collection_efficiency',name:'Collection Efficiency %',dept:'Banking',cat:'Credit',aliases:['collection efficiency','collection efficiency %'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'business_per_employee',name:'Business per Employee',dept:'Banking, Management',cat:'Productivity',aliases:['business per employee','business per staff'],direct:true,agg:'avg',higher:true},
+  {id:'profit_per_employee',name:'Profit per Employee',dept:'Banking, Management',cat:'Productivity',aliases:['profit per employee','profit per staff'],direct:true,agg:'avg',higher:true},
+  {id:'digital_transactions',name:'Digital Transactions',dept:'Banking',cat:'Digital',aliases:['digital transactions','digital transaction count','digital transactions count'],direct:true,agg:'sum',higher:true},
+  {id:'fee_income',name:'Fee Income',dept:'Banking, Finance',cat:'Income',aliases:['fee income','fee based income','commission income'],direct:true,agg:'sum',higher:true}
+];
+
+const KPI_ALIAS_CACHE = new Map();
+function normKpiText(v){ return String(v??'').toLowerCase().replace(/[%₹$€£]/g,'').replace(/[&/\\_-]+/g,' ').replace(/[^a-z0-9 ]+/g,' ').replace(/\\s+/g,' ').trim(); }
+function kpiAliasScore(colName, alias){
+  const c=normKpiText(colName), a=normKpiText(alias); if(!c||!a) return 0;
+  if(c===a) return 1;
+  if(c.includes(a)) return Math.min(.96, .82 + Math.min(.14,a.length/100));
+  const cw=new Set(c.split(' ')), aw=a.split(' '); const hit=aw.filter(x=>cw.has(x)).length;
+  return aw.length?Math.min(.88, hit/aw.length*.82):0;
+}
+function sourceMatchForKpi(def){
+  const cols=STATE.columns||[]; let best=null;
+  cols.forEach(col=>{ const p=STATE.profile[col.name]; if(!p||p.type!=='Number') return;
+    let score=0, alias='';
+    def.aliases.forEach(a=>{const sc=kpiAliasScore(col.name,a); if(sc>score){score=sc;alias=a;}});
+    if(score>0){
+      if(p.role==='Identifier') score*=.15;
+      if(p.isPercentage && def.percent) score=Math.min(1,score+.06);
+      if(!p.isPercentage && def.percent && /%|percent|margin|rate|growth/.test(col.name.toLowerCase())) score+=.03;
+      if(score>.55 && (!best||score>best.score)) best={column:col.name,score,alias};
+    }
+  });
+  return best;
+}
+function detectDepartment(){
+  const names=STATE.columns.map(c=>c.name.toLowerCase()).join(' | ');
+  const scores={HR:0,Finance:0,'Sales / Business':0,Marketing:0,'Operations / Manufacturing':0,Procurement:0,'Supply Chain':0,'Customer Service':0,'Project Management':0,Banking:0,Management:0};
+  const rules={
+    HR:/employee|staff|headcount|salary|attendance|attrition|joining|joiner|leave|training|performance rating|recruit/i,
+    Finance:/revenue|sales|profit|gross profit|net profit|ebitda|debtors|creditors|balance sheet|cash flow|working capital|cogs/i,
+    'Sales / Business':/sales|customer|client|order|deal|pipeline|revenue|conversion|salesperson/i,
+    Marketing:/campaign|lead|mql|sql|impression|click|ctr|marketing|social|email open|roas/i,
+    'Operations / Manufacturing':/production|output|machine|downtime|defect|rejection|scrap|capacity|wip|manufactur/i,
+    Procurement:/supplier|vendor|purchase order|procurement|ppv|contract compliance/i,
+    'Supply Chain':/inventory|warehouse|logistics|freight|delivery|stockout|supply chain/i,
+    'Customer Service':/ticket|complaint|csat|nps|sla|resolution|support|service/i,
+    'Project Management':/project|milestone|task|schedule variance|resource utilisation|resource utilization/i,
+    Banking:/deposit|casa|advance|npa|loan application|sanction|disbursement|branch|cd ratio|banking/i,
+    Management:/target|budget|actual|variance|kpi|achievement/i
+  };
+  Object.entries(rules).forEach(([d,re])=>{if(re.test(names)) scores[d]++;});
+  const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  return sorted[0][1]>0?sorted[0][0]:'Auto Detect';
+}
+function kpiNumberForColumn(col){
+  return STATE.filteredData.map(r=>getNumeric(r,col)).filter(v=>!isNaN(v));
+}
+function kpiAggregate(col,agg){
+  if(agg==='countRows') return STATE.filteredData.length;
+  const nums=kpiNumberForColumn(col); if(!nums.length) return null;
+  if(agg==='avg') return nums.reduce((a,b)=>a+b,0)/nums.length;
+  if(agg==='min') return Math.min(...nums);
+  if(agg==='max') return Math.max(...nums);
+  return nums.reduce((a,b)=>a+b,0);
+}
+function kpiPeriodDays(){
+  const t=timeList()[0]; if(!t) return 365;
+  const dts=STATE.filteredData.map(r=>getDateVal(r,t)).filter(Boolean);
+  if(dts.length>=2){const span=(Math.max(...dts.map(d=>d.getTime()))-Math.min(...dts.map(d=>d.getTime())))/(86400000); if(span>=1)return span;}
+  return 365;
+}
+function buildKpiContext(){
+  const ctx={days:kpiPeriodDays()};
+  const keyToDef={}; KPI_DEFS.forEach(d=>keyToDef[d.id]=d);
+  KPI_DEFS.forEach(def=>{ if(def.direct){const m=getKpiSource(def); ctx[def.id]=m?kpiAggregate(m.column,def.agg):null; ctx[def.id+'_source']=m?m.column:null; }});
+  ctx.rev=ctx.revenue; ctx.gp=ctx.gross_profit; ctx.np=ctx.net_profit; ctx.cogs=ctx.cogs; ctx.debtors=ctx.debtors; ctx.creditors=ctx.creditors; ctx.stock=ctx.stock; ctx.purchases=ctx.purchases; ctx.ca=ctx.current_assets; ctx.cl=ctx.current_liabilities; ctx.ebitda=ctx.ebitda; ctx.contribution=ctx.contribution; ctx.target=ctx.target; ctx.actual=ctx.actual; ctx.orders=ctx.orders;
+  return ctx;
+}
+function deriveTrendKpi(def){
+  const t=timeList()[0]; if(!t) return null;
+  let source=null;
+  const map={revenue_growth:'revenue',profit_growth:'net_profit'}; const id=map[def.id];
+  if(id){ const d=KPI_DEFS.find(x=>x.id===id); source=sourceMatchForKpi(d); }
+  if(!source) return null;
+  const agg=aggregate(STATE.filteredData,t,source.column,'sum').sort((a,b)=>a.key<b.key?-1:1);
+  if(agg.length<2||agg[agg.length-2].value===0)return null;
+  return (agg[agg.length-1].value-agg[agg.length-2].value)/Math.abs(agg[agg.length-2].value);
+}
+function buildUniversalKpis(){
+  const ctx=buildKpiContext(); const found=[];
+  KPI_DEFS.forEach(def=>{
+    let source=def.direct?sourceMatchForKpi(def):null; let value=null; let confidence='low'; let formula=def.formula||'Direct source value';
+    if(def.direct && source){ value=kpiAggregate(source.column,def.agg); confidence=source.score>=.88?'high':'medium'; if(value===null)return; }
+    else if(def.derived){
+      if(def.trend) value=deriveTrendKpi(def); else { try{value=def.calc(ctx);}catch(e){value=null;} }
+      if(value!==null&&value!==undefined&&!isNaN(value)) confidence='high'; else return;
+    } else return;
+    found.push({...def,value,source:source?source.column:null,confidence,formula});
+  });
+  // Deduplicate aliases that map to the same physical source where direct KPI IDs overlap.
+  const seen=new Set(), out=[];
+  found.forEach(k=>{const sig=k.id+'|'+(k.source||'derived'); if(!seen.has(sig)){seen.add(sig);out.push(k);}});
+  return out;
+}
+function fmtKpiValue(k){
+  if(k.percent)return fmtPercent(k.value);
+  if(k.unit==='days'||k.unit==='hours')return fmtNum(k.value,{compact:true})+' '+k.unit;
+  if(k.ratio)return fmtNum(k.value,{decimals:2});
+  return fmtNum(k.value,{compact:true});
+}
+function renderKpiMapping(kpis){
+  const box=document.getElementById('kpiMappingBody'); if(!box)return;
+  const autoDept=detectDepartment(); const dept=STATE.kpiDepartment&&STATE.kpiDepartment!=='Auto Detect'?STATE.kpiDepartment:autoDept; const hint=document.getElementById('kpiDepartmentHint'); if(hint)hint.textContent='Detected area: '+dept+' · '+kpis.length+' KPI(s) available'; const ds=document.getElementById('kpiDepartmentSelect'); if(ds)ds.value=STATE.kpiDepartment||'Auto Detect';
+  if(!kpis.length){box.innerHTML='<div class="kpi-empty">No reliable KPI mappings were found. Review the Data Profile or add a custom mapping.</div>';return;}
+  const opts=STATE.columns.map(c=>`<option value="${escapeHtml(c.name)}">${escapeHtml(c.name)}</option>`).join('');
+  box.innerHTML=`<table class="kpi-mapping-table"><thead><tr><th>KPI</th><th>Department</th><th>Category</th><th>Source column</th><th>Confidence</th><th>Value</th><th>Formula / method</th></tr></thead><tbody>${kpis.map(k=>`<tr><td><strong>${escapeHtml(k.name)}</strong></td><td>${escapeHtml(k.dept)}</td><td>${escapeHtml(k.cat)}</td><td>${k.source?`<select class="kpi-map-select" data-kpi="${escapeHtml(k.id)}"><option value="" ${!(STATE.kpiManualMap&&STATE.kpiManualMap[k.id])?'selected':''}>Auto: ${escapeHtml(k.source)}</option>${STATE.columns.map(c=>`<option value="${escapeHtml(c.name)}" ${(STATE.kpiManualMap&&STATE.kpiManualMap[k.id]===c.name)?'selected':''}>${escapeHtml(c.name)}</option>`).join('')}</select>`:'Calculated'}</td><td><span class="kpi-badge ${k.confidence}">${k.confidence}</span></td><td><strong>${escapeHtml(fmtKpiValue(k))}</strong></td><td>${escapeHtml(k.formula)}</td></tr>`).join('')}</tbody></table>`;
+  box.querySelectorAll('.kpi-map-select').forEach(sel=>sel.addEventListener('change',()=>{
+    const id=sel.dataset.kpi, def=KPI_DEFS.find(d=>d.id===id); if(!def)return;
+    if(sel.value){ if(!STATE.kpiManualMap)STATE.kpiManualMap={}; STATE.kpiManualMap[id]=sel.value; }
+    else if(STATE.kpiManualMap) delete STATE.kpiManualMap[id];
+    renderKPIs();
+  }));
+}
+function getKpiSource(def){
+  if(STATE.kpiManualMap&&STATE.kpiManualMap[def.id]&&STATE.columns.some(c=>c.name===STATE.kpiManualMap[def.id])) return {column:STATE.kpiManualMap[def.id],score:1,alias:'manual'};
+  return sourceMatchForKpi(def);
+}
+function buildUniversalKpisWithManual(){
+  const original=sourceMatchForKpi; const ctx=buildKpiContext(); const found=[];
+  KPI_DEFS.forEach(def=>{
+    let source=def.direct?getKpiSource(def):null, value=null, confidence='low', formula=def.formula||'Direct source value';
+    if(def.direct&&source){value=kpiAggregate(source.column,def.agg);confidence=source.alias==='manual'?'high':source.score>=.88?'high':'medium';if(value===null)return;}
+    else if(def.derived){if(def.trend)value=deriveTrendKpi(def);else{try{value=def.calc(ctx);}catch(e){value=null;}}if(value===null||value===undefined||isNaN(value))return;confidence='high';}
+    else return;
+    found.push({...def,value,source:source?source.column:null,confidence,formula});
+  });
+  return found;
+}
+
 // ---------- 4. KPI CARDS ----------
 function fmtPercent(v, decimals){
   if(v===null||v===undefined||isNaN(v)) return '—';
@@ -1493,57 +1860,67 @@ function outlierCountFor(colName){
   return STATE.settings.outlierMethod==='sigma'? p.outliers3Sigma : p.outliersIQR;
 }
 
+function customKpiAggregate(col,agg){ return agg==='countRows'?STATE.filteredData.length:kpiAggregate(col,agg); }
+function buildCustomKpiResults(){
+  const out=[]; (STATE.customKpis||[]).forEach(k=>{
+    const a=k.a?customKpiAggregate(k.a,k.agg):null, b=k.b?customKpiAggregate(k.b,k.agg):null; let v=null;
+    if(k.op==='direct')v=a; else if(k.op==='add'&&a!==null&&b!==null)v=a+b; else if(k.op==='sub'&&a!==null&&b!==null)v=a-b; else if(k.op==='mul'&&a!==null&&b!==null)v=a*b; else if(k.op==='div'&&a!==null&&b!==null&&b!==0)v=a/b;
+    if(v!==null&&!isNaN(v)) out.push({id:k.id,name:k.name,dept:k.dept||'Custom',cat:'Custom',value:v,source:k.op==='direct'?k.a:(k.a+' '+k.op+' '+k.b),confidence:'high',formula:k.formula,percent:k.unit==='percent',unit:['days','hours'].includes(k.unit)?k.unit:null,ratio:k.unit==='ratio',higher:k.higher});
+  }); return out;
+}
+function openCustomKpiModal(){
+  const cols=STATE.columns.filter(c=>STATE.profile[c.name]&&STATE.profile[c.name].type==='Number');
+  const opts=cols.map(c=>`<option value="${escapeHtml(c.name)}">${escapeHtml(c.name)}</option>`).join('');
+  document.getElementById('customKpiA').innerHTML='<option value="">Select</option>'+opts;
+  document.getElementById('customKpiB').innerHTML='<option value="">None</option>'+opts;
+  document.getElementById('customKpiName').value=''; document.getElementById('customKpiModal').classList.add('open');
+}
+document.getElementById('customKpiBtn').addEventListener('click',()=>{if(!STATE.data.length){showMessage('Load a spreadsheet first, then create a custom KPI.','info');return;}openCustomKpiModal();});
+document.getElementById('saveCustomKpiBtn').addEventListener('click',()=>{
+  const name=document.getElementById('customKpiName').value.trim(), a=document.getElementById('customKpiA').value, b=document.getElementById('customKpiB').value, op=document.getElementById('customKpiOp').value, agg=document.getElementById('customKpiAgg').value, unit=document.getElementById('customKpiUnit').value;
+  if(!name||!a){showMessage('Enter a KPI name and select Source A.','warn');return;}
+  if(op!=='direct'&&!b){showMessage('Select Source B for a calculated KPI.','warn');return;}
+  const sym={direct:'',add:' + ',sub:' − ',mul:' × ',div:' ÷ '}[op];
+  STATE.customKpis=STATE.customKpis||[]; STATE.customKpis.push({id:'custom_'+Date.now(),name,a,b,op,agg,unit,formula:op==='direct'?a:`${a}${sym}${b}`});
+  document.getElementById('customKpiModal').classList.remove('open'); renderKPIs(); showMessage('Custom KPI added to the dashboard.','info');
+});
+
 function renderKPIs(){
-  const rows=STATE.filteredData;
-  const grid=document.getElementById('kpiGrid');
-  const cards=[];
-  cards.push({label:'Total rows', value:rows.length.toLocaleString('en-IN'), sub:STATE.data.length!==rows.length? `of ${STATE.data.length.toLocaleString('en-IN')} total`:''});
-
-  const meas=measuresList().slice(0,3);
-  meas.forEach(m=>{
-    const nums=rows.map(r=>getNumeric(r,m)).filter(v=>!isNaN(v));
-    const isPct=(STATE.profile[m]||{}).isPercentage;
-    const avg=nums.length? nums.reduce((a,b)=>a+b,0)/nums.length : 0;
-    if(isPct){
-      // Summing a column of percentages (e.g. individual growth rates)
-      // produces a number with no real meaning — only the average does.
-      cards.push({label:'Average '+m, value:fmtPercent(avg), sub:nums.length? `across ${nums.length.toLocaleString('en-IN')} rows`:'', measure:m});
-    } else {
-      const sum=nums.reduce((a,b)=>a+b,0);
-      cards.push({label:'Total '+m, value:fmtNum(sum,{compact:true}), sub:'avg '+fmtNum(avg,{compact:true}), measure:m});
-    }
+  const grid=document.getElementById('kpiGrid'); if(!grid)return;
+  const kpis=buildUniversalKpisWithManual().concat(buildCustomKpiResults());
+  const showAll=!!STATE.showAllKpis;
+  const ranked=kpis.sort((a,b)=>{
+    const pr={high:3,medium:2,low:1};
+    const dept=STATE.kpiDepartment&&STATE.kpiDepartment!=='Auto Detect'?STATE.kpiDepartment:detectDepartment();
+    const da=(a.dept||'').includes(dept)?2:0, db=(b.dept||'').includes(dept)?2:0;
+    return (db+pr[b.confidence])-(da+pr[a.confidence]);
   });
-
-  const dims=dimensionsList().concat(highCardList());
-  if(dims.length){
-    const primary=dims[0];
-    const uniq=new Set(rows.map(r=>r[primary]).filter(v=>v!==null&&v!==undefined&&v!=='')).size;
-    cards.push({label:'Unique '+primary, value:uniq.toLocaleString('en-IN'), sub:''});
-  }
-  const tcols=timeList();
-  if(tcols.length){
-    const t=tcols[0];
-    const dts=rows.map(r=>getDateVal(r,t)).filter(Boolean);
-    if(dts.length){
-      const min=new Date(Math.min(...dts.map(d=>d.getTime())));
-      const max=new Date(Math.max(...dts.map(d=>d.getTime())));
-      cards.push({label:t+' range', value:formatDate(min)+' – '+formatDate(max), sub:''});
-    }
-  }
-  grid.innerHTML=cards.slice(0,6).map((c,i)=>`
-    <div class="kpi-card">
-      <div class="kpi-value">${c.value}</div>
-      <div class="kpi-label">${escapeHtml(c.label)}</div>
-      ${c.sub?`<div class="kpi-sub">${escapeHtml(c.sub)}</div>`:''}
-      ${c.measure?`<button type="button" class="kpi-explain" data-measure="${escapeHtml(c.measure)}">🔍 Explain</button>`:''}
+  const visible=showAll?ranked:ranked.slice(0,10);
+  if(!visible.length){grid.innerHTML='<div class="kpi-empty">No reliable KPIs identified from the current data. Use Data Profile to review detected columns.</div>';} else {
+    grid.innerHTML=visible.map(k=>`<div class="kpi-card ${k.derived?'kpi-derived':''} ${k.confidence==='low'?'kpi-warning':''}">
+      <div class="kpi-value">${escapeHtml(fmtKpiValue(k))}</div>
+      <div class="kpi-label">${escapeHtml(k.name)}</div>
+      <div class="kpi-meta">${k.source?'Source: '+escapeHtml(k.source):'Calculated from available source columns'} · ${escapeHtml(k.confidence)} confidence</div>
+      <div class="kpi-formula">${escapeHtml(k.formula||'Direct source value')}</div>
+      <button type="button" class="kpi-explain" data-kpi="${escapeHtml(k.id)}">🔍 Explain</button>
     </div>`).join('');
-  grid.querySelectorAll('.kpi-explain').forEach(btn=>{
-    btn.addEventListener('click',()=>showExplainPopover(btn, btn.dataset.measure, null));
-  });
+    grid.querySelectorAll('.kpi-explain').forEach(btn=>btn.addEventListener('click',()=>{
+      const k=ranked.find(x=>x.id===btn.dataset.kpi); if(!k)return;
+      showKpiExplanation(btn,k);
+    }));
+  }
+  renderKpiMapping(ranked);
   renderExecutiveInsights();
   renderFinancialIntelligence();
 }
-
+function showKpiExplanation(anchor,k){
+  if(_explainPopover)_explainPopover.remove();
+  const pop=document.createElement('div'); pop.className='ask-msg bot'; pop.style.cssText='position:absolute;z-index:150;max-width:360px;box-shadow:var(--shadow-hover);margin-top:6px;';
+  const direction=k.higher?'Higher is generally better':k.lower?'Lower is generally better':'';
+  pop.innerHTML=`<strong>${escapeHtml(k.name)}</strong><br>Value: ${escapeHtml(fmtKpiValue(k))}<br>${k.source?'Source column: '+escapeHtml(k.source):'Derived KPI'}<br>Formula: ${escapeHtml(k.formula||'Direct source value')}${direction?'<br>'+direction:''}<div style="text-align:right;margin-top:8px"><button type="button" style="background:none;border:none;color:var(--muted);font-size:11px;cursor:pointer" id="closeKpiPop">Close</button></div>`;
+  document.body.appendChild(pop); const r=anchor.getBoundingClientRect(); pop.style.left=Math.min(r.left+window.scrollX,window.innerWidth-376)+'px'; pop.style.top=r.bottom+window.scrollY+4+'px'; _explainPopover=pop;
+  document.getElementById('closeKpiPop').addEventListener('click',()=>{pop.remove();_explainPopover=null;});
+}
 // ---------- EXPLAIN (shared by KPI cards and charts) ----------
 // Reuses the same contributor/ranking analysis Ask Your Data uses, surfaced
 // as a one-tap popover instead of requiring a typed question. Always states
@@ -2821,7 +3198,11 @@ function buildDashboardConfig(){
     headerRow: STATE.headerRow,
     settings: STATE.settings,
     filters,
-    charts: STATE.charts.map(c=>({...c.spec}))
+    charts: STATE.charts.map(c=>({...c.spec})),
+    kpiManualMap: STATE.kpiManualMap || {},
+    showAllKpis: !!STATE.showAllKpis,
+    kpiDepartment: STATE.kpiDepartment || 'Auto Detect',
+    customKpis: STATE.customKpis || []
   };
 }
 document.getElementById('saveConfigBtn').addEventListener('click',()=>{
@@ -2882,6 +3263,10 @@ function applyDashboardConfig(config){
   const currentCols=new Set(STATE.columns.map(c=>c.name));
   // settings
   if(config.settings) STATE.settings={...STATE.settings, ...config.settings};
+  if(config.kpiManualMap) STATE.kpiManualMap={...config.kpiManualMap};
+  if(typeof config.showAllKpis==='boolean') STATE.showAllKpis=config.showAllKpis;
+  if(config.kpiDepartment) STATE.kpiDepartment=config.kpiDepartment;
+  if(Array.isArray(config.customKpis)) STATE.customKpis=config.customKpis;
   // filters — only apply to columns/values that still exist
   if(config.filters){
     Object.entries(config.filters).forEach(([col,fc])=>{
@@ -3012,7 +3397,8 @@ const compareModal=document.getElementById('compareModal');
 const reportModal=document.getElementById('reportModal');
 const loadConfigModal=document.getElementById('loadConfigModal');
 const cleanModal=document.getElementById('cleanModal');
-const allModals=[addChartModal,pivotModal,settingsModal,helpModal,compareModal,reportModal,loadConfigModal,cleanModal];
+const customKpiModal=document.getElementById('customKpiModal');
+const allModals=[addChartModal,pivotModal,settingsModal,helpModal,compareModal,reportModal,loadConfigModal,cleanModal,customKpiModal];
 document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>{
   allModals.forEach(m=>m.classList.remove('open'));
 }));
