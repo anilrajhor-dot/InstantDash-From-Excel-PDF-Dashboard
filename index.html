@@ -5,10 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 <title>InstantDash — Excel to Dashboard v3.0.0</title>
 <meta name="author" content="Developed by Anil Sharma, Former General Manager, Central Bank of India">
-<meta name="application-name" content="InstantDash v3.3.3">
+<meta name="application-name" content="InstantDash v3.4.0">
 <meta name="description" content="InstantDash — Excel to Dashboard, developed by Anil Sharma">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js';document.head.appendChild(s);"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';document.head.appendChild(s);"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';document.head.appendChild(s);"></script>
 <style>
@@ -381,7 +382,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
   .datatable-wrap{max-height:60vh;}
 }
 
-/* v3.3.3 — cleaner upload state and PDF preview */
+/* v3.4.0 — cleaner upload state and PDF preview */
 #messages:empty{display:none;}
 #messages{margin:12px auto 0;max-width:900px;}
 #messages .msg-banner{border-radius:10px;padding:10px 13px;font-size:13px;line-height:1.4;}
@@ -413,7 +414,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 <body>
 
 <div class="topbar">
-  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v3.3.3</span></div>
+  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v3.4.0</span></div>
   <div class="topbar-right">
     <div class="privacy-badge">🔒 <span class="txt">Processed locally — not uploaded to any server</span></div>
     <button class="icon-btn" id="shareTopBtn" title="Share dashboard" aria-label="Share dashboard as an image" style="display:none;">📤</button>
@@ -452,11 +453,11 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
       
       <span id="pdfPageInfo" style="font-size:12px;font-weight:700;min-width:78px;text-align:center;">Page 1</span>
       
-      <button class="btn secondary small" id="pdfOpenBtn" type="button">↗ Open Full PDF</button>
+      <button class="btn secondary small" id="pdfDashboardBtn" type="button">📊 Prepare Dashboard</button><button class="btn secondary small" id="pdfOpenBtn" type="button">↗ Open Full PDF</button>
       <button class="btn secondary small" id="pdfBackBtn" type="button">← Back</button>
     </div>
     <div class="pdf-viewer" id="pdfViewer"><div id="pdfPages" class="pdf-pages" aria-label="PDF status"></div></div>
-    <div class="pdf-note">All PDF pages can be viewed with Previous/Next. “Full PDF” opens the browser's native PDF viewer, which is the best option for continuous scrolling on iPhone. PDF table extraction remains a separate verified step.</div>
+    <div class="pdf-note">PDF can be opened in full. <strong>Prepare Dashboard</strong> extracts text/tables from text-based PDFs, maps recognised KPIs from the KPI Library, and builds the dashboard locally.</div>
   </div>
 
   <!-- LOADING -->
@@ -574,7 +575,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
     </div>
   </div>
 
-  <footer class="app-footer">InstantDash <strong>v3.3.3</strong> · Excel / CSV / PDF upload · InstantDash — developed by Anil Sharma · runs 100% locally in your browser</footer>
+  <footer class="app-footer">InstantDash <strong>v3.4.0</strong> · Excel / CSV / PDF upload · InstantDash — developed by Anil Sharma · runs 100% locally in your browser</footer>
 </div>
 
 <!-- Ask Your Data floating widget -->
@@ -1035,6 +1036,105 @@ document.getElementById('showAllKpisBtn').addEventListener('click',()=>{
   renderKPIs();
 });
 
+
+async function loadPdfJs(){
+  return await waitFor(()=>window.pdfjsLib && typeof window.pdfjsLib.getDocument==='function',12000);
+}
+function pdfPeriodFromText(text){
+  const m=String(text||'').match(/\b(?:Q[1-4]\s*FY\s*\d{2,4}|FY\s*\d{2,4}|Q[1-4]\s*\d{4})\b/i);
+  return m?m[0].replace(/\s+/g,' ').trim():'PDF';
+}
+function pdfNumberTokens(text){
+  const out=[]; const re=/(?:₹|\$|€|£)?\s*\(?-?\d[\d,]*(?:\.\d+)?\)?\s*%?/g;
+  let m;
+  while((m=re.exec(String(text||'')))!==null){
+    const raw=m[0].trim();
+    const n=parseCleanNumber(raw);
+    if(!isNaN(n)) out.push({raw,n,index:m.index});
+  }
+  return out;
+}
+function pdfKpiMatches(line){
+  const txt=String(line||'');
+  const matches=[];
+  KPI_DEFS.filter(d=>d.direct && Array.isArray(d.aliases)).forEach(def=>{
+    (def.aliases||[]).slice().sort((a,b)=>String(b).length-String(a).length).some(alias=>{
+      const a=String(alias||'').trim();
+      if(!a)return false;
+      const re=new RegExp('(?:^|[^A-Za-z0-9])'+a.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'(?:$|[^A-Za-z0-9])','i');
+      const m=txt.match(re);
+      if(m){matches.push({def,alias,start:m.index+(m[0].length-a.length)});return true;}
+      return false;
+    });
+  });
+  const seen=new Set();
+  return matches.filter(x=>{if(seen.has(x.def.id))return false;seen.add(x.def.id);return true;});
+}
+async function extractPdfDashboard(file){
+  const ready=await loadPdfJs();
+  if(!ready) throw new Error('PDF extraction engine could not load. Please check your internet connection and try again.');
+  const buf=await file.arrayBuffer();
+  const pdf=await pdfjsLib.getDocument({data:buf}).promise;
+  const rows=[];
+  const foundIds=new Set();
+
+  for(let pageNo=1;pageNo<=pdf.numPages;pageNo++){
+    const page=await pdf.getPage(pageNo);
+    const content=await page.getTextContent();
+    const items=(content.items||[]).map(it=>({
+      text:String(it.str||'').trim(),
+      x:Number(it.transform?.[4]||0),
+      y:Number(it.transform?.[5]||0)
+    })).filter(it=>it.text);
+    const lines=[];
+    items.sort((a,b)=>b.y-a.y || a.x-b.x);
+    items.forEach(it=>{
+      let line=lines.find(l=>Math.abs(l.y-it.y)<3);
+      if(!line){line={y:it.y,items:[]};lines.push(line);}
+      line.items.push(it);
+    });
+    lines.sort((a,b)=>b.y-a.y);
+    const pageText=lines.map(l=>l.items.sort((a,b)=>a.x-b.x).map(x=>x.text).join(' ')).filter(Boolean);
+
+    pageText.forEach(line=>{
+      const matches=pdfKpiMatches(line);
+      matches.forEach(({def,alias})=>{
+        const aliasPos=line.toLowerCase().indexOf(String(alias).toLowerCase());
+        const after=aliasPos>=0?line.slice(aliasPos+String(alias).length):line;
+        let nums=pdfNumberTokens(after);
+        if(!nums.length) nums=pdfNumberTokens(line);
+        if(!nums.length)return;
+        const val=nums[0].n;
+        const row={Period:pdfPeriodFromText(line),Page:pageNo,'Source Text':line};
+        KPI_DEFS.filter(d=>d.direct).forEach(d=>row[d.name]=null);
+        row[def.name]=val;
+        row.__pdfKpiId=def.id;
+        rows.push(row);
+        foundIds.add(def.id);
+      });
+    });
+  }
+
+  if(!rows.length){
+    // Fallback: create a compact extracted-text dataset so the user can see
+    // what was read even when no library KPI alias was found.
+    const fallback=[];
+    for(let pageNo=1;pageNo<=pdf.numPages;pageNo++){
+      const page=await pdf.getPage(pageNo);
+      const content=await page.getTextContent();
+      const text=(content.items||[]).map(x=>String(x.str||'').trim()).filter(Boolean).join(' ');
+      if(text) fallback.push({Page:pageNo,Text:text.slice(0,5000)});
+    }
+    STATE.pdfExtractedText=fallback;
+    throw new Error('PDF was read, but no recognised KPI was found. The PDF may be scanned/image-based or use labels not yet in the KPI Library. The extracted text is retained for review.');
+  }
+
+  const kpiNames=KPI_DEFS.filter(d=>d.direct).map(d=>d.name);
+  const headers=['Period','Page','Source Text',...kpiNames];
+  const aoa=[headers];
+  rows.forEach(r=>aoa.push(headers.map(h=>r[h]===undefined?null:r[h])));
+  return {aoa,pages:pdf.numPages,found:foundIds.size};
+}
 async function handleFile(file){
   clearMessages();
   const isPdf = /\.pdf$/i.test(file.name) || file.type === 'application/pdf';
@@ -1043,28 +1143,51 @@ async function handleFile(file){
     const pages=document.getElementById('pdfPages');
     const name=document.getElementById('pdfName');
     const openBtn=document.getElementById('pdfOpenBtn');
+    const dashBtn=document.getElementById('pdfDashboardBtn');
     const pageInfo=document.getElementById('pdfPageInfo');
     const url=URL.createObjectURL(file);
 
     STATE.pdfObjectUrl=url;
     name.textContent='📕 '+file.name;
-    pageInfo.textContent='Full document';
-
+    pageInfo.textContent='PDF selected';
     emptyState.style.display='none';
     loadingState.style.display='none';
     document.getElementById('appContent').style.display='none';
     document.getElementById('askFab').style.display='none';
     panel.style.display='block';
 
-    pages.innerHTML='<div class="pdf-loading">PDF selected.<br><br>Tap <strong>↗ Open Full PDF</strong> to open the complete document.</div>';
+    pages.innerHTML='<div class="pdf-loading">PDF selected.<br><br>Tap <strong>📊 Prepare Dashboard</strong> to extract recognised KPIs, or <strong>↗ Open Full PDF</strong> to read the complete document.</div>';
 
-    // IMPORTANT: window.open() here is not used because the file-picker
-    // callback is not considered a user gesture by iPhone Safari. That was
-    // causing "PDF is ready. Tap “Open Full PDF” to view all pages."
-    // The actual navigation happens only when the user taps Full PDF.
     openBtn.onclick=(ev)=>{
       ev.preventDefault();
       window.location.href=url;
+    };
+
+    dashBtn.onclick=async()=>{
+      dashBtn.disabled=true;
+      pageInfo.textContent='Extracting…';
+      pages.innerHTML='<div class="pdf-loading">Reading PDF pages and identifying KPI values…<br><br>Please wait.</div>';
+      try{
+        const result=await extractPdfDashboard(file);
+        STATE.sheetName='PDF';
+        STATE.rawRows=result.aoa;
+        STATE.workbook=null;
+        STATE.headerRow=0;
+        // Build the same dashboard used by Excel/CSV from the normalised PDF rows.
+        buildFromHeaderRow(0);
+        pageInfo.textContent=`Dashboard · ${result.pages} pages · ${result.found} KPIs`;
+        panel.style.display='none';
+        if(STATE.pdfObjectUrl){ URL.revokeObjectURL(STATE.pdfObjectUrl); STATE.pdfObjectUrl=null; }
+        document.getElementById('askFab').style.display='flex';
+        showMessage(`PDF dashboard prepared from ${result.found} recognised KPI(s) across ${result.pages} page(s). Values are sourced from the PDF text and should be verified against the source page.`, 'info');
+      }catch(err){
+        console.error(err);
+        pageInfo.textContent='PDF extraction';
+        pages.innerHTML='<div class="pdf-loading">'+escapeHtml(err.message)+'</div>';
+        showMessage(err.message,'warn');
+      }finally{
+        dashBtn.disabled=false;
+      }
     };
 
     document.getElementById('pdfBackBtn').onclick=()=>{
@@ -1073,7 +1196,7 @@ async function handleFile(file){
       if(STATE.pdfObjectUrl){ URL.revokeObjectURL(STATE.pdfObjectUrl); STATE.pdfObjectUrl=null; }
       emptyState.style.display='block';
       clearMessages();
-      pageInfo.textContent='Full document';
+      pageInfo.textContent='PDF selected';
     };
     return;
   }
@@ -2809,10 +2932,10 @@ function chooseAndBuildCharts(){
   const aggFor=m=> (STATE.profile[m]||{}).isPercentage ? 'avg' : 'sum';
   const verbFor=m=> (STATE.profile[m]||{}).isPercentage ? 'Average' : 'Total';
 
-  // 1. Date + measure -> line over time (auto grain)
+  // 1. Date + measure -> DONUT by default; line remains available manually
   if(times.length && measures.length){
-    specs.push({kind:'line', x:times[0], y:measures[0], agg:aggFor(measures[0]), title:`${verbFor(measures[0])} ${measures[0]} by ${times[0]}`});
-    if(measures[1]) specs.push({kind:'line', x:times[0], y:measures[1], agg:aggFor(measures[1]), title:`${verbFor(measures[1])} ${measures[1]} by ${times[0]}`});
+    specs.push({kind:'doughnut', x:times[0], y:measures[0], agg:aggFor(measures[0]), title:`${verbFor(measures[0])} ${measures[0]} by ${times[0]}`, sort:'desc'});
+    if(measures[1]) specs.push({kind:'doughnut', x:times[0], y:measures[1], agg:aggFor(measures[1]), title:`${verbFor(measures[1])} ${measures[1]} by ${times[0]}`, sort:'desc'});
   }
   // 2. Dimension + measure -> bar sorted desc
   dims.slice(0,2).forEach((d,i)=>{
@@ -2821,12 +2944,12 @@ function chooseAndBuildCharts(){
       specs.push({kind:'doughnut', x:d, y:m, agg:aggFor(m), title:`${verbFor(m)} ${m} by ${d}`, sort:'desc'});
     }
   });
-  // 3. Small-category dimension -> BAR by default. Donut remains available manually.
+  // 3. Small-category dimension -> DONUT by default.
   dims.filter(d=>STATE.profile[d].unique>=2 && STATE.profile[d].unique<=6).slice(0,1).forEach(d=>{
     const m=measures.find(mm=>!(STATE.profile[mm]||{}).isPercentage) || measures[0];
     specs.push({kind:'doughnut', x:d, y:m||null, agg: m?'sum':'count', title: m? `${verbFor(m)} ${m} by ${d}`:`Record count by ${d}`, sort:'desc'});
   });
-  // 4. High-cardinality dim + measure -> top10 horizontal bar
+  // 4. High-cardinality dim + measure -> DONUT by default
   if(highCards.length && measures.length){
     const m=measures[0];
     specs.push({kind:'doughnut', x:highCards[0], y:m, agg:aggFor(m), title:`Top ${STATE.settings.maxCategories} ${highCards[0]} by ${verbFor(m)} ${m}`, top10:true, horizontal:true});
