@@ -381,7 +381,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
   .datatable-wrap{max-height:60vh;}
 }
 
-/* v3.2.6 — cleaner upload state and PDF preview */
+/* v3.2.7 — cleaner upload state and PDF preview */
 #messages:empty{display:none;}
 #messages{margin:12px auto 0;max-width:900px;}
 #messages .msg-banner{border-radius:10px;padding:10px 13px;font-size:13px;line-height:1.4;}
@@ -413,7 +413,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 <body>
 
 <div class="topbar">
-  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v3.2.6</span></div>
+  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v3.2.7</span></div>
   <div class="topbar-right">
     <div class="privacy-badge">🔒 <span class="txt">Processed locally — not uploaded to any server</span></div>
     <button class="icon-btn" id="shareTopBtn" title="Share dashboard" aria-label="Share dashboard as an image" style="display:none;">📤</button>
@@ -574,7 +574,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
     </div>
   </div>
 
-  <footer class="app-footer">InstantDash <strong>v3.2.6</strong> · Excel / CSV / PDF upload · InstantDash — developed by Anil Sharma · runs 100% locally in your browser</footer>
+  <footer class="app-footer">InstantDash <strong>v3.2.7</strong> · Excel / CSV / PDF upload · InstantDash — developed by Anil Sharma · runs 100% locally in your browser</footer>
 </div>
 
 <!-- Ask Your Data floating widget -->
@@ -996,8 +996,9 @@ const loadingState=document.getElementById('loadingState');
 const loadingText=document.getElementById('loadingText');
 const appContent=document.getElementById('appContent');
 
-document.getElementById('browseBtn').addEventListener('click',()=>fileInput.click());
+document.getElementById('browseBtn').addEventListener('click',()=>{ fileInput.value=''; fileInput.click(); });
 fileInput.addEventListener('change',e=>{if(e.target.files[0]) handleFile(e.target.files[0]);});
+fileInput.addEventListener('cancel',()=>{});
 
 ['dragover','dragenter'].forEach(ev=>document.body.addEventListener(ev,e=>{
   e.preventDefault(); emptyState.classList.add('drag');
@@ -1086,20 +1087,6 @@ async function handleFile(file){
     openBtn.onclick=()=>window.open(url,'_blank','noopener');
     prevBtn.onclick=()=>showPdfPage(STATE.pdfPage-1);
     nextBtn.onclick=()=>showPdfPage(STATE.pdfPage+1);
-    document.getElementById('pdfBackBtn').onclick=()=>{
-      panel.style.display='none';
-      frame.src='';
-      if(STATE.pdfObjectUrl){ URL.revokeObjectURL(STATE.pdfObjectUrl); STATE.pdfObjectUrl=null; }
-      emptyState.style.display='block';
-      clearMessages();
-    };
-    return;
-  }
-  emptyState.style.display='none';
-    loadingState.style.display='none';
-    document.getElementById('appContent').style.display='none';
-    panel.style.display='block';
-    openBtn.onclick=()=>window.open(url,'_blank','noopener');
     document.getElementById('pdfBackBtn').onclick=()=>{
       panel.style.display='none';
       frame.src='';
