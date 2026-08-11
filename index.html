@@ -562,10 +562,17 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
       </select></label>
       <label>Chart type<select id="bType">
         <option value="bar">Bar</option><option value="line">Line</option>
-        <option value="doughnut">Donut</option><option value="scatter">Scatter</option>
+        <option value="area">Area</option><option value="doughnut">Donut</option>
+        <option value="scatter">Scatter</option><option value="stacked">Stacked bar</option>
+        <option value="stacked100">100% stacked</option><option value="combo">Combo</option>
+        <option value="waterfall">Waterfall</option><option value="funnel">Funnel</option>
+        <option value="gauge">Gauge</option><option value="heatmap">Heatmap</option>
         <option value="horizontalBar">Horizontal bar</option>
       </select></label>
     </div>
+    <p style="font-size:12px;color:var(--muted);margin:10px 0 0;">
+      Advanced charts: Area highlights trends; Stacked/100% Stacked show composition; Combo compares two measures; Waterfall shows sequential movement; Funnel shows stages; Gauge shows target-style progress; Heatmap shows category-by-category intensity.
+    </p>
     <div style="text-align:right; margin-top:16px;">
       <button class="btn" id="buildChartBtn">Add chart to dashboard</button>
     </div>
@@ -2743,7 +2750,28 @@ function chooseAndBuildCharts(){
     const m=measures.find(mm=>!(STATE.profile[mm]||{}).isPercentage) || measures[0]; // stacking percentages isn't meaningful either
     specs.push({kind:'stacked', x:dims[0], stack:dims[1], y:m, agg:'sum', title:`${m} by ${dims[0]} & ${dims[1]}`});
   }
-  // 8. Only text columns, no measures -> frequency counts
+  // 8. Additional advanced recommendations
+  // Area chart for a time-series measure: visually emphasises cumulative movement.
+  if(times.length && measures.length>=2){
+    specs.push({kind:'area', x:times[0], y:measures[0], agg:aggFor(measures[0]), title:`Trend area — ${measures[0]} by ${times[0]}`});
+  }
+  // Combo chart for two measures with a common period/category axis.
+  if((times.length || dims.length) && measures.length>=2){
+    const gx = times[0] || dims[0];
+    specs.push({kind:'combo', x:gx, y:measures[0], y2:measures[1], agg:aggFor(measures[0]), agg2:aggFor(measures[1]), title:`${measures[0]} and ${measures[1]} by ${gx}`});
+  }
+  // 100% stacked composition when two dimensions and a measure exist.
+  if(dims.length>=2 && measures.length){
+    const m=measures.find(mm=>!(STATE.profile[mm]||{}).isPercentage) || measures[0];
+    specs.push({kind:'stacked100', x:dims[0], stack:dims[1], y:m, agg:'sum', title:`100% composition of ${m} by ${dims[0]} & ${dims[1]}`});
+  }
+  // Heatmap for category x category x measure.
+  if(dims.length>=2 && measures.length){
+    const m=measures.find(mm=>!(STATE.profile[mm]||{}).isPercentage) || measures[0];
+    specs.push({kind:'heatmap', x:dims[0], stack:dims[1], y:m, agg:'sum', title:`Heatmap — ${m} by ${dims[0]} & ${dims[1]}`});
+  }
+
+  // 9. Only text columns, no measures -> frequency counts
   if(measures.length===0){
     (dims.length?dims:highCards).slice(0,4).forEach(d=>{
       specs.push({kind:'bar', x:d, y:null, agg:'count', title:`Row count by ${d}`, top10: STATE.profile[d].role==='HighCard'});
@@ -2786,8 +2814,16 @@ function createChartCard(spec, custom){
       <select class="ctrlType" aria-label="Chart type">
         <option value="bar" ${spec.kind==='bar'?'selected':''}>Bar</option>
         <option value="line" ${spec.kind==='line'?'selected':''}>Line</option>
+        <option value="area" ${spec.kind==='area'?'selected':''}>Area</option>
         <option value="doughnut" ${spec.kind==='doughnut'?'selected':''}>Donut</option>
         <option value="scatter" ${spec.kind==='scatter'?'selected':''}>Scatter</option>
+        <option value="stacked">Stacked bar</option>
+        <option value="stacked100" ${spec.kind==='stacked100'?'selected':''}>100% stacked</option>
+        <option value="combo" ${spec.kind==='combo'?'selected':''}>Combo</option>
+        <option value="waterfall" ${spec.kind==='waterfall'?'selected':''}>Waterfall</option>
+        <option value="funnel" ${spec.kind==='funnel'?'selected':''}>Funnel</option>
+        <option value="gauge" ${spec.kind==='gauge'?'selected':''}>Gauge</option>
+        <option value="heatmap" ${spec.kind==='heatmap'?'selected':''}>Heatmap</option>
       </select>
       <select class="ctrlMeasure" aria-label="Measure">${measOptions}</select>
       <select class="ctrlDim" aria-label="Group by">${dimOptions}</select>
@@ -2854,6 +2890,50 @@ function buildChartDataset(spec){
     });
     return {type:'bar', labels:xTop, datasets, stacked:true};
   }
+  if(spec.kind==='area'){
+    let agg=aggregate(rows,spec.x,spec.y,spec.agg||'sum');
+    if((STATE.profile[spec.x]||{}).type==='Date') agg.sort((a,b)=>a.key<b.key?-1:1);
+    return {type:'line',labels:agg.map(a=>a.key),datasets:[{label:spec.y,data:agg.map(a=>a.value),borderColor:cssVar('--rust'),fillColor:'rgba(194,92,61,.18)'}],area:true,isPercentage:!!(STATE.profile[spec.y]||{}).isPercentage};
+  }
+  if(spec.kind==='combo'){
+    let a=aggregate(rows,spec.x,spec.y,spec.agg||'sum'), b=aggregate(rows,spec.x,spec.y2,spec.agg2||'sum');
+    const keys=[...new Set([...a.map(o=>o.key),...b.map(o=>o.key)])];
+    if((STATE.profile[spec.x]||{}).type==='Date') keys.sort();
+    const ma=new Map(a.map(o=>[o.key,o.value])), mb=new Map(b.map(o=>[o.key,o.value]));
+    return {type:'combo',labels:keys,datasets:[
+      {label:spec.y,data:keys.map(k=>ma.get(k)||0),backgroundColor:cssVar('--amber')},
+      {label:spec.y2,data:keys.map(k=>mb.get(k)||0),borderColor:cssVar('--rust')}
+    ]};
+  }
+  if(spec.kind==='stacked100'){
+    const stackVals=[...new Set(rows.map(r=>r[spec.stack]).filter(v=>v!==null&&v!==undefined&&v!==''))].map(String).slice(0,8);
+    const xVals=[...new Set(rows.map(r=>r[spec.x]).filter(v=>v!==null&&v!==undefined&&v!==''))].map(String).slice(0,15);
+    const raw=stackVals.map(sv=>xVals.map(xv=>rows.filter(r=>String(r[spec.x])===xv&&String(r[spec.stack])===sv).reduce((a,r)=>a+(getNumeric(r,spec.y)||0),0)));
+    const totals=xVals.map((_,i)=>raw.reduce((a,row)=>a+row[i],0)||1);
+    const datasets=stackVals.map((sv,si)=>({label:sv,data:xVals.map((_,i)=>raw[si][i]/totals[i]*100),backgroundColor:PALETTE[si%PALETTE.length]}));
+    return {type:'bar',labels:xVals,datasets,stacked:true,isPercentage:true};
+  }
+  if(spec.kind==='waterfall'){
+    let agg=aggregate(rows,spec.x,spec.y,spec.agg||'sum');
+    if((STATE.profile[spec.x]||{}).type==='Date') agg.sort((a,b)=>a.key<b.key?-1:1);
+    return {type:'waterfall',labels:agg.map(a=>a.key),datasets:[{label:spec.y,data:agg.map(a=>a.value)}]};
+  }
+  if(spec.kind==='funnel'){
+    let agg=aggregate(rows,spec.x,spec.y,spec.agg||'sum').sort((a,b)=>b.value-a.value);
+    return {type:'funnel',labels:agg.map(a=>a.key),datasets:[{label:spec.y,data:agg.map(a=>a.value)}]};
+  }
+  if(spec.kind==='gauge'){
+    let agg=aggregate(rows,spec.x,spec.y,spec.agg||'avg');
+    const value=agg.length?agg.reduce((a,b)=>a+b.value,0)/agg.length:0;
+    return {type:'gauge',value,label:spec.y,max:100,isPercentage:!!(STATE.profile[spec.y]||{}).isPercentage};
+  }
+  if(spec.kind==='heatmap'){
+    const xs=[...new Set(rows.map(r=>r[spec.x]).filter(v=>v!==null&&v!==undefined&&v!==''))].map(String).slice(0,12);
+    const ys=[...new Set(rows.map(r=>r[spec.stack]).filter(v=>v!==null&&v!==undefined&&v!==''))].map(String).slice(0,12);
+    const matrix=ys.map(y=>xs.map(x=>rows.filter(r=>String(r[spec.x])===x&&String(r[spec.stack])===y).reduce((a,r)=>a+(getNumeric(r,spec.y)||0),0)));
+    return {type:'heatmap',xLabels:xs,yLabels:ys,matrix};
+  }
+
   // default: aggregate by group
   let agg=aggregate(rows, spec.x, spec.y, spec.agg||'sum');
   if(spec.x && (STATE.profile[spec.x]||{}).type==='Date'){
@@ -2955,6 +3035,11 @@ const MiniChart=(function(){
     if(ds.type==='doughnut') return renderDoughnut(ctx,w,h,ds,textColor);
     if(ds.type==='scatter') return renderScatter(ctx,w,h,ds,textColor,gridColor);
     if(ds.type==='line') return renderLine(ctx,w,h,ds,textColor,gridColor);
+    if(ds.type==='combo') return renderCombo(ctx,w,h,ds,textColor,gridColor,canvas);
+    if(ds.type==='waterfall') return renderWaterfall(ctx,w,h,ds,textColor,gridColor,canvas);
+    if(ds.type==='funnel') return renderFunnel(ctx,w,h,ds,textColor,canvas);
+    if(ds.type==='gauge') return renderGauge(ctx,w,h,ds,textColor,canvas);
+    if(ds.type==='heatmap') return renderHeatmap(ctx,w,h,ds,textColor,canvas);
     return renderBar(ctx,w,h,ds,textColor,gridColor,!!spec.horizontal,canvas);
 
     function renderBar(ctx,w,h,ds,textColor,gridColor,horizontal,canvas){
@@ -3079,6 +3164,13 @@ const MiniChart=(function(){
       const yOf=v=> plotB - (v-scale.min)/((scale.max-scale.min)||1) * plotH;
       ctx.strokeStyle=gridColor; ctx.lineWidth=1; ctx.fillStyle=textColor; ctx.textAlign='right';
       scale.ticks.forEach(t=>{ const y=yOf(t); ctx.beginPath(); ctx.moveTo(plotL,y); ctx.lineTo(plotR,y); ctx.stroke(); ctx.fillText(fmtVal(t), plotL-6, y); });
+      if(ds.area){
+        ctx.beginPath();
+        values.forEach((v,i)=>{ const x=xOf(i), y=yOf(v); if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y); });
+        ctx.lineTo(xOf(values.length-1), plotB); ctx.lineTo(xOf(0), plotB); ctx.closePath();
+        ctx.fillStyle = d.fillColor || 'rgba(194,92,61,.18)';
+        ctx.fill();
+      }
       ctx.strokeStyle=d.borderColor||cssVar('--rust'); ctx.lineWidth=2.5; ctx.beginPath();
       values.forEach((v,i)=>{ const x=xOf(i), y=yOf(v); if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y); });
       ctx.stroke();
@@ -3148,6 +3240,81 @@ const MiniChart=(function(){
         ctx.fillText(truncateLabel(ctx,`${lab} (${pct}%)`, legendW-24), lx+14, ly+5);
         ly+=18;
       });
+    }
+
+
+    function renderCombo(ctx,w,h,ds,textColor,gridColor,canvas){
+      const labels=ds.labels||[], bars=(ds.datasets||[])[0], line=(ds.datasets||[])[1];
+      if(!bars || !line || !labels.length){ emptyMsg(ctx,w,h,textColor); return; }
+      const all=[...bars.data,...line.data].filter(v=>isFinite(v));
+      const scale=niceScale(Math.min(0,...all),Math.max(...all),5);
+      const pad={top:14,right:42,bottom:34,left:54}, L=pad.left,R=w-pad.right,T=pad.top,B=h-pad.bottom;
+      const H=B-T,W=R-L,y=v=>B-(v-scale.min)/((scale.max-scale.min)||1)*H;
+      ctx.strokeStyle=gridColor; ctx.fillStyle=textColor; ctx.textAlign='right';
+      scale.ticks.forEach(t=>{const yy=y(t);ctx.beginPath();ctx.moveTo(L,yy);ctx.lineTo(R,yy);ctx.stroke();ctx.fillText(fmtNum(t,{compact:true}),L-6,yy);});
+      const bw=Math.min(42,W/labels.length*.55), band=W/labels.length;
+      labels.forEach((lab,i)=>{
+        const v=bars.data[i]||0, xx=L+band*i+band/2, yy=y(v), y0=y(0);
+        ctx.fillStyle=bars.backgroundColor||cssVar('--amber'); ctx.fillRect(xx-bw/2,Math.min(yy,y0),bw,Math.abs(y0-yy));
+        canvas._hit.push({x:xx-bw/2,y:Math.min(yy,y0),w:bw,h:Math.max(1,Math.abs(y0-yy)),label:lab,value:v});
+      });
+      ctx.strokeStyle=line.borderColor||cssVar('--rust'); ctx.lineWidth=2.5; ctx.beginPath();
+      line.data.forEach((v,i)=>{const xx=L+band*i+band/2,yy=y(v); if(i===0)ctx.moveTo(xx,yy);else ctx.lineTo(xx,yy);});
+      ctx.stroke();
+      line.data.forEach((v,i)=>{const xx=L+band*i+band/2,yy=y(v);ctx.fillStyle=line.borderColor||cssVar('--rust');ctx.beginPath();ctx.arc(xx,yy,3,0,Math.PI*2);ctx.fill();});
+      ctx.fillStyle=textColor; ctx.textAlign='center';
+      labels.forEach((lab,i)=>{if(i%Math.ceil(labels.length/8||1)===0)ctx.fillText(truncateLabel(ctx,String(lab),band-4),L+band*i+band/2,B+14);});
+      ctx.textAlign='left';ctx.fillStyle=bars.backgroundColor||cssVar('--amber');ctx.fillRect(L,3,10,10);ctx.fillStyle=textColor;ctx.fillText(bars.label||'Bar',L+14,8);
+      ctx.fillStyle=line.borderColor||cssVar('--rust');ctx.fillRect(L+75,3,10,10);ctx.fillStyle=textColor;ctx.fillText(line.label||'Line',L+89,8);
+    }
+
+    function renderWaterfall(ctx,w,h,ds,textColor,gridColor,canvas){
+      const labels=ds.labels||[], vals=ds.datasets?.[0]?.data||[];
+      if(!labels.length){emptyMsg(ctx,w,h,textColor);return;}
+      let cumulative=0, points=[];
+      vals.forEach((v,i)=>{ const start=cumulative; cumulative += v; points.push({start,end:cumulative,value:v}); });
+      const min=Math.min(0,...points.flatMap(p=>[p.start,p.end])), max=Math.max(0,...points.flatMap(p=>[p.start,p.end]));
+      const scale=niceScale(min,max,5), pad={top:16,right:18,bottom:38,left:58}, L=pad.left,R=w-pad.right,T=pad.top,B=h-pad.bottom;
+      const y=v=>B-(v-scale.min)/((scale.max-scale.min)||1)*(B-T), band=(R-L)/labels.length, bw=Math.min(48,band*.65);
+      ctx.strokeStyle=gridColor;ctx.fillStyle=textColor;ctx.textAlign='right';
+      scale.ticks.forEach(t=>{const yy=y(t);ctx.beginPath();ctx.moveTo(L,yy);ctx.lineTo(R,yy);ctx.stroke();ctx.fillText(fmtNum(t,{compact:true}),L-6,yy);});
+      points.forEach((p,i)=>{const xx=L+band*i+band/2, y1=y(Math.max(p.start,p.end)), y0=y(Math.min(p.start,p.end));ctx.fillStyle=p.value>=0?cssVar('--amber'):cssVar('--rust');ctx.fillRect(xx-bw/2,y1,bw,Math.max(1,y0-y1));canvas._hit.push({x:xx-bw/2,y:y1,w:bw,h:Math.max(1,y0-y1),label:labels[i],value:p.value});});
+      ctx.fillStyle=textColor;ctx.textAlign='center';labels.forEach((lab,i)=>ctx.fillText(truncateLabel(ctx,String(lab),band-4),L+band*i+band/2,B+15));
+    }
+
+    function renderFunnel(ctx,w,h,ds,textColor,canvas){
+      const labels=ds.labels||[], vals=ds.datasets?.[0]?.data||[];
+      if(!labels.length){emptyMsg(ctx,w,h,textColor);return;}
+      const max=Math.max(...vals,1), padL=20,padR=20, top=16, rowH=Math.min(42,(h-24)/labels.length);
+      labels.forEach((lab,i)=>{
+        const width=(w-80)*(vals[i]/max), cx=w/2, y=top+i*rowH+rowH*.15, hh=rowH*.7;
+        const x=cx-width/2;ctx.fillStyle=PALETTE[i%PALETTE.length];
+        ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+width,y);ctx.lineTo(x+width*.9,y+hh);ctx.lineTo(x+width*.1,y+hh);ctx.closePath();ctx.fill();
+        ctx.fillStyle=textColor;ctx.textAlign='left';ctx.fillText(truncateLabel(ctx,String(lab),100),10,y+hh/2);
+        ctx.textAlign='right';ctx.fillText(fmtNum(vals[i],{compact:true}),w-8,y+hh/2);
+        canvas._hit.push({x,y,w:Math.max(1,width),h:hh,label:lab,value:vals[i]});
+      });
+    }
+
+    function renderGauge(ctx,w,h,ds,textColor,canvas){
+      const v=Number(ds.value)||0, max=Number(ds.max)||100, pct=Math.max(0,Math.min(1,v/max));
+      const cx=w/2, cy=h*.78, r=Math.min(w*.34,h*.55), start=Math.PI*.85, end=Math.PI*2.15;
+      ctx.lineWidth=Math.max(12, r*.16);ctx.strokeStyle='rgba(128,128,128,.18)';
+      ctx.beginPath();ctx.arc(cx,cy,r,start,end);ctx.stroke();
+      ctx.strokeStyle=cssVar('--rust');ctx.beginPath();ctx.arc(cx,cy,r,start,start+(end-start)*pct);ctx.stroke();
+      ctx.fillStyle=textColor;ctx.textAlign='center';ctx.font='bold 24px -apple-system,sans-serif';ctx.fillText(ds.isPercentage?fmtPercent(v):fmtNum(v,{compact:true}),cx,cy-4);
+      ctx.font='11px -apple-system,sans-serif';ctx.fillText(ds.label||'KPI',cx,cy+18);
+      canvas._hit.push({cx,cy,r,label:ds.label||'KPI',value:v});
+    }
+
+    function renderHeatmap(ctx,w,h,ds,textColor,canvas){
+      const xs=ds.xLabels||[], ys=ds.yLabels||[], vals=ds.matrix||[];
+      if(!xs.length||!ys.length){emptyMsg(ctx,w,h,textColor);return;}
+      const max=Math.max(...vals.flat(),0), min=Math.min(...vals.flat(),0), L=88,T=24,R=12,B=32;
+      const cw=(w-L-R)/xs.length, ch=(h-T-B)/ys.length;
+      xs.forEach((x,i)=>{ctx.fillStyle=textColor;ctx.textAlign='center';ctx.fillText(truncateLabel(ctx,String(x),cw-4),L+i*cw+cw/2,T-10);});
+      ys.forEach((y,j)=>{ctx.fillStyle=textColor;ctx.textAlign='right';ctx.fillText(truncateLabel(ctx,String(y),L-12),L-8,T+j*ch+ch/2);});
+      ys.forEach((yv,j)=>xs.forEach((xv,i)=>{const v=Number(vals[j][i])||0;const norm=max===min?.5:(v-min)/(max-min);ctx.fillStyle=`rgba(194,92,61,${.12+.78*norm})`;ctx.fillRect(L+i*cw,T+j*ch,cw-2,ch-2);canvas._hit.push({x:L+i*cw,y:T+j*ch,w:cw-2,h:ch-2,label:`${yv} · ${xv}`,value:v});}));
     }
 
     function emptyMsg(ctx,w,h,textColor){
@@ -3581,7 +3748,13 @@ document.getElementById('buildChartBtn').addEventListener('click',()=>{
   const horizontal = type==='horizontalBar';
   const kind = horizontal? 'bar': type;
   const aggLabel={sum:'Sum',avg:'Average',count:'Count',distinct:'Distinct count',min:'Min',max:'Max'}[agg];
-  createChartCard({kind, x, y, agg, title:`${aggLabel} of ${y} by ${x}`, horizontal, sort:'desc'});
+  const titleMap={
+    area:`Trend area — ${y} by ${x}`, stacked:`${aggLabel} of ${y} by ${x} (stacked)`,
+    stacked100:`100% composition of ${y} by ${x}`, combo:`${y} and comparison by ${x}`,
+    waterfall:`Waterfall of ${y} by ${x}`, funnel:`Funnel of ${y} by ${x}`,
+    gauge:`Gauge — ${y}`, heatmap:`Heatmap — ${y} by ${x}`
+  };
+  createChartCard({kind, x, y, agg, title:titleMap[kind]||`${aggLabel} of ${y} by ${x}`, horizontal, sort:'desc'});
   addChartModal.classList.remove('open');
 });
 
