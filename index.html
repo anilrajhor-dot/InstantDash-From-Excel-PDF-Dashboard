@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 <title>InstantDash — Excel to Dashboard v3.0.0</title>
 <meta name="author" content="Developed by Anil Sharma, Former General Manager, Central Bank of India">
-<meta name="application-name" content="InstantDash v3.5.1">
+<meta name="application-name" content="InstantDash v3.5.2">
 <meta name="description" content="InstantDash — Excel to Dashboard, developed by Anil Sharma">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -382,7 +382,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
   .datatable-wrap{max-height:60vh;}
 }
 
-/* v3.5.1 — cleaner upload state and PDF preview */
+/* v3.5.2 — cleaner upload state and PDF preview */
 #messages:empty{display:none;}
 #messages{margin:12px auto 0;max-width:900px;}
 #messages .msg-banner{border-radius:10px;padding:10px 13px;font-size:13px;line-height:1.4;}
@@ -426,7 +426,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 <body>
 
 <div class="topbar">
-  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v3.5.1</span></div>
+  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v3.5.2</span></div>
   <div class="topbar-right">
     <div class="privacy-badge">🔒 <span class="txt">Processed locally — not uploaded to any server</span></div>
     <button class="icon-btn" id="shareTopBtn" title="Share dashboard" aria-label="Share dashboard as an image" style="display:none;">📤</button>
@@ -587,7 +587,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
     </div>
   </div>
 
-  <footer class="app-footer">InstantDash <strong>v3.5.1</strong> · Excel / CSV / PDF upload · InstantDash — developed by Anil Sharma · runs 100% locally in your browser</footer>
+  <footer class="app-footer">InstantDash <strong>v3.5.2</strong> · Excel / CSV / PDF upload · InstantDash — developed by Anil Sharma · runs 100% locally in your browser</footer>
 </div>
 
 <!-- Ask Your Data floating widget -->
@@ -1241,7 +1241,7 @@ async function handleFile(file){
       }
       STATE.workbook=wb;
       populateSheetSelect(wb.SheetNames);
-      loadSheet(wb.SheetNames[0]);
+      loadSheet(chooseBestDataSheet(wb.SheetNames, wb));
     }catch(err){
       console.error(err);
       fail('Something went wrong opening this file: '+err.message);
@@ -1254,6 +1254,42 @@ function fail(msg){
   loadingState.style.display='none';
   emptyState.style.display='block';
   showMessage(msg,'error');
+}
+
+
+function chooseBestDataSheet(names, wb){
+  const list=Array.isArray(names)?names:[];
+  if(!list.length) return '';
+  // Prefer an explicit data sheet when present.
+  const preferred=list.find(n=>/^(test[_ -]?data|data|raw[_ -]?data|performance|transactions?)$/i.test(String(n).trim()));
+  if(preferred) return preferred;
+
+  let best=list[0], bestScore=-Infinity;
+  list.forEach(name=>{
+    let score=0;
+    const low=String(name).toLowerCase();
+    if(/kpi|directory|library|mapping|lookup|readme|config|metadata/.test(low)) score-=80;
+    if(/data|performance|actual|target|transaction|branch|deposit|advance|npa/.test(low)) score+=20;
+    try{
+      const ws=wb.Sheets[name];
+      const aoa=XLSX.utils.sheet_to_json(ws,{header:1,raw:true,defval:null,blankrows:false});
+      const rows=aoa.filter(r=>Array.isArray(r)&&r.some(v=>v!==null&&v!==undefined&&String(v).trim()!==''));
+      if(rows.length<3) { score-=20; return; }
+      const header=rows[0]||[];
+      const body=rows.slice(1,Math.min(rows.length,31));
+      let numericCols=0;
+      header.forEach((h,ci)=>{
+        const vals=body.map(r=>r[ci]).filter(v=>v!==null&&v!==undefined&&String(v).trim()!=='');
+        if(vals.length && vals.filter(v=>!isNaN(parseCleanNumber(v))).length/vals.length>=0.7) numericCols++;
+      });
+      score += Math.min(80,numericCols*12);
+      if(header.some(h=>/^(actual|target|amount|balance|sales|revenue|deposit|advance|npa|profit|income|expense)$/i.test(String(h||'').trim()))) score+=45;
+      if(header.some(h=>/^(kpi|area|unit|default|aliases)$/i.test(String(h||'').trim()))) score-=35;
+      score += Math.min(20,Math.log10(rows.length)*8);
+    }catch(e){}
+    if(score>bestScore){bestScore=score;best=name;}
+  });
+  return best;
 }
 
 function populateSheetSelect(names){
@@ -3215,6 +3251,60 @@ function destroyAllCharts(){
   document.getElementById('chartGrid').innerHTML='';
 }
 
+
+function detectLongFormKpiDataset(){
+  const names=(STATE.columns||[]).map(c=>c.name);
+  const findName=(rx)=>names.find(n=>rx.test(String(n).trim()));
+  return {
+    area:findName(/^area$/i),
+    kpi:findName(/^kpi$|^metric$|^particulars$|^indicator$/i),
+    actual:findName(/^actual$|^actual value$|^value$/i),
+    target:findName(/^target$|^target value$/i),
+    unit:findName(/^unit$|^measure$|^uom$/i),
+    date:findName(/^date$|^period$|^month$|^quarter$|^year$/i)
+  };
+}
+function buildLongFormKpiCharts(){
+  const lf=detectLongFormKpiDataset();
+  if(!lf.kpi || !lf.actual || !lf.unit) return false;
+  const rows=STATE.filteredData||[];
+  const unitValues=new Set(rows.map(r=>String(r[lf.unit]??'').trim()).filter(Boolean).map(x=>x.toLowerCase()));
+  const hasCurrency=[...unitValues].some(x=>/₹|inr|rs\.?|rupee/.test(x));
+  const hasPercent=[...unitValues].some(x=>/%|percent|ratio|rate/.test(x));
+  if(!hasCurrency && !hasPercent) return false;
+
+  const specs=[];
+  if(hasCurrency){
+    specs.push({
+      kind:'bar',autoDefault:true,unitFilter:'currency',unitColumn:lf.unit,
+      x:lf.kpi,y:lf.actual,agg:'sum',top10:false,horizontal:false,
+      title:'₹ Actual by Banking KPI'
+    });
+    if(lf.target) specs.push({
+      kind:'bar',autoDefault:true,unitFilter:'currency',unitColumn:lf.unit,
+      x:lf.kpi,y:lf.target,agg:'sum',top10:false,horizontal:false,
+      title:'₹ Target by Banking KPI'
+    });
+  }
+  if(hasPercent){
+    specs.push({
+      kind:'doughnut',autoDefault:true,unitFilter:'percent',unitColumn:lf.unit,
+      x:lf.kpi,y:lf.actual,agg:'avg',top10:true,
+      title:'Percentage KPI — Actual'
+    });
+  }
+  // Target-vs-actual is especially useful for the banking test data.
+  if(lf.target && hasCurrency){
+    specs.push({
+      kind:'bar',autoDefault:true,unitFilter:'currency',unitColumn:lf.unit,
+      x:lf.kpi,y:lf.actual,agg:'sum',top10:true,horizontal:false,
+      title:'₹ Actual vs Target — select KPI for comparison'
+    });
+  }
+  specs.forEach(spec=>createChartCard(spec));
+  return specs.length>0;
+}
+
 function chooseAndBuildCharts(){
   destroyAllCharts();
   const measures=measuresList();
@@ -3222,6 +3312,8 @@ function chooseAndBuildCharts(){
   const highCards=highCardList();
   const times=timeList();
   const specs=[];
+  // Long-form KPI workbooks need KPI-aware charts; otherwise Target/Actual would be summed across mixed ₹/%/Count units.
+  if(buildLongFormKpiCharts()) return;
   // Percentage-type measures (Rate/Margin/Growth/% columns) get averaged,
   // never summed — "sum of a percentage" isn't a meaningful number — and
   // labelled "Average" instead of "Total" to match.
@@ -3286,14 +3378,19 @@ function chooseAndBuildCharts(){
     specs.push({kind:'heatmap', x:dims[0], stack:dims[1], y:m, agg:'sum', title:`Heatmap — ${m} by ${dims[0]} & ${dims[1]}`});
   }
 
-  // 9. Only text columns, no measures -> frequency counts
+  // 9. Only text columns, no measures -> do not create misleading dashboard charts.
+  // A KPI Directory/Library sheet is metadata, not performance data.
   if(measures.length===0){
-    (dims.length?dims:highCards).slice(0,4).forEach(d=>{
-      specs.push({kind:'doughnut', x:d, y:null, agg:'count', title:`Row count by ${d}`, top10: STATE.profile[d].role==='HighCard'});
-    });
-    if(specs.length===0){
-      showMessage('This file has no usable numeric column, so InstantDash is showing frequency charts of the categorical columns instead.','info');
+    const names=STATE.columns.map(c=>c.name);
+    const metadataLike=names.some(n=>/^kpi$/i.test(n)) && names.some(n=>/^unit$/i.test(n)) && names.some(n=>/^default$/i.test(n));
+    if(metadataLike){
+      document.getElementById('chartGrid').innerHTML='<div class="chart-card"><strong>📚 KPI Directory detected</strong><br><br>This sheet contains KPI definitions, not actual performance figures. InstantDash will not create misleading record-count charts. Select the sheet containing Target / Actual / ₹ values, or upload the performance workbook.</div>';
+      showMessage('KPI Directory sheet detected. No performance chart was created because it contains definitions rather than actual figures.','info');
+      return;
     }
+    (dims.length?dims:highCards).slice(0,2).forEach(d=>{
+      specs.push({kind:'doughnut', x:d, y:null, agg:'count', title:`Record count by ${d}`, top10: STATE.profile[d].role==='HighCard'});
+    });
   }
 
   // De-dupe, cap at 8 while ALWAYS preserving the distribution chart when a measure exists.
@@ -3404,6 +3501,11 @@ function isCurrencyMeasure(name, rows){
   return monetary>0 || (numeric>0 && /^(amount|total|net|gross|value|balance)$/i.test(n));
 }
 function defaultChartKind(name, rows){
+  if(Array.isArray(rows) && rows.some(r=>{
+    const unit=String(r?.Unit??r?.unit??r?.UOM??'');
+    const kpi=String(r?.KPI??r?.kpi??r?.Metric??'');
+    return /₹|inr|rs\.?|rupee/i.test(unit) && (name==='Actual'||name==='Target'||name==='Value'||name==='Amount'||kpi.includes('₹'));
+  })) return 'bar';
   return isCurrencyMeasure(name, rows) ? 'bar' : 'doughnut';
 }
 function buildChartDataset(spec){
@@ -3415,7 +3517,13 @@ function buildChartDataset(spec){
     }
   }
 
-  const rows=STATE.filteredData;
+  let rows=STATE.filteredData;
+  if(spec.unitFilter && spec.unitColumn){
+    const wanted=spec.unitFilter==='currency'
+      ? /₹|inr|rs\.?|rupee/i
+      : /%|percent|ratio|rate/i;
+    rows=rows.filter(r=>wanted.test(String(r[spec.unitColumn]??'')));
+  }
   if(spec.kind==='scatter'){
     const pts=rows.map(r=>({x:getNumeric(r,spec.x), y:getNumeric(r,spec.y)})).filter(p=>!isNaN(p.x)&&!isNaN(p.y));
     const sampled = pts.length>3000;
