@@ -462,7 +462,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
       <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
         <span class="hint" id="kpiDepartmentHint"></span>
         <select id="kpiDepartmentSelect" aria-label="KPI department" class="input" style="max-width:190px;padding:6px 8px;">
-          <option value="Auto Detect">Auto Detect</option><option>Management</option><option>Finance</option><option>HR</option><option>Sales / Business</option><option>Marketing</option><option>Operations / Manufacturing</option><option>Procurement</option><option>Supply Chain</option><option>Customer Service</option><option>Project Management</option><option>Banking</option><option>Risk &amp; Compliance</option><option>Legal</option><option>Audit</option><option>ESG / Sustainability</option><option>IT / Technology</option><option>Cybersecurity</option><option>Quality Management</option><option>Retail</option><option>E-commerce</option><option>Healthcare</option><option>Education</option><option>Hospitality</option><option>Real Estate</option><option>Construction</option><option>NGO / Non-profit</option><option>Government / Public Sector</option><option>Banking Credit Analysis</option><option>Micro &amp; Small Enterprise</option>
+          <option value="Auto Detect">Auto Detect</option><option>Management</option><option>Finance</option><option>HR</option><option>Sales / Business</option><option>Marketing</option><option>Operations / Manufacturing</option><option>Procurement</option><option>Supply Chain</option><option>Customer Service</option><option>Project Management</option><option>Banking</option><option>Risk &amp; Compliance</option><option>Legal</option><option>Audit</option><option>ESG / Sustainability</option><option>IT / Technology</option><option>Cybersecurity</option><option>Quality Management</option><option>Retail</option><option>E-commerce</option><option>Healthcare</option><option>Education</option><option>Hospitality</option><option>Real Estate</option><option>Construction</option><option>NGO / Non-profit</option><option>Government / Public Sector</option><option>Banking Credit Analysis</option><option>BC Performance</option><option>Micro &amp; Small Enterprise</option>
         </select>
         <button class="btn secondary small" id="kpiLibraryBtn">📚 KPI Library</button>
         <button class="btn secondary small" id="customKpiBtn">➕ Custom KPI</button>
@@ -576,7 +576,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 <div class="modal-overlay" id="kpiLibraryModal">
   <div class="modal" style="max-width:1100px;width:96%;">
     <div class="modal-head"><h3>📚 Universal KPI Library</h3><button class="icon-btn" id="closeKpiLibrary">✕</button></div>
-    <div class="hint" style="margin-bottom:10px;">Browse KPIs by area, search by name, and add your own KPI definitions for future files. Library additions are saved in this browser.</div>
+    <div class="hint" style="margin-bottom:10px;">Browse KPIs by area, search by KPI name or alias, review the recognised Aliases used for automatic matching, and add your own KPI definitions for future files. Library additions are saved in this browser.</div>
     <div class="kpi-toolbar">
       <select id="kpiLibraryArea" class="input" style="max-width:240px;"><option value="All">All areas</option></select>
       <input id="kpiLibrarySearch" class="input" style="min-width:240px;flex:1;" placeholder="Search KPI, alias or area…">
@@ -1742,6 +1742,78 @@ const KPI_DEFS = [
   {id:'digital_transactions',name:'Digital Transactions',dept:'Banking',cat:'Digital',aliases:['digital transactions','digital transaction count','digital transactions count'],direct:true,agg:'sum',higher:true},
   {id:'fee_income',name:'Fee Income',dept:'Banking, Finance',cat:'Income',aliases:['fee income','fee based income','commission income'],direct:true,agg:'sum',higher:true},
 
+
+  // Business Correspondent (BC) Performance
+  // Built for bank-supplied BC-wise performance and commission data.
+  {id:'bc_unique_count',name:'Unique BCs in Data',dept:'BC Performance',cat:'BC Network',aliases:['unique bcs','unique bc count','bc count','number of unique bc','unique business correspondents'],derived:true,calc:()=>{const cols=STATE.columns||[];const c=cols.find(x=>/^(bc|business correspondent)\s*(name|id|code)?$/i.test(String(x.name).trim())||/bc\s*(name|id|code)|business correspondent/i.test(String(x.name)));if(!c)return null;const vals=STATE.filteredData.map(r=>String(r[c.name]??'').trim()).filter(Boolean);return new Set(vals).size;},formula:'Distinct count of BC Name / BC ID / BC Code',higher:true},
+  {id:'bc_avg_commission_per_bc',name:'Average Commission per BC',dept:'BC Performance',cat:'Income / Productivity',aliases:['average commission per bc','avg commission per bc','commission per bc','average bc commission'],derived:true,calc:ctx=>{if(ctx.bc_commission==null)return null;const n=ctx.bc_unique_count||ctx.bc_active||ctx.bc_total;return n?ctx.bc_commission/n:null;},formula:'Commission Earned ÷ Number of BCs',higher:true},
+  {id:'bc_active',name:'Active BCs',dept:'BC Performance',cat:'BC Network',aliases:['active bc','active bcs','active business correspondent','active business correspondents','bc active'],direct:true,agg:'sum',higher:true},
+  {id:'bc_total',name:'Total BCs',dept:'BC Performance',cat:'BC Network',aliases:['total bc','total bcs','total business correspondent','total business correspondents','bc count','number of bc','number of bcs'],direct:true,agg:'sum',higher:true},
+  {id:'bc_transactions',name:'BC Transactions',dept:'BC Performance',cat:'Transactions',aliases:['bc transactions','bc transaction count','business correspondent transactions','transactions by bc','transaction count bc','no of transactions'],direct:true,agg:'sum',higher:true},
+  {id:'bc_customers',name:'Customers Served by BCs',dept:'BC Performance',cat:'Customer Service',aliases:['customers served by bc','bc customers','customers through bc','customer count bc','customers served'],direct:true,agg:'sum',higher:true},
+  {id:'bc_new_customers',name:'New Customers Onboarded',dept:'BC Performance',cat:'Customer Acquisition',aliases:['new customers onboarded','new customers by bc','bc new customers','new customer onboarding','customers onboarded'],direct:true,agg:'sum',higher:true},
+  {id:'bc_accounts_opened',name:'Accounts Opened through BC',dept:'BC Performance',cat:'Customer Acquisition',aliases:['accounts opened through bc','bc accounts opened','accounts opened by bc','new accounts through bc','account opening bc'],direct:true,agg:'sum',higher:true},
+  {id:'bc_savings_accounts',name:'Savings Accounts Opened',dept:'BC Performance',cat:'Accounts',aliases:['savings accounts opened','saving accounts opened','sb accounts opened by bc','sb accounts bc'],direct:true,agg:'sum',higher:true},
+  {id:'bc_current_accounts',name:'Current Accounts Opened',dept:'BC Performance',cat:'Accounts',aliases:['current accounts opened','ca accounts opened by bc','current accounts bc'],direct:true,agg:'sum',higher:true},
+  {id:'bc_deposits',name:'BC Deposit Mobilisation',dept:'BC Performance',cat:'Deposits',aliases:['bc deposits','deposit mobilisation by bc','deposit mobilization by bc','deposit mobilisation','deposit mobilization','deposits sourced by bc','deposit amount bc'],direct:true,agg:'sum',higher:true},
+  {id:'bc_cash_deposit',name:'Cash Deposit Transactions',dept:'BC Performance',cat:'Transactions',aliases:['cash deposit transactions','cash deposits by bc','cash deposit count bc','cash deposit amount bc'],direct:true,agg:'sum',higher:true},
+  {id:'bc_cash_withdrawal',name:'Cash Withdrawal Transactions',dept:'BC Performance',cat:'Transactions',aliases:['cash withdrawal transactions','cash withdrawals by bc','cash withdrawal count bc','cash withdrawal amount bc'],direct:true,agg:'sum',higher:true},
+  {id:'bc_aeps_transactions',name:'AEPS Transactions',dept:'BC Performance',cat:'Digital / AEPS',aliases:['aeps transactions','aeps transaction count','aeps transactions by bc','aadhaar enabled payment system transactions'],direct:true,agg:'sum',higher:true},
+  {id:'bc_micro_atm_transactions',name:'Micro ATM Transactions',dept:'BC Performance',cat:'Digital / Micro ATM',aliases:['micro atm transactions','micro-atm transactions','micro atm transaction count','micro atm by bc'],direct:true,agg:'sum',higher:true},
+  {id:'bc_digital_transactions',name:'BC Digital Transactions',dept:'BC Performance',cat:'Digital',aliases:['bc digital transactions','digital transactions by bc','digital transaction count bc'],direct:true,agg:'sum',higher:true},
+  {id:'bc_remittance',name:'Remittance Transactions',dept:'BC Performance',cat:'Remittance',aliases:['remittance transactions by bc','bc remittance','remittance amount bc','remittance transactions'],direct:true,agg:'sum',higher:true},
+  {id:'bc_loan_leads',name:'Loan Leads Sourced by BCs',dept:'BC Performance',cat:'Credit',aliases:['loan leads sourced by bc','bc loan leads','loan leads by bc','loan applications sourced by bc','loan applications by bc'],direct:true,agg:'sum',higher:true},
+  {id:'bc_loan_sanctions',name:'Loans Sanctioned through BCs',dept:'BC Performance',cat:'Credit',aliases:['loans sanctioned through bc','bc loan sanctions','loan sanctions by bc','sanctions sourced by bc'],direct:true,agg:'sum',higher:true},
+  {id:'bc_loan_disbursement',name:'Loan Disbursement through BCs',dept:'BC Performance',cat:'Credit',aliases:['loan disbursement through bc','bc loan disbursement','loan disbursements by bc','disbursement sourced by bc','loan disbursed by bc'],direct:true,agg:'sum',higher:true},
+  {id:'bc_recovery',name:'Recovery through BCs',dept:'BC Performance',cat:'Collections',aliases:['recovery through bc','bc recovery','recovery by bc','loan recovery by bc','collection by bc'],direct:true,agg:'sum',higher:true},
+  {id:'bc_insurance',name:'Insurance Business through BCs',dept:'BC Performance',cat:'Third Party Products',aliases:['insurance through bc','bc insurance','insurance business by bc','insurance policies by bc','insurance premium through bc'],direct:true,agg:'sum',higher:true},
+  {id:'bc_pmjjby_enrolments',name:'PMJJBY Enrolments',dept:'BC Performance',cat:'Insurance / Social Security',aliases:['pmjjby enrolments','pmjjby enrollment','pmjjby','pradhan mantri jeevan jyoti bima yojana','jeevan jyoti bima enrolments','pmjjby policies'],direct:true,agg:'sum',higher:true},
+  {id:'bc_pmjjby_premium',name:'PMJJBY Premium Collected',dept:'BC Performance',cat:'Insurance / Social Security',aliases:['pmjjby premium','pmjjby premium collected','pmjjby premium collection','pmjjby insurance premium'],direct:true,agg:'sum',higher:true},
+  {id:'bc_pmjjby_renewals',name:'PMJJBY Renewals',dept:'BC Performance',cat:'Insurance / Social Security',aliases:['pmjjby renewals','pmjjby renewal','pmjjby renewal policies'],direct:true,agg:'sum',higher:true},
+  {id:'bc_pmjjby_claims',name:'PMJJBY Claims',dept:'BC Performance',cat:'Insurance / Claims',aliases:['pmjjby claims','pmjjby claim cases','pmjjby claims settled'],direct:true,agg:'sum',higher:false},
+  {id:'bc_pmjjby_commission',name:'PMJJBY Commission',dept:'BC Performance',cat:'Insurance Income',aliases:['pmjjby commission','pmjjby commission earned','pmjjby incentive','commission pmjjby'],direct:true,agg:'sum',higher:true},
+  {id:'bc_pmsby_enrolments',name:'PMSBY Enrolments',dept:'BC Performance',cat:'Insurance / Social Security',aliases:['pmsby enrolments','pmsby enrollment','pmsby','pradhan mantri suraksha bima yojana','suraksha bima enrolments','pmsby policies'],direct:true,agg:'sum',higher:true},
+  {id:'bc_pmsby_premium',name:'PMSBY Premium Collected',dept:'BC Performance',cat:'Insurance / Social Security',aliases:['pmsby premium','pmsby premium collected','pmsby premium collection','pmsby insurance premium'],direct:true,agg:'sum',higher:true},
+  {id:'bc_pmsby_renewals',name:'PMSBY Renewals',dept:'BC Performance',cat:'Insurance / Social Security',aliases:['pmsby renewals','pmsby renewal','pmsby renewal policies'],direct:true,agg:'sum',higher:true},
+  {id:'bc_pmsby_claims',name:'PMSBY Claims',dept:'BC Performance',cat:'Insurance / Claims',aliases:['pmsby claims','pmsby claim cases','pmsby claims settled'],direct:true,agg:'sum',higher:false},
+  {id:'bc_pmsby_commission',name:'PMSBY Commission',dept:'BC Performance',cat:'Insurance Income',aliases:['pmsby commission','pmsby commission earned','pmsby incentive','commission pmsby'],direct:true,agg:'sum',higher:true},
+  {id:'bc_apy_enrolments',name:'APY Enrolments',dept:'BC Performance',cat:'Pension / Social Security',aliases:['apy enrolments','apy enrollment','apy','atal pension yojana','atal pension yojana enrolments','pension enrolments apy'],direct:true,agg:'sum',higher:true},
+  {id:'bc_apy_contributions',name:'APY Contributions Collected',dept:'BC Performance',cat:'Pension / Social Security',aliases:['apy contributions','apy contribution collected','apy premium','apy contribution collection'],direct:true,agg:'sum',higher:true},
+  {id:'bc_apy_renewals',name:'APY Active / Regular Contributions',dept:'BC Performance',cat:'Pension / Social Security',aliases:['apy renewals','apy regular contributions','apy active accounts','apy active subscribers'],direct:true,agg:'sum',higher:true},
+  {id:'bc_apy_commission',name:'APY Commission',dept:'BC Performance',cat:'Pension Income',aliases:['apy commission','apy commission earned','apy incentive','commission apy'],direct:true,agg:'sum',higher:true},
+  {id:'bc_pmjjby_target_achievement',name:'PMJJBY Target Achievement %',dept:'BC Performance',cat:'Insurance Performance',aliases:['pmjjby target achievement','pmjjby achievement','pmjjby target achievement %'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'bc_pmsby_target_achievement',name:'PMSBY Target Achievement %',dept:'BC Performance',cat:'Insurance Performance',aliases:['pmsby target achievement','pmsby achievement','pmsby target achievement %'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'bc_apy_target_achievement',name:'APY Target Achievement %',dept:'BC Performance',cat:'Pension Performance',aliases:['apy target achievement','apy achievement','apy target achievement %'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'bc_insurance_total_policies',name:'Total Insurance / Social Security Enrolments',dept:'BC Performance',cat:'Insurance Performance',aliases:['total insurance enrolments','total insurance enrollment','total pmjjby pmsby apy','insurance social security enrolments'],derived:true,calc:ctx=>['bc_pmjjby_enrolments','bc_pmsby_enrolments','bc_apy_enrolments'].map(k=>ctx[k]).filter(v=>v!=null).reduce((a,b)=>a+b,0)||null,formula:'PMJJBY + PMSBY + APY enrolments',higher:true},
+  {id:'bc_insurance_total_commission',name:'Total PMJJBY + PMSBY + APY Commission',dept:'BC Performance',cat:'Insurance Income',aliases:['total insurance commission','pmjjby pmsby apy commission','social security commission','total insurance commission earned'],derived:true,calc:ctx=>['bc_pmjjby_commission','bc_pmsby_commission','bc_apy_commission'].map(k=>ctx[k]).filter(v=>v!=null).reduce((a,b)=>a+b,0)||null,formula:'PMJJBY Commission + PMSBY Commission + APY Commission',higher:true},
+  {id:'bc_pension',name:'Pension / Social Security Enrolments',dept:'BC Performance',cat:'Government Schemes',aliases:['pension enrolments by bc','bc pension','social security enrolments by bc','apy enrolment','apy enrolments','pmjjby enrolment','pmsby enrolment'],direct:true,agg:'sum',higher:true},
+  {id:'bc_govt_scheme',name:'Government Scheme Enrolments',dept:'BC Performance',cat:'Government Schemes',aliases:['government scheme enrolments by bc','govt scheme enrolments','scheme enrolments by bc','social security schemes by bc'],direct:true,agg:'sum',higher:true},
+  {id:'bc_commission',name:'Commission Earned',dept:'BC Performance',cat:'Income',aliases:['commission earned','bc commission','commission by bc','bc commission earned','business correspondent commission','commission income bc','total commission'],direct:true,agg:'sum',higher:true},
+  {id:'bc_incentive',name:'BC Incentive Earned',dept:'BC Performance',cat:'Income',aliases:['bc incentive','incentive earned by bc','bc incentives','incentive amount bc','performance incentive bc'],direct:true,agg:'sum',higher:true},
+  {id:'bc_target',name:'BC Business Target',dept:'BC Performance',cat:'Target',aliases:['bc target','bc business target','business target bc','bc performance target','target assigned to bc'],direct:true,agg:'sum',higher:true},
+  {id:'bc_achievement',name:'BC Business Achievement',dept:'BC Performance',cat:'Target',aliases:['bc achievement','bc business achievement','business achieved by bc','bc actual business','actual business bc'],direct:true,agg:'sum',higher:true},
+  {id:'bc_active_days',name:'BC Active Days',dept:'BC Performance',cat:'Productivity',aliases:['bc active days','active days bc','days active bc','working days bc'],direct:true,agg:'sum',higher:true},
+  {id:'bc_zero_activity',name:'BCs with Zero Activity',dept:'BC Performance',cat:'Productivity',aliases:['bcs with zero activity','bc zero activity','zero activity bc','inactive bc'],direct:true,agg:'sum',lower:true},
+  {id:'bc_grievances',name:'BC Customer Grievances',dept:'BC Performance',cat:'Customer Service',aliases:['bc grievances','customer grievances by bc','complaints against bc','bc complaints'],direct:true,agg:'sum',lower:true},
+  {id:'bc_complaints_resolved',name:'BC Complaints Resolved',dept:'BC Performance',cat:'Customer Service',aliases:['bc complaints resolved','complaints resolved by bc','grievances resolved by bc'],direct:true,agg:'sum',higher:true},
+  {id:'bc_service_quality',name:'BC Service Quality %',dept:'BC Performance',cat:'Quality',aliases:['bc service quality','bc service quality %','bc quality score','business correspondent quality'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'bc_compliance',name:'BC Compliance %',dept:'BC Performance',cat:'Compliance',aliases:['bc compliance','bc compliance %','business correspondent compliance','bc audit compliance'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'bc_satisfaction',name:'BC Customer Satisfaction %',dept:'BC Performance',cat:'Customer Service',aliases:['bc customer satisfaction','bc customer satisfaction %','customer satisfaction bc','bc csat'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'bc_commission_per_transaction',name:'Commission per Transaction',dept:'BC Performance',cat:'Productivity',aliases:['commission per transaction','bc commission per transaction'],derived:true,calc:ctx=>ctx.bc_commission!=null&&ctx.bc_transactions?ctx.bc_commission/ctx.bc_transactions:null,formula:'Commission Earned ÷ BC Transactions',higher:true},
+  {id:'bc_commission_per_active_bc',name:'Commission per Active BC',dept:'BC Performance',cat:'Productivity',aliases:['commission per active bc','commission per active business correspondent'],derived:true,calc:ctx=>ctx.bc_commission!=null&&ctx.bc_active?ctx.bc_commission/ctx.bc_active:null,formula:'Commission Earned ÷ Active BCs',higher:true},
+  {id:'bc_business_per_active_bc',name:'Business per Active BC',dept:'BC Performance',cat:'Productivity',aliases:['business per active bc','business per bc','average business per bc'],derived:true,calc:ctx=>ctx.bc_achievement!=null&&ctx.bc_active?ctx.bc_achievement/ctx.bc_active:null,formula:'BC Business Achievement ÷ Active BCs',higher:true},
+  {id:'bc_target_achievement',name:'BC Target Achievement %',dept:'BC Performance',cat:'Target',aliases:['bc target achievement','bc target achievement %','bc achievement %','bc target achieved'],derived:true,calc:ctx=>ctx.bc_achievement!=null&&ctx.bc_target?ctx.bc_achievement/ctx.bc_target:null,percent:true,formula:'BC Business Achievement ÷ BC Business Target',higher:true},
+  {id:'bc_transaction_per_active_bc',name:'Transactions per Active BC',dept:'BC Performance',cat:'Productivity',aliases:['transactions per active bc','transactions per bc','average transactions per bc'],derived:true,calc:ctx=>ctx.bc_transactions!=null&&ctx.bc_active?ctx.bc_transactions/ctx.bc_active:null,formula:'BC Transactions ÷ Active BCs',higher:true},
+  {id:'bc_customer_per_active_bc',name:'Customers per Active BC',dept:'BC Performance',cat:'Productivity',aliases:['customers per active bc','customers per bc','average customers per bc'],derived:true,calc:ctx=>ctx.bc_customers!=null&&ctx.bc_active?ctx.bc_customers/ctx.bc_active:null,formula:'Customers Served by BCs ÷ Active BCs',higher:true},
+  {id:'bc_recovery_to_disbursement',name:'BC Recovery to Disbursement %',dept:'BC Performance',cat:'Collections',aliases:['bc recovery to disbursement','recovery to disbursement bc','bc recovery ratio'],derived:true,calc:ctx=>ctx.bc_recovery!=null&&ctx.bc_loan_disbursement?ctx.bc_recovery/ctx.bc_loan_disbursement:null,percent:true,formula:'Recovery through BCs ÷ Loan Disbursement through BCs',higher:true},
+  {id:'bc_sanction_conversion',name:'BC Loan Sanction Conversion %',dept:'BC Performance',cat:'Credit',aliases:['bc sanction conversion','loan sanction conversion bc','bc loan conversion'],derived:true,calc:ctx=>ctx.bc_loan_sanctions!=null&&ctx.bc_loan_leads?ctx.bc_loan_sanctions/ctx.bc_loan_leads:null,percent:true,formula:'Loans Sanctioned through BCs ÷ Loan Leads Sourced by BCs',higher:true},
+  {id:'bc_disbursement_conversion',name:'BC Loan Disbursement Conversion %',dept:'BC Performance',cat:'Credit',aliases:['bc disbursement conversion','loan disbursement conversion bc'],derived:true,calc:ctx=>ctx.bc_loan_disbursement!=null&&ctx.bc_loan_sanctions?ctx.bc_loan_disbursement/ctx.bc_loan_sanctions:null,percent:true,formula:'Loan Disbursement through BCs ÷ Loans Sanctioned through BCs',higher:true},
+  {id:'bc_complaint_resolution',name:'BC Complaint Resolution %',dept:'BC Performance',cat:'Customer Service',aliases:['bc complaint resolution','bc complaint resolution %','grievance resolution bc'],derived:true,calc:ctx=>ctx.bc_complaints_resolved!=null&&ctx.bc_grievances?ctx.bc_complaints_resolved/ctx.bc_grievances:null,percent:true,formula:'BC Complaints Resolved ÷ BC Customer Grievances',higher:true},
+  {id:'bc_commission_growth',name:'BC Commission Growth %',dept:'BC Performance',cat:'Income',aliases:['bc commission growth','bc commission growth %','commission growth bc'],derived:true,trend:true,percent:true,formula:'Current period Commission Earned vs previous period',higher:true},
+
+
+  // BC Performance alias enhancements: different banks may use short forms, CSP/Bank Mitra terminology,
+  // transaction abbreviations, and scheme names. These aliases are used for automatic KPI matching.
   // Extended universal library — additional professional areas
   {id:'risk_exposure',name:'Risk Exposure',dept:'Risk & Compliance, Banking, Management',cat:'Risk',aliases:['risk exposure','total risk exposure','exposure at risk'],direct:true,agg:'sum',lower:true},
   {id:'risk_score',name:'Risk Score',dept:'Risk & Compliance',cat:'Risk',aliases:['risk score','risk rating','risk index'],direct:true,agg:'avg',lower:true},
@@ -1927,7 +1999,7 @@ const KPI_DEFS = [
 // User-added KPI definitions are stored locally and merged into KPI_DEFS so they
 // work on future uploads. Existing definitions remain untouched.
 const KPI_LIBRARY_STORAGE_KEY = 'instantdash_kpi_library_v1';
-const KPI_LIBRARY_AREAS = ['Management','Finance','HR','Sales / Business','Marketing','Operations / Manufacturing','Procurement','Supply Chain','Customer Service','Project Management','Banking','Risk & Compliance','Legal','Audit','ESG / Sustainability','IT / Technology','Cybersecurity','Quality Management','Retail','E-commerce','Healthcare','Education','Hospitality','Real Estate','Construction','NGO / Non-profit','Government / Public Sector','Banking Credit Analysis','Micro & Small Enterprise'];
+const KPI_LIBRARY_AREAS = ['Management','Finance','HR','Sales / Business','Marketing','Operations / Manufacturing','Procurement','Supply Chain','Customer Service','Project Management','Banking','Risk & Compliance','Legal','Audit','ESG / Sustainability','IT / Technology','Cybersecurity','Quality Management','Retail','E-commerce','Healthcare','Education','Hospitality','Real Estate','Construction','NGO / Non-profit','Government / Public Sector','Banking Credit Analysis','BC Performance','Micro & Small Enterprise'];
 function loadKpiLibrary(){
   try{ const raw=localStorage.getItem(KPI_LIBRARY_STORAGE_KEY); const arr=raw?JSON.parse(raw):[]; return Array.isArray(arr)?arr:[]; }catch(e){ return []; }
 }
@@ -1937,6 +2009,45 @@ function restoreUserKpis(){
   saved.forEach(d=>{ if(d&&d.id&&!KPI_DEFS.some(x=>x.id===d.id)){ KPI_DEFS.push(d); } });
 }
 restoreUserKpis();
+// Additional BC Performance aliases for common bank correspondence formats.
+const BC_ALIAS_ENHANCEMENTS={
+  bc_total:['BC No','BC Number','BC ID','BC Code','BC Name','Business Correspondent Count','CSP Count','Bank Mitra Count'],
+  bc_active:['Active BC','Active BC Count','Active CSP','Active Bank Mitra','BCs Active'],
+  bc_transactions:['Txn','Txns','Transaction No','Transaction Count','BC Txn','BC Txns','No of Txns','Number of Transactions'],
+  bc_customers:['Customers','Customer Count','No of Customers','Customers Handled','Customers Served by CSP'],
+  bc_commission:['Commission','Commission Earned','BC Earnings','BC Income','BC Remuneration','CSP Commission','Bank Mitra Commission'],
+  bc_incentive:['Incentive','BC Incentive','BC Incentives Earned','Performance Incentive'],
+  bc_deposits:['Deposit Amount','Deposit Mobilisation','Deposit Mobilization','Deposits Sourced','BC Deposit'],
+  bc_aeps_transactions:['AEPS Txn','AEPS Txns','AEPS Count','Aadhaar Enabled Payment System','Aadhaar Transactions'],
+  bc_micro_atm_transactions:['Micro ATM Txn','Micro ATM Txns','Micro-ATM Txn','MATM Transactions'],
+  bc_remittance:['Remittance','Remittance Txn','Remittance Txns','Money Transfer Transactions'],
+  bc_pmjjby_enrolments:['PMJJBY No','PMJJBY Count','PMJJBY Enrolment','Jeevan Jyoti','JJBY','PMJJBY Policies'],
+  bc_pmjjby_premium:['PMJJBY Amount','PMJJBY Premium Amount','JJBY Premium','Jeevan Jyoti Premium'],
+  bc_pmjjby_renewals:['PMJJBY Renewal','PMJJBY Renewal Count','JJBY Renewal'],
+  bc_pmjjby_claims:['PMJJBY Claim','PMJJBY Claim Count','JJBY Claims'],
+  bc_pmjjby_commission:['PMJJBY Incentive','PMJJBY Earnings','JJBY Commission'],
+  bc_pmsby_enrolments:['PMSBY No','PMSBY Count','PMSBY Enrolment','Suraksha Bima','SBY','PMSBY Policies'],
+  bc_pmsby_premium:['PMSBY Amount','PMSBY Premium Amount','SBY Premium','Suraksha Bima Premium'],
+  bc_pmsby_renewals:['PMSBY Renewal','PMSBY Renewal Count','SBY Renewal'],
+  bc_pmsby_claims:['PMSBY Claim','PMSBY Claim Count','SBY Claims'],
+  bc_pmsby_commission:['PMSBY Incentive','PMSBY Earnings','SBY Commission'],
+  bc_apy_enrolments:['APY No','APY Count','APY Enrolment','APY Accounts','Atal Pension Yojana','Atal Pension Yojana Enrolment'],
+  bc_apy_contributions:['APY Amount','APY Contribution Amount','APY Collection','APY Contributions'],
+  bc_apy_renewals:['APY Renewal','APY Active Accounts','APY Active Subscribers','APY Regular Contribution'],
+  bc_apy_commission:['APY Incentive','APY Earnings'],
+  bc_loan_leads:['Loan Leads','Loan Lead Count','BC Loan Application','Loan Applications Sourced'],
+  bc_loan_sanctions:['Loan Sanction','Loan Sanction Count','Sanctions Sourced'],
+  bc_loan_disbursement:['Loan Disbursement','Disbursement Amount','Loan Disbursed'],
+  bc_recovery:['Recovery Amount','Collection Amount','BC Recovery','Recovery Sourced'],
+  bc_grievances:['Complaints','BC Complaints','Customer Grievances','Grievance Count'],
+  bc_complaints_resolved:['Complaints Resolved','Grievances Resolved','Resolved Complaints'],
+  bc_target:['Target','BC Target','Business Target','Assigned Target'],
+  bc_achievement:['Achievement','BC Achievement','Business Achievement','Actual Business'],
+  bc_active_days:['Active Days','Working Days','BC Working Days'],
+  bc_service_quality:['Quality Score','BC Quality','Service Quality'],
+  bc_compliance:['Compliance Score','BC Compliance','Audit Compliance']
+};
+Object.entries(BC_ALIAS_ENHANCEMENTS).forEach(([id,aliases])=>{const d=KPI_DEFS.find(x=>x.id===id);if(d)d.aliases=Array.from(new Set([...(d.aliases||[]),...aliases]));});
 function allKpiLibraryDefs(){ return KPI_DEFS.slice(); }
 function populateKpiLibraryAreas(){
   const el=document.getElementById('kpiLibraryArea'); if(!el)return;
@@ -2022,7 +2133,7 @@ function sourceMatchForKpi(def){
 }
 function detectDepartment(){
   const names=STATE.columns.map(c=>c.name.toLowerCase()).join(' | ');
-  const scores={HR:0,Finance:0,'Sales / Business':0,Marketing:0,'Operations / Manufacturing':0,Procurement:0,'Supply Chain':0,'Customer Service':0,'Project Management':0,Banking:0,Management:0};
+  const scores={HR:0,Finance:0,'Sales / Business':0,Marketing:0,'Operations / Manufacturing':0,Procurement:0,'Supply Chain':0,'Customer Service':0,'Project Management':0,Banking:0,'BC Performance':0,Management:0};
   const rules={
     HR:/employee|staff|headcount|salary|attendance|attrition|joining|joiner|leave|training|performance rating|recruit/i,
     Finance:/revenue|sales|profit|gross profit|net profit|ebitda|debtors|creditors|balance sheet|cash flow|working capital|cogs/i,
@@ -2034,6 +2145,7 @@ function detectDepartment(){
     'Customer Service':/ticket|complaint|csat|nps|sla|resolution|support|service/i,
     'Project Management':/project|milestone|task|schedule variance|resource utilisation|resource utilization/i,
     Banking:/deposit|casa|advance|npa|loan application|sanction|disbursement|branch|cd ratio|banking/i,
+    'BC Performance':/business correspondent|\bbc\b|bc code|bc id|bc name|commission earned|bc commission|aeps|micro atm|business correspondent performance|customer onboarding/i,
     Management:/target|budget|actual|variance|kpi|achievement/i
   };
   Object.entries(rules).forEach(([d,re])=>{if(re.test(names)) scores[d]++;});
@@ -2067,7 +2179,7 @@ function buildKpiContext(){
 function deriveTrendKpi(def){
   const t=timeList()[0]; if(!t) return null;
   let source=null;
-  const map={revenue_growth:'revenue',profit_growth:'net_profit'}; const id=map[def.id];
+  const map={revenue_growth:'revenue',profit_growth:'net_profit',bc_commission_growth:'bc_commission'}; const id=map[def.id];
   if(id){ const d=KPI_DEFS.find(x=>x.id===id); source=sourceMatchForKpi(d); }
   if(!source) return null;
   const agg=aggregate(STATE.filteredData,t,source.column,'sum').sort((a,b)=>a.key<b.key?-1:1);
