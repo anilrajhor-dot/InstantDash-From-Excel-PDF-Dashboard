@@ -462,8 +462,9 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
       <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
         <span class="hint" id="kpiDepartmentHint"></span>
         <select id="kpiDepartmentSelect" aria-label="KPI department" class="input" style="max-width:190px;padding:6px 8px;">
-          <option value="Auto Detect">Auto Detect</option><option>Management</option><option>Finance</option><option>HR</option><option>Sales / Business</option><option>Marketing</option><option>Operations / Manufacturing</option><option>Procurement</option><option>Supply Chain</option><option>Customer Service</option><option>Project Management</option><option>Banking</option>
+          <option value="Auto Detect">Auto Detect</option><option>Management</option><option>Finance</option><option>HR</option><option>Sales / Business</option><option>Marketing</option><option>Operations / Manufacturing</option><option>Procurement</option><option>Supply Chain</option><option>Customer Service</option><option>Project Management</option><option>Banking</option><option>Risk &amp; Compliance</option><option>Legal</option><option>Audit</option><option>ESG / Sustainability</option><option>IT / Technology</option><option>Cybersecurity</option><option>Quality Management</option><option>Retail</option><option>E-commerce</option><option>Healthcare</option><option>Education</option><option>Hospitality</option><option>Real Estate</option><option>Construction</option><option>NGO / Non-profit</option><option>Government / Public Sector</option><option>Banking Credit Analysis</option><option>Micro &amp; Small Enterprise</option>
         </select>
+        <button class="btn secondary small" id="kpiLibraryBtn">📚 KPI Library</button>
         <button class="btn secondary small" id="customKpiBtn">➕ Custom KPI</button>
         <button class="btn secondary small" id="showAllKpisBtn">View all KPIs</button>
       </div>
@@ -568,6 +569,41 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
     <div style="text-align:right; margin-top:16px;">
       <button class="btn" id="buildChartBtn">Add chart to dashboard</button>
     </div>
+  </div>
+</div>
+
+<!-- Universal KPI Library modal -->
+<div class="modal-overlay" id="kpiLibraryModal">
+  <div class="modal" style="max-width:1100px;width:96%;">
+    <div class="modal-head"><h3>📚 Universal KPI Library</h3><button class="icon-btn" id="closeKpiLibrary">✕</button></div>
+    <div class="hint" style="margin-bottom:10px;">Browse KPIs by area, search by name, and add your own KPI definitions for future files. Library additions are saved in this browser.</div>
+    <div class="kpi-toolbar">
+      <select id="kpiLibraryArea" class="input" style="max-width:240px;"><option value="All">All areas</option></select>
+      <input id="kpiLibrarySearch" class="input" style="min-width:240px;flex:1;" placeholder="Search KPI, alias or area…">
+      <button class="btn primary small" id="addLibraryKpiBtn">➕ Add KPI to Library</button>
+    </div>
+    <div class="kpi-mapping-wrap" style="max-height:58vh;">
+      <table class="kpi-mapping-table"><thead><tr><th>KPI</th><th>Area</th><th>Category</th><th>Aliases</th><th>Formula / Source</th><th></th></tr></thead>
+      <tbody id="kpiLibraryBody"></tbody></table>
+    </div>
+  </div>
+</div>
+
+<!-- Add KPI to library modal -->
+<div class="modal-overlay" id="addLibraryKpiModal">
+  <div class="modal" style="max-width:720px;width:96%;">
+    <div class="modal-head"><h3>➕ Add KPI to Library</h3><button class="icon-btn" id="closeAddLibraryKpi">✕</button></div>
+    <div class="form-grid">
+      <label>KPI name<input class="input" id="libraryKpiName" placeholder="e.g. Cost per Customer"></label>
+      <label>Area / Department<input class="input" id="libraryKpiDept" placeholder="e.g. Risk & Compliance"></label>
+      <label>Category<input class="input" id="libraryKpiCat" placeholder="e.g. Efficiency"></label>
+      <label>Aliases<input class="input" id="libraryKpiAliases" placeholder="Comma separated: cost per customer, CPCustomer"></label>
+      <label>Source column (optional)<input class="input" id="libraryKpiSource" placeholder="Column heading if directly available"></label>
+      <label>Formula (optional)<input class="input" id="libraryKpiFormula" placeholder="e.g. Total Cost ÷ Customers"></label>
+      <label>Unit<select class="input" id="libraryKpiUnit"><option value="number">Number</option><option value="currency">Currency</option><option value="percent">Percentage</option><option value="days">Days</option><option value="hours">Hours</option><option value="ratio">Ratio</option></select></label>
+      <label>Direction<select class="input" id="libraryKpiDirection"><option value="neutral">Neutral</option><option value="higher">Higher is better</option><option value="lower">Lower is better</option></select></label>
+    </div>
+    <div class="modal-actions"><button class="btn secondary" id="cancelAddLibraryKpi">Cancel</button><button class="btn primary" id="saveLibraryKpi">Save to Library</button></div>
   </div>
 </div>
 
@@ -1704,8 +1740,262 @@ const KPI_DEFS = [
   {id:'business_per_employee',name:'Business per Employee',dept:'Banking, Management',cat:'Productivity',aliases:['business per employee','business per staff'],direct:true,agg:'avg',higher:true},
   {id:'profit_per_employee',name:'Profit per Employee',dept:'Banking, Management',cat:'Productivity',aliases:['profit per employee','profit per staff'],direct:true,agg:'avg',higher:true},
   {id:'digital_transactions',name:'Digital Transactions',dept:'Banking',cat:'Digital',aliases:['digital transactions','digital transaction count','digital transactions count'],direct:true,agg:'sum',higher:true},
-  {id:'fee_income',name:'Fee Income',dept:'Banking, Finance',cat:'Income',aliases:['fee income','fee based income','commission income'],direct:true,agg:'sum',higher:true}
+  {id:'fee_income',name:'Fee Income',dept:'Banking, Finance',cat:'Income',aliases:['fee income','fee based income','commission income'],direct:true,agg:'sum',higher:true},
+
+  // Extended universal library — additional professional areas
+  {id:'risk_exposure',name:'Risk Exposure',dept:'Risk & Compliance, Banking, Management',cat:'Risk',aliases:['risk exposure','total risk exposure','exposure at risk'],direct:true,agg:'sum',lower:true},
+  {id:'risk_score',name:'Risk Score',dept:'Risk & Compliance',cat:'Risk',aliases:['risk score','risk rating','risk index'],direct:true,agg:'avg',lower:true},
+  {id:'high_risk_items',name:'High Risk Items',dept:'Risk & Compliance, Audit',cat:'Risk',aliases:['high risk items','high risk cases','high risk findings'],direct:true,agg:'sum',lower:true},
+  {id:'compliance_rate',name:'Compliance Rate %',dept:'Risk & Compliance, Audit',cat:'Compliance',aliases:['compliance rate','compliance rate %','compliance percentage'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'policy_breaches',name:'Policy Breaches',dept:'Risk & Compliance',cat:'Compliance',aliases:['policy breaches','policy violations','compliance breaches'],direct:true,agg:'sum',lower:true},
+  {id:'incidents',name:'Incidents',dept:'Risk & Compliance, Cybersecurity, Operations',cat:'Risk',aliases:['incidents','risk incidents','operational incidents'],direct:true,agg:'sum',lower:true},
+  {id:'loss_event_value',name:'Loss Event Value',dept:'Risk & Compliance',cat:'Risk',aliases:['loss event value','operational loss','risk loss'],direct:true,agg:'sum',lower:true},
+  {id:'kri_breaches',name:'KRI Breaches',dept:'Risk & Compliance',cat:'Risk',aliases:['kri breaches','key risk indicator breaches'],direct:true,agg:'sum',lower:true},
+
+  {id:'legal_cases',name:'Legal Cases',dept:'Legal',cat:'Legal',aliases:['legal cases','litigation cases','court cases'],direct:true,agg:'sum',lower:true},
+  {id:'case_resolution_days',name:'Case Resolution Days',dept:'Legal',cat:'Legal',aliases:['case resolution days','legal resolution days','case closure days'],direct:true,agg:'avg',unit:'days',lower:true},
+  {id:'legal_cost',name:'Legal Cost',dept:'Legal',cat:'Cost',aliases:['legal cost','legal expenses','litigation cost'],direct:true,agg:'sum',lower:true},
+  {id:'contracts_reviewed',name:'Contracts Reviewed',dept:'Legal',cat:'Contracts',aliases:['contracts reviewed','contract reviews'],direct:true,agg:'sum',higher:true},
+  {id:'contract_cycle_days',name:'Contract Cycle Time',dept:'Legal, Procurement',cat:'Efficiency',aliases:['contract cycle time','contract cycle days','contract turnaround'],direct:true,agg:'avg',unit:'days',lower:true},
+  {id:'contract_compliance',name:'Contract Compliance %',dept:'Legal, Procurement',cat:'Compliance',aliases:['contract compliance','contract compliance %'],direct:true,agg:'avg',percent:true,higher:true},
+
+  {id:'audit_findings',name:'Audit Findings',dept:'Audit, Risk & Compliance',cat:'Audit',aliases:['audit findings','audit observations','audit issues'],direct:true,agg:'sum',lower:true},
+  {id:'open_audit_findings',name:'Open Audit Findings',dept:'Audit',cat:'Audit',aliases:['open audit findings','pending audit findings','unresolved audit findings'],direct:true,agg:'sum',lower:true},
+  {id:'audit_closure_rate',name:'Audit Closure Rate %',dept:'Audit',cat:'Audit',aliases:['audit closure rate','audit closure rate %','finding closure %'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'repeat_findings',name:'Repeat Audit Findings',dept:'Audit',cat:'Audit',aliases:['repeat audit findings','recurring audit findings'],direct:true,agg:'sum',lower:true},
+  {id:'audit_adjustments',name:'Audit Adjustments',dept:'Audit, Finance',cat:'Audit',aliases:['audit adjustments','audit adjustment value'],direct:true,agg:'sum',lower:true},
+
+  {id:'carbon_emissions',name:'Carbon Emissions',dept:'ESG / Sustainability',cat:'Environment',aliases:['carbon emissions','co2 emissions','ghg emissions','greenhouse gas emissions'],direct:true,agg:'sum',lower:true},
+  {id:'energy_consumption',name:'Energy Consumption',dept:'ESG / Sustainability, Operations',cat:'Environment',aliases:['energy consumption','energy use','electricity consumption'],direct:true,agg:'sum',lower:true},
+  {id:'water_consumption',name:'Water Consumption',dept:'ESG / Sustainability',cat:'Environment',aliases:['water consumption','water use'],direct:true,agg:'sum',lower:true},
+  {id:'waste_generated',name:'Waste Generated',dept:'ESG / Sustainability, Operations',cat:'Environment',aliases:['waste generated','waste quantity','total waste'],direct:true,agg:'sum',lower:true},
+  {id:'waste_recycled',name:'Waste Recycled',dept:'ESG / Sustainability',cat:'Environment',aliases:['waste recycled','recycled waste'],direct:true,agg:'sum',higher:true},
+  {id:'renewable_energy_pct',name:'Renewable Energy %',dept:'ESG / Sustainability',cat:'Environment',aliases:['renewable energy %','renewable energy percentage'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'safety_incident_rate',name:'Safety Incident Rate',dept:'ESG / Sustainability, Operations',cat:'Safety',aliases:['safety incident rate','incident frequency rate','lost time injury rate'],direct:true,agg:'avg',lower:true},
+  {id:'diversity_ratio',name:'Workforce Diversity %',dept:'ESG / Sustainability, HR',cat:'People',aliases:['diversity %','workforce diversity','diversity ratio'],direct:true,agg:'avg',percent:true,higher:true},
+
+  {id:'it_uptime',name:'IT System Uptime %',dept:'IT / Technology',cat:'Service',aliases:['it uptime','system uptime','application uptime','uptime %'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'it_incidents',name:'IT Incidents',dept:'IT / Technology',cat:'Service',aliases:['it incidents','technology incidents','it tickets'],direct:true,agg:'sum',lower:true},
+  {id:'change_success_rate',name:'Change Success Rate %',dept:'IT / Technology',cat:'Change',aliases:['change success rate','change success rate %','successful changes %'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'deployment_frequency',name:'Deployment Frequency',dept:'IT / Technology',cat:'DevOps',aliases:['deployment frequency','deployments'],direct:true,agg:'sum',higher:true},
+  {id:'mean_time_to_repair',name:'Mean Time to Repair',dept:'IT / Technology, Operations',cat:'Reliability',aliases:['mttr','mean time to repair','mean time to restore'],direct:true,agg:'avg',unit:'hours',lower:true},
+  {id:'mean_time_between_failures',name:'Mean Time Between Failures',dept:'IT / Technology, Operations',cat:'Reliability',aliases:['mtbf','mean time between failures'],direct:true,agg:'avg',unit:'hours',higher:true},
+  {id:'technology_cost',name:'Technology Cost',dept:'IT / Technology',cat:'Cost',aliases:['technology cost','it cost','it expenditure','technology spend'],direct:true,agg:'sum',lower:true},
+
+  {id:'security_incidents',name:'Security Incidents',dept:'Cybersecurity',cat:'Security',aliases:['security incidents','cyber incidents','cybersecurity incidents'],direct:true,agg:'sum',lower:true},
+  {id:'critical_vulnerabilities',name:'Critical Vulnerabilities',dept:'Cybersecurity',cat:'Security',aliases:['critical vulnerabilities','critical security vulnerabilities'],direct:true,agg:'sum',lower:true},
+  {id:'patch_compliance',name:'Patch Compliance %',dept:'Cybersecurity, IT / Technology',cat:'Security',aliases:['patch compliance','patch compliance %'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'phishing_failure_rate',name:'Phishing Failure Rate %',dept:'Cybersecurity',cat:'Security',aliases:['phishing failure rate','phishing failure rate %'],direct:true,agg:'avg',percent:true,lower:true},
+  {id:'mttd',name:'Mean Time to Detect',dept:'Cybersecurity',cat:'Security',aliases:['mttd','mean time to detect'],direct:true,agg:'avg',unit:'hours',lower:true},
+  {id:'mttr_security',name:'Security Incident MTTR',dept:'Cybersecurity',cat:'Security',aliases:['security mttr','security incident mttr'],direct:true,agg:'avg',unit:'hours',lower:true},
+
+  {id:'defect_rate',name:'Defect Rate %',dept:'Quality Management, Operations / Manufacturing',cat:'Quality',aliases:['defect rate','defect rate %','defective rate'],direct:true,agg:'avg',percent:true,lower:true},
+  {id:'first_pass_yield',name:'First Pass Yield %',dept:'Quality Management, Operations / Manufacturing',cat:'Quality',aliases:['first pass yield','fpy','first pass yield %'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'customer_rejection_rate',name:'Customer Rejection Rate %',dept:'Quality Management',cat:'Quality',aliases:['customer rejection rate','customer rejection %'],direct:true,agg:'avg',percent:true,lower:true},
+  {id:'rework_rate',name:'Rework Rate %',dept:'Quality Management, Operations / Manufacturing',cat:'Quality',aliases:['rework rate','rework rate %'],direct:true,agg:'avg',percent:true,lower:true},
+  {id:'quality_cost',name:'Cost of Poor Quality',dept:'Quality Management',cat:'Quality',aliases:['cost of poor quality','copq','quality cost'],direct:true,agg:'sum',lower:true},
+  {id:'quality_complaints',name:'Quality Complaints',dept:'Quality Management, Customer Service',cat:'Quality',aliases:['quality complaints','product complaints','quality issues'],direct:true,agg:'sum',lower:true},
+
+  {id:'store_sales',name:'Store Sales',dept:'Retail',cat:'Sales',aliases:['store sales','retail sales','shop sales'],direct:true,agg:'sum',higher:true},
+  {id:'same_store_growth',name:'Same Store Growth %',dept:'Retail',cat:'Growth',aliases:['same store growth','same store sales growth','sssg'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'footfall',name:'Store Footfall',dept:'Retail',cat:'Customer',aliases:['footfall','store footfall','customer footfall'],direct:true,agg:'sum',higher:true},
+  {id:'conversion_rate_retail',name:'Retail Conversion Rate %',dept:'Retail',cat:'Sales',aliases:['retail conversion rate','store conversion rate'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'sales_per_sqft',name:'Sales per Sq Ft',dept:'Retail',cat:'Productivity',aliases:['sales per sq ft','sales per square foot'],direct:true,agg:'avg',higher:true},
+  {id:'basket_size',name:'Average Basket Size',dept:'Retail',cat:'Sales',aliases:['average basket size','basket size','average bill value'],direct:true,agg:'avg',higher:true},
+
+  {id:'website_traffic',name:'Website Traffic',dept:'E-commerce, Marketing',cat:'Digital',aliases:['website traffic','website visitors','visitors','sessions'],direct:true,agg:'sum',higher:true},
+  {id:'cart_abandonment',name:'Cart Abandonment Rate %',dept:'E-commerce',cat:'Conversion',aliases:['cart abandonment','cart abandonment rate','cart abandonment rate %'],direct:true,agg:'avg',percent:true,lower:true},
+  {id:'online_orders',name:'Online Orders',dept:'E-commerce',cat:'Sales',aliases:['online orders','ecommerce orders','e commerce orders'],direct:true,agg:'sum',higher:true},
+  {id:'average_order_value',name:'Average Order Value',dept:'E-commerce, Sales / Business, Retail',cat:'Sales',aliases:['average order value','aov','avg order value'],direct:true,agg:'avg',higher:true},
+  {id:'repeat_purchase_rate',name:'Repeat Purchase Rate %',dept:'E-commerce, Retail, Sales / Business',cat:'Customer',aliases:['repeat purchase rate','repeat purchase rate %','repeat customer rate'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'return_rate',name:'Product Return Rate %',dept:'E-commerce, Retail',cat:'Customer',aliases:['return rate','product return rate','returns %'],direct:true,agg:'avg',percent:true,lower:true},
+
+  {id:'patient_volume',name:'Patient Volume',dept:'Healthcare',cat:'Service',aliases:['patient volume','patients','patient visits','patient count'],direct:true,agg:'sum',higher:true},
+  {id:'bed_occupancy',name:'Bed Occupancy %',dept:'Healthcare',cat:'Capacity',aliases:['bed occupancy','bed occupancy %','occupancy rate'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'average_length_stay',name:'Average Length of Stay',dept:'Healthcare',cat:'Efficiency',aliases:['average length of stay','alos','length of stay'],direct:true,agg:'avg',unit:'days',lower:true},
+  {id:'readmission_rate',name:'Readmission Rate %',dept:'Healthcare',cat:'Quality',aliases:['readmission rate','readmission rate %','30 day readmission'],direct:true,agg:'avg',percent:true,lower:true},
+  {id:'patient_satisfaction',name:'Patient Satisfaction %',dept:'Healthcare',cat:'Customer',aliases:['patient satisfaction','patient satisfaction %','patient experience'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'claim_denial_rate',name:'Claim Denial Rate %',dept:'Healthcare',cat:'Finance',aliases:['claim denial rate','claim denial rate %','insurance claim denial'],direct:true,agg:'avg',percent:true,lower:true},
+
+  {id:'student_enrolment',name:'Student Enrolment',dept:'Education',cat:'Students',aliases:['student enrolment','student enrollment','student count','enrolment'],direct:true,agg:'sum',higher:true},
+  {id:'attendance_rate_education',name:'Student Attendance %',dept:'Education',cat:'Students',aliases:['student attendance','student attendance %','attendance rate students'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'pass_rate',name:'Pass Rate %',dept:'Education',cat:'Academic',aliases:['pass rate','pass percentage','success rate students'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'dropout_rate',name:'Dropout Rate %',dept:'Education',cat:'Students',aliases:['dropout rate','drop out rate','student dropout'],direct:true,agg:'avg',percent:true,lower:true},
+  {id:'faculty_student_ratio',name:'Faculty Student Ratio',dept:'Education',cat:'Resources',aliases:['faculty student ratio','student faculty ratio'],direct:true,agg:'avg',ratio:true},
+  {id:'training_completion_education',name:'Course Completion %',dept:'Education',cat:'Learning',aliases:['course completion','course completion %','completion rate students'],direct:true,agg:'avg',percent:true,higher:true},
+
+  {id:'occupancy_rate',name:'Occupancy Rate %',dept:'Hospitality, Real Estate',cat:'Capacity',aliases:['occupancy rate','occupancy %','room occupancy'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'adr',name:'Average Daily Rate',dept:'Hospitality',cat:'Revenue',aliases:['average daily rate','adr','average room rate'],direct:true,agg:'avg',higher:true},
+  {id:'revpar',name:'Revenue per Available Room',dept:'Hospitality',cat:'Revenue',aliases:['revpar','revenue per available room'],direct:true,agg:'avg',higher:true},
+  {id:'guest_satisfaction',name:'Guest Satisfaction %',dept:'Hospitality',cat:'Customer',aliases:['guest satisfaction','guest satisfaction %','guest rating'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'cancellation_rate',name:'Cancellation Rate %',dept:'Hospitality',cat:'Customer',aliases:['cancellation rate','cancellation rate %','booking cancellation'],direct:true,agg:'avg',percent:true,lower:true},
+
+  {id:'property_sales',name:'Property Sales',dept:'Real Estate',cat:'Sales',aliases:['property sales','real estate sales','property revenue'],direct:true,agg:'sum',higher:true},
+  {id:'occupancy_realestate',name:'Property Occupancy %',dept:'Real Estate',cat:'Property',aliases:['property occupancy','occupancy real estate','occupied units %'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'rent_collection',name:'Rent Collection %',dept:'Real Estate',cat:'Collections',aliases:['rent collection','rent collection %','rental collection efficiency'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'vacancy_rate',name:'Vacancy Rate %',dept:'Real Estate',cat:'Property',aliases:['vacancy rate','vacancy %','vacant units'],direct:true,agg:'avg',percent:true,lower:true},
+  {id:'property_yield',name:'Property Yield %',dept:'Real Estate',cat:'Return',aliases:['property yield','rental yield','property yield %'],direct:true,agg:'avg',percent:true,higher:true},
+
+  {id:'construction_progress',name:'Construction Progress %',dept:'Construction',cat:'Project',aliases:['construction progress','project progress','construction completion'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'cost_per_sqft',name:'Construction Cost per Sq Ft',dept:'Construction',cat:'Cost',aliases:['construction cost per sq ft','cost per square foot construction'],direct:true,agg:'avg',higher:false},
+  {id:'safety_incidents_construction',name:'Construction Safety Incidents',dept:'Construction',cat:'Safety',aliases:['construction safety incidents','site safety incidents'],direct:true,agg:'sum',lower:true},
+  {id:'schedule_variance',name:'Schedule Variance',dept:'Construction, Project Management',cat:'Schedule',aliases:['schedule variance','time variance','schedule delay'],direct:true,agg:'avg',unit:'days',lower:true},
+  {id:'cost_variance_construction',name:'Construction Cost Variance',dept:'Construction, Project Management',cat:'Cost',aliases:['construction cost variance','project cost variance'],direct:true,agg:'sum',lower:true},
+
+  {id:'program_beneficiaries',name:'Beneficiaries Served',dept:'NGO / Non-profit, Government / Public Sector',cat:'Impact',aliases:['beneficiaries','beneficiaries served','people served','participants'],direct:true,agg:'sum',higher:true},
+  {id:'program_completion',name:'Programme Completion %',dept:'NGO / Non-profit, Government / Public Sector',cat:'Programme',aliases:['programme completion','program completion','programme completion %'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'fund_utilisation',name:'Fund Utilisation %',dept:'NGO / Non-profit, Government / Public Sector',cat:'Finance',aliases:['fund utilisation','fund utilization','fund utilisation %','budget utilisation'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'cost_per_beneficiary',name:'Cost per Beneficiary',dept:'NGO / Non-profit, Government / Public Sector',cat:'Efficiency',aliases:['cost per beneficiary','cost per participant'],direct:true,agg:'avg',lower:true},
+  {id:'grant_utilisation',name:'Grant Utilisation %',dept:'NGO / Non-profit',cat:'Finance',aliases:['grant utilisation','grant utilization','grant utilisation %'],direct:true,agg:'avg',percent:true,higher:true},
+
+  {id:'scheme_coverage',name:'Scheme Coverage',dept:'Government / Public Sector',cat:'Service Delivery',aliases:['scheme coverage','coverage','beneficiary coverage'],direct:true,agg:'sum',higher:true},
+  {id:'service_delivery_time',name:'Service Delivery Time',dept:'Government / Public Sector',cat:'Service Delivery',aliases:['service delivery time','turnaround time government','service turnaround time'],direct:true,agg:'avg',unit:'days',lower:true},
+  {id:'grievance_resolution_rate',name:'Grievance Resolution Rate %',dept:'Government / Public Sector, Customer Service',cat:'Service Delivery',aliases:['grievance resolution rate','grievance resolution rate %','complaint resolution government'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'scheme_target_achievement',name:'Scheme Target Achievement %',dept:'Government / Public Sector',cat:'Target',aliases:['scheme target achievement','scheme target achievement %'],direct:true,agg:'avg',percent:true,higher:true},
+
+  {id:'credit_score',name:'Credit Score',dept:'Banking Credit Analysis, Risk & Compliance',cat:'Credit Risk',aliases:['credit score','borrower credit score','bureau score'],direct:true,agg:'avg',higher:true},
+  {id:'debt_service_coverage',name:'Debt Service Coverage Ratio',dept:'Banking Credit Analysis, Finance',cat:'Credit Risk',aliases:['dscr','debt service coverage ratio','debt service coverage'],direct:true,agg:'avg',ratio:true,higher:true},
+  {id:'interest_coverage',name:'Interest Coverage Ratio',dept:'Banking Credit Analysis, Finance',cat:'Credit Risk',aliases:['interest coverage','interest coverage ratio'],direct:true,agg:'avg',ratio:true,higher:true},
+  {id:'loan_to_value',name:'Loan to Value %',dept:'Banking Credit Analysis',cat:'Credit Risk',aliases:['loan to value','ltv','loan to value %'],direct:true,agg:'avg',percent:true,lower:true},
+  {id:'foir',name:'Fixed Obligation to Income Ratio %',dept:'Banking Credit Analysis',cat:'Credit Risk',aliases:['foir','fixed obligation to income ratio','foir %'],direct:true,agg:'avg',percent:true,lower:true},
+  {id:'credit_utilisation',name:'Credit Utilisation %',dept:'Banking Credit Analysis',cat:'Credit Risk',aliases:['credit utilisation','credit utilization','credit utilisation %'],direct:true,agg:'avg',percent:true,lower:true},
+  {id:'early_warning_accounts',name:'Early Warning Accounts',dept:'Banking Credit Analysis, Risk & Compliance',cat:'Credit Risk',aliases:['early warning accounts','ewa accounts','early warning signals'],direct:true,agg:'sum',lower:true},
+
+  {id:'enterprise_revenue',name:'Enterprise Revenue',dept:'Micro & Small Enterprise, Business',cat:'Business',aliases:['enterprise revenue','business turnover','micro enterprise sales','msme turnover'],direct:true,agg:'sum',higher:true},
+  {id:'enterprise_profit',name:'Enterprise Profit',dept:'Micro & Small Enterprise, Business',cat:'Profitability',aliases:['enterprise profit','business profit','micro enterprise profit','msme profit'],direct:true,agg:'sum',higher:true},
+  {id:'enterprise_working_capital',name:'Enterprise Working Capital',dept:'Micro & Small Enterprise, Finance',cat:'Liquidity',aliases:['enterprise working capital','msme working capital'],direct:true,agg:'sum'},
+  {id:'enterprise_debtor_days',name:'Enterprise Debtor Days',dept:'Micro & Small Enterprise, Finance',cat:'Efficiency',aliases:['enterprise debtor days','msme debtor days'],direct:true,agg:'avg',unit:'days',lower:true},
+  {id:'enterprise_stock_days',name:'Enterprise Stock Days',dept:'Micro & Small Enterprise, Finance',cat:'Efficiency',aliases:['enterprise stock days','msme stock days'],direct:true,agg:'avg',unit:'days',lower:true},
+  {id:'enterprise_creditor_days',name:'Enterprise Creditor Days',dept:'Micro & Small Enterprise, Finance',cat:'Efficiency',aliases:['enterprise creditor days','msme creditor days'],direct:true,agg:'avg',unit:'days',lower:true},
+
+  {id:'customer_acquisition_cost',name:'Customer Acquisition Cost',dept:'Sales / Business, Marketing, E-commerce',cat:'Customer',aliases:['customer acquisition cost','cac','cost per acquisition'],direct:true,agg:'avg',higher:false},
+  {id:'customer_lifetime_value',name:'Customer Lifetime Value',dept:'Sales / Business, Marketing, E-commerce',cat:'Customer',aliases:['customer lifetime value','clv','ltv customer'],direct:true,agg:'avg',higher:true},
+  {id:'customer_retention_rate',name:'Customer Retention Rate %',dept:'Sales / Business, Marketing, Customer Service',cat:'Customer',aliases:['customer retention rate','customer retention rate %','retention %'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'churn_rate',name:'Customer Churn Rate %',dept:'Sales / Business, Marketing, Customer Service',cat:'Customer',aliases:['churn rate','customer churn','customer churn rate %'],direct:true,agg:'avg',percent:true,lower:true},
+  {id:'conversion_rate',name:'Conversion Rate %',dept:'Sales / Business, Marketing, E-commerce',cat:'Sales',aliases:['conversion rate','conversion rate %','lead conversion'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'win_rate',name:'Win Rate %',dept:'Sales / Business',cat:'Sales',aliases:['win rate','win rate %','deal win rate'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'sales_cycle_days',name:'Average Sales Cycle',dept:'Sales / Business',cat:'Efficiency',aliases:['sales cycle','sales cycle days','average sales cycle'],direct:true,agg:'avg',unit:'days',lower:true},
+  {id:'sales_per_employee',name:'Sales per Employee',dept:'Sales / Business, Management, HR',cat:'Productivity',aliases:['sales per employee','sales per staff','revenue per employee'],direct:true,agg:'avg',higher:true},
+
+  {id:'employee_attrition',name:'Employee Attrition %',dept:'HR',cat:'Workforce',aliases:['employee attrition','attrition rate','attrition %','employee turnover'],direct:true,agg:'avg',percent:true,lower:true},
+  {id:'employee_retention',name:'Employee Retention %',dept:'HR',cat:'Workforce',aliases:['employee retention','retention rate employees','employee retention %'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'headcount',name:'Headcount',dept:'HR, Management',cat:'Workforce',aliases:['headcount','employee count','employees','staff count','total employees'],direct:true,agg:'sum',higher:true},
+  {id:'time_to_hire',name:'Time to Hire',dept:'HR',cat:'Recruitment',aliases:['time to hire','time to fill','hiring days'],direct:true,agg:'avg',unit:'days',lower:true},
+  {id:'cost_per_hire',name:'Cost per Hire',dept:'HR',cat:'Recruitment',aliases:['cost per hire','recruitment cost per hire'],direct:true,agg:'avg',lower:true},
+  {id:'offer_acceptance',name:'Offer Acceptance %',dept:'HR',cat:'Recruitment',aliases:['offer acceptance','offer acceptance %','offer acceptance rate'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'training_hours_employee',name:'Training Hours per Employee',dept:'HR',cat:'Learning',aliases:['training hours per employee','training hours employee'],direct:true,agg:'avg',unit:'hours',higher:true},
+  {id:'absenteeism_rate',name:'Absenteeism %',dept:'HR',cat:'Attendance',aliases:['absenteeism','absenteeism rate','absence rate'],direct:true,agg:'avg',percent:true,lower:true},
+  {id:'overtime_hours',name:'Overtime Hours',dept:'HR, Operations',cat:'Workforce',aliases:['overtime hours','overtime'],direct:true,agg:'sum',lower:true},
+
+  {id:'production_productivity',name:'Production Productivity',dept:'Operations / Manufacturing',cat:'Productivity',aliases:['production productivity','output per employee','production per hour'],direct:true,agg:'avg',higher:true},
+  {id:'capacity_utilisation',name:'Capacity Utilisation %',dept:'Operations / Manufacturing',cat:'Efficiency',aliases:['capacity utilisation','capacity utilization','capacity utilisation %'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'downtime',name:'Downtime Hours',dept:'Operations / Manufacturing, IT / Technology',cat:'Reliability',aliases:['downtime','downtime hours','machine downtime'],direct:true,agg:'sum',lower:true},
+  {id:'on_time_delivery',name:'On-time Delivery %',dept:'Operations / Manufacturing, Supply Chain, Procurement',cat:'Delivery',aliases:['on time delivery','on-time delivery','on time delivery %','otd'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'cost_per_unit',name:'Cost per Unit',dept:'Operations / Manufacturing',cat:'Cost',aliases:['cost per unit','unit cost','production cost per unit'],direct:true,agg:'avg',lower:true},
+  {id:'scrap_rate',name:'Scrap Rate %',dept:'Operations / Manufacturing, Quality Management',cat:'Quality',aliases:['scrap rate','scrap rate %','scrap percentage'],direct:true,agg:'avg',percent:true,lower:true},
+
+  {id:'supplier_otd',name:'Supplier On-time Delivery %',dept:'Procurement',cat:'Supplier',aliases:['supplier on time delivery','supplier otd','supplier on-time delivery %'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'supplier_quality',name:'Supplier Quality %',dept:'Procurement',cat:'Supplier',aliases:['supplier quality','supplier quality %','supplier acceptance rate'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'purchase_price_variance',name:'Purchase Price Variance',dept:'Procurement, Finance',cat:'Cost',aliases:['purchase price variance','ppv','purchase variance'],direct:true,agg:'sum',lower:true},
+  {id:'procurement_savings',name:'Procurement Savings',dept:'Procurement',cat:'Savings',aliases:['procurement savings','purchase savings','procurement cost savings'],direct:true,agg:'sum',higher:true},
+  {id:'supplier_lead_time',name:'Supplier Lead Time',dept:'Procurement, Supply Chain',cat:'Efficiency',aliases:['supplier lead time','vendor lead time','supplier lead time days'],direct:true,agg:'avg',unit:'days',lower:true},
+
+  {id:'inventory_turnover',name:'Inventory Turnover',dept:'Supply Chain, Finance, Retail',cat:'Inventory',aliases:['inventory turnover','stock turnover','inventory turnover ratio'],direct:true,agg:'avg',ratio:true,higher:true},
+  {id:'stockout_rate',name:'Stock-out Rate %',dept:'Supply Chain, Retail, E-commerce',cat:'Inventory',aliases:['stock out rate','stockout rate','stock-out rate %'],direct:true,agg:'avg',percent:true,lower:true},
+  {id:'inventory_accuracy',name:'Inventory Accuracy %',dept:'Supply Chain, Retail',cat:'Inventory',aliases:['inventory accuracy','inventory accuracy %','stock accuracy'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'order_fulfilment_rate',name:'Order Fulfilment %',dept:'Supply Chain, E-commerce, Operations / Manufacturing',cat:'Delivery',aliases:['order fulfilment','order fulfillment','order fulfilment %','order fill rate'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'warehouse_utilisation',name:'Warehouse Utilisation %',dept:'Supply Chain',cat:'Warehouse',aliases:['warehouse utilisation','warehouse utilization','warehouse utilisation %'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'logistics_cost',name:'Logistics Cost',dept:'Supply Chain',cat:'Cost',aliases:['logistics cost','logistics expense','freight cost'],direct:true,agg:'sum',lower:true},
+
+  {id:'ticket_resolution_rate',name:'Ticket Resolution Rate %',dept:'Customer Service',cat:'Service',aliases:['ticket resolution rate','resolution rate','ticket closure rate'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'first_response_time',name:'First Response Time',dept:'Customer Service',cat:'Service',aliases:['first response time','first response hours','initial response time'],direct:true,agg:'avg',unit:'hours',lower:true},
+  {id:'average_resolution_time',name:'Average Resolution Time',dept:'Customer Service',cat:'Service',aliases:['average resolution time','resolution time','average handling time'],direct:true,agg:'avg',unit:'hours',lower:true},
+  {id:'sla_compliance',name:'SLA Compliance %',dept:'Customer Service, IT / Technology',cat:'Service',aliases:['sla compliance','sla compliance %','service level compliance'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'csat',name:'Customer Satisfaction %',dept:'Customer Service',cat:'Customer',aliases:['csat','customer satisfaction','customer satisfaction %'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'nps',name:'Net Promoter Score',dept:'Customer Service, Marketing',cat:'Customer',aliases:['nps','net promoter score'],direct:true,agg:'avg',higher:true},
+
+  {id:'project_completion',name:'Project Completion %',dept:'Project Management, Construction',cat:'Project',aliases:['project completion','project completion %','completion percentage'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'milestone_completion',name:'Milestone Completion %',dept:'Project Management',cat:'Project',aliases:['milestone completion','milestone completion %','milestone achieved'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'budget_utilisation',name:'Budget Utilisation %',dept:'Project Management, Finance, Government / Public Sector',cat:'Cost',aliases:['budget utilisation','budget utilization','budget utilisation %'],direct:true,agg:'avg',percent:true},
+  {id:'overdue_tasks',name:'Overdue Tasks',dept:'Project Management',cat:'Delivery',aliases:['overdue tasks','late tasks','delayed tasks'],direct:true,agg:'sum',lower:true},
+  {id:'resource_utilisation',name:'Resource Utilisation %',dept:'Project Management, HR, Operations',cat:'Productivity',aliases:['resource utilisation','resource utilization','resource utilisation %'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'schedule_adherence',name:'Schedule Adherence %',dept:'Project Management, Operations',cat:'Delivery',aliases:['schedule adherence','schedule adherence %','on schedule %'],direct:true,agg:'avg',percent:true,higher:true}
 ];
+
+
+// ---------- EXTENSIBLE KPI LIBRARY ----------
+// User-added KPI definitions are stored locally and merged into KPI_DEFS so they
+// work on future uploads. Existing definitions remain untouched.
+const KPI_LIBRARY_STORAGE_KEY = 'instantdash_kpi_library_v1';
+const KPI_LIBRARY_AREAS = ['Management','Finance','HR','Sales / Business','Marketing','Operations / Manufacturing','Procurement','Supply Chain','Customer Service','Project Management','Banking','Risk & Compliance','Legal','Audit','ESG / Sustainability','IT / Technology','Cybersecurity','Quality Management','Retail','E-commerce','Healthcare','Education','Hospitality','Real Estate','Construction','NGO / Non-profit','Government / Public Sector','Banking Credit Analysis','Micro & Small Enterprise'];
+function loadKpiLibrary(){
+  try{ const raw=localStorage.getItem(KPI_LIBRARY_STORAGE_KEY); const arr=raw?JSON.parse(raw):[]; return Array.isArray(arr)?arr:[]; }catch(e){ return []; }
+}
+function saveKpiLibrary(){ try{ localStorage.setItem(KPI_LIBRARY_STORAGE_KEY, JSON.stringify(KPI_DEFS.filter(d=>d.userAdded===true))); }catch(e){} }
+function restoreUserKpis(){
+  const saved=loadKpiLibrary();
+  saved.forEach(d=>{ if(d&&d.id&&!KPI_DEFS.some(x=>x.id===d.id)){ KPI_DEFS.push(d); } });
+}
+restoreUserKpis();
+function allKpiLibraryDefs(){ return KPI_DEFS.slice(); }
+function populateKpiLibraryAreas(){
+  const el=document.getElementById('kpiLibraryArea'); if(!el)return;
+  const areas=new Set(['All']); KPI_DEFS.forEach(d=>String(d.dept||'').split(',').forEach(x=>areas.add(x.trim())));
+  el.innerHTML=Array.from(areas).sort((a,b)=>a==='All'?-1:b==='All'?1:a.localeCompare(b)).map(a=>`<option>${escapeHtml(a)}</option>`).join('');
+}
+function renderKpiLibrary(){
+  const body=document.getElementById('kpiLibraryBody'); if(!body)return;
+  populateKpiLibraryAreas();
+  const area=document.getElementById('kpiLibraryArea').value||'All';
+  const q=normKpiText(document.getElementById('kpiLibrarySearch').value||'');
+  const list=KPI_DEFS.filter(d=>{
+    const areaOk=area==='All'||String(d.dept||'').split(',').map(x=>x.trim()).includes(area);
+    const text=normKpiText([d.name,d.dept,d.cat,(d.aliases||[]).join(' '),d.formula||''].join(' '));
+    return areaOk&&(!q||text.includes(q));
+  });
+  body.innerHTML=list.map(d=>`<tr>
+    <td><strong>${escapeHtml(d.name)}</strong>${d.userAdded?'<br><span class="kpi-badge high">User added</span>':''}</td>
+    <td>${escapeHtml(d.dept||'')}</td><td>${escapeHtml(d.cat||'')}</td>
+    <td>${escapeHtml((d.aliases||[]).join(', '))}</td>
+    <td>${escapeHtml(d.formula||'Direct source value')}</td>
+    <td>${d.userAdded?`<button class="btn secondary small delete-library-kpi" data-id="${escapeHtml(d.id)}">Delete</button>`:'<span class="hint">Built-in</span>'}</td>
+  </tr>`).join('') || '<tr><td colspan="6" class="kpi-empty">No KPI matches your search.</td></tr>';
+  body.querySelectorAll('.delete-library-kpi').forEach(btn=>btn.addEventListener('click',()=>{
+    const id=btn.dataset.id;
+    const i=KPI_DEFS.findIndex(d=>d.id===id&&d.userAdded); if(i>=0){KPI_DEFS.splice(i,1);saveKpiLibrary();renderKpiLibrary();renderKPIs();showMessage('KPI removed from your personal library.','info');}
+  }));
+}
+function openKpiLibrary(){ populateKpiLibraryAreas(); renderKpiLibrary(); document.getElementById('kpiLibraryModal').classList.add('open'); }
+function closeKpiLibrary(){ document.getElementById('kpiLibraryModal').classList.remove('open'); }
+function openAddLibraryKpi(){ document.getElementById('addLibraryKpiModal').classList.add('open'); }
+function closeAddLibraryKpi(){ document.getElementById('addLibraryKpiModal').classList.remove('open'); }
+function clearAddLibraryForm(){ ['libraryKpiName','libraryKpiDept','libraryKpiCat','libraryKpiAliases','libraryKpiSource','libraryKpiFormula'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';}); }
+function saveNewLibraryKpi(){
+  const name=document.getElementById('libraryKpiName').value.trim();
+  const dept=document.getElementById('libraryKpiDept').value.trim()||'Management';
+  const cat=document.getElementById('libraryKpiCat').value.trim()||'Custom';
+  const aliases=document.getElementById('libraryKpiAliases').value.split(',').map(x=>x.trim()).filter(Boolean);
+  const source=document.getElementById('libraryKpiSource').value.trim();
+  const formula=document.getElementById('libraryKpiFormula').value.trim();
+  const unit=document.getElementById('libraryKpiUnit').value;
+  const direction=document.getElementById('libraryKpiDirection').value;
+  if(!name){showMessage('Enter a KPI name.','warn');return;}
+  const id='user_'+normKpiText(name).replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'')+'_'+Date.now();
+  const d={id,name,dept,cat,aliases:aliases.length?aliases:[name],direct:!formula,agg:'sum',formula:formula||source||'Direct source value',unit,userAdded:true};
+  if(source)d.aliases=Array.from(new Set(d.aliases.concat([source])));
+  if(unit==='percent')d.percent=true;
+  if(direction==='higher')d.higher=true; else if(direction==='lower')d.lower=true;
+  KPI_DEFS.push(d); saveKpiLibrary(); clearAddLibraryForm(); closeAddLibraryKpi(); renderKpiLibrary(); renderKPIs(); showMessage('KPI added to the library and saved for future uploads.','info');
+}
+
+document.getElementById('kpiLibraryBtn')?.addEventListener('click',openKpiLibrary);
+document.getElementById('closeKpiLibrary')?.addEventListener('click',closeKpiLibrary);
+document.getElementById('kpiLibraryArea')?.addEventListener('change',renderKpiLibrary);
+document.getElementById('kpiLibrarySearch')?.addEventListener('input',renderKpiLibrary);
+document.getElementById('addLibraryKpiBtn')?.addEventListener('click',openAddLibraryKpi);
+document.getElementById('closeAddLibraryKpi')?.addEventListener('click',closeAddLibraryKpi);
+document.getElementById('cancelAddLibraryKpi')?.addEventListener('click',closeAddLibraryKpi);
+document.getElementById('saveLibraryKpi')?.addEventListener('click',saveNewLibraryKpi);
 
 const KPI_ALIAS_CACHE = new Map();
 function normKpiText(v){ return String(v??'').toLowerCase().replace(/[%₹$€£]/g,'').replace(/[&/\\_-]+/g,' ').replace(/[^a-z0-9 ]+/g,' ').replace(/\\s+/g,' ').trim(); }
@@ -3398,7 +3688,8 @@ const reportModal=document.getElementById('reportModal');
 const loadConfigModal=document.getElementById('loadConfigModal');
 const cleanModal=document.getElementById('cleanModal');
 const customKpiModal=document.getElementById('customKpiModal');
-const allModals=[addChartModal,pivotModal,settingsModal,helpModal,compareModal,reportModal,loadConfigModal,cleanModal,customKpiModal];
+const kpiLibraryModal=document.getElementById('kpiLibraryModal'); const addLibraryKpiModal=document.getElementById('addLibraryKpiModal');
+const allModals=[addChartModal,pivotModal,settingsModal,helpModal,compareModal,reportModal,loadConfigModal,cleanModal,customKpiModal,kpiLibraryModal,addLibraryKpiModal];
 document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>{
   allModals.forEach(m=>m.classList.remove('open'));
 }));
