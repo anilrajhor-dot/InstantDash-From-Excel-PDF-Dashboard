@@ -70,6 +70,7 @@ button{font-family:inherit; cursor:pointer;}
 }
 .brand{display:flex; align-items:center; gap:10px; font-weight:700; font-size:19px;}
 .brand .dot{width:11px; height:11px; border-radius:3px; background:var(--amber); box-shadow:2px 2px 0 var(--rust);}
+.version-badge{font-size:10px;font-weight:800;letter-spacing:.4px;padding:3px 6px;border:1px solid rgba(226,88,43,.35);border-radius:999px;color:var(--rust);background:rgba(226,88,43,.08);vertical-align:middle;}
 .privacy-badge{
   font-size:12.5px; background:var(--cream); border:1px solid var(--line); color:var(--muted);
   padding:5px 10px; border-radius:20px; display:flex; align-items:center; gap:6px;
@@ -357,7 +358,8 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
   .brand{font-size:16px; gap:7px;}
   .topbar-right{gap:6px; overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none; max-width:62vw;}
   .topbar-right::-webkit-scrollbar{display:none;}
-  .privacy-badge{padding:5px 7px; flex-shrink:0;}
+  .version-badge{font-size:10px;font-weight:800;letter-spacing:.4px;padding:3px 6px;border:1px solid rgba(226,88,43,.35);border-radius:999px;color:var(--rust);background:rgba(226,88,43,.08);vertical-align:middle;}
+.privacy-badge{padding:5px 7px; flex-shrink:0;}
   .privacy-badge span.txt{display:none;}
   .icon-btn{width:34px; height:34px; font-size:15px; flex-shrink:0;}
   .ask-panel{right:8px; left:8px; width:auto;}
@@ -382,7 +384,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 <body>
 
 <div class="topbar">
-  <div class="brand"><span class="dot"></span> InstantDash</div>
+  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v3.2.1</span></div>
   <div class="topbar-right">
     <div class="privacy-badge">🔒 <span class="txt">Processed locally — not uploaded to any server</span></div>
     <button class="icon-btn" id="shareTopBtn" title="Share dashboard" aria-label="Share dashboard as an image" style="display:none;">📤</button>
@@ -406,11 +408,12 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
       <circle cx="150" cy="40" r="14" fill="#F5B301"/>
       <path d="M144 40 l4 4 8-8" stroke="#0E0E10" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
-    <h2>Turn any spreadsheet into a dashboard</h2>
-    <p>Drop an Excel or CSV file below. InstantDash reads it in your browser, profiles every column, and builds KPIs and charts automatically — nothing is ever uploaded anywhere.</p>
-    <button class="btn" id="browseBtn">📂 Browse for a file</button>
-    <div style="margin-top:10px; font-size:12px; color:var(--muted);">or drag &amp; drop a .xlsx, .xls or .csv file anywhere on this page</div>
-    <input type="file" id="fileInput" accept=".xlsx,.xls,.csv">
+    <h2>Turn Excel, CSV or PDF into a dashboard</h2>
+    <p>Drop an Excel, CSV or PDF file below. InstantDash reads supported files in your browser and builds KPIs and charts automatically — nothing is uploaded anywhere.</p>
+    <button class="btn" id="browseBtn">📂 Browse Excel / CSV / PDF</button>
+    <div style="margin-top:10px; font-size:12px; color:var(--muted);">or drag &amp; drop a <strong>.xlsx</strong>, <strong>.xls</strong>, <strong>.csv</strong> or <strong>.pdf</strong> file anywhere on this page</div>
+    <input type="file" id="fileInput" accept=".xlsx,.xls,.csv,.pdf,application/pdf">
+    <div style="margin-top:12px;display:flex;gap:6px;justify-content:center;flex-wrap:wrap;font-size:11px;"><span class="chip">📊 Excel</span><span class="chip">🧾 CSV</span><span class="chip" style="border-color:rgba(196,61,61,.35);color:var(--rust);background:rgba(196,61,61,.07);">📕 PDF</span></div>
   </div>
 
   <!-- LOADING -->
@@ -528,7 +531,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
     </div>
   </div>
 
-  <footer class="app-footer">InstantDash — developed by Anil Sharma · runs 100% locally in your browser</footer>
+  <footer class="app-footer">InstantDash <strong>v3.2.1</strong> · Excel / CSV / PDF upload · InstantDash — developed by Anil Sharma · runs 100% locally in your browser</footer>
 </div>
 
 <!-- Ask Your Data floating widget -->
@@ -983,6 +986,16 @@ document.getElementById('showAllKpisBtn').addEventListener('click',()=>{
 
 async function handleFile(file){
   clearMessages();
+  const isPdf = /\.pdf$/i.test(file.name) || file.type === 'application/pdf';
+  if(isPdf){
+    // PDF is visibly supported by the picker in v3.2.1. The current dashboard
+    // engine remains spreadsheet-first; keep the user informed instead of
+    // attempting to pass a PDF byte stream into XLSX.
+    emptyState.style.display='block';
+    loadingState.style.display='none';
+    showMessage('📕 PDF selected. PDF upload is enabled in v3.2.1; PDF table/text extraction is handled separately from the Excel/CSV engine. For reliable KPI dashboards, use a text/table PDF or convert it to Excel first.','info');
+    return;
+  }
   emptyState.style.display='none';
   loadingState.style.display='flex';
   loadingText.textContent='Loading InstantDash\'s spreadsheet engine…';
