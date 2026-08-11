@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<title>InstantDash — Excel to Dashboard</title>
+<title>InstantDash — Excel to Dashboard v3.0.0</title>
 <meta name="author" content="Developed by Anil Sharma, Former General Manager, Central Bank of India">
-<meta name="application-name" content="InstantDash">
+<meta name="application-name" content="InstantDash v3.0.0">
 <meta name="description" content="InstantDash — Excel to Dashboard, developed by Anil Sharma">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -462,7 +462,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
       <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
         <span class="hint" id="kpiDepartmentHint"></span>
         <select id="kpiDepartmentSelect" aria-label="KPI department" class="input" style="max-width:190px;padding:6px 8px;">
-          <option value="Auto Detect">Auto Detect</option><option>Management</option><option>Finance</option><option>HR</option><option>Sales / Business</option><option>Marketing</option><option>Operations / Manufacturing</option><option>Procurement</option><option>Supply Chain</option><option>Customer Service</option><option>Project Management</option><option>Banking</option><option>Risk &amp; Compliance</option><option>Legal</option><option>Audit</option><option>ESG / Sustainability</option><option>IT / Technology</option><option>Cybersecurity</option><option>Quality Management</option><option>Retail</option><option>E-commerce</option><option>Healthcare</option><option>Education</option><option>Hospitality</option><option>Real Estate</option><option>Construction</option><option>NGO / Non-profit</option><option>Government / Public Sector</option><option>Banking Credit Analysis</option><option>BC Performance</option><option>Micro &amp; Small Enterprise</option>
+          <option value="Auto Detect">Auto Detect</option><option>Management</option><option>Finance</option><option>HR</option><option>Sales / Business</option><option>Marketing</option><option>Operations / Manufacturing</option><option>Procurement</option><option>Supply Chain</option><option>Customer Service</option><option>Project Management</option><option>Banking</option><option>Risk &amp; Compliance</option><option>Legal</option><option>Audit</option><option>ESG / Sustainability</option><option>IT / Technology</option><option>Cybersecurity</option><option>Quality Management</option><option>Retail</option><option>E-commerce</option><option>Healthcare</option><option>Education</option><option>Hospitality</option><option>Real Estate</option><option>Construction</option><option>NGO / Non-profit</option><option>Government / Public Sector</option><option>Banking Credit Analysis</option><option>BC Performance</option><option>Bank &amp; NBFC Earnings / Investor Analysis</option><option>Micro &amp; Small Enterprise</option>
         </select>
         <button class="btn secondary small" id="kpiLibraryBtn">📚 KPI Library</button>
         <button class="btn secondary small" id="customKpiBtn">➕ Custom KPI</button>
@@ -1026,6 +1026,34 @@ function populateSheetSelect(names){
   sel.onchange=()=>loadSheet(sel.value);
 }
 
+function transformMetricMatrix(aoa){
+  // Supports bank/NBFC result workbooks where KPIs are rows and periods are columns,
+  // e.g. Particulars | Q1FY27 | FY26 | Q4FY26... or Metric | FY23 | FY24...
+  if(!Array.isArray(aoa)||aoa.length<4)return aoa;
+  let header=-1;
+  for(let i=0;i<Math.min(12,aoa.length);i++){
+    const first=String(aoa[i]?.[0]??'').trim().toLowerCase();
+    const vals=(aoa[i]||[]).map(v=>String(v??'').trim()).filter(Boolean);
+    const periodCount=vals.slice(1).filter(v=>/^(Q[1-4]|FY\d{2,4}|Q[1-4]\s*FY\d{2,4})$/i.test(v)||/^\d{4}[-/]\d{2}$/.test(v)).length;
+    if(/^(particulars|metric|parameter|key metrics?)$/i.test(first)&&periodCount>=2){header=i;break;}
+  }
+  if(header<0)return aoa;
+  const h=aoa[header]||[];
+  const periods=h.slice(1).map(v=>String(v??'').trim()).filter(Boolean);
+  if(periods.length<2)return aoa;
+  const rows=aoa.slice(header+1).filter(r=>r&&String(r[0]??'').trim() && !/^source|note|figures in|cost ratios as/i.test(String(r[0]).trim()));
+  const metrics=[];
+  rows.forEach(r=>{
+    const metric=String(r[0]??'').trim();
+    if(!metric)return;
+    metrics.push({metric,values:r.slice(1,periods.length+1)});
+  });
+  if(metrics.length<3)return aoa;
+  const out=[['Period',...metrics.map(m=>m.metric)]];
+  periods.forEach((period,pi)=>out.push([period,...metrics.map(m=>m.values[pi]??null)]));
+  return out;
+}
+
 function loadSheet(name){
   loadingState.style.display='flex';
   loadingText.textContent='Parsing sheet "'+name+'"…';
@@ -1048,6 +1076,8 @@ function loadSheet(name){
         if(hasData) keepCols.push(c);
       }
       aoa=aoa.map(r=>keepCols.map(c=>r[c]!==undefined?r[c]:null));
+      const transformed=transformMetricMatrix(aoa);
+      if(transformed!==aoa){ aoa=transformed; }
       STATE.rawRows=aoa;
 
       if(aoa.length>200000){
@@ -1743,6 +1773,65 @@ const KPI_DEFS = [
   {id:'fee_income',name:'Fee Income',dept:'Banking, Finance',cat:'Income',aliases:['fee income','fee based income','commission income'],direct:true,agg:'sum',higher:true},
 
 
+  // Bank & NBFC Earnings / Investor Analysis
+  // Designed for quarterly/annual results, investor snapshots and earnings-analysis workbooks.
+  {id:'bn_total_fund_income',name:'Total Fund Based Income',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Income',aliases:['total fund based income','fund based income','interest income'],direct:true,agg:'sum',higher:true},
+  {id:'bn_other_income',name:'Other Income',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Income',aliases:['other income','non interest income','non-interest income'],direct:true,agg:'sum',higher:true},
+  {id:'bn_total_income',name:'Total Income',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Income',aliases:['total income','total revenue'],direct:true,agg:'sum',higher:true},
+  {id:'bn_interest_expense',name:'Total Interest Expense',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Income',aliases:['total interest expense','interest expense','interest cost'],direct:true,agg:'sum',higher:false},
+  {id:'bn_nii',name:'Net Interest Income (NII)',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Profitability',aliases:['net interest income','nii','net interest earnings','net interest income (nii)'],direct:true,agg:'sum',higher:true},
+  {id:'bn_nii_yoy',name:'NII Growth YoY %',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Growth',aliases:['nii growth yoy','nii growth y-o-y','net interest income growth yoy'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'bn_nii_qoq',name:'NII Growth QoQ %',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Growth',aliases:['nii growth qoq','nii growth q-o-q','net interest income growth qoq'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'bn_opex',name:'Total Operating Expenses',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Efficiency',aliases:['total operating expenses','operating expenses','total opex'],direct:true,agg:'sum',higher:false},
+  {id:'bn_ppbp',name:'Profit Before Tax & Provisions (PPOP)',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Profitability',aliases:['profit before tax and provisions','pbt before provisions','ppop','pre provision operating profit','pre-provision operating profit'],direct:true,agg:'sum',higher:true},
+  {id:'bn_npa_provision',name:'Provision for NPA',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Asset Quality',aliases:['provision for npa','npa provision','provision for non performing assets'],direct:true,agg:'sum',higher:false},
+  {id:'bn_total_provisions',name:'Total Provisions',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Asset Quality',aliases:['total provisions','provisions and contingencies','provisions'],direct:true,agg:'sum',higher:false},
+  {id:'bn_pbt',name:'Profit Before Tax (PBT)',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Profitability',aliases:['profit before tax','pbt','profit before tax (pbt)'],direct:true,agg:'sum',higher:true},
+  {id:'bn_tax',name:'Income Tax',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Profitability',aliases:['income tax','tax expense'],direct:true,agg:'sum',higher:false},
+  {id:'bn_effective_tax',name:'Effective Tax Rate %',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Profitability',aliases:['effective tax rate','effective tax rate %','tax rate'],direct:true,agg:'avg',percent:true,higher:false},
+  {id:'bn_pat',name:'Net Profit / PAT',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Profitability',aliases:['net profit','pat','profit after tax','net profit / pat'],direct:true,agg:'sum',higher:true},
+  {id:'bn_pat_yoy',name:'PAT Growth YoY %',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Growth',aliases:['net profit growth yoy','pat growth yoy','pat growth y-o-y'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'bn_pat_qoq',name:'PAT Growth QoQ %',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Growth',aliases:['net profit growth qoq','pat growth qoq','pat growth q-o-q'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'bn_total_business',name:'Total Business',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Business Growth',aliases:['total business','total banking business','business'],direct:true,agg:'sum',higher:true},
+  {id:'bn_gross_advances',name:'Gross Advances',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Business Growth',aliases:['gross advances','gross loans','gross advances outstanding'],direct:true,agg:'sum',higher:true},
+  {id:'bn_gross_adv_growth',name:'Gross Advances Growth YoY %',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Growth',aliases:['gross advances growth yoy','gross advances growth y-o-y','loan growth yoy'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'bn_net_advances',name:'Net Advances',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Business Growth',aliases:['net advances','net loans','net loans outstanding'],direct:true,agg:'sum',higher:true},
+  {id:'bn_net_adv_growth',name:'Net Advances Growth YoY %',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Growth',aliases:['net advances growth yoy','net advances growth y-o-y','net loan growth yoy'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'bn_deposits',name:'Deposits',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Business Growth',aliases:['deposits','total deposits','deposit base'],direct:true,agg:'sum',higher:true},
+  {id:'bn_deposit_growth',name:'Deposit Growth YoY %',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Growth',aliases:['deposit growth yoy','deposit growth y-o-y','deposits growth'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'bn_savings',name:'Savings Deposits',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Deposits',aliases:['savings deposits','sa','savings account deposits'],direct:true,agg:'sum',higher:true},
+  {id:'bn_current',name:'Current Deposits',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Deposits',aliases:['current deposits','ca','current account deposits'],direct:true,agg:'sum',higher:true},
+  {id:'bn_casa',name:'CASA',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Deposits',aliases:['casa','casa deposits','current account savings account'],direct:true,agg:'sum',higher:true},
+  {id:'bn_casa_ratio',name:'CASA Ratio %',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Deposits',aliases:['casa ratio','casa ratio %','casa as % of total deposits'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'bn_gnpa_amt',name:'Gross NPA',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Asset Quality',aliases:['gross npa','gnpa','gross npas','gross non performing assets'],direct:true,agg:'sum',higher:false},
+  {id:'bn_nnpa_amt',name:'Net NPA',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Asset Quality',aliases:['net npa','nnpa','net npas','net non performing assets'],direct:true,agg:'sum',higher:false},
+  {id:'bn_gnpa_pct',name:'Gross NPA %',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Asset Quality',aliases:['gross npa %','gnpa %','% of gross npas','gross npa ratio'],direct:true,agg:'avg',percent:true,higher:false},
+  {id:'bn_nnpa_pct',name:'Net NPA %',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Asset Quality',aliases:['net npa %','nnpa %','% of net npas','net npa ratio'],direct:true,agg:'avg',percent:true,higher:false},
+  {id:'bn_credit_cost',name:'Credit Cost %',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Asset Quality',aliases:['credit cost','credit cost %','cost of credit'],direct:true,agg:'avg',percent:true,higher:false},
+  {id:'bn_pcr_no_wo',name:'Provision Coverage Ratio without Technical Write-off %',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Asset Quality',aliases:['pcr without tech w/off','pcr without technical write off','provision coverage ratio without technical write off','pcr without technical write-off'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'bn_pcr_with_wo',name:'Provision Coverage Ratio with Technical Write-off %',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Asset Quality',aliases:['pcr with tech w/off','pcr with technical write off','provision coverage ratio with technical write off','pcr with technical write-off'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'bn_nim',name:'Net Interest Margin (NIM) %',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Profitability',aliases:['nim','nims','net interest margin','net interest margin %','nim %'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'bn_cost_income',name:'Cost to Income Ratio %',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Efficiency',aliases:['cost to income','cost to income ratio','cost to income %','c/i ratio','cost/income'],direct:true,agg:'avg',percent:true,lower:true},
+  {id:'bn_car',name:'Capital Adequacy Ratio (CAR) %',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Capital',aliases:['capital adequacy ratio','car','crar','capital adequacy','car %'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'bn_cet1',name:'CET 1 %',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Capital',aliases:['cet 1','cet1','cet-1','common equity tier 1','cet 1 %'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'bn_networth',name:'Net Worth',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Capital',aliases:['networth','net worth','shareholders funds'],direct:true,agg:'sum',higher:true},
+  {id:'bn_equity_capital',name:'Equity Share Capital',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Capital',aliases:['equity share capital','share capital','equity capital'],direct:true,agg:'sum',higher:true},
+  {id:'bn_govt_holding',name:'Government Holding %',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Ownership',aliases:['govt holding','government holding','government shareholding'],direct:true,agg:'avg',percent:true},
+  {id:'bn_roa',name:'Return on Assets (ROA) %',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Profitability',aliases:['return on assets','roa','roa %','return on asset'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'bn_roe',name:'Return on Equity (ROE) %',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Profitability',aliases:['return on equity','roe','roe %','return on net worth'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'bn_bvps',name:'Book Value per Share',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Market / Investor',aliases:['book value per share','book value/share','bvps'],direct:true,agg:'avg',higher:true},
+  {id:'bn_adj_bvps',name:'Adjusted Book Value per Share',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Market / Investor',aliases:['adj book value','adjusted book value','adjusted book value per share','adj bvps'],direct:true,agg:'avg',higher:true},
+  {id:'bn_eps',name:'Earnings per Share (EPS)',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Market / Investor',aliases:['earning per share','earnings per share','eps','eps (rs)'],direct:true,agg:'avg',higher:true},
+  {id:'bn_dps',name:'Dividend per Share (DPS)',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Market / Investor',aliases:['dps','dividend per share','dividend/share'],direct:true,agg:'avg',higher:true},
+  {id:'bn_div_payout',name:'Dividend Payout %',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Market / Investor',aliases:['dividend payout','dividend payout %','payout ratio'],direct:true,agg:'avg',percent:true},
+  {id:'bn_branch_count',name:'Branches',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Distribution',aliases:['branches','branch count','number of branches'],direct:true,agg:'avg',higher:true},
+  {id:'bn_atm_count',name:'ATMs',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Distribution',aliases:['atms','atm count','number of atms'],direct:true,agg:'avg',higher:true},
+  {id:'bn_ppop_margin',name:'PPOP Margin %',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Efficiency',aliases:['ppop margin','ppop margin %','pre provision operating profit margin'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'bn_cost_ratio_wages',name:'Wages / Total Income %',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Cost Ratios',aliases:['wages','wages %','wages to total income'],direct:true,agg:'avg',percent:true,lower:true},
+  {id:'bn_admin_ratio',name:'Administrative Expenses / Total Income %',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Cost Ratios',aliases:['other administrative exps','administrative expenses','admin expenses','administrative expenses %'],direct:true,agg:'avg',percent:true,lower:true},
+  {id:'bn_opex_ratio',name:'Operating Expenses / Total Income %',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Cost Ratios',aliases:['total operating expenses %','operating expenses %','opex %'],direct:true,agg:'avg',percent:true,lower:true},
+  {id:'bn_pbt_ratio',name:'PBT / Total Income %',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Cost Ratios',aliases:['pbt %','profit before tax %','pbt to total income'],direct:true,agg:'avg',percent:true,higher:true},
+  {id:'bn_pat_ratio',name:'PAT / Total Income %',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Cost Ratios',aliases:['pat %','net profit %','pat to total income'],direct:true,agg:'avg',percent:true,higher:true},
   // Business Correspondent (BC) Performance
   // Built for bank-supplied BC-wise performance and commission data.
   {id:'bc_unique_count',name:'Unique BCs in Data',dept:'BC Performance',cat:'BC Network',aliases:['unique bcs','unique bc count','bc count','number of unique bc','unique business correspondents'],derived:true,calc:()=>{const cols=STATE.columns||[];const c=cols.find(x=>/^(bc|business correspondent)\s*(name|id|code)?$/i.test(String(x.name).trim())||/bc\s*(name|id|code)|business correspondent/i.test(String(x.name)));if(!c)return null;const vals=STATE.filteredData.map(r=>String(r[c.name]??'').trim()).filter(Boolean);return new Set(vals).size;},formula:'Distinct count of BC Name / BC ID / BC Code',higher:true},
@@ -1999,7 +2088,7 @@ const KPI_DEFS = [
 // User-added KPI definitions are stored locally and merged into KPI_DEFS so they
 // work on future uploads. Existing definitions remain untouched.
 const KPI_LIBRARY_STORAGE_KEY = 'instantdash_kpi_library_v1';
-const KPI_LIBRARY_AREAS = ['Management','Finance','HR','Sales / Business','Marketing','Operations / Manufacturing','Procurement','Supply Chain','Customer Service','Project Management','Banking','Risk & Compliance','Legal','Audit','ESG / Sustainability','IT / Technology','Cybersecurity','Quality Management','Retail','E-commerce','Healthcare','Education','Hospitality','Real Estate','Construction','NGO / Non-profit','Government / Public Sector','Banking Credit Analysis','BC Performance','Micro & Small Enterprise'];
+const KPI_LIBRARY_AREAS = ['Management','Finance','HR','Sales / Business','Marketing','Operations / Manufacturing','Procurement','Supply Chain','Customer Service','Project Management','Banking','Risk & Compliance','Legal','Audit','ESG / Sustainability','IT / Technology','Cybersecurity','Quality Management','Retail','E-commerce','Healthcare','Education','Hospitality','Real Estate','Construction','NGO / Non-profit','Government / Public Sector','Banking Credit Analysis','BC Performance','Bank & NBFC Earnings / Investor Analysis','Micro & Small Enterprise'];
 function loadKpiLibrary(){
   try{ const raw=localStorage.getItem(KPI_LIBRARY_STORAGE_KEY); const arr=raw?JSON.parse(raw):[]; return Array.isArray(arr)?arr:[]; }catch(e){ return []; }
 }
@@ -2133,7 +2222,7 @@ function sourceMatchForKpi(def){
 }
 function detectDepartment(){
   const names=STATE.columns.map(c=>c.name.toLowerCase()).join(' | ');
-  const scores={HR:0,Finance:0,'Sales / Business':0,Marketing:0,'Operations / Manufacturing':0,Procurement:0,'Supply Chain':0,'Customer Service':0,'Project Management':0,Banking:0,'BC Performance':0,Management:0};
+  const scores={HR:0,Finance:0,'Sales / Business':0,Marketing:0,'Operations / Manufacturing':0,Procurement:0,'Supply Chain':0,'Customer Service':0,'Project Management':0,Banking:0,'BC Performance':0,'Bank & NBFC Earnings / Investor Analysis':0,Management:0};
   const rules={
     HR:/employee|staff|headcount|salary|attendance|attrition|joining|joiner|leave|training|performance rating|recruit/i,
     Finance:/revenue|sales|profit|gross profit|net profit|ebitda|debtors|creditors|balance sheet|cash flow|working capital|cogs/i,
@@ -2145,7 +2234,7 @@ function detectDepartment(){
     'Customer Service':/ticket|complaint|csat|nps|sla|resolution|support|service/i,
     'Project Management':/project|milestone|task|schedule variance|resource utilisation|resource utilization/i,
     Banking:/deposit|casa|advance|npa|loan application|sanction|disbursement|branch|cd ratio|banking/i,
-    'BC Performance':/business correspondent|\bbc\b|bc code|bc id|bc name|commission earned|bc commission|aeps|micro atm|business correspondent performance|customer onboarding/i,
+    'BC Performance':/business correspondent|\bbc\b|bc code|bc id|bc name|commission earned|bc commission|aeps|micro atm|business correspondent performance|customer onboarding/i,    'Bank & NBFC Earnings / Investor Analysis':/net interest income|nii|net interest margin|\bnim\b|gross npa|gnpa|net npa|nnpa|provision coverage|pcr|capital adequacy|car|cet 1|cet1|return on assets|\broa\b|return on equity|\broe\b|cost to income|total business|gross advances|net advances|profit before tax|pre-provision|ppop|book value per share|earning per share|dividend payout|quarterly financials/i,
     Management:/target|budget|actual|variance|kpi|achievement/i
   };
   Object.entries(rules).forEach(([d,re])=>{if(re.test(names)) scores[d]++;});
