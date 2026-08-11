@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 <title>InstantDash — Excel to Dashboard v3.0.0</title>
 <meta name="author" content="Developed by Anil Sharma, Former General Manager, Central Bank of India">
-<meta name="application-name" content="InstantDash v3.5.2">
+<meta name="application-name" content="InstantDash v3.5.3">
 <meta name="description" content="InstantDash — Excel to Dashboard, developed by Anil Sharma">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -382,7 +382,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
   .datatable-wrap{max-height:60vh;}
 }
 
-/* v3.5.2 — cleaner upload state and PDF preview */
+/* v3.5.3 — cleaner upload state and PDF preview */
 #messages:empty{display:none;}
 #messages{margin:12px auto 0;max-width:900px;}
 #messages .msg-banner{border-radius:10px;padding:10px 13px;font-size:13px;line-height:1.4;}
@@ -422,11 +422,11 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 .banking-kpi-table .chart-bar{font-weight:700}
 .banking-kpi-table .chart-donut{font-weight:700}
 </style>
-</head>
+<style id="chartPolicyStyles">.chart-policy-note{margin:8px 0 14px;padding:9px 12px;border:1px solid rgba(245,166,35,.35);border-radius:10px;font-size:12px}.chart-policy-note strong{font-weight:800}</style></head>
 <body>
 
 <div class="topbar">
-  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v3.5.2</span></div>
+  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v3.5.3</span></div>
   <div class="topbar-right">
     <div class="privacy-badge">🔒 <span class="txt">Processed locally — not uploaded to any server</span></div>
     <button class="icon-btn" id="shareTopBtn" title="Share dashboard" aria-label="Share dashboard as an image" style="display:none;">📤</button>
@@ -587,7 +587,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
     </div>
   </div>
 
-  <footer class="app-footer">InstantDash <strong>v3.5.2</strong> · Excel / CSV / PDF upload · InstantDash — developed by Anil Sharma · runs 100% locally in your browser</footer>
+  <footer class="app-footer">InstantDash <strong>v3.5.3</strong> · Excel / CSV / PDF upload · InstantDash — developed by Anil Sharma · runs 100% locally in your browser</footer>
 </div>
 
 <!-- Ask Your Data floating widget -->
@@ -2758,9 +2758,11 @@ function isCurrencyKpi(name){
 }
 function defaultChartKind(name){ return isCurrencyKpi(name) ? 'bar' : 'doughnut'; }
 function enforceAutomaticChartDefault(spec){
-  if(!spec || !spec.autoDefault) return spec;
-  const desired=defaultChartKind(spec.y);
-  return (spec.kind===desired && !(desired==='bar'&&spec.horizontal)) ? spec : {...spec,kind:desired,horizontal:false};
+  if(!spec) return spec;
+  if(spec.userSelectedType) return spec;
+  if(!spec.autoDefault) return spec;
+  const desired=defaultChartKind(spec.y, STATE.filteredData);
+  return {...spec, kind:desired, horizontal:false};
 }
 function sourceMatchForKpi(def){
   const cols=STATE.columns||[]; let best=null;
@@ -3469,8 +3471,8 @@ function createChartCard(spec, custom){
     card.remove();
     STATE.charts=STATE.charts.filter(c=>c.id!==id);
   });
-  card.querySelector('.ctrlType').addEventListener('change',(e)=>{ entry.spec.kind=e.target.value; renderChart(entry); });
-  card.querySelector('.ctrlMeasure').addEventListener('change',(e)=>{ entry.spec.y=e.target.value; renderChart(entry); });
+  card.querySelector('.ctrlType').addEventListener('change',(e)=>{ entry.spec.userSelectedType=true; entry.spec.kind=e.target.value; entry.spec.horizontal=false; renderChart(entry); });
+  card.querySelector('.ctrlMeasure').addEventListener('change',(e)=>{ entry.spec.y=e.target.value; entry.spec.userSelectedType=false; entry.spec.kind=defaultChartKind(entry.spec.y, STATE.filteredData); renderChart(entry); });
   card.querySelector('.ctrlDim').addEventListener('change',(e)=>{ entry.spec.x=e.target.value; renderChart(entry); });
 }
 
@@ -3503,20 +3505,13 @@ function isCurrencyMeasure(name, rows){
 function defaultChartKind(name, rows){
   if(Array.isArray(rows) && rows.some(r=>{
     const unit=String(r?.Unit??r?.unit??r?.UOM??'');
-    const kpi=String(r?.KPI??r?.kpi??r?.Metric??'');
-    return /₹|inr|rs\.?|rupee/i.test(unit) && (name==='Actual'||name==='Target'||name==='Value'||name==='Amount'||kpi.includes('₹'));
+    return /₹|inr|rs\.?|rupee/i.test(unit) &&
+      /^(actual|target|value|amount|balance|total|opening|closing|recovery|expense|profit|income)$/i.test(String(name||'').trim());
   })) return 'bar';
   return isCurrencyMeasure(name, rows) ? 'bar' : 'doughnut';
 }
 function buildChartDataset(spec){
   spec=enforceAutomaticChartDefault(spec);
-  if(spec && spec.autoDefault){
-    const desired=defaultChartKind(spec.y, STATE.filteredData);
-    if((desired==='bar' && spec.kind!=='bar') || (desired==='doughnut' && spec.kind!=='doughnut')){
-      spec={...spec,kind:desired};
-    }
-  }
-
   let rows=STATE.filteredData;
   if(spec.unitFilter && spec.unitColumn){
     const wanted=spec.unitFilter==='currency'
