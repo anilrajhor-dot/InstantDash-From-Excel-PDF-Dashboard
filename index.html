@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 <title>InstantDash — Excel to Dashboard v3.0.0</title>
 <meta name="author" content="Developed by Anil Sharma, Former General Manager, Central Bank of India">
-<meta name="application-name" content="InstantDash v3.4.0">
+<meta name="application-name" content="InstantDash v3.4.1">
 <meta name="description" content="InstantDash — Excel to Dashboard, developed by Anil Sharma">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -382,7 +382,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
   .datatable-wrap{max-height:60vh;}
 }
 
-/* v3.4.0 — cleaner upload state and PDF preview */
+/* v3.4.1 — cleaner upload state and PDF preview */
 #messages:empty{display:none;}
 #messages{margin:12px auto 0;max-width:900px;}
 #messages .msg-banner{border-radius:10px;padding:10px 13px;font-size:13px;line-height:1.4;}
@@ -414,7 +414,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 <body>
 
 <div class="topbar">
-  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v3.4.0</span></div>
+  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v3.4.1</span></div>
   <div class="topbar-right">
     <div class="privacy-badge">🔒 <span class="txt">Processed locally — not uploaded to any server</span></div>
     <button class="icon-btn" id="shareTopBtn" title="Share dashboard" aria-label="Share dashboard as an image" style="display:none;">📤</button>
@@ -575,7 +575,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
     </div>
   </div>
 
-  <footer class="app-footer">InstantDash <strong>v3.4.0</strong> · Excel / CSV / PDF upload · InstantDash — developed by Anil Sharma · runs 100% locally in your browser</footer>
+  <footer class="app-footer">InstantDash <strong>v3.4.1</strong> · Excel / CSV / PDF upload · InstantDash — developed by Anil Sharma · runs 100% locally in your browser</footer>
 </div>
 
 <!-- Ask Your Data floating widget -->
@@ -618,7 +618,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
       </select></label>
     </div>
     <p style="font-size:12px;color:var(--muted);margin:10px 0 0;">
-      Advanced charts: Area highlights trends; Stacked/100% Stacked show composition; Combo compares two measures; Waterfall shows sequential movement; Funnel shows stages; Gauge shows target-style progress; Heatmap shows category-by-category intensity.
+      Default chart rule: all generic KPI charts use Donut; ₹/currency measures use Bar.<br>Advanced charts: Area highlights trends; Stacked/100% Stacked show composition; Combo compares two measures; Waterfall shows sequential movement; Funnel shows stages; Gauge shows target-style progress; Heatmap shows category-by-category intensity.
     </p>
     <div style="text-align:right; margin-top:16px;">
       <button class="btn" id="buildChartBtn">Add chart to dashboard</button>
@@ -2934,25 +2934,25 @@ function chooseAndBuildCharts(){
 
   // 1. Date + measure -> DONUT by default; line remains available manually
   if(times.length && measures.length){
-    specs.push({kind:'doughnut', x:times[0], y:measures[0], agg:aggFor(measures[0]), title:`${verbFor(measures[0])} ${measures[0]} by ${times[0]}`, sort:'desc'});
-    if(measures[1]) specs.push({kind:'doughnut', x:times[0], y:measures[1], agg:aggFor(measures[1]), title:`${verbFor(measures[1])} ${measures[1]} by ${times[0]}`, sort:'desc'});
+    specs.push({kind:defaultChartKind(measures[0]), x:times[0], y:measures[0], agg:aggFor(measures[0]), title:`${verbFor(measures[0])} ${measures[0]} by ${times[0]}`, sort:'desc'});
+    if(measures[1]) specs.push({kind:defaultChartKind(measures[1]), x:times[0], y:measures[1], agg:aggFor(measures[1]), title:`${verbFor(measures[1])} ${measures[1]} by ${times[0]}`, sort:'desc'});
   }
   // 2. Dimension + measure -> bar sorted desc
   dims.slice(0,2).forEach((d,i)=>{
     if(measures[i]!==undefined || measures[0]!==undefined){
       const m=measures[i]||measures[0];
-      specs.push({kind:'doughnut', x:d, y:m, agg:aggFor(m), title:`${verbFor(m)} ${m} by ${d}`, sort:'desc'});
+      specs.push({kind:defaultChartKind(m), x:d, y:m, agg:aggFor(m), title:`${verbFor(m)} ${m} by ${d}`, sort:'desc'});
     }
   });
   // 3. Small-category dimension -> DONUT by default.
   dims.filter(d=>STATE.profile[d].unique>=2 && STATE.profile[d].unique<=6).slice(0,1).forEach(d=>{
     const m=measures.find(mm=>!(STATE.profile[mm]||{}).isPercentage) || measures[0];
-    specs.push({kind:'doughnut', x:d, y:m||null, agg: m?'sum':'count', title: m? `${verbFor(m)} ${m} by ${d}`:`Record count by ${d}`, sort:'desc'});
+    specs.push({kind:m?defaultChartKind(m):'doughnut', x:d, y:m||null, agg: m?'sum':'count', title: m? `${verbFor(m)} ${m} by ${d}`:`Record count by ${d}`, sort:'desc'});
   });
   // 4. High-cardinality dim + measure -> DONUT by default
   if(highCards.length && measures.length){
     const m=measures[0];
-    specs.push({kind:'doughnut', x:highCards[0], y:m, agg:aggFor(m), title:`Top ${STATE.settings.maxCategories} ${highCards[0]} by ${verbFor(m)} ${m}`, top10:true, horizontal:true});
+    specs.push({kind:defaultChartKind(m), x:highCards[0], y:m, agg:aggFor(m), title:`Top ${STATE.settings.maxCategories} ${highCards[0]} by ${verbFor(m)} ${m}`, top10:true, horizontal:isCurrencyMeasure(m)?false:true});
   }
   // 5. Two measures -> scatter
   if(measures.length>=2){
@@ -3036,7 +3036,7 @@ function createChartCard(spec, custom){
     <div class="chart-body"><canvas id="${id}_canvas" role="img" aria-label="${escapeHtml(spec.title)} chart"></canvas></div>
     <div class="chart-controls-row">
       <select class="ctrlType" aria-label="Chart type">
-        <option value="bar">Bar</option>
+        <option value="bar" ${spec.kind==='bar'?'selected':''}>Bar</option>
         <option value="line" ${spec.kind==='line'?'selected':''}>Line</option>
         <option value="area" ${spec.kind==='area'?'selected':''}>Area</option>
         <option value="doughnut" ${spec.kind==='doughnut'?'selected':''}>Donut</option>
@@ -3082,6 +3082,14 @@ function createChartCard(spec, custom){
 
 function updateAllCharts(){ STATE.charts.forEach(renderChart); }
 
+
+function isCurrencyMeasure(name){
+  const n=String(name||'').toLowerCase().trim();
+  return /₹|rs\.?|inr|rupee|amount|value|revenue|sales|income|expense|profit|loss|pat|pbt|nii|interest|commission|deposit|advance|loan|balance|turnover|capital|net worth|earnings|dividend|premium|cost|salary|wages|cash|assets|liabilit|receivable|payable|stock|inventory/.test(n);
+}
+function defaultChartKind(name){
+  return isCurrencyMeasure(name) ? 'bar' : 'doughnut';
+}
 function buildChartDataset(spec){
   const rows=STATE.filteredData;
   if(spec.kind==='scatter'){
@@ -3961,7 +3969,16 @@ function renderDataTable(){
 
 // ---------- 9. ADD CHART BUILDER + PIVOT ----------
 const addChartModal=document.getElementById('addChartModal');
+const addChartTypeEl=document.getElementById('addChartType');
+const addChartYEl=document.getElementById('addChartY');
+if(addChartTypeEl && addChartYEl){
+  addChartYEl.addEventListener('change',()=>{
+    addChartTypeEl.value=defaultChartKind(addChartYEl.value);
+  });
+}
+
 document.getElementById('addChartBtn').addEventListener('click',()=>{
+  setTimeout(()=>{ if(addChartTypeEl && addChartYEl) addChartTypeEl.value=defaultChartKind(addChartYEl.value); },0);
   const allCols=STATE.columns.map(c=>c.name);
   document.getElementById('bXAxis').innerHTML=allCols.map(n=>`<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join('');
   document.getElementById('bYAxis').innerHTML=allCols.map(n=>`<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join('');
