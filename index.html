@@ -304,9 +304,10 @@ table.dt tr:hover td{background:rgba(245,179,1,.06);}
 
 /* ---------- Ask Your Data ---------- */
 .ask-fab{
+  display:none;
   position:fixed; right:20px; bottom:20px; z-index:80; width:58px; height:58px; border-radius:50%;
   background:var(--amber); box-shadow:0 6px 20px rgba(0,0,0,.25); border:none; font-size:24px;
-  display:flex; align-items:center; justify-content:center; transition:.15s;
+  align-items:center; justify-content:center; transition:.15s;
 }
 .ask-fab:hover{transform:scale(1.06);}
 .ask-panel{
@@ -379,12 +380,40 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
   .builder-grid{grid-template-columns:1fr;}
   .datatable-wrap{max-height:60vh;}
 }
+
+/* v3.2.4 — cleaner upload state and PDF preview */
+#messages:empty{display:none;}
+#messages{margin:12px auto 0;max-width:900px;}
+#messages .msg-banner{border-radius:10px;padding:10px 13px;font-size:13px;line-height:1.4;}
+.pdf-panel{
+  display:none; background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+  margin-top:16px; overflow:hidden; box-shadow:var(--shadow);
+}
+.pdf-toolbar{
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 12px;
+  border-bottom:1px solid var(--line);background:rgba(128,128,128,.06);
+}
+.pdf-name{font-weight:700;min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.pdf-viewer{height:min(72vh,760px);background:#202126;}
+.pdf-viewer iframe{width:100%;height:100%;border:0;background:#fff;}
+.pdf-note{padding:9px 12px;font-size:12px;color:var(--muted);border-top:1px solid var(--line);}
+.upload-status{margin:14px auto 0;max-width:520px;padding:9px 12px;border:1px solid var(--line);
+  border-radius:10px;background:rgba(128,128,128,.06);font-size:12.5px;color:var(--muted);}
+@media(max-width:640px){
+  .wrap{padding:12px;}
+  .empty-state{padding:34px 14px 28px;margin-top:10px;}
+  .empty-state svg{width:92px;height:92px;margin-bottom:4px;}
+  .empty-state h2{font-size:20px;line-height:1.25;}
+  .empty-state p{font-size:13.5px;line-height:1.45;margin-bottom:16px;}
+  .empty-state .btn{width:min(100%,360px);justify-content:center;}
+  .pdf-viewer{height:68vh;}
+}
 </style>
 </head>
 <body>
 
 <div class="topbar">
-  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v3.2.3</span></div>
+  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v3.2.4</span></div>
   <div class="topbar-right">
     <div class="privacy-badge">🔒 <span class="txt">Processed locally — not uploaded to any server</span></div>
     <button class="icon-btn" id="shareTopBtn" title="Share dashboard" aria-label="Share dashboard as an image" style="display:none;">📤</button>
@@ -409,11 +438,22 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
       <path d="M144 40 l4 4 8-8" stroke="#0E0E10" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
     <h2>Turn Excel, CSV or PDF into a dashboard</h2>
-    <p>Drop an Excel, CSV or PDF file below. InstantDash reads supported files in your browser and builds KPIs and charts automatically — nothing is uploaded anywhere.</p>
+    <p>Drop an Excel, CSV or PDF file below. Files are processed in your browser. Excel/CSV build dashboards automatically; PDFs open in the built-in viewer.</p>
     <button class="btn" id="browseBtn">📂 Browse Excel / CSV / PDF</button>
     <div style="margin-top:10px; font-size:12px; color:var(--muted);">or drag &amp; drop a <strong>.xlsx</strong>, <strong>.xls</strong>, <strong>.csv</strong> or <strong>.pdf</strong> file anywhere on this page</div>
     <input type="file" id="fileInput" accept=".xlsx,.xls,.csv,.pdf,application/pdf">
     <div style="margin-top:12px;display:flex;gap:6px;justify-content:center;flex-wrap:wrap;font-size:11px;"><span class="chip">📊 Excel</span><span class="chip">🧾 CSV</span><span class="chip" style="border-color:rgba(196,61,61,.35);color:var(--rust);background:rgba(196,61,61,.07);">📕 PDF</span></div>
+  </div>
+
+  <!-- PDF PREVIEW -->
+  <div class="pdf-panel" id="pdfPanel" aria-live="polite">
+    <div class="pdf-toolbar">
+      <span class="pdf-name" id="pdfName">PDF</span>
+      <button class="btn secondary small" id="pdfOpenBtn" type="button">↗ Open in new tab</button>
+      <button class="btn secondary small" id="pdfBackBtn" type="button">← Back</button>
+    </div>
+    <div class="pdf-viewer"><iframe id="pdfFrame" title="PDF preview"></iframe></div>
+    <div class="pdf-note">PDF preview is opened locally in your browser. Excel/CSV dashboards continue to use the KPI engine. PDF table extraction is a separate step and is not presented as completed until the values can be verified.</div>
   </div>
 
   <!-- LOADING -->
@@ -531,7 +571,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
     </div>
   </div>
 
-  <footer class="app-footer">InstantDash <strong>v3.2.3</strong> · Excel / CSV / PDF upload · InstantDash — developed by Anil Sharma · runs 100% locally in your browser</footer>
+  <footer class="app-footer">InstantDash <strong>v3.2.4</strong> · Excel / CSV / PDF upload · InstantDash — developed by Anil Sharma · runs 100% locally in your browser</footer>
 </div>
 
 <!-- Ask Your Data floating widget -->
@@ -968,7 +1008,13 @@ document.body.addEventListener('drop',e=>{
 });
 
 document.getElementById('newFileBtn').addEventListener('click',()=>{
+  const pp=document.getElementById('pdfPanel');
+  const pf=document.getElementById('pdfFrame');
+  if(pp){pp.style.display='none';}
+  if(pf){pf.src='';}
+  if(STATE.pdfObjectUrl){URL.revokeObjectURL(STATE.pdfObjectUrl);STATE.pdfObjectUrl=null;}
   appContent.style.display='none';
+  document.getElementById('askFab').style.display='none';
   emptyState.style.display='block';
   document.getElementById('shareTopBtn').style.display='none';
   clearMessages();
@@ -988,12 +1034,26 @@ async function handleFile(file){
   clearMessages();
   const isPdf = /\.pdf$/i.test(file.name) || file.type === 'application/pdf';
   if(isPdf){
-    // PDF is visibly supported by the picker in v3.2.3. The current dashboard
-    // engine remains spreadsheet-first; keep the user informed instead of
-    // attempting to pass a PDF byte stream into XLSX.
-    emptyState.style.display='block';
+    const panel=document.getElementById('pdfPanel');
+    const frame=document.getElementById('pdfFrame');
+    const name=document.getElementById('pdfName');
+    const openBtn=document.getElementById('pdfOpenBtn');
+    const url=URL.createObjectURL(file);
+    STATE.pdfObjectUrl=url;
+    name.textContent='📕 '+file.name;
+    frame.src=url;
+    emptyState.style.display='none';
     loadingState.style.display='none';
-    showMessage('📕 PDF selected. PDF upload is enabled in v3.2.3; PDF table/text extraction is handled separately from the Excel/CSV engine. For reliable KPI dashboards, use a text/table PDF or convert it to Excel first.','info');
+    document.getElementById('appContent').style.display='none';
+    panel.style.display='block';
+    openBtn.onclick=()=>window.open(url,'_blank','noopener');
+    document.getElementById('pdfBackBtn').onclick=()=>{
+      panel.style.display='none';
+      frame.src='';
+      if(STATE.pdfObjectUrl){ URL.revokeObjectURL(STATE.pdfObjectUrl); STATE.pdfObjectUrl=null; }
+      emptyState.style.display='block';
+      clearMessages();
+    };
     return;
   }
   emptyState.style.display='none';
