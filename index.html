@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<title>InstantDash — Excel to Dashboard v3.0.0</title>
+<title>InstantDash — Excel to Dashboard v3.3.0</title>
 <meta name="author" content="Developed by Anil Sharma, Former General Manager, Central Bank of India">
-<meta name="application-name" content="InstantDash v3.0.0">
+<meta name="application-name" content="InstantDash v3.3.0">
 <meta name="description" content="InstantDash — Excel to Dashboard, developed by Anil Sharma">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -381,7 +381,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
   .datatable-wrap{max-height:60vh;}
 }
 
-/* v3.2.7 — cleaner upload state and PDF preview */
+/* v3.3.0 — cleaner upload state and PDF preview */
 #messages:empty{display:none;}
 #messages{margin:12px auto 0;max-width:900px;}
 #messages .msg-banner{border-radius:10px;padding:10px 13px;font-size:13px;line-height:1.4;}
@@ -408,12 +408,18 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
   .empty-state .btn{width:min(100%,360px);justify-content:center;}
   .pdf-viewer{height:68vh;}
 }
+
+.pdf-pages{height:100%;overflow:auto;padding:24px;background:#2b2c30;box-sizing:border-box;-webkit-overflow-scrolling:touch;}
+.pdf-page{display:flex;flex-direction:column;align-items:center;margin:0 auto 14px;max-width:100%;}
+.pdf-page canvas{display:block;max-width:100%;height:auto;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.28);}
+.pdf-page-label{color:#e9e9e9;font-size:11px;font-weight:700;padding:6px 0;}
+.pdf-loading{height:100%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;text-align:center;padding:24px;box-sizing:border-box;}
 </style>
 </head>
 <body>
 
 <div class="topbar">
-  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v3.2.7</span></div>
+  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v3.3.0</span></div>
   <div class="topbar-right">
     <div class="privacy-badge">🔒 <span class="txt">Processed locally — not uploaded to any server</span></div>
     <button class="icon-btn" id="shareTopBtn" title="Share dashboard" aria-label="Share dashboard as an image" style="display:none;">📤</button>
@@ -455,8 +461,8 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
       <button class="btn secondary small" id="pdfOpenBtn" type="button">↗ Full PDF</button>
       <button class="btn secondary small" id="pdfBackBtn" type="button">← Back</button>
     </div>
-    <div class="pdf-viewer"><iframe id="pdfFrame" title="PDF preview"></iframe></div>
-    <div class="pdf-note">All PDF pages can be viewed with Previous/Next. “Full PDF” opens the browser's native PDF viewer, which is the best option for continuous scrolling on iPhone. PDF table extraction remains a separate verified step.</div>
+    <div class="pdf-viewer" id="pdfViewer"><div id="pdfPages" class="pdf-pages" aria-label="All PDF pages"></div></div>
+    <div class="pdf-note">The complete PDF opens in the device's native PDF viewer for reliable multi-page viewing on iPhone and iPad. “Full PDF” opens the browser's native PDF viewer, which is the best option for continuous scrolling on iPhone. PDF table extraction remains a separate verified step.</div>
   </div>
 
   <!-- LOADING -->
@@ -574,7 +580,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
     </div>
   </div>
 
-  <footer class="app-footer">InstantDash <strong>v3.2.7</strong> · Excel / CSV / PDF upload · InstantDash — developed by Anil Sharma · runs 100% locally in your browser</footer>
+  <footer class="app-footer">InstantDash <strong>v3.3.0</strong> · Excel / CSV / PDF upload · InstantDash — developed by Anil Sharma · runs 100% locally in your browser</footer>
 </div>
 
 <!-- Ask Your Data floating widget -->
@@ -1014,9 +1020,9 @@ document.body.addEventListener('drop',e=>{
 
 document.getElementById('newFileBtn').addEventListener('click',()=>{
   const pp=document.getElementById('pdfPanel');
-  const pf=document.getElementById('pdfFrame');
+  const pf=document.getElementById('pdfPages');
   if(pp){pp.style.display='none';}
-  if(pf){pf.src='';}
+  if(pf){pf.innerHTML='';}
   if(STATE.pdfObjectUrl){URL.revokeObjectURL(STATE.pdfObjectUrl);STATE.pdfObjectUrl=null;} STATE.pdfPage=1; STATE.pdfPageCount=1;
   appContent.style.display='none';
   document.getElementById('askFab').style.display='none';
@@ -1040,59 +1046,120 @@ async function handleFile(file){
   const isPdf = /\.pdf$/i.test(file.name) || file.type === 'application/pdf';
   if(isPdf){
     const panel=document.getElementById('pdfPanel');
-    const frame=document.getElementById('pdfFrame');
+    const pages=document.getElementById('pdfPages');
     const name=document.getElementById('pdfName');
     const openBtn=document.getElementById('pdfOpenBtn');
     const prevBtn=document.getElementById('pdfPrevBtn');
     const nextBtn=document.getElementById('pdfNextBtn');
     const pageInfo=document.getElementById('pdfPageInfo');
     const url=URL.createObjectURL(file);
+
     STATE.pdfObjectUrl=url;
     STATE.pdfPage=1;
-    STATE.pdfPageCount=1;
+    STATE.pdfPageCount=0;
     name.textContent='📕 '+file.name;
-
-    // Count ordinary PDF page objects for navigation. This is a best-effort count;
-    // the browser's native viewer remains the authoritative full-document view.
-    file.arrayBuffer().then(buf=>{
-      try{
-        const bytes=new Uint8Array(buf);
-        let text='';
-        const chunk=65536;
-        for(let i=0;i<bytes.length;i+=chunk){
-          const part=bytes.subarray(i,Math.min(i+chunk,bytes.length));
-          text += new TextDecoder('latin1').decode(part);
-        }
-        const matches=text.match(/\/Type\s*\/Page\b/g);
-        STATE.pdfPageCount=Math.max(1,matches?matches.length:1);
-      }catch(e){ STATE.pdfPageCount=1; }
-      pageInfo.textContent=`Page 1 of ${STATE.pdfPageCount}`;
-      prevBtn.disabled=true;
-      nextBtn.disabled=STATE.pdfPageCount<=1;
-    });
-
-    function showPdfPage(n){
-      const total=Math.max(1,STATE.pdfPageCount||1);
-      STATE.pdfPage=Math.max(1,Math.min(total,n));
-      frame.src=url+'#page='+STATE.pdfPage+'&zoom=page-width';
-      pageInfo.textContent=`Page ${STATE.pdfPage} of ${total}`;
-      prevBtn.disabled=STATE.pdfPage<=1;
-      nextBtn.disabled=STATE.pdfPage>=total;
-    }
-    showPdfPage(1);
+    pages.innerHTML='<div class="pdf-loading">Opening the complete PDF…</div>';
     emptyState.style.display='none';
     loadingState.style.display='none';
     document.getElementById('appContent').style.display='none';
+    document.getElementById('askFab').style.display='none';
     panel.style.display='block';
+    prevBtn.style.display='none';
+    nextBtn.style.display='none';
+    pageInfo.textContent='Full document';
+
+    // IMPORTANT for iPhone/iPad:
+    // Do not embed the blob in an iframe or canvas. iOS can show only the first
+    // page in some embedded PDF viewers. Opening the blob directly hands the
+    // complete PDF to the browser's native PDF/Quick Look viewer.
+    const opened=window.open(url,'_blank');
+    if(!opened){
+      pages.innerHTML='<div class="pdf-loading">Tap “Full PDF” below to open the complete document. iPhone may block automatic new tabs.</div>';
+    }else{
+      pages.innerHTML='<div class="pdf-loading">The complete PDF has been opened in a new tab/window.<br><br>Use the browser’s PDF controls to scroll through every page, search, share or save the document.</div>';
+    }
+
     openBtn.onclick=()=>window.open(url,'_blank','noopener');
-    prevBtn.onclick=()=>showPdfPage(STATE.pdfPage-1);
-    nextBtn.onclick=()=>showPdfPage(STATE.pdfPage+1);
     document.getElementById('pdfBackBtn').onclick=()=>{
       panel.style.display='none';
-      frame.src='';
+      pages.innerHTML='';
       if(STATE.pdfObjectUrl){ URL.revokeObjectURL(STATE.pdfObjectUrl); STATE.pdfObjectUrl=null; }
       emptyState.style.display='block';
       clearMessages();
+      pageInfo.textContent='Page 1';
+    };
+    return;
+  }
+  emptyState.style.display='none';
+    loadingState.style.display='none';
+    document.getElementById('appContent').style.display='none';
+    document.getElementById('askFab').style.display='none';
+    panel.style.display='block';
+
+    prevBtn.style.display='none';
+    nextBtn.style.display='none';
+    pageInfo.textContent='Loading…';
+
+    openBtn.onclick=()=>window.open(url,'_blank','noopener');
+
+    async function renderPdfAllPages(){
+      const ready=await waitFor(()=>window.pdfjsLib && typeof window.pdfjsLib.getDocument==='function', 10000);
+      if(!ready){
+        pages.innerHTML='<div class="pdf-loading">PDF viewer could not load. Tap “Full PDF” to open the complete document in your browser.</div>';
+        pageInfo.textContent='PDF';
+        return;
+      }
+      try{
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        const data=await file.arrayBuffer();
+        const pdf=await window.pdfjsLib.getDocument({data}).promise;
+        STATE.pdfPageCount=pdf.numPages;
+        pageInfo.textContent=`${pdf.numPages} pages`;
+        pages.innerHTML='';
+
+        // Render every page in order. This avoids the iOS iframe/native-viewer
+        // behaviour that was showing only page 1.
+        for(let p=1;p<=pdf.numPages;p++){
+          const page=await pdf.getPage(p);
+          const base=page.getViewport({scale:1});
+          const maxWidth=Math.min(pages.clientWidth-28, 1100);
+          const scale=Math.max(.55, Math.min(2.0, maxWidth/base.width));
+          const viewport=page.getViewport({scale});
+          const wrap=document.createElement('div');
+          wrap.className='pdf-page';
+          const label=document.createElement('div');
+          label.className='pdf-page-label';
+          label.textContent=`Page ${p} of ${pdf.numPages}`;
+          const canvas=document.createElement('canvas');
+          const ctx=canvas.getContext('2d',{alpha:false});
+          const dpr=Math.min(window.devicePixelRatio||1,2);
+          canvas.width=Math.ceil(viewport.width*dpr);
+          canvas.height=Math.ceil(viewport.height*dpr);
+          canvas.style.width=Math.ceil(viewport.width)+'px';
+          canvas.style.height=Math.ceil(viewport.height)+'px';
+          ctx.setTransform(dpr,0,0,dpr,0,0);
+          wrap.appendChild(label);
+          wrap.appendChild(canvas);
+          pages.appendChild(wrap);
+          await page.render({canvasContext:ctx,viewport}).promise;
+        }
+        // All pages are now present and scrollable.
+      }catch(err){
+        pages.innerHTML='<div class="pdf-loading">The PDF could not be rendered in the built-in viewer. Tap “Full PDF” to open the complete document.</div>';
+        pageInfo.textContent='PDF error';
+        console.error('PDF render error',err);
+      }
+    }
+
+    renderPdfAllPages();
+
+    document.getElementById('pdfBackBtn').onclick=()=>{
+      panel.style.display='none';
+      pages.innerHTML='';
+      if(STATE.pdfObjectUrl){ URL.revokeObjectURL(STATE.pdfObjectUrl); STATE.pdfObjectUrl=null; }
+      emptyState.style.display='block';
+      clearMessages();
+      pageInfo.textContent='Page 1';
     };
     return;
   }
