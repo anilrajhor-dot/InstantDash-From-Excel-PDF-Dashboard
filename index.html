@@ -384,7 +384,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 <body>
 
 <div class="topbar">
-  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v3.2.1</span></div>
+  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v3.2.3</span></div>
   <div class="topbar-right">
     <div class="privacy-badge">🔒 <span class="txt">Processed locally — not uploaded to any server</span></div>
     <button class="icon-btn" id="shareTopBtn" title="Share dashboard" aria-label="Share dashboard as an image" style="display:none;">📤</button>
@@ -531,7 +531,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
     </div>
   </div>
 
-  <footer class="app-footer">InstantDash <strong>v3.2.1</strong> · Excel / CSV / PDF upload · InstantDash — developed by Anil Sharma · runs 100% locally in your browser</footer>
+  <footer class="app-footer">InstantDash <strong>v3.2.3</strong> · Excel / CSV / PDF upload · InstantDash — developed by Anil Sharma · runs 100% locally in your browser</footer>
 </div>
 
 <!-- Ask Your Data floating widget -->
@@ -565,7 +565,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
       </select></label>
       <label>Chart type<select id="bType">
         <option value="bar">Bar</option><option value="line">Line</option>
-        <option value="area">Area</option><option value="doughnut">Donut</option>
+        <option value="area">Area</option><option value="doughnut" selected>Donut</option>
         <option value="scatter">Scatter</option><option value="stacked">Stacked bar</option>
         <option value="stacked100">100% stacked</option><option value="combo">Combo</option>
         <option value="waterfall">Waterfall</option><option value="funnel">Funnel</option>
@@ -788,7 +788,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
       <p><strong>5. What is a Dimension?</strong><br>A text or boolean column with 15 or fewer unique values — good for grouping and filtering, like Region or Status.</p>
       <p><strong>6. What is High Cardinality?</strong><br>A text column with 16–50 unique values, like Product Name. Usable in charts, but only as a "Top N + Others" view to stay readable.</p>
       <p><strong>7. How filters work</strong><br>Every Dimension gets a multi-select filter; every Date column gets a from/to range. All KPIs, charts, and the data table update live as you change them.</p>
-      <p><strong>8. How charts are selected</strong><br>Based on what's in your profile: date+measure → line chart, dimension+measure → bar chart, small dimension → donut, high-cardinality+measure → Top N bar, two measures → scatter, one measure alone → histogram, two dimensions+measure → stacked bar.</p>
+      <p><strong>8. How charts are selected</strong><br>Based on what's in your profile: date+measure → line chart, dimension+measure → bar chart, dimension+measure → bar, high-cardinality+measure → Top N bar, two measures → scatter, measure → distribution bar, two dimensions+measure → stacked bar. Donut remains available as a manual option.</p>
       <p><strong>9. How to create a pivot</strong><br>Click "Pivot table," choose Rows, Columns (optional), Values, and an aggregation, then "Generate pivot." Totals are always recalculated from the underlying records — never by adding up averages, minimums, or maximums.</p>
       <p><strong>10. What "Ask Your Data — Local Analysis" can answer</strong><br>It reads the same profile and aggregates already on your screen — always from the <em>currently filtered</em> data — and explains them in plain language: contributors to a change, rankings by category, totals and averages. It does not use an external AI model; it's a local, rule-based reader of your numbers, so it can't reason beyond your columns. It can identify the largest contributor to a change, not necessarily the reason behind it — correlation shown in your data is not the same as a confirmed cause. Note: if you use the microphone button, the audio is processed by your browser or device's built-in speech-to-text service (e.g. Apple's or Google's), which is not guaranteed to be fully on-device — typed questions stay entirely local.</p>
       <p><strong>11. Privacy</strong><br>Your spreadsheet is processed locally in your browser. InstantDash does not upload your spreadsheet to a server. It's held in your browser's memory only, and closing the tab clears it. (The page itself — its code, fonts, and the spreadsheet-reading library — loads from the internet the first time you open it, the same as any webpage; it's your file's contents that never get sent anywhere. If voice input is used with "Ask Your Data," that audio is processed by your browser/device's built-in speech recognition service, which may not be entirely local — see note 10.)</p>
@@ -988,12 +988,12 @@ async function handleFile(file){
   clearMessages();
   const isPdf = /\.pdf$/i.test(file.name) || file.type === 'application/pdf';
   if(isPdf){
-    // PDF is visibly supported by the picker in v3.2.1. The current dashboard
+    // PDF is visibly supported by the picker in v3.2.3. The current dashboard
     // engine remains spreadsheet-first; keep the user informed instead of
     // attempting to pass a PDF byte stream into XLSX.
     emptyState.style.display='block';
     loadingState.style.display='none';
-    showMessage('📕 PDF selected. PDF upload is enabled in v3.2.1; PDF table/text extraction is handled separately from the Excel/CSV engine. For reliable KPI dashboards, use a text/table PDF or convert it to Excel first.','info');
+    showMessage('📕 PDF selected. PDF upload is enabled in v3.2.3; PDF table/text extraction is handled separately from the Excel/CSV engine. For reliable KPI dashboards, use a text/table PDF or convert it to Excel first.','info');
     return;
   }
   emptyState.style.display='none';
@@ -2740,10 +2740,10 @@ function chooseAndBuildCharts(){
       specs.push({kind:'bar', x:d, y:m, agg:aggFor(m), title:`${verbFor(m)} ${m} by ${d}`, sort:'desc'});
     }
   });
-  // 3. Dimension with 2-6 uniques -> donut of share of total
+  // 3. Small-category dimension -> BAR by default. Donut remains available manually.
   dims.filter(d=>STATE.profile[d].unique>=2 && STATE.profile[d].unique<=6).slice(0,1).forEach(d=>{
-    const m=measures.find(mm=>!(STATE.profile[mm]||{}).isPercentage) || measures[0]; // avoid a "share of total %" donut, which is meaningless for a percentage column
-    specs.push({kind:'doughnut', x:d, y:m||null, agg: m?'sum':'count', title: m? `${m} share by ${d}`:`Row share by ${d}`});
+    const m=measures.find(mm=>!(STATE.profile[mm]||{}).isPercentage) || measures[0];
+    specs.push({kind:'bar', x:d, y:m||null, agg: m?'sum':'count', title: m? `${verbFor(m)} ${m} by ${d}`:`Record count by ${d}`, sort:'desc'});
   });
   // 4. High-cardinality dim + measure -> top10 horizontal bar
   if(highCards.length && measures.length){
@@ -2754,8 +2754,10 @@ function chooseAndBuildCharts(){
   if(measures.length>=2){
     specs.push({kind:'scatter', x:measures[0], y:measures[1], title:`${measures[1]} vs ${measures[0]}`});
   }
-  // 6. A measure alone -> histogram
-  if(measures.length && specs.length<8){
+  // 6. Measure distribution -> always include a distribution bar/histogram.
+  // This prevents charts such as "Distribution of Credit" from disappearing
+  // when other recommended charts have already filled the recommendation list.
+  if(measures.length){
     specs.push({kind:'histogram', x:measures[0], title:`Distribution of ${measures[0]}`});
   }
   // 7. Two dimensions + measure -> stacked bar
@@ -2794,9 +2796,14 @@ function chooseAndBuildCharts(){
     }
   }
 
-  // De-dupe, cap 4-8
+  // De-dupe, cap at 8 while ALWAYS preserving the distribution chart when a measure exists.
   const seenTitles=new Set();
-  const finalSpecs=specs.filter(s=>{ if(seenTitles.has(s.title)) return false; seenTitles.add(s.title); return true; }).slice(0,8);
+  let finalSpecs=specs.filter(s=>{ if(seenTitles.has(s.title)) return false; seenTitles.add(s.title); return true; });
+  const distributionSpec=finalSpecs.find(s=>s.kind==='histogram');
+  if(finalSpecs.length>8){
+    finalSpecs=finalSpecs.slice(0,8);
+    if(distributionSpec && !finalSpecs.includes(distributionSpec)) finalSpecs[finalSpecs.length-1]=distributionSpec;
+  }
 
   if(finalSpecs.length===0){
     document.getElementById('chartGrid').innerHTML='<div class="chart-card">Not enough distinct data to build charts automatically. Try the "Add chart" button above.</div>';
@@ -2825,7 +2832,7 @@ function createChartCard(spec, custom){
     <div class="chart-body"><canvas id="${id}_canvas" role="img" aria-label="${escapeHtml(spec.title)} chart"></canvas></div>
     <div class="chart-controls-row">
       <select class="ctrlType" aria-label="Chart type">
-        <option value="bar" ${spec.kind==='bar'?'selected':''}>Bar</option>
+        <option value="bar">Bar</option>
         <option value="line" ${spec.kind==='line'?'selected':''}>Line</option>
         <option value="area" ${spec.kind==='area'?'selected':''}>Area</option>
         <option value="doughnut" ${spec.kind==='doughnut'?'selected':''}>Donut</option>
@@ -2883,7 +2890,11 @@ function buildChartDataset(spec){
     const nums=rows.map(r=>getNumeric(r,spec.x)).filter(v=>!isNaN(v));
     if(nums.length===0) return {type:'bar', labels:[], datasets:[{data:[]}]};
     const min=Math.min(...nums), max=Math.max(...nums);
-    const bins=10; const width=(max-min)/bins || 1;
+    const bins=10;
+    if(min===max){
+      return {type:'bar', labels:[fmtNum(min,{compact:true})], datasets:[{label:'Count', data:[nums.length], backgroundColor:cssVar('--amber')}]};
+    }
+    const width=(max-min)/bins;
     const counts=new Array(bins).fill(0);
     nums.forEach(v=>{ let idx=Math.floor((v-min)/width); if(idx>=bins) idx=bins-1; if(idx<0) idx=0; counts[idx]++; });
     const labels=counts.map((_,i)=> fmtNum(min+i*width,{compact:true})+'–'+fmtNum(min+(i+1)*width,{compact:true}));
