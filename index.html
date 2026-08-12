@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<title>InstantDash — Excel to Dashboard v4.1.1</title>
+<title>InstantDash — Excel to Dashboard v4.1.2</title>
 <meta name="author" content="Developed by Anil Sharma, Former General Manager, Central Bank of India">
-<meta name="application-name" content="InstantDash v4.1.1">
-<meta name="description" content="InstantDash — Excel to Dashboard v4.1.1, developed by Anil Sharma">
+<meta name="application-name" content="InstantDash v4.1.2">
+<meta name="description" content="InstantDash — Excel to Dashboard v4.1.2, developed by Anil Sharma">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js';document.head.appendChild(s);"></script>
@@ -217,7 +217,7 @@ select, .input{
 .chart-body{position:relative; height:320px; min-height:320px; width:100%; overflow:hidden;}
 .chart-body canvas{display:block !important; width:100% !important; height:100% !important; min-height:300px;}
 .chart-controls-row{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; border-top:1px dashed var(--line); padding-top:8px;}
-/* ---------- v4.1.1 mobile-first dashboard polish ---------- */
+/* ---------- v4.1.2 mobile-first dashboard polish ---------- */
 .kpi-card{position:relative;overflow:hidden;min-height:196px;padding:18px 18px 16px;border-radius:18px;border:1px solid rgba(255,255,255,.06);background:linear-gradient(145deg,var(--card),rgba(255,255,255,.018));box-shadow:0 8px 24px rgba(0,0,0,.18);}
 .kpi-card:before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:var(--amber);}
 .kpi-card.kpi-derived:before{background:#304968;}
@@ -507,7 +507,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v403UiFix">
-/* v4.1.1: KPI directory is part of the loaded dashboard, never the landing page. */
+/* v4.1.2: KPI directory is part of the loaded dashboard, never the landing page. */
 #bankingKpiDirectory{display:block}
 #emptyState ~ #bankingKpiDirectory{display:none !important}
 </style>
@@ -537,11 +537,82 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
   letter-spacing:.01em;
 }
 </style>
+
+<style id="v412InsightVisibility">
+/* v4.1.2 — high-contrast KPI Insight */
+.click-insight-backdrop{
+  background:rgba(0,0,0,.62) !important;
+}
+.click-insight-modal{
+  background:#ffffff !important;
+  color:#111827 !important;
+  border:2px solid #d97706 !important;
+  box-shadow:0 22px 70px rgba(0,0,0,.38) !important;
+}
+.click-insight-head h3{
+  color:#111827 !important;
+  font-weight:900 !important;
+}
+.click-insight-close{
+  background:#f3f4f6 !important;
+  color:#111827 !important;
+  border:1px solid #d1d5db !important;
+  font-weight:800 !important;
+}
+.click-insight-stat{
+  background:#f8fafc !important;
+  border:1px solid #d1d5db !important;
+  color:#111827 !important;
+}
+.click-insight-label{
+  color:#4b5563 !important;
+  font-weight:800 !important;
+}
+.click-insight-stat b{
+  color:#111827 !important;
+  font-weight:900 !important;
+}
+.click-insight-reason{
+  background:#fff7ed !important;
+  border:1px solid #fed7aa !important;
+  color:#1f2937 !important;
+}
+.click-insight-reason strong{
+  color:#9a3412 !important;
+  font-weight:900 !important;
+}
+.click-insight-actions button{
+  background:#111827 !important;
+  color:#ffffff !important;
+  border:1px solid #111827 !important;
+  font-weight:800 !important;
+}
+.click-insight-actions button:hover{
+  background:#374151 !important;
+}
+.click-insight-stat .good,
+.click-insight-stat b.good{
+  color:#15803d !important;
+}
+.click-insight-stat .bad,
+.click-insight-stat b.bad{
+  color:#b91c1c !important;
+}
+@media(max-width:600px){
+  .click-insight-modal{
+    width:min(94vw,560px) !important;
+    padding:16px !important;
+  }
+  .click-insight-stat b{
+    font-size:17px !important;
+  }
+}
+</style>
 </head>
 <body>
 
 <div class="topbar">
-  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v4.1.1</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
+  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v4.1.2</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
   <div class="topbar-right">
     <div class="privacy-badge">🔒 <span class="txt">Processed locally — not uploaded to any server</span></div>
     <button class="icon-btn" id="shareTopBtn" title="Share dashboard" aria-label="Share dashboard as an image" style="display:none;">📤</button>
@@ -728,7 +799,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
   </div>
 </div>
 
-<footer class="app-footer">InstantDash <strong>v4.1.1</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
+<footer class="app-footer">InstantDash <strong>v4.1.2</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
 </div>
 
 <!-- Ask Your Data floating widget -->
@@ -1399,7 +1470,7 @@ function fail(msg){
 
 
 
-// v4.1.1: expose the real file handler for the independent mobile file-picker hook.
+// v4.1.2: expose the real file handler for the independent mobile file-picker hook.
 window.instantDashHandleFile = handleFile;
 
 function chooseBestDataSheet(names, wb){
@@ -1978,7 +2049,7 @@ function renderPerformanceScorecard(){
 }
 
 
-/* ===================== InstantDash v4.1.1 =====================
+/* ===================== InstantDash v4.1.2 =====================
    Consolidated management/KPI intelligence layer.
    It is additive: existing v3.5.9 chart engine remains intact.
 ================================================================ */
