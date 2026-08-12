@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<title>InstantDash — Excel to Dashboard v4.0.9</title>
+<title>InstantDash — Excel to Dashboard v4.1.0</title>
 <meta name="author" content="Developed by Anil Sharma, Former General Manager, Central Bank of India">
-<meta name="application-name" content="InstantDash v4.0.9">
-<meta name="description" content="InstantDash — Excel to Dashboard v4.0.9, developed by Anil Sharma">
+<meta name="application-name" content="InstantDash v4.1.0">
+<meta name="description" content="InstantDash — Excel to Dashboard v4.1.0, developed by Anil Sharma">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js';document.head.appendChild(s);"></script>
@@ -217,7 +217,7 @@ select, .input{
 .chart-body{position:relative; height:320px; min-height:320px; width:100%; overflow:hidden;}
 .chart-body canvas{display:block !important; width:100% !important; height:100% !important; min-height:300px;}
 .chart-controls-row{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; border-top:1px dashed var(--line); padding-top:8px;}
-/* ---------- v4.0.9 mobile-first dashboard polish ---------- */
+/* ---------- v4.1.0 mobile-first dashboard polish ---------- */
 .kpi-card{position:relative;overflow:hidden;min-height:196px;padding:18px 18px 16px;border-radius:18px;border:1px solid rgba(255,255,255,.06);background:linear-gradient(145deg,var(--card),rgba(255,255,255,.018));box-shadow:0 8px 24px rgba(0,0,0,.18);}
 .kpi-card:before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:var(--amber);}
 .kpi-card.kpi-derived:before{background:#304968;}
@@ -507,7 +507,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v403UiFix">
-/* v4.0.9: KPI directory is part of the loaded dashboard, never the landing page. */
+/* v4.1.0: KPI directory is part of the loaded dashboard, never the landing page. */
 #bankingKpiDirectory{display:block}
 #emptyState ~ #bankingKpiDirectory{display:none !important}
 </style>
@@ -529,7 +529,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 <body>
 
 <div class="topbar">
-  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v4.0.9</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
+  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v4.1.0</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
   <div class="topbar-right">
     <div class="privacy-badge">🔒 <span class="txt">Processed locally — not uploaded to any server</span></div>
     <button class="icon-btn" id="shareTopBtn" title="Share dashboard" aria-label="Share dashboard as an image" style="display:none;">📤</button>
@@ -716,7 +716,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
   </div>
 </div>
 
-<footer class="app-footer">InstantDash <strong>v4.0.9</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
+<footer class="app-footer">InstantDash <strong>v4.1.0</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
 </div>
 
 <!-- Ask Your Data floating widget -->
@@ -1387,7 +1387,7 @@ function fail(msg){
 
 
 
-// v4.0.9: expose the real file handler for the independent mobile file-picker hook.
+// v4.1.0: expose the real file handler for the independent mobile file-picker hook.
 window.instantDashHandleFile = handleFile;
 
 function chooseBestDataSheet(names, wb){
@@ -1966,7 +1966,7 @@ function renderPerformanceScorecard(){
 }
 
 
-/* ===================== InstantDash v4.0.9 =====================
+/* ===================== InstantDash v4.1.0 =====================
    Consolidated management/KPI intelligence layer.
    It is additive: existing v3.5.9 chart engine remains intact.
 ================================================================ */
@@ -4555,7 +4555,12 @@ const MiniChart=(function(){
     }
   }
 
-  function attachInteraction(canvas){
+  function attachInteraction(canvas, spec, ds){
+    // Keep the interaction handler alive when a chart is reshaped, but always
+    // point it at the latest spec/dataset. Older builds captured the first
+    // chart's spec and dataset, which made taps silently fail or show stale data.
+    canvas._miniChartSpec=spec;
+    canvas._miniChartDs=ds;
     if(canvas._miniChartBound) return;
     canvas._miniChartBound=true;
     const findHit=(mx,my)=>{
@@ -4573,8 +4578,12 @@ const MiniChart=(function(){
             const dx=mx-hRegion.cx, dy=my-hRegion.cy;
             if(Math.sqrt(dx*dx+dy*dy)<=hRegion.r) return hRegion;
           }
-        } else if(mx>=hRegion.x && mx<=hRegion.x+hRegion.w && my>=hRegion.y && my<=hRegion.y+hRegion.h){
-          return hRegion;
+        } else {
+          // Expand thin/zero-height bars into a comfortable touch target on
+          // phones. The visual bar remains unchanged; only hit-testing grows.
+          const padX=10, padY=12;
+          if(mx>=hRegion.x-padX && mx<=hRegion.x+hRegion.w+padX &&
+             my>=hRegion.y-padY && my<=hRegion.y+hRegion.h+padY) return hRegion;
         }
       }
       return null;
@@ -4597,9 +4606,10 @@ const MiniChart=(function(){
       const t=e.changedTouches && e.changedTouches[0];
       if(!t) return;
       // On iPhone/iPad a tap should open the same detailed insight as a desktop click.
+      canvas._lastTouchAt=Date.now();
       handleClick(t.clientX,t.clientY);
       hideTooltip();
-    });
+    }, {passive:true});
 
     // Drill down: clicking a bar or donut slice filters the whole dashboard
     // to that one category, by setting the same multiselect filter used
@@ -4607,6 +4617,8 @@ const MiniChart=(function(){
     // behaves exactly like manually filtering, just one tap instead of
     // opening the dropdown and finding the value.
     function handleClick(clientX, clientY){
+      const activeSpec=canvas._miniChartSpec||{};
+      const activeDs=canvas._miniChartDs||{};
       const drillCol=canvas._drillColumn;
       const rect=canvas.getBoundingClientRect();
       const mx=clientX-rect.left, my=clientY-rect.top;
@@ -4614,7 +4626,7 @@ const MiniChart=(function(){
       if(!hit) return;
       // Every chart point is now tappable: first show the KPI figure and movement insight.
       // Drill/filter is an additional action only where a real categorical dimension exists.
-      showClickInsight(spec,hit,ds);
+      showClickInsight(activeSpec,hit,activeDs);
       if(!drillCol) return;
       if(hit.label==='Others' || String(hit.label).includes(' · ')){
         showMessage('That segment groups several categories together — open the filter dropdown for '+drillCol+' to pick specific ones.','info');
@@ -4632,7 +4644,7 @@ const MiniChart=(function(){
       showMessage(`Drilled into "${hit.label}" — clear the ${drillCol} filter chip above to zoom back out.`,'info');
       document.getElementById('kpiGrid')?.scrollIntoView({behavior:'smooth', block:'start'});
     }
-    canvas.addEventListener('click', e=>{ handleClick(e.clientX,e.clientY); });
+    canvas.addEventListener('click', e=>{ if(Date.now()-(canvas._lastTouchAt||0)<700) return; handleClick(e.clientX,e.clientY); });
     canvas.style.cursor='default';
   }
 
@@ -4651,56 +4663,90 @@ function clickInsightRowsForCategory(spec,label){
   const rows=STATE.filteredData||[];
   const x=spec.x;
   if(!x) return rows;
+  const prof=STATE.profile?.[x];
+  // For a time axis the chart label is usually a bucket (month/week/FY), not
+  // the literal source-cell value. Rebuild the same bucket used by aggregate().
+  if(prof?.role==='Time' || prof?.type==='Date'){
+    const grain=spec.granularity || timeGrainFor(rows,x);
+    return rows.filter(r=>{
+      const d=getDateVal(r,x);
+      return d ? dateBucketKey(d,grain)===String(label) : String(r[x]??'')===String(label);
+    });
+  }
   return rows.filter(r=>String(r[x]??'')===String(label));
 }
 function clickInsightReason(spec,hit,ds){
   const rows=STATE.filteredData||[];
   const x=spec.x, y=hit.measure || spec.y;
   const currency=!!(ds.isCurrency||chartIsCurrency(spec));
-  const pct=!!(ds.isPercentage);
+  const pct=!!(ds.isPercentage || (STATE.profile?.[y]?.isPercentage));
   const current=Number(hit.value);
   let previous=NaN, previousLabel='';
   let target=NaN, targetCol=null;
   const cols=(STATE.columns||[]).map(c=>String(c.name||''));
   targetCol=cols.find(n=>/^target$|^target value$|^budget$/i.test(n));
-  // If the X axis is time, compare the clicked period with the immediately
-  // preceding available period in the same measure.
+
   const prof=STATE.profile?.[x];
-  if(prof?.role==='Time'){
-    const ordered=[...new Set(rows.map(r=>String(r[x]??'')).filter(Boolean))];
-    const idx=ordered.indexOf(String(hit.label));
+  if(prof?.role==='Time' || prof?.type==='Date'){
+    // Use the chart's actual bucket labels, so month/week/FY comparisons work
+    // even when the source data contains full dates or timestamps.
+    const grain=spec.granularity || timeGrainFor(rows,x);
+    const labels=(ds.labels||[]).map(String);
+    const currentLabel=String(hit.label);
+    const idx=labels.indexOf(currentLabel);
     if(idx>0){
-      const pr=rows.filter(r=>String(r[x]??'')===ordered[idx-1]);
+      const prevLabel=labels[idx-1];
+      const pr=rows.filter(r=>{
+        const d=getDateVal(r,x);
+        return d ? dateBucketKey(d,grain)===prevLabel : String(r[x]??'')===prevLabel;
+      });
       const vals=pr.map(r=>getNumeric(r,y)).filter(v=>Number.isFinite(v));
-      if(vals.length){previous=vals.reduce((a,b)=>a+b,0);previousLabel=ordered[idx-1];}
+      if(vals.length){
+        const agg=(STATE.profile?.[y]?.isPercentage || ds.isPercentage) ? 'avg' : 'sum';
+        previous=agg==='avg' ? vals.reduce((a,b)=>a+b,0)/vals.length : vals.reduce((a,b)=>a+b,0);
+        previousLabel=prevLabel;
+      }
     }
   }
+
+  const selectedRows=clickInsightRowsForCategory(spec,hit.label);
   if(targetCol){
-    const targetVals=clickInsightRowsForCategory(spec,hit.label).map(r=>getNumeric(r,targetCol)).filter(v=>Number.isFinite(v));
+    const targetVals=selectedRows.map(r=>getNumeric(r,targetCol)).filter(v=>Number.isFinite(v));
     if(targetVals.length) target=targetVals.reduce((a,b)=>a+b,0);
   }
+
   let growth=NaN;
   if(Number.isFinite(previous)&&previous!==0) growth=(current-previous)/Math.abs(previous)*100;
   let reason=[];
   if(Number.isFinite(growth)){
     reason.push(`${growth>=0?'Growth':'Degrowth'} of ${Math.abs(growth).toFixed(1)}% versus ${previousLabel}.`);
-  }else{
+  }else if(prof?.role==='Time' || prof?.type==='Date'){
     reason.push('No directly comparable previous period is available in the current filtered data.');
+  }else{
+    reason.push('Growth / degrowth is not applicable because this chart compares categories rather than time periods.');
   }
   if(Number.isFinite(target)&&target!==0){
     const ach=current/target*100, gap=current-target;
     reason.push(`${ach.toFixed(1)}% of target; gap is ${clickInsightFormat(gap,currency,false)}.`);
   }
-  // Explain likely driver using categorical split if another dimension is available.
+
+  // Explain the movement using the strongest categorical contributor available
+  // in the same period/category. Never invent a cause if the data cannot prove it.
   const dims=cols.filter(c=>c!==x&&c!==y&&STATE.profile?.[c]?.role==='Categorical');
   let driver='';
-  for(const d of dims.slice(0,5)){
-    const sub=clickInsightRowsForCategory(spec,hit.label);
+  for(const d of dims.slice(0,8)){
     const groups=new Map();
-    sub.forEach(r=>{const k=String(r[d]??'').trim();const v=getNumeric(r,y);if(k&&Number.isFinite(v))groups.set(k,(groups.get(k)||0)+v);});
+    selectedRows.forEach(r=>{
+      const k=String(r[d]??'').trim();
+      const v=getNumeric(r,y);
+      if(k&&Number.isFinite(v)) groups.set(k,(groups.get(k)||0)+v);
+    });
     if(groups.size>1){
       const top=[...groups.entries()].sort((a,b)=>Math.abs(b[1])-Math.abs(a[1]))[0];
-      if(top) {driver=`Within ${hit.label}, the largest observed contributor is ${top[0]} (${clickInsightFormat(top[1],currency,pct)}).`;break;}
+      if(top){
+        driver=`Largest observed contributor within ${hit.label} is ${top[0]} (${clickInsightFormat(top[1],currency,pct)}).`;
+        break;
+      }
     }
   }
   if(driver) reason.push(driver);
@@ -4724,6 +4770,7 @@ function showClickInsight(spec,hit,ds){
       <div class="click-insight-stat"><span class="click-insight-label">Growth / Degrowth</span><b class="${growthClass}">${clickInsightEscape(growthText)}</b></div>
       <div class="click-insight-stat"><span class="click-insight-label">Previous period</span><b>${clickInsightEscape(clickInsightFormat(info.previous,info.currency,info.pct))}</b><span class="click-insight-label">${clickInsightEscape(info.previousLabel||'Not available')}</span></div>
       <div class="click-insight-stat"><span class="click-insight-label">Target</span><b>${clickInsightEscape(clickInsightFormat(info.target,info.currency,false))}</b></div>
+      <div class="click-insight-stat"><span class="click-insight-label">KPI nature</span><b>${clickInsightEscape(kpiNature(hit.measure||spec.y||''))}</b></div>
     </div>
     <div class="click-insight-reason"><strong>Why did it move?</strong><br>${info.reason.map(clickInsightEscape).join('<br>')}</div>`;
   back.style.display='flex';
@@ -4745,7 +4792,7 @@ function renderChart(entry){
   const canvas=entry.canvas || document.getElementById(entry.canvasId);
   if(!canvas) return;
   MiniChart.render(canvas, ds, spec, STATE.darkMode);
-  MiniChart.attachInteraction(canvas);
+  MiniChart.attachInteraction(canvas, spec, ds);
   // Drill-down is only offered for plain bar/donut charts grouped by a real
   // dimension — not histograms (bins aren't real categories), not stacked
   // charts (ambiguous which series to filter to), not time axes (a filter
@@ -4753,7 +4800,7 @@ function renderChart(entry){
   const drillable = spec.x && (spec.kind==='bar' || spec.kind==='doughnut' || spec.kind==='pie') && (STATE.profile[spec.x]||{}).role!=='Time';
   canvas._drillColumn = drillable? spec.x : null;
   canvas.style.cursor = 'pointer';
-  canvas.title = `Tap a chart point to see the figure, growth/degrowth and available reason`;
+  canvas.title = `Tap any bar, line point, area point, donut slice or combo series to see the figure, growth/degrowth and available reason`;
   // Be explicit on-chart whenever points are actually sampled for display —
   // don't claim sampling anywhere it isn't really happening (only scatter
   // plots sample; bars/lines/pivots always aggregate the full dataset).
