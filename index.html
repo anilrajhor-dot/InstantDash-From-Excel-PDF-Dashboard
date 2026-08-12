@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<title>InstantDash — Excel to Dashboard v4.0.8</title>
+<title>InstantDash — Excel to Dashboard v4.0.9</title>
 <meta name="author" content="Developed by Anil Sharma, Former General Manager, Central Bank of India">
-<meta name="application-name" content="InstantDash v4.0.8">
-<meta name="description" content="InstantDash — Excel to Dashboard v4.0.8, developed by Anil Sharma">
+<meta name="application-name" content="InstantDash v4.0.9">
+<meta name="description" content="InstantDash — Excel to Dashboard v4.0.9, developed by Anil Sharma">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js';document.head.appendChild(s);"></script>
@@ -217,7 +217,7 @@ select, .input{
 .chart-body{position:relative; height:320px; min-height:320px; width:100%; overflow:hidden;}
 .chart-body canvas{display:block !important; width:100% !important; height:100% !important; min-height:300px;}
 .chart-controls-row{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; border-top:1px dashed var(--line); padding-top:8px;}
-/* ---------- v4.0.8 mobile-first dashboard polish ---------- */
+/* ---------- v4.0.9 mobile-first dashboard polish ---------- */
 .kpi-card{position:relative;overflow:hidden;min-height:196px;padding:18px 18px 16px;border-radius:18px;border:1px solid rgba(255,255,255,.06);background:linear-gradient(145deg,var(--card),rgba(255,255,255,.018));box-shadow:0 8px 24px rgba(0,0,0,.18);}
 .kpi-card:before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:var(--amber);}
 .kpi-card.kpi-derived:before{background:#304968;}
@@ -507,7 +507,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v403UiFix">
-/* v4.0.8: KPI directory is part of the loaded dashboard, never the landing page. */
+/* v4.0.9: KPI directory is part of the loaded dashboard, never the landing page. */
 #bankingKpiDirectory{display:block}
 #emptyState ~ #bankingKpiDirectory{display:none !important}
 </style>
@@ -529,7 +529,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 <body>
 
 <div class="topbar">
-  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v4.0.8</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
+  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v4.0.9</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
   <div class="topbar-right">
     <div class="privacy-badge">🔒 <span class="txt">Processed locally — not uploaded to any server</span></div>
     <button class="icon-btn" id="shareTopBtn" title="Share dashboard" aria-label="Share dashboard as an image" style="display:none;">📤</button>
@@ -716,7 +716,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
   </div>
 </div>
 
-<footer class="app-footer">InstantDash <strong>v4.0.8</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
+<footer class="app-footer">InstantDash <strong>v4.0.9</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
 </div>
 
 <!-- Ask Your Data floating widget -->
@@ -1387,7 +1387,7 @@ function fail(msg){
 
 
 
-// v4.0.8: expose the real file handler for the independent mobile file-picker hook.
+// v4.0.9: expose the real file handler for the independent mobile file-picker hook.
 window.instantDashHandleFile = handleFile;
 
 function chooseBestDataSheet(names, wb){
@@ -1966,7 +1966,7 @@ function renderPerformanceScorecard(){
 }
 
 
-/* ===================== InstantDash v4.0.8 =====================
+/* ===================== InstantDash v4.0.9 =====================
    Consolidated management/KPI intelligence layer.
    It is additive: existing v3.5.9 chart engine remains intact.
 ================================================================ */
@@ -4406,7 +4406,7 @@ const MiniChart=(function(){
         const x=xOf(i), y=yOf(v);
         ctx.fillStyle=d.borderColor||cssVar('--rust');
         ctx.beginPath(); ctx.arc(x,y,3,0,Math.PI*2); ctx.fill();
-        canvas._hit && canvas._hit.push({cx:x,cy:y,r:8,label:labels[i],value:v,color:d.borderColor||cssVar('--rust')});
+        canvas._hit && canvas._hit.push({cx:x,cy:y,r:18,label:labels[i],value:v,measure:d.label||spec?.y||'',color:d.borderColor||cssVar('--rust')});
         ctx.fillStyle=textColor;
         const lab=String(labels[i]);
         if(rotate){ ctx.save(); ctx.translate(x, plotB+8); ctx.rotate(-Math.PI/5); ctx.textAlign='right'; ctx.fillText(truncateLabel(ctx,lab,90),0,0); ctx.restore(); }
@@ -4486,12 +4486,14 @@ const MiniChart=(function(){
       labels.forEach((lab,i)=>{
         const v=bars.data[i]||0, xx=L+band*i+band/2, yy=y(v), y0=y(0);
         ctx.fillStyle=bars.backgroundColor||cssVar('--amber'); ctx.fillRect(xx-bw/2,Math.min(yy,y0),bw,Math.abs(y0-yy));
-        canvas._hit.push({x:xx-bw/2,y:Math.min(yy,y0),w:bw,h:Math.max(1,Math.abs(y0-yy)),label:lab,value:v});
+        canvas._hit.push({x:xx-bw/2,y:Math.min(yy,y0),w:bw,h:Math.max(1,Math.abs(y0-yy)),label:lab,value:v,measure:bars.label||''});
       });
       ctx.strokeStyle=line.borderColor||cssVar('--rust'); ctx.lineWidth=2.5; ctx.beginPath();
       line.data.forEach((v,i)=>{const xx=L+band*i+band/2,yy=y(v); if(i===0)ctx.moveTo(xx,yy);else ctx.lineTo(xx,yy);});
       ctx.stroke();
-      line.data.forEach((v,i)=>{const xx=L+band*i+band/2,yy=y(v);ctx.fillStyle=line.borderColor||cssVar('--rust');ctx.beginPath();ctx.arc(xx,yy,3,0,Math.PI*2);ctx.fill();});
+      line.data.forEach((v,i)=>{const xx=L+band*i+band/2,yy=y(v);ctx.fillStyle=line.borderColor||cssVar('--rust');ctx.beginPath();ctx.arc(xx,yy,4,0,Math.PI*2);ctx.fill();
+        canvas._hit.push({cx:xx,cy:yy,r:18,label:labels[i],value:v,measure:line.label||'',color:line.borderColor||cssVar('--rust')});
+      });
       ctx.fillStyle=textColor; ctx.textAlign='center';
       labels.forEach((lab,i)=>{if(i%Math.ceil(labels.length/8||1)===0)ctx.fillText(truncateLabel(ctx,String(lab),band-4),L+band*i+band/2,B+14);});
       ctx.textAlign='left';ctx.fillStyle=bars.backgroundColor||cssVar('--amber');ctx.fillRect(L,3,10,10);ctx.fillStyle=textColor;ctx.fillText(bars.label||'Bar',L+14,8);
@@ -4591,7 +4593,13 @@ const MiniChart=(function(){
     canvas.addEventListener('mouseleave', hideTooltip);
     canvas.addEventListener('touchstart', e=>{ const t=e.touches[0]; if(t) handleMove(t.clientX,t.clientY); }, {passive:true});
     canvas.addEventListener('touchmove', e=>{ const t=e.touches[0]; if(t) handleMove(t.clientX,t.clientY); }, {passive:true});
-    canvas.addEventListener('touchend', hideTooltip);
+    canvas.addEventListener('touchend', e=>{
+      const t=e.changedTouches && e.changedTouches[0];
+      if(!t) return;
+      // On iPhone/iPad a tap should open the same detailed insight as a desktop click.
+      handleClick(t.clientX,t.clientY);
+      hideTooltip();
+    });
 
     // Drill down: clicking a bar or donut slice filters the whole dashboard
     // to that one category, by setting the same multiselect filter used
@@ -4600,12 +4608,14 @@ const MiniChart=(function(){
     // opening the dropdown and finding the value.
     function handleClick(clientX, clientY){
       const drillCol=canvas._drillColumn;
-      if(!drillCol) return;
       const rect=canvas.getBoundingClientRect();
       const mx=clientX-rect.left, my=clientY-rect.top;
       const hit=findHit(mx,my);
       if(!hit) return;
+      // Every chart point is now tappable: first show the KPI figure and movement insight.
+      // Drill/filter is an additional action only where a real categorical dimension exists.
       showClickInsight(spec,hit,ds);
+      if(!drillCol) return;
       if(hit.label==='Others' || String(hit.label).includes(' · ')){
         showMessage('That segment groups several categories together — open the filter dropdown for '+drillCol+' to pick specific ones.','info');
         return;
@@ -4645,7 +4655,7 @@ function clickInsightRowsForCategory(spec,label){
 }
 function clickInsightReason(spec,hit,ds){
   const rows=STATE.filteredData||[];
-  const x=spec.x, y=spec.y;
+  const x=spec.x, y=hit.measure || spec.y;
   const currency=!!(ds.isCurrency||chartIsCurrency(spec));
   const pct=!!(ds.isPercentage);
   const current=Number(hit.value);
@@ -4705,7 +4715,7 @@ function showClickInsight(spec,hit,ds){
   const title=document.getElementById('clickInsightTitle');
   if(!back||!body||!title)return;
   const info=clickInsightReason(spec,hit,ds);
-  title.textContent=`${hit.label} — KPI Insight`;
+  title.textContent=`${hit.measure ? hit.measure+' — ' : ''}${hit.label} — KPI Insight`;
   const growthText=Number.isFinite(info.growth)?`${info.growth>=0?'+':''}${info.growth.toFixed(1)}%`:'—';
   const growthClass=Number.isFinite(info.growth)?(info.growth>=0?'good':'bad'):'';
   body.innerHTML=`
@@ -4742,8 +4752,8 @@ function renderChart(entry){
   // bar already covers date ranges), and not scatter (no category to pick).
   const drillable = spec.x && (spec.kind==='bar' || spec.kind==='doughnut' || spec.kind==='pie') && (STATE.profile[spec.x]||{}).role!=='Time';
   canvas._drillColumn = drillable? spec.x : null;
-  canvas.style.cursor = drillable? 'pointer':'default';
-  canvas.title = drillable? `Tap a ${spec.kind==='doughnut'?'slice':'bar'} to filter the dashboard to that ${spec.x}` : '';
+  canvas.style.cursor = 'pointer';
+  canvas.title = `Tap a chart point to see the figure, growth/degrowth and available reason`;
   // Be explicit on-chart whenever points are actually sampled for display —
   // don't claim sampling anywhere it isn't really happening (only scatter
   // plots sample; bars/lines/pivots always aggregate the full dataset).
