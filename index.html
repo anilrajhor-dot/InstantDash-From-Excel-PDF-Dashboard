@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<title>InstantDash — Excel to Dashboard v3.0.0</title>
+<title>InstantDash — Excel to Dashboard v3.5.8</title>
 <meta name="author" content="Developed by Anil Sharma, Former General Manager, Central Bank of India">
-<meta name="application-name" content="InstantDash v3.5.4">
-<meta name="description" content="InstantDash — Excel to Dashboard, developed by Anil Sharma">
+<meta name="application-name" content="InstantDash v3.5.8">
+<meta name="description" content="InstantDash — Excel to Dashboard v3.5.8, developed by Anil Sharma">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js';document.head.appendChild(s);"></script>
@@ -217,6 +217,50 @@ select, .input{
 .chart-body{position:relative; height:320px; min-height:320px; width:100%; overflow:hidden;}
 .chart-body canvas{display:block !important; width:100% !important; height:100% !important; min-height:300px;}
 .chart-controls-row{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; border-top:1px dashed var(--line); padding-top:8px;}
+/* ---------- v3.5.8 mobile-first dashboard polish ---------- */
+.kpi-card{position:relative;overflow:hidden;min-height:196px;padding:18px 18px 16px;border-radius:18px;border:1px solid rgba(255,255,255,.06);background:linear-gradient(145deg,var(--card),rgba(255,255,255,.018));box-shadow:0 8px 24px rgba(0,0,0,.18);}
+.kpi-card:before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:var(--amber);}
+.kpi-card.kpi-derived:before{background:#304968;}
+.kpi-value{font-size:31px;line-height:1.08;letter-spacing:-.7px;font-weight:800;margin-bottom:8px;}
+.kpi-label{font-size:16px;font-weight:700;line-height:1.25;}
+.kpi-meta{font-size:11.5px;line-height:1.45;margin-top:9px;}
+.kpi-formula{font-size:11.5px;line-height:1.45;margin-top:7px;}
+.kpi-card .kpi-explain{margin-top:10px;font-size:12px;font-weight:600;}
+.chart-card{border:1px solid rgba(255,255,255,.06);border-radius:18px;padding:14px 14px 12px;box-shadow:0 8px 24px rgba(0,0,0,.18);}
+.chart-head{align-items:center;margin-bottom:10px;}
+.chart-title{font-size:16px;font-weight:700;letter-spacing:-.15px;}
+.chart-rule-badge{font-size:9.5px;font-weight:800;padding:3px 6px;border-radius:7px;opacity:.9;}
+.chart-actions button{min-width:38px;min-height:36px;border-radius:10px;font-size:15px;}
+.chart-body{height:285px;min-height:285px;border-radius:12px;}
+.chart-body canvas{min-height:265px;}
+.chart-controls-row{background:rgba(255,255,255,.018);border-top:1px dashed rgba(255,255,255,.10);padding-top:10px;margin-top:10px;gap:8px;}
+.chart-controls-row select{min-height:40px;border-radius:11px;font-weight:600;padding:8px 10px;background:var(--card);color:var(--ink);border:1px solid var(--line);}
+.kpi-currency-badge{display:inline-flex;align-items:center;gap:4px;margin-left:6px;padding:2px 6px;border-radius:999px;font-size:9px;font-weight:800;border:1px solid rgba(245,179,1,.35);color:var(--amber);vertical-align:middle;}
+.chart-currency-note{font-size:10px;color:var(--muted);margin-top:5px;}
+@media (max-width:700px){
+  .kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
+  .kpi-card{min-height:178px;padding:15px 14px 13px;border-radius:16px;}
+  .kpi-value{font-size:28px;}
+  .kpi-label{font-size:14px;}
+  .kpi-meta,.kpi-formula{font-size:10.5px;}
+  .kpi-card .kpi-explain{font-size:11px;}
+  .chart-card{padding:12px 10px 10px;border-radius:16px;}
+  .chart-head{align-items:flex-start;}
+  .chart-title{font-size:15px;}
+  .chart-actions{gap:4px;}
+  .chart-actions button{min-width:34px;min-height:34px;}
+  .chart-body{height:255px;min-height:255px;}
+  .chart-body canvas{min-height:235px;}
+  .chart-controls-row{display:grid;grid-template-columns:1fr 1.35fr;gap:7px;}
+  .chart-controls-row select{width:100%;min-width:0;font-size:13px;}
+}
+@media (max-width:430px){
+  .kpi-value{font-size:25px;}
+  .kpi-card{min-height:170px;}
+  .chart-body{height:235px;min-height:235px;}
+  .chart-body canvas{min-height:215px;}
+}
+
 
 /* ---------- data quality ---------- */
 .dq-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:14px;}
@@ -428,7 +472,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 <body>
 
 <div class="topbar">
-  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v3.5.7</span></div>
+  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v3.5.8</span></div>
   <div class="topbar-right">
     <div class="privacy-badge">🔒 <span class="txt">Processed locally — not uploaded to any server</span></div>
     <button class="icon-btn" id="shareTopBtn" title="Share dashboard" aria-label="Share dashboard as an image" style="display:none;">📤</button>
@@ -551,6 +595,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
         <button class="btn secondary small" id="addChartBtn">➕ Add chart</button>
       </div>
     </div>
+    <div class="chart-policy-note"><strong>Chart policy:</strong> ₹ / INR / currency KPIs use <strong>Bar</strong>; percentages and generic KPI shares use <strong>Donut</strong>. Two related measures use a grouped <strong>Bar</strong> comparison. Scatter remains available manually.</div>
     <div class="chart-grid" id="chartGrid"></div>
 
     <div id="dataQualitySection">
@@ -686,9 +731,9 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
       <label>Operation<select id="customKpiOp"><option value="direct">Direct</option><option value="add">A + B</option><option value="sub">A − B</option><option value="mul">A × B</option><option value="div">A ÷ B</option></select></label>
       <label>Source B<select id="customKpiB"></select></label>
       <label>Aggregation<select id="customKpiAgg"><option value="sum">Sum</option><option value="avg">Average</option><option value="count">Count rows</option></select></label>
-      <label>Unit<select id="customKpiUnit"><option value="number">Number</option><option value="percent">Percentage</option><option value="days">Days</option><option value="hours">Hours</option><option value="ratio">Ratio</option></select></label>
+      <label>Unit<select id="customKpiUnit"><option value="number">Number</option><option value="currency">₹ Currency</option><option value="percent">Percentage</option><option value="days">Days</option><option value="hours">Hours</option><option value="ratio">Ratio</option></select></label>
     </div>
-    <p style="font-size:12px;color:var(--muted)">For percentage KPIs, use a division operation and select Percentage. The KPI is calculated locally from the current filtered data.</p>
+    <p style="font-size:12px;color:var(--muted)">For currency KPIs, select ₹ Currency. For percentage KPIs, use a division operation and select Percentage. The KPI is calculated locally from the current filtered data.</p>
     <div style="text-align:right;margin-top:14px"><button class="btn" id="saveCustomKpiBtn">Save KPI</button></div>
   </div>
 </div>
@@ -2896,9 +2941,10 @@ function buildUniversalKpis(){
   return out;
 }
 function fmtKpiValue(k){
-  if(k.percent)return fmtPercent(k.value);
+  if(k.percent || k.unit==='percent')return fmtPercent(k.value);
   if(k.unit==='days'||k.unit==='hours')return fmtNum(k.value,{compact:true})+' '+k.unit;
-  if(k.ratio)return fmtNum(k.value,{decimals:2});
+  if(k.ratio || k.unit==='ratio')return fmtNum(k.value,{decimals:2});
+  if(k.unit==='currency' || k.unit==='₹' || isCurrencyKpi(k.name)) return fmtCurrencyCompact(k.value);
   return fmtNum(k.value,{compact:true});
 }
 function renderKpiMapping(kpis){
@@ -2993,7 +3039,7 @@ function renderKPIs(){
   const visible=showAll?ranked:ranked.slice(0,10);
   if(!visible.length){grid.innerHTML='<div class="kpi-empty">No reliable KPIs identified from the current data. Use Data Profile to review detected columns.</div>';} else {
     grid.innerHTML=visible.map(k=>`<div class="kpi-card ${k.derived?'kpi-derived':''} ${k.confidence==='low'?'kpi-warning':''}">
-      <div class="kpi-value">${escapeHtml(fmtKpiValue(k))}</div>
+      <div class="kpi-value">${escapeHtml(fmtKpiValue(k))}${(k.unit==='currency'||k.unit==='₹'||isCurrencyKpi(k.name))?'<span class="kpi-currency-badge">₹ INR</span>':''}</div>
       <div class="kpi-label">${escapeHtml(k.name)}</div>
       <div class="kpi-meta">${k.source?'Source: '+escapeHtml(k.source):'Calculated from available source columns'} · ${escapeHtml(k.confidence)} confidence</div>
       <div class="kpi-formula">${escapeHtml(k.formula||'Direct source value')}</div>
@@ -3450,9 +3496,12 @@ function chooseAndBuildCharts(){
     const m=measures[0];
     specs.push({kind:defaultChartKind(m, STATE.filteredData), autoDefault:true, x:highCards[0], y:m, agg:aggFor(m), title:`Top ${STATE.settings.maxCategories} ${highCards[0]} by ${verbFor(m)} ${m}`, top10:true, horizontal:isCurrencyMeasure(m)?false:true});
   }
-  // 5. Two measures -> scatter
-  if(measures.length>=2){
-    specs.push({kind:'scatter', x:measures[0], y:measures[1], title:`${measures[1]} vs ${measures[0]}`});
+  // 5. Two measures -> grouped comparison BAR when a real axis exists.
+  // Scatter remains available manually, but management dashboards should compare
+  // two KPIs with side-by-side bars so target/actual and planned/completed are readable.
+  if(measures.length>=2 && (times.length || dims.length)){
+    const gx=times[0] || dims[0];
+    specs.push({kind:'bar',databaseDefault:true,autoDefault:false,multiMeasure:true,x:gx,y:measures[0],y2:measures[1],agg:aggFor(measures[0]),agg2:aggFor(measures[1]),title:`${measures[0]} vs ${measures[1]} by ${gx}`,sort:'desc'});
   }
   // 6. Measure distribution -> always include a distribution bar/histogram.
   // This prevents charts such as "Distribution of Credit" from disappearing
@@ -3541,7 +3590,7 @@ function createChartCard(spec, custom){
   const dimOptions=dimensionsList().concat(highCardList()).concat(timeList()).map(d=>`<option value="${escapeHtml(d)}" ${d===spec.x?'selected':''}>${escapeHtml(d)}</option>`).join('');
   card.innerHTML=`
     <div class="chart-head">
-      <div class="chart-title">${escapeHtml(spec.title)} <span class="chart-rule-badge" title="Effective chart rule">${spec.databaseDefault?'DB: ':''}${spec.kind==='doughnut'?'Donut':spec.kind==='bar'?'Bar':spec.kind}</span></div>
+      <div class="chart-title">${escapeHtml(spec.title)} <span class="chart-rule-badge" title="Effective chart rule">${spec.databaseDefault?'DB: ':''}${spec.kind==='doughnut'?'Donut':spec.kind==='bar'?'Bar':spec.kind}${(spec.isCurrency||isCurrencyKpi(spec.y))?' · ₹':''}</span></div>
       <div class="chart-actions">
         <button data-act="explain" title="Explain this chart" aria-label="Explain this chart">🔍</button>
         <button data-act="png" title="Download or share as PNG" aria-label="Download or share this chart as an image">⬇</button>
@@ -3661,10 +3710,19 @@ function chartIsCurrency(spec){
 }
 function fmtCurrency(n){
   if(n===null||n===undefined||isNaN(n)) return '—';
-  const s=STATE.settings;
+  const s=STATE.settings||{};
   const locale=s.numberFormat==='indian'?'en-IN':'en-US';
   const decimals=s.decimals!==undefined?s.decimals:2;
   return '₹'+Number(n).toLocaleString(locale,{minimumFractionDigits:decimals,maximumFractionDigits:decimals});
+}
+function fmtCurrencyCompact(n){
+  if(n===null||n===undefined||isNaN(n)) return '—';
+  const x=Number(n), a=Math.abs(x);
+  const d=(v,dp)=>'₹'+v.toFixed(dp);
+  if(a>=10000000) return d(x/10000000,2)+' Cr';
+  if(a>=100000) return d(x/100000,2)+' L';
+  if(a>=1000) return d(x/1000,1)+' K';
+  return fmtCurrency(x);
 }
 
 function buildChartDataset(spec){
@@ -3681,6 +3739,20 @@ function buildChartDataset(spec){
     const sampled = pts.length>3000;
     const sample = sampled? pts.filter((_,i)=>i%Math.ceil(pts.length/3000)===0) : pts;
     return {type:'scatter', datasets:[{label:spec.y+' vs '+spec.x, data:sample, backgroundColor:cssVar('--amber')}], sampled, sampledFrom:pts.length, sampledTo:sample.length};
+  }
+  // Two-measure comparisons are grouped BAR charts when a real category/time axis exists.
+  // Scatter remains available as a manual chart type, but is no longer the automatic comparison.
+  if(spec.kind==='bar' && spec.multiMeasure && spec.x && spec.y && spec.y2){
+    let a=aggregate(rows,spec.x,spec.y,spec.agg||'sum',spec.granularity);
+    let b=aggregate(rows,spec.x,spec.y2,spec.agg2||'sum',spec.granularity);
+    const keys=[...new Set([...a.map(o=>o.key),...b.map(o=>o.key)])];
+    if((STATE.profile[spec.x]||{}).type==='Date') keys.sort();
+    else if(spec.sort==='desc') keys.sort((ka,kb)=>((new Map(a.map(o=>[o.key,o.value]))).get(kb)||0)-((new Map(a.map(o=>[o.key,o.value]))).get(ka)||0));
+    const ma=new Map(a.map(o=>[o.key,o.value])), mb=new Map(b.map(o=>[o.key,o.value]));
+    return {type:'bar',labels:keys,datasets:[
+      {label:spec.y,data:keys.map(k=>ma.get(k)||0),backgroundColor:cssVar('--amber')},
+      {label:spec.y2,data:keys.map(k=>mb.get(k)||0),backgroundColor:cssVar('--rust')}
+    ],isCurrency:isCurrencyKpi(spec.y)||isCurrencyKpi(spec.y2),isPercentage:!!(STATE.profile[spec.y]||{}).isPercentage && !!(STATE.profile[spec.y2]||{}).isPercentage};
   }
   if(spec.kind==='histogram'){
     const nums=rows.map(r=>getNumeric(r,spec.x)).filter(v=>!isNaN(v));
@@ -3853,7 +3925,7 @@ const MiniChart=(function(){
     canvas._isPercentage=!!ds.isPercentage; // read by the hover tooltip
     const textColor= isDark? '#D8D4CC':'#4a453f';
     const gridColor= isDark? 'rgba(255,255,255,.10)':'rgba(0,0,0,.08)';
-    const fmtVal = ds.isPercentage ? (v=>fmtPercent(v)) : (canvas._isCurrency ? (v=>fmtCurrency(v)) : (v=>fmtNum(v,{compact:true})));
+    const fmtVal = ds.isPercentage ? (v=>fmtPercent(v)) : (canvas._isCurrency ? (v=>fmtCurrencyCompact(v)) : (v=>fmtNum(v,{compact:true})));
     ctx.clearRect(0,0,w,h);
     ctx.font='11px -apple-system,BlinkMacSystemFont,sans-serif';
     ctx.textBaseline='middle';
