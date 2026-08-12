@@ -426,7 +426,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 <body>
 
 <div class="topbar">
-  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v3.5.4</span></div>
+  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v3.5.5</span></div>
   <div class="topbar-right">
     <div class="privacy-badge">🔒 <span class="txt">Processed locally — not uploaded to any server</span></div>
     <button class="icon-btn" id="shareTopBtn" title="Share dashboard" aria-label="Share dashboard as an image" style="display:none;">📤</button>
@@ -621,7 +621,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
       </select></label>
       <label>Chart type<select id="bType">
         <option value="bar">Bar</option><option value="line">Line</option>
-        <option value="area">Area</option><option value="doughnut" selected>Donut</option>
+        <option value="area">Area</option><option value="doughnut" selected>Donut</option><option value="pie">Pie</option><option value="histogram">Histogram</option>
         <option value="scatter">Scatter</option><option value="stacked">Stacked bar</option>
         <option value="stacked100">100% stacked</option><option value="combo">Combo</option>
         <option value="waterfall">Waterfall</option><option value="funnel">Funnel</option>
@@ -844,7 +844,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
       <p><strong>5. What is a Dimension?</strong><br>A text or boolean column with 15 or fewer unique values — good for grouping and filtering, like Region or Status.</p>
       <p><strong>6. What is High Cardinality?</strong><br>A text column with 16–50 unique values, like Product Name. Usable in charts, but only as a "Top N + Others" view to stay readable.</p>
       <p><strong>7. How filters work</strong><br>Every Dimension gets a multi-select filter; every Date column gets a from/to range. All KPIs, charts, and the data table update live as you change them.</p>
-      <p><strong>8. How charts are selected</strong><br>Based on what's in your profile: date+measure → line chart, dimension+measure → bar chart, dimension+measure → bar, high-cardinality+measure → Top N bar, two measures → scatter, measure → distribution bar, two dimensions+measure → stacked bar. Donut remains available as a manual option.</p>
+      <p><strong>8. How charts are selected</strong><br>Based on what's in your profile and the KPI database: ₹/INR/Rs/currency KPIs → Bar; other generic KPIs → Donut. Date charts can be grouped by Day/Month/Quarter/Year. Histogram and Pie are also available manually.</p>
       <p><strong>9. How to create a pivot</strong><br>Click "Pivot table," choose Rows, Columns (optional), Values, and an aggregation, then "Generate pivot." Totals are always recalculated from the underlying records — never by adding up averages, minimums, or maximums.</p>
       <p><strong>10. What "Ask Your Data — Local Analysis" can answer</strong><br>It reads the same profile and aggregates already on your screen — always from the <em>currently filtered</em> data — and explains them in plain language: contributors to a change, rankings by category, totals and averages. It does not use an external AI model; it's a local, rule-based reader of your numbers, so it can't reason beyond your columns. It can identify the largest contributor to a change, not necessarily the reason behind it — correlation shown in your data is not the same as a confirmed cause. Note: if you use the microphone button, the audio is processed by your browser or device's built-in speech-to-text service (e.g. Apple's or Google's), which is not guaranteed to be fully on-device — typed questions stay entirely local.</p>
       <p><strong>11. Privacy</strong><br>Your spreadsheet is processed locally in your browser. InstantDash does not upload your spreadsheet to a server. It's held in your browser's memory only, and closing the tab clears it. (The page itself — its code, fonts, and the spreadsheet-reading library — loads from the internet the first time you open it, the same as any webpage; it's your file's contents that never get sent anywhere. If voice input is used with "Ask Your Data," that audio is processed by your browser/device's built-in speech recognition service, which may not be entirely local — see note 10.)</p>
@@ -3202,14 +3202,14 @@ function renderFinancialIntelligence(){
     </div>`).join('')+'</div>';
 }
 
-function aggregate(rows, groupCol, measureCol, agg){
+function aggregate(rows, groupCol, measureCol, agg, forcedGrain){
   const groups={};
   rows.forEach(r=>{
     let key = groupCol? r[groupCol] : '__all__';
     if(key===null||key===undefined||String(key).trim()==='') key='(blank)';
     if(groupCol && (STATE.profile[groupCol]||{}).type==='Date'){
       const d=getDateVal(r,groupCol);
-      key = d? dateBucketKey(d, timeGrainFor(rows,groupCol)) : '(blank)';
+      key = d? dateBucketKey(d, forcedGrain || timeGrainFor(rows,groupCol)) : '(blank)';
     } else {
       key=String(key);
     }
@@ -3245,6 +3245,7 @@ function timeGrainFor(rows, dateCol){
 function dateBucketKey(d, grain){
   if(grain==='day') return toLocalISODate(d);
   if(grain==='year') return String(d.getFullYear());
+  if(grain==='quarter') return d.getFullYear()+' Q'+(Math.floor(d.getMonth()/3)+1);
   return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
 }
 function sortBucketKeys(keys, grain){
@@ -3383,7 +3384,7 @@ function chooseAndBuildCharts(){
   const aggFor=m=> (STATE.profile[m]||{}).isPercentage ? 'avg' : 'sum';
   const verbFor=m=> (STATE.profile[m]||{}).isPercentage ? 'Average' : 'Total';
 
-  // 1. Date + measure -> DONUT by default; line remains available manually
+  // 1. Date + measure -> database/currency rule first; date grouping is user-selectable
   if(times.length && measures.length){
     specs.push({kind:defaultChartKind(measures[0], STATE.filteredData), autoDefault:true, x:times[0], y:measures[0], agg:aggFor(measures[0]), title:`${verbFor(measures[0])} ${measures[0]} by ${times[0]}`, sort:'desc'});
     if(measures[1]) specs.push({kind:defaultChartKind(measures[1], STATE.filteredData), autoDefault:true, x:times[0], y:measures[1], agg:aggFor(measures[1]), title:`${verbFor(measures[1])} ${measures[1]} by ${times[0]}`, sort:'desc'});
@@ -3395,12 +3396,12 @@ function chooseAndBuildCharts(){
       specs.push({kind:defaultChartKind(m, STATE.filteredData), autoDefault:true, x:d, y:m, agg:aggFor(m), title:`${verbFor(m)} ${m} by ${d}`, sort:'desc'});
     }
   });
-  // 3. Small-category dimension -> DONUT by default.
+  // 3. Small-category dimension -> database/currency rule first; generic KPI defaults to Donut.
   dims.filter(d=>STATE.profile[d].unique>=2 && STATE.profile[d].unique<=6).slice(0,1).forEach(d=>{
     const m=measures.find(mm=>!(STATE.profile[mm]||{}).isPercentage) || measures[0];
     specs.push({kind:m?defaultChartKind(m, STATE.filteredData):'doughnut', autoDefault:true, x:d, y:m||null, agg: m?'sum':'count', title: m? `${verbFor(m)} ${m} by ${d}`:`Record count by ${d}`, sort:'desc'});
   });
-  // 4. High-cardinality dim + measure -> DONUT by default
+  // 4. High-cardinality dim + measure -> database/currency rule first
   if(highCards.length && measures.length){
     const m=measures[0];
     specs.push({kind:defaultChartKind(m, STATE.filteredData), autoDefault:true, x:highCards[0], y:m, agg:aggFor(m), title:`Top ${STATE.settings.maxCategories} ${highCards[0]} by ${verbFor(m)} ${m}`, top10:true, horizontal:isCurrencyMeasure(m)?false:true});
@@ -3456,6 +3457,19 @@ function chooseAndBuildCharts(){
     });
   }
 
+  // Ensure at least four meaningful automatic charts where the data supports them.
+  // These are fillers only when the rule-driven recommendations produced fewer than four.
+  const fillerDims=dims.concat(highCards).filter(Boolean);
+  let fillIdx=0;
+  while(specs.length<4 && measures.length && fillerDims.length){
+    const d=fillerDims[fillIdx % fillerDims.length];
+    const m=measures[fillIdx % measures.length];
+    const title=`${verbFor(m)} ${m} by ${d}`;
+    if(!specs.some(s=>s.title===title)) specs.push({kind:defaultChartKind(m, STATE.filteredData), autoDefault:true, x:d, y:m, agg:aggFor(m), title, sort:'desc'});
+    fillIdx++;
+    if(fillIdx>fillerDims.length*measures.length+2) break;
+  }
+
   // De-dupe, cap at 8 while ALWAYS preserving the distribution chart when a measure exists.
   const seenTitles=new Set();
   let finalSpecs=specs.filter(s=>{ if(seenTitles.has(s.title)) return false; seenTitles.add(s.title); return true; });
@@ -3497,6 +3511,8 @@ function createChartCard(spec, custom){
         <option value="line" ${spec.kind==='line'?'selected':''}>Line</option>
         <option value="area" ${spec.kind==='area'?'selected':''}>Area</option>
         <option value="doughnut" ${spec.kind==='doughnut'?'selected':''}>Donut</option>
+        <option value="pie" ${spec.kind==='pie'?'selected':''}>Pie</option>
+        <option value="histogram" ${spec.kind==='histogram'?'selected':''}>Histogram</option>
         <option value="scatter" ${spec.kind==='scatter'?'selected':''}>Scatter</option>
         <option value="stacked">Stacked bar</option>
         <option value="stacked100" ${spec.kind==='stacked100'?'selected':''}>100% stacked</option>
@@ -3508,6 +3524,12 @@ function createChartCard(spec, custom){
       </select>
       <select class="ctrlMeasure" aria-label="Measure">${measOptions}</select>
       <select class="ctrlDim" aria-label="Group by">${dimOptions}</select>
+      <select class="ctrlGrain" aria-label="Date grouping" title="Date grouping" style="display:${(STATE.profile[spec.x]||{}).type==='Date'?'':'none'}">
+        <option value="day" ${(spec.granularity || timeGrainFor(STATE.filteredData,spec.x))==='day'?'selected':''}>Day</option>
+        <option value="month" ${(spec.granularity || timeGrainFor(STATE.filteredData,spec.x))==='month'?'selected':''}>Month</option>
+        <option value="quarter" ${(spec.granularity || timeGrainFor(STATE.filteredData,spec.x))==='quarter'?'selected':''}>Quarter</option>
+        <option value="year" ${(spec.granularity || timeGrainFor(STATE.filteredData,spec.x))==='year'?'selected':''}>Year</option>
+      </select>
     </div>`;
   grid.appendChild(card);
 
@@ -3533,8 +3555,9 @@ function createChartCard(spec, custom){
     STATE.charts=STATE.charts.filter(c=>c.id!==id);
   });
   card.querySelector('.ctrlType').addEventListener('change',(e)=>{ entry.spec.userSelectedType=true; entry.spec.kind=e.target.value; entry.spec.horizontal=false; renderChart(entry); });
-  card.querySelector('.ctrlMeasure').addEventListener('change',(e)=>{ entry.spec.y=e.target.value; entry.spec.userSelectedType=false; entry.spec.databaseDefault=false; entry.spec.kind=entry.spec.unitFilter==='currency'?'bar':entry.spec.unitFilter==='percent'?'doughnut':defaultChartKind(entry.spec.y, STATE.filteredData); renderChart(entry); });
-  card.querySelector('.ctrlDim').addEventListener('change',(e)=>{ entry.spec.x=e.target.value; renderChart(entry); });
+  card.querySelector('.ctrlMeasure').addEventListener('change',(e)=>{ entry.spec.y=e.target.value; entry.spec.userSelectedType=false; entry.spec.databaseDefault=false; entry.spec.autoDefault=true; entry.spec.kind=entry.spec.unitFilter==='currency'?'bar':entry.spec.unitFilter==='percent'?'doughnut':defaultChartKind(entry.spec.y, STATE.filteredData); renderChart(entry); });
+  card.querySelector('.ctrlDim').addEventListener('change',(e)=>{ entry.spec.x=e.target.value; const g=card.querySelector('.ctrlGrain'); if(g) g.style.display=(STATE.profile[entry.spec.x]||{}).type==='Date'?'':'none'; renderChart(entry); });
+  card.querySelector('.ctrlGrain').addEventListener('change',(e)=>{ entry.spec.granularity=e.target.value; renderChart(entry); });
 }
 
 function updateAllCharts(){ STATE.charts.forEach(renderChart); }
@@ -3564,6 +3587,11 @@ function isCurrencyMeasure(name, rows){
   return monetary>0 || (numeric>0 && /^(amount|total|net|gross|value|balance)$/i.test(n));
 }
 function defaultChartKind(name, rows){
+  // Row-level database instruction wins whenever the current dataset is a long-form KPI table.
+  if(Array.isArray(rows)){
+    const hit=rows.find(r=>String(r?.KPI??r?.Metric??r?.Particulars??'').trim()===String(name||'').trim());
+    if(hit){ const db=databaseChartKindForRow(hit); if(db) return db; }
+  }
   if(Array.isArray(rows) && rows.some(r=>{
     const unit=String(r?.Unit??r?.unit??r?.UOM??'');
     return /₹|inr|rs\.?|rupee/i.test(unit) &&
@@ -3615,12 +3643,12 @@ function buildChartDataset(spec){
     return {type:'bar', labels:xTop, datasets, stacked:true};
   }
   if(spec.kind==='area'){
-    let agg=aggregate(rows,spec.x,spec.y,spec.agg||'sum');
+    let agg=aggregate(rows,spec.x,spec.y,spec.agg||'sum',spec.granularity);
     if((STATE.profile[spec.x]||{}).type==='Date') agg.sort((a,b)=>a.key<b.key?-1:1);
     return {type:'line',labels:agg.map(a=>a.key),datasets:[{label:spec.y,data:agg.map(a=>a.value),borderColor:cssVar('--rust'),fillColor:'rgba(194,92,61,.18)'}],area:true,isPercentage:!!(STATE.profile[spec.y]||{}).isPercentage};
   }
   if(spec.kind==='combo'){
-    let a=aggregate(rows,spec.x,spec.y,spec.agg||'sum'), b=aggregate(rows,spec.x,spec.y2,spec.agg2||'sum');
+    let a=aggregate(rows,spec.x,spec.y,spec.agg||'sum',spec.granularity), b=aggregate(rows,spec.x,spec.y2,spec.agg2||'sum',spec.granularity);
     const keys=[...new Set([...a.map(o=>o.key),...b.map(o=>o.key)])];
     if((STATE.profile[spec.x]||{}).type==='Date') keys.sort();
     const ma=new Map(a.map(o=>[o.key,o.value])), mb=new Map(b.map(o=>[o.key,o.value]));
@@ -3638,12 +3666,12 @@ function buildChartDataset(spec){
     return {type:'bar',labels:xVals,datasets,stacked:true,isPercentage:true};
   }
   if(spec.kind==='waterfall'){
-    let agg=aggregate(rows,spec.x,spec.y,spec.agg||'sum');
+    let agg=aggregate(rows,spec.x,spec.y,spec.agg||'sum',spec.granularity);
     if((STATE.profile[spec.x]||{}).type==='Date') agg.sort((a,b)=>a.key<b.key?-1:1);
     return {type:'waterfall',labels:agg.map(a=>a.key),datasets:[{label:spec.y,data:agg.map(a=>a.value)}]};
   }
   if(spec.kind==='funnel'){
-    let agg=aggregate(rows,spec.x,spec.y,spec.agg||'sum').sort((a,b)=>b.value-a.value);
+    let agg=aggregate(rows,spec.x,spec.y,spec.agg||'sum',spec.granularity).sort((a,b)=>b.value-a.value);
     return {type:'funnel',labels:agg.map(a=>a.key),datasets:[{label:spec.y,data:agg.map(a=>a.value)}]};
   }
   if(spec.kind==='gauge'){
@@ -3756,7 +3784,8 @@ const MiniChart=(function(){
     ctx.font='11px -apple-system,BlinkMacSystemFont,sans-serif';
     ctx.textBaseline='middle';
 
-    if(ds.type==='doughnut') return renderDoughnut(ctx,w,h,ds,textColor);
+    if(ds.type==='doughnut') return renderDoughnut(ctx,w,h,ds,textColor,false);
+    if(ds.type==='pie') return renderDoughnut(ctx,w,h,ds,textColor,true);
     if(ds.type==='scatter') return renderScatter(ctx,w,h,ds,textColor,gridColor);
     if(ds.type==='line') return renderLine(ctx,w,h,ds,textColor,gridColor);
     if(ds.type==='combo') return renderCombo(ctx,w,h,ds,textColor,gridColor,canvas);
@@ -3935,7 +3964,7 @@ const MiniChart=(function(){
       });
     }
 
-    function renderDoughnut(ctx,w,h,ds,textColor){
+    function renderDoughnut(ctx,w,h,ds,textColor,isPie){
       const labels=ds.labels||[]; const d=(ds.datasets||[])[0];
       if(!d || labels.length===0){ emptyMsg(ctx,w,h,textColor); return; }
       const values=d.data, colors=Array.isArray(d.backgroundColor)? d.backgroundColor : labels.map((_,i)=>PALETTE[i%PALETTE.length]);
@@ -3950,9 +3979,11 @@ const MiniChart=(function(){
         canvas._hit.push({cx, cy, r, angleStart:start, angleEnd:start+angle, label:labels[i], value:v, pct:(v/total*100), color:colors[i%colors.length]});
         start+=angle;
       });
-      ctx.globalCompositeOperation='destination-out';
-      ctx.beginPath(); ctx.arc(cx,cy,r*0.55,0,Math.PI*2); ctx.fill();
-      ctx.globalCompositeOperation='source-over';
+      if(!isPie){
+        ctx.globalCompositeOperation='destination-out';
+        ctx.beginPath(); ctx.arc(cx,cy,r*0.55,0,Math.PI*2); ctx.fill();
+        ctx.globalCompositeOperation='source-over';
+      }
       // legend
       ctx.textAlign='left'; ctx.font='11px -apple-system,sans-serif';
       let ly=h/2 - (labels.length*18)/2;
@@ -4133,7 +4164,7 @@ function renderChart(entry){
   // dimension — not histograms (bins aren't real categories), not stacked
   // charts (ambiguous which series to filter to), not time axes (a filter
   // bar already covers date ranges), and not scatter (no category to pick).
-  const drillable = spec.x && (spec.kind==='bar' || spec.kind==='doughnut') && (STATE.profile[spec.x]||{}).role!=='Time';
+  const drillable = spec.x && (spec.kind==='bar' || spec.kind==='doughnut' || spec.kind==='pie') && (STATE.profile[spec.x]||{}).role!=='Time';
   canvas._drillColumn = drillable? spec.x : null;
   canvas.style.cursor = drillable? 'pointer':'default';
   canvas.title = drillable? `Tap a ${spec.kind==='doughnut'?'slice':'bar'} to filter the dashboard to that ${spec.x}` : '';
@@ -4466,12 +4497,34 @@ if(addChartTypeEl && addChartYEl){
 }
 
 document.getElementById('addChartBtn').addEventListener('click',()=>{
-  setTimeout(()=>{ const y=document.getElementById('bY')?.value; const t=document.getElementById('bType'); if(y&&t)t.value=defaultChartKind(y); },0);
-  setTimeout(()=>{ if(addChartTypeEl && addChartYEl) addChartTypeEl.value=defaultChartKind(addChartYEl.value, STATE.filteredData); },0);
   const allCols=STATE.columns.map(c=>c.name);
   document.getElementById('bXAxis').innerHTML=allCols.map(n=>`<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join('');
   document.getElementById('bYAxis').innerHTML=allCols.map(n=>`<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join('');
   document.getElementById('bAgg').value=STATE.settings.defaultAgg;
+
+  let grainLabel=document.getElementById('bGrainLabel');
+  if(!grainLabel){
+    grainLabel=document.createElement('label');
+    grainLabel.id='bGrainLabel';
+    grainLabel.innerHTML='Date grouping<select id="bGrain"><option value="day">Day</option><option value="month" selected>Month</option><option value="quarter">Quarter</option><option value="year">Year</option></select>';
+    document.querySelector('#addChartModal .builder-grid').appendChild(grainLabel);
+  }
+  const grainEl=document.getElementById('bGrain');
+  const syncGrain=()=>{
+    const x=document.getElementById('bXAxis').value;
+    const isDate=(STATE.profile[x]||{}).type==='Date';
+    grainLabel.style.display=isDate?'':'none';
+    if(isDate) grainEl.value=timeGrainFor(STATE.filteredData,x);
+  };
+  document.getElementById('bXAxis').onchange=syncGrain;
+  syncGrain();
+
+  const syncDefault=()=>{
+    const y=document.getElementById('bYAxis').value;
+    document.getElementById('bType').value=defaultChartKind(y, STATE.filteredData);
+  };
+  document.getElementById('bYAxis').onchange=syncDefault;
+  syncDefault();
   addChartModal.classList.add('open');
 });
 document.getElementById('buildChartBtn').addEventListener('click',()=>{
@@ -4482,13 +4535,14 @@ document.getElementById('buildChartBtn').addEventListener('click',()=>{
   const horizontal = type==='horizontalBar';
   const kind = horizontal? 'bar': type;
   const aggLabel={sum:'Sum',avg:'Average',count:'Count',distinct:'Distinct count',min:'Min',max:'Max'}[agg];
+  const grain=document.getElementById('bGrain')?.value || null;
   const titleMap={
-    area:`Trend area — ${y} by ${x}`, stacked:`${aggLabel} of ${y} by ${x} (stacked)`,
+    area:`Trend area — ${y} by ${x}`, pie:`${aggLabel} of ${y} by ${x} (Pie)`, histogram:`Distribution of ${y}`, stacked:`${aggLabel} of ${y} by ${x} (stacked)`,
     stacked100:`100% composition of ${y} by ${x}`, combo:`${y} and comparison by ${x}`,
     waterfall:`Waterfall of ${y} by ${x}`, funnel:`Funnel of ${y} by ${x}`,
     gauge:`Gauge — ${y}`, heatmap:`Heatmap — ${y} by ${x}`
   };
-  createChartCard({kind, x, y, agg, title:titleMap[kind]||`${aggLabel} of ${y} by ${x}`, horizontal, sort:'desc'});
+  createChartCard({kind, x, y, agg, granularity:grain, title:titleMap[kind]||`${aggLabel} of ${y} by ${x}`, horizontal, sort:'desc', userSelectedType:true});
   addChartModal.classList.remove('open');
 });
 
