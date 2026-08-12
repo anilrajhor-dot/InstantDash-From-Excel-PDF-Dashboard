@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<title>InstantDash — Excel to Dashboard v4.2.5</title>
+<title>InstantDash — Excel to Dashboard v4.2.6</title>
 <meta name="author" content="Developed by Anil Sharma, Former General Manager, Central Bank of India">
-<meta name="application-name" content="InstantDash v4.2.5">
-<meta name="description" content="InstantDash — Excel to Dashboard v4.2.5, developed by Anil Sharma">
+<meta name="application-name" content="InstantDash v4.2.6">
+<meta name="description" content="InstantDash — Excel to Dashboard v4.2.6, developed by Anil Sharma">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js';document.head.appendChild(s);"></script>
@@ -217,7 +217,7 @@ select, .input{
 .chart-body{position:relative; height:320px; min-height:320px; width:100%; overflow:hidden;}
 .chart-body canvas{display:block !important; width:100% !important; height:100% !important; min-height:300px;}
 .chart-controls-row{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; border-top:1px dashed var(--line); padding-top:8px;}
-/* ---------- v4.2.5 mobile-first dashboard polish ---------- */
+/* ---------- v4.2.6 mobile-first dashboard polish ---------- */
 .kpi-card{position:relative;overflow:hidden;min-height:196px;padding:18px 18px 16px;border-radius:18px;border:1px solid rgba(255,255,255,.06);background:linear-gradient(145deg,var(--card),rgba(255,255,255,.018));box-shadow:0 8px 24px rgba(0,0,0,.18);}
 .kpi-card:before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:var(--amber);}
 .kpi-card.kpi-derived:before{background:#304968;}
@@ -507,7 +507,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v403UiFix">
-/* v4.2.5: KPI directory is part of the loaded dashboard, never the landing page. */
+/* v4.2.6: KPI directory is part of the loaded dashboard, never the landing page. */
 #bankingKpiDirectory{display:block}
 #emptyState ~ #bankingKpiDirectory{display:none !important}
 </style>
@@ -539,7 +539,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v412InsightVisibility">
-/* v4.2.5 — high-contrast KPI Insight */
+/* v4.2.6 — high-contrast KPI Insight */
 .click-insight-backdrop{
   background:rgba(0,0,0,.62) !important;
 }
@@ -735,11 +735,24 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 .er-strength{border-left:4px solid #15803d}
 @media(max-width:800px){.er-grid{grid-template-columns:1fr}}
 </style>
+
+<style id="v426PriorityMatrixStyle">
+.kpi-priority-matrix{margin:12px 0 18px;padding:14px;border:1px solid var(--line);border-radius:16px;background:var(--panel);box-shadow:var(--shadow)}
+.kpi-priority-matrix h3{margin:0 0 4px;font-size:16px}
+.kpi-priority-matrix .pm-sub{margin:0;color:var(--muted);font-size:11px;line-height:1.45}
+.pm-table-wrap{overflow-x:auto;margin-top:10px}
+.pm-table{width:100%;border-collapse:collapse;min-width:620px}
+.pm-table th,.pm-table td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left;font-size:11px}
+.pm-table th{font-size:10px;text-transform:uppercase;color:var(--muted);font-weight:900}
+.pm-high{font-weight:900;color:#b91c1c}
+.pm-medium{font-weight:900;color:#b45309}
+.pm-routine{font-weight:900;color:#15803d}
+</style>
 </head>
 <body>
 
 <div class="topbar">
-  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v4.2.5</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
+  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v4.2.6</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
   <div class="topbar-right">
     <div class="privacy-badge">🔒 <span class="txt">Processed locally — not uploaded to any server</span></div>
     <button class="icon-btn" id="shareTopBtn" title="Share dashboard" aria-label="Share dashboard as an image" style="display:none;">📤</button>
@@ -973,6 +986,25 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
     This is a review framework, not an automatic conclusion. Actual strengths, watch areas and actions must be supported by the uploaded data.
   </p>
 </div>
+<div class="kpi-priority-matrix" id="kpiPriorityMatrix">
+  <h3>🎯 KPI Priority Matrix</h3>
+  <p class="pm-sub">A management framework for deciding which banking indicators deserve immediate attention. Actual priority should be based on the uploaded figures, targets and trend.</p>
+  <div class="pm-table-wrap">
+    <table class="pm-table">
+      <thead><tr><th>Priority</th><th>Banking KPI / Area</th><th>What to Review</th><th>Management Response</th></tr></thead>
+      <tbody>
+        <tr><td class="pm-high">High</td><td>Gross / Net NPA, SMA-1/2/3</td><td>Adverse movement, target gap, slippages</td><td>Immediate account-level review and recovery/action plan</td></tr>
+        <tr><td class="pm-high">High</td><td>NPA Recovery / Written-off Recovery</td><td>Achievement against target and trend</td><td>Review overdue accounts and responsible units</td></tr>
+        <tr><td class="pm-high">High</td><td>Customer Complaints</td><td>Pending volume and resolution time</td><td>Escalate ageing and repeat complaints</td></tr>
+        <tr><td class="pm-medium">Medium</td><td>Deposits / Advances</td><td>Growth versus target and previous period</td><td>Identify product/segment gaps</td></tr>
+        <tr><td class="pm-medium">Medium</td><td>Profitability / Expenses</td><td>Income, expense and margin movement</td><td>Review variance and cost drivers</td></tr>
+        <tr><td class="pm-routine">Routine</td><td>BC / PMJJBY / PMSBY / APY</td><td>Coverage, activity and target achievement</td><td>Monitor outreach and activation</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="margin:9px 0 0;color:var(--muted);font-size:10px">This matrix is a review aid; it does not replace the actual KPI values or bank-specific thresholds.</p>
+</div>
+
 
 
 
@@ -1048,7 +1080,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
   </div>
 </div>
 
-<footer class="app-footer">InstantDash <strong>v4.2.5</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
+<footer class="app-footer">InstantDash <strong>v4.2.6</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
 </div>
 
 <!-- Ask Your Data floating widget -->
@@ -1719,7 +1751,7 @@ function fail(msg){
 
 
 
-// v4.2.5: expose the real file handler for the independent mobile file-picker hook.
+// v4.2.6: expose the real file handler for the independent mobile file-picker hook.
 window.instantDashHandleFile = handleFile;
 
 function chooseBestDataSheet(names, wb){
@@ -2298,7 +2330,7 @@ function renderPerformanceScorecard(){
 }
 
 
-/* ===================== InstantDash v4.2.5 =====================
+/* ===================== InstantDash v4.2.6 =====================
    Consolidated management/KPI intelligence layer.
    It is additive: existing v3.5.9 chart engine remains intact.
 ================================================================ */
