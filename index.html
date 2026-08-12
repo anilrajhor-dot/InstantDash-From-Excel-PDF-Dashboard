@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 <title>InstantDash — Excel to Dashboard v3.0.0</title>
 <meta name="author" content="Developed by Anil Sharma, Former General Manager, Central Bank of India">
-<meta name="application-name" content="InstantDash v3.5.3">
+<meta name="application-name" content="InstantDash v3.5.4">
 <meta name="description" content="InstantDash — Excel to Dashboard, developed by Anil Sharma">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -382,7 +382,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
   .datatable-wrap{max-height:60vh;}
 }
 
-/* v3.5.3 — cleaner upload state and PDF preview */
+/* v3.5.4 — cleaner upload state and PDF preview */
 #messages:empty{display:none;}
 #messages{margin:12px auto 0;max-width:900px;}
 #messages .msg-banner{border-radius:10px;padding:10px 13px;font-size:13px;line-height:1.4;}
@@ -426,7 +426,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 <body>
 
 <div class="topbar">
-  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v3.5.3</span></div>
+  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v3.5.4</span></div>
   <div class="topbar-right">
     <div class="privacy-badge">🔒 <span class="txt">Processed locally — not uploaded to any server</span></div>
     <button class="icon-btn" id="shareTopBtn" title="Share dashboard" aria-label="Share dashboard as an image" style="display:none;">📤</button>
@@ -587,7 +587,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
     </div>
   </div>
 
-  <footer class="app-footer">InstantDash <strong>v3.5.3</strong> · Excel / CSV / PDF upload · InstantDash — developed by Anil Sharma · runs 100% locally in your browser</footer>
+  <footer class="app-footer">InstantDash <strong>v3.5.4</strong> · Excel / CSV / PDF upload · InstantDash — developed by Anil Sharma · runs 100% locally in your browser</footer>
 </div>
 
 <!-- Ask Your Data floating widget -->
@@ -2759,8 +2759,12 @@ function isCurrencyKpi(name){
 function defaultChartKind(name){ return isCurrencyKpi(name) ? 'bar' : 'doughnut'; }
 function enforceAutomaticChartDefault(spec){
   if(!spec) return spec;
+  // Database-defined chart types are authoritative.
+  if(spec.databaseDefault) return spec;
   if(spec.userSelectedType) return spec;
   if(!spec.autoDefault) return spec;
+  if(spec.unitFilter==='currency') return {...spec, kind:'bar', horizontal:false};
+  if(spec.unitFilter==='percent') return {...spec, kind:'doughnut', horizontal:false};
   const desired=defaultChartKind(spec.y, STATE.filteredData);
   return {...spec, kind:desired, horizontal:false};
 }
@@ -3266,43 +3270,100 @@ function detectLongFormKpiDataset(){
     date:findName(/^date$|^period$|^month$|^quarter$|^year$/i)
   };
 }
+
+function normaliseChartKind(v){
+  const x=String(v||'').trim().toLowerCase();
+  if(x==='bar'||x==='column') return 'bar';
+  if(x==='donut'||x==='doughnut'||x==='pie') return 'doughnut';
+  if(x==='line') return 'line';
+  if(x==='area') return 'area';
+  if(x==='scatter') return 'scatter';
+  if(x==='stacked'||x==='stacked bar') return 'stacked';
+  if(x==='100% stacked'||x==='stacked100') return 'stacked100';
+  if(x==='combo') return 'combo';
+  if(x==='waterfall') return 'waterfall';
+  if(x==='funnel') return 'funnel';
+  if(x==='gauge') return 'gauge';
+  if(x==='heatmap') return 'heatmap';
+  return null;
+}
+function databaseChartKindForRow(row){
+  // The uploaded Test_Data contains Default Chart, which is the most
+  // reliable row-level source because it is already linked to the KPI.
+  const direct=normaliseChartKind(row?.['Default Chart'] ?? row?.['default chart'] ?? row?.DefaultChart);
+  if(direct) return direct;
+  const unit=String(row?.Unit??row?.unit??'');
+  if(/₹|inr|rs\\.?|rupee/i.test(unit)) return 'bar';
+  return 'doughnut';
+}
 function buildLongFormKpiCharts(){
   const lf=detectLongFormKpiDataset();
   if(!lf.kpi || !lf.actual || !lf.unit) return false;
   const rows=STATE.filteredData||[];
-  const unitValues=new Set(rows.map(r=>String(r[lf.unit]??'').trim()).filter(Boolean).map(x=>x.toLowerCase()));
-  const hasCurrency=[...unitValues].some(x=>/₹|inr|rs\.?|rupee/.test(x));
-  const hasPercent=[...unitValues].some(x=>/%|percent|ratio|rate/.test(x));
-  if(!hasCurrency && !hasPercent) return false;
+  if(!rows.length) return false;
+
+  // Read the chart requirement directly from the database row. This avoids
+  // guessing from the Actual column name (which was the cause of ₹ becoming
+  // Donut in earlier versions).
+  const groups={};
+  rows.forEach(r=>{
+    const kpi=String(r[lf.kpi]??'').trim();
+    if(!kpi) return;
+    const unit=String(r[lf.unit]??'').trim();
+    const kind=databaseChartKindForRow(r);
+    const key=kind+'|'+unit;
+    if(!groups[key]) groups[key]={kind,unit,rows:[],kpis:[]};
+    groups[key].rows.push(r);
+    if(!groups[key].kpis.includes(kpi)) groups[key].kpis.push(kpi);
+  });
 
   const specs=[];
-  if(hasCurrency){
+  Object.values(groups).forEach(g=>{
+    const isCurrency=/₹|inr|rs\\.?|rupee/i.test(g.unit);
+    const isPercent=/%|percent|ratio|rate/i.test(g.unit);
+    const agg=isPercent?'avg':'sum';
+    const title=isCurrency ? '₹ Actual by KPI'
+      : isPercent ? 'Percentage KPI — Actual'
+      : `${g.unit||'KPI'} — Actual`;
+
+    // Each database-defined chart group gets its own chart. This means a
+    // currency KPI can never inherit the donut setting of a percentage KPI.
     specs.push({
-      kind:'bar',autoDefault:true,unitFilter:'currency',unitColumn:lf.unit,
-      x:lf.kpi,y:lf.actual,agg:'sum',top10:false,horizontal:false,
-      title:'₹ Actual by Banking KPI'
+      kind:g.kind,
+      databaseDefault:true,
+      autoDefault:false,
+      unitFilter: isCurrency?'currency':(isPercent?'percent':null),
+      unitColumn:lf.unit,
+      x:lf.kpi,y:lf.actual,agg,
+      top10:false,horizontal:false,
+      title
     });
-    if(lf.target) specs.push({
-      kind:'bar',autoDefault:true,unitFilter:'currency',unitColumn:lf.unit,
-      x:lf.kpi,y:lf.target,agg:'sum',top10:false,horizontal:false,
-      title:'₹ Target by Banking KPI'
+
+    if(lf.target){
+      specs.push({
+        kind:g.kind,
+        databaseDefault:true,
+        autoDefault:false,
+        unitFilter: isCurrency?'currency':(isPercent?'percent':null),
+        unitColumn:lf.unit,
+        x:lf.kpi,y:lf.target,agg,
+        top10:false,horizontal:false,
+        title:isCurrency?'₹ Target by KPI':(isPercent?'Percentage KPI — Target':`${g.unit||'KPI'} — Target`)
+      });
+    }
+  });
+
+  // A target-vs-actual bar is useful only where the database says Bar.
+  const currencyGroups=Object.values(groups).filter(g=>/₹|inr|rs\\.?|rupee/i.test(g.unit)&&g.kind==='bar');
+  if(lf.target && currencyGroups.length){
+    const g=currencyGroups[0];
+    specs.push({
+      kind:'bar',databaseDefault:true,autoDefault:false,
+      unitFilter:'currency',unitColumn:lf.unit,x:lf.kpi,y:lf.actual,agg:'sum',
+      top10:true,horizontal:false,title:'₹ Actual — KPI comparison'
     });
   }
-  if(hasPercent){
-    specs.push({
-      kind:'doughnut',autoDefault:true,unitFilter:'percent',unitColumn:lf.unit,
-      x:lf.kpi,y:lf.actual,agg:'avg',top10:true,
-      title:'Percentage KPI — Actual'
-    });
-  }
-  // Target-vs-actual is especially useful for the banking test data.
-  if(lf.target && hasCurrency){
-    specs.push({
-      kind:'bar',autoDefault:true,unitFilter:'currency',unitColumn:lf.unit,
-      x:lf.kpi,y:lf.actual,agg:'sum',top10:true,horizontal:false,
-      title:'₹ Actual vs Target — select KPI for comparison'
-    });
-  }
+
   specs.forEach(spec=>createChartCard(spec));
   return specs.length>0;
 }
@@ -3472,7 +3533,7 @@ function createChartCard(spec, custom){
     STATE.charts=STATE.charts.filter(c=>c.id!==id);
   });
   card.querySelector('.ctrlType').addEventListener('change',(e)=>{ entry.spec.userSelectedType=true; entry.spec.kind=e.target.value; entry.spec.horizontal=false; renderChart(entry); });
-  card.querySelector('.ctrlMeasure').addEventListener('change',(e)=>{ entry.spec.y=e.target.value; entry.spec.userSelectedType=false; entry.spec.kind=defaultChartKind(entry.spec.y, STATE.filteredData); renderChart(entry); });
+  card.querySelector('.ctrlMeasure').addEventListener('change',(e)=>{ entry.spec.y=e.target.value; entry.spec.userSelectedType=false; entry.spec.databaseDefault=false; entry.spec.kind=entry.spec.unitFilter==='currency'?'bar':entry.spec.unitFilter==='percent'?'doughnut':defaultChartKind(entry.spec.y, STATE.filteredData); renderChart(entry); });
   card.querySelector('.ctrlDim').addEventListener('change',(e)=>{ entry.spec.x=e.target.value; renderChart(entry); });
 }
 
