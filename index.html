@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<title>InstantDash — Excel to Dashboard v3.5.8</title>
+<title>InstantDash — Excel to Dashboard v3.5.9</title>
 <meta name="author" content="Developed by Anil Sharma, Former General Manager, Central Bank of India">
-<meta name="application-name" content="InstantDash v3.5.8">
-<meta name="description" content="InstantDash — Excel to Dashboard v3.5.8, developed by Anil Sharma">
+<meta name="application-name" content="InstantDash v3.5.9">
+<meta name="description" content="InstantDash — Excel to Dashboard v3.5.9, developed by Anil Sharma">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js';document.head.appendChild(s);"></script>
@@ -217,7 +217,7 @@ select, .input{
 .chart-body{position:relative; height:320px; min-height:320px; width:100%; overflow:hidden;}
 .chart-body canvas{display:block !important; width:100% !important; height:100% !important; min-height:300px;}
 .chart-controls-row{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; border-top:1px dashed var(--line); padding-top:8px;}
-/* ---------- v3.5.8 mobile-first dashboard polish ---------- */
+/* ---------- v3.5.9 mobile-first dashboard polish ---------- */
 .kpi-card{position:relative;overflow:hidden;min-height:196px;padding:18px 18px 16px;border-radius:18px;border:1px solid rgba(255,255,255,.06);background:linear-gradient(145deg,var(--card),rgba(255,255,255,.018));box-shadow:0 8px 24px rgba(0,0,0,.18);}
 .kpi-card:before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:var(--amber);}
 .kpi-card.kpi-derived:before{background:#304968;}
@@ -468,11 +468,19 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 .banking-kpi-table .chart-bar{font-weight:700}
 .banking-kpi-table .chart-donut{font-weight:700}
 </style>
-<style id="chartPolicyStyles">.chart-policy-note{margin:8px 0 14px;padding:9px 12px;border:1px solid rgba(245,166,35,.35);border-radius:10px;font-size:12px}.chart-policy-note strong{font-weight:800}</style></head>
+<style id="chartPolicyStyles">.chart-policy-note{margin:8px 0 14px;padding:9px 12px;border:1px solid rgba(245,166,35,.35);border-radius:10px;font-size:12px}.chart-policy-note strong{font-weight:800}</style><style id="scorecardStyles">
+.scorecard-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:8px 0 18px}
+.scorecard-card{background:var(--panel);border:1px solid var(--line);border-top:4px solid var(--amber);border-radius:16px;padding:15px;min-height:110px;box-shadow:var(--shadow)}
+.scorecard-label{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.scorecard-value{font-size:28px;font-weight:900;margin:6px 0}
+.scorecard-sub{font-size:12px;color:var(--muted)}
+.scorecard-good{border-top-color:#39b56a}.scorecard-warn{border-top-color:#f5a623}.scorecard-bad{border-top-color:#e05252}
+@media(max-width:720px){.scorecard-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.scorecard-card{padding:12px}.scorecard-value{font-size:22px}}
+</style></head>
 <body>
 
 <div class="topbar">
-  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v3.5.8</span></div>
+  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v3.5.9</span></div>
   <div class="topbar-right">
     <div class="privacy-badge">🔒 <span class="txt">Processed locally — not uploaded to any server</span></div>
     <button class="icon-btn" id="shareTopBtn" title="Share dashboard" aria-label="Share dashboard as an image" style="display:none;">📤</button>
@@ -588,6 +596,9 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
     </div>
     <div class="chip-row" id="activeFilterChips"></div>
 
+    <div class="section-title"><h2>🎯 Performance Scorecard</h2><span class="hint">Target vs Actual • RAG status • current filtered data</span></div>
+    <div id="performanceScorecard" class="scorecard-grid"></div>
+
     <div class="section-title">
       <h2>Dashboard</h2>
       <div style="display:flex; gap:8px;">
@@ -595,7 +606,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
         <button class="btn secondary small" id="addChartBtn">➕ Add chart</button>
       </div>
     </div>
-    <div class="chart-policy-note"><strong>Chart policy:</strong> ₹ / INR / currency KPIs use <strong>Bar</strong>; percentages and generic KPI shares use <strong>Donut</strong>. Two related measures use a grouped <strong>Bar</strong> comparison. Scatter remains available manually.</div>
+    <div class="chart-policy-note"><strong>Chart policy:</strong> ₹ / INR / currency KPIs use <strong>Bar</strong>; percentages and generic KPI shares use <strong>Donut</strong>. Two related measures use a grouped <strong>Bar</strong> comparison. Scatter remains available manually. Date grouping: <strong>Day / Week / Month / Quarter / Financial Year / Year</strong>.</div>
     <div class="chart-grid" id="chartGrid"></div>
 
     <div id="dataQualitySection">
@@ -1846,6 +1857,39 @@ document.getElementById('resetFiltersBtn').addEventListener('click',()=>{
   applyFiltersAndRender();
 });
 
+
+function renderPerformanceScorecard(){
+  const el=document.getElementById('performanceScorecard');
+  if(!el) return;
+  const rows=STATE.filteredData||[];
+  const cols=(STATE.columns||[]).map(c=>c.name);
+  const find=(rx)=>cols.find(n=>rx.test(String(n).trim()));
+  const actual=find(/^actual$|^actual value$|^achievement$|^value$/i);
+  const target=find(/^target$|^target value$|^budget$/i);
+  const unit=find(/^unit$|^measure$|^uom$/i);
+  let actualSum=0,targetSum=0,actualCount=0,targetCount=0;
+  if(actual) rows.forEach(r=>{const v=getNumeric(r,actual);if(!isNaN(v)){actualSum+=v;actualCount++;}});
+  if(target) rows.forEach(r=>{const v=getNumeric(r,target);if(!isNaN(v)){targetSum+=v;targetCount++;}});
+  let achievement=targetSum!==0&&actualCount?actualSum/targetSum*100:null;
+  const monetary=(unit&&rows.some(r=>/₹|inr|rs\.?|rupee/i.test(String(r[unit]??'')))) ||
+    isCurrencyKpi(actual||'') || isCurrencyKpi(target||'') ||
+    /amount|deposit|advance|income|profit|cost|expense|revenue|sales|loan|recovery/i.test(`${actual||''} ${target||''}`);
+  const fmtMoney=v=>monetary?formatINR(v):fmtNum(v,{compact:true});
+  const status=achievement===null?'':achievement>=100?'scorecard-good':achievement>=80?'scorecard-warn':'scorecard-bad';
+  const statusText=achievement===null?'No target/actual pair':achievement>=100?'On / Above Target':achievement>=80?'Watch':'Below Target';
+  const cards=[
+    {label:'Actual',value:actualCount?fmtMoney(actualSum):'—',sub:actual?'Source: '+actual:'No Actual column'},
+    {label:'Target / Budget',value:targetCount?fmtMoney(targetSum):'—',sub:target?'Source: '+target:'No Target column'},
+    {label:'Achievement',value:achievement===null?'—':achievement.toFixed(2)+'%',sub:statusText,cls:status},
+    {label:'Data rows',value:fmtNum(rows.length,{compact:true}),sub:'Current filtered view'}
+  ];
+  el.innerHTML=cards.map(c=>`<div class="scorecard-card ${c.cls||''}">
+    <div class="scorecard-label">${escapeHtml(c.label)}</div>
+    <div class="scorecard-value">${escapeHtml(String(c.value))}</div>
+    <div class="scorecard-sub">${escapeHtml(c.sub)}</div>
+  </div>`).join('');
+}
+
 function applyFiltersAndRender(rebuildCharts){
   let rows=STATE.data;
   Object.entries(STATE.filters).forEach(([colName,f])=>{
@@ -1865,6 +1909,7 @@ function applyFiltersAndRender(rebuildCharts){
   });
   STATE.filteredData=rows;
   renderKPIs();
+  renderPerformanceScorecard();
   if(rebuildCharts){ chooseAndBuildCharts(); }
   else { updateAllCharts(); }
   renderDataQuality();
@@ -3326,12 +3371,27 @@ function timeGrainFor(rows, dateCol){
   if(dts.length<2) return 'month';
   const min=Math.min(...dts.map(d=>d.getTime())), max=Math.max(...dts.map(d=>d.getTime()));
   const spanDays=(max-min)/(1000*3600*24);
-  if(spanDays<=62) return 'day';
+  if(spanDays<=31) return 'day';
+  if(spanDays<=180) return 'week';
   if(spanDays<=1100) return 'month';
   return 'year';
 }
+function isoWeekKey(d){
+  const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());
+  const day=x.getDay()||7; x.setDate(x.getDate()+4-day);
+  const y=x.getFullYear();
+  const yearStart=new Date(y,0,1);
+  const wk=Math.ceil((((x-yearStart)/86400000)+1)/7);
+  return `${y}-W${String(wk).padStart(2,'0')}`;
+}
+function financialYearKey(d){
+  const y=d.getFullYear();
+  return d.getMonth()>=3 ? `FY ${String(y).slice(-2)}-${String(y+1).slice(-2)}` : `FY ${String(y-1).slice(-2)}-${String(y).slice(-2)}`;
+}
 function dateBucketKey(d, grain){
   if(grain==='day') return toLocalISODate(d);
+  if(grain==='week') return isoWeekKey(d);
+  if(grain==='fy') return financialYearKey(d);
   if(grain==='year') return String(d.getFullYear());
   if(grain==='quarter') return d.getFullYear()+' Q'+(Math.floor(d.getMonth()/3)+1);
   return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
@@ -3619,8 +3679,10 @@ function createChartCard(spec, custom){
       <select class="ctrlDim" aria-label="Group by">${dimOptions}</select>
       <select class="ctrlGrain" aria-label="Date grouping" title="Date grouping" style="display:${(STATE.profile[spec.x]||{}).type==='Date'?'':'none'}">
         <option value="day" ${(spec.granularity || timeGrainFor(STATE.filteredData,spec.x))==='day'?'selected':''}>Day</option>
+        <option value="week" ${(spec.granularity || timeGrainFor(STATE.filteredData,spec.x))==='week'?'selected':''}>Week</option>
         <option value="month" ${(spec.granularity || timeGrainFor(STATE.filteredData,spec.x))==='month'?'selected':''}>Month</option>
         <option value="quarter" ${(spec.granularity || timeGrainFor(STATE.filteredData,spec.x))==='quarter'?'selected':''}>Quarter</option>
+        <option value="fy" ${(spec.granularity || timeGrainFor(STATE.filteredData,spec.x))==='fy'?'selected':''}>Financial Year</option>
         <option value="year" ${(spec.granularity || timeGrainFor(STATE.filteredData,spec.x))==='year'?'selected':''}>Year</option>
       </select>
     </div>`;
@@ -5069,6 +5131,7 @@ document.getElementById('applySettingsBtn').addEventListener('click',()=>{
   settingsModal.classList.remove('open');
   if(STATE.data.length){
     renderKPIs();
+    renderPerformanceScorecard();
     chooseAndBuildCharts();
     renderDataQuality();
     renderDataTable();
