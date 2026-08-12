@@ -210,10 +210,12 @@ select, .input{
 .chart-card:hover{box-shadow:var(--shadow-hover);}
 .chart-head{display:flex; align-items:flex-start; justify-content:space-between; gap:8px; margin-bottom:8px;}
 .chart-title{font-size:14.5px; font-weight:600; line-height:1.3;}
+.chart-rule-badge{display:inline-block;margin-left:6px;font-size:10px;font-weight:700;opacity:.7;padding:2px 5px;border:1px solid var(--line);border-radius:5px;vertical-align:middle;}
 .chart-actions{display:flex; gap:6px; flex-wrap:wrap;}
 .chart-actions select{font-size:12px; padding:5px 7px;}
 .chart-actions button{font-size:12px; padding:5px 7px; background:var(--cream); border:1px solid var(--line); border-radius:6px;}
-.chart-body{position:relative; height:280px;}
+.chart-body{position:relative; height:320px; min-height:320px; width:100%; overflow:hidden;}
+.chart-body canvas{display:block !important; width:100% !important; height:100% !important; min-height:300px;}
 .chart-controls-row{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; border-top:1px dashed var(--line); padding-top:8px;}
 
 /* ---------- data quality ---------- */
@@ -426,7 +428,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 <body>
 
 <div class="topbar">
-  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v3.5.5</span></div>
+  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v3.5.7</span></div>
   <div class="topbar-right">
     <div class="privacy-badge">🔒 <span class="txt">Processed locally — not uploaded to any server</span></div>
     <button class="icon-btn" id="shareTopBtn" title="Share dashboard" aria-label="Share dashboard as an image" style="display:none;">📤</button>
@@ -587,7 +589,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
     </div>
   </div>
 
-  <footer class="app-footer">InstantDash <strong>v3.5.4</strong> · Excel / CSV / PDF upload · InstantDash — developed by Anil Sharma · runs 100% locally in your browser</footer>
+  <footer class="app-footer">InstantDash <strong>v3.5.7</strong> · Excel / CSV / PDF upload · InstantDash — developed by Anil Sharma · runs 100% locally in your browser</footer>
 </div>
 
 <!-- Ask Your Data floating widget -->
@@ -1881,7 +1883,7 @@ function bankingKpiDirection(kpi){
   return /npa|slippage|expense|complaint|backlog|resolution time|cost-to-income/i.test(String(kpi||'')) ? 'Lower is Better' : 'Higher is Better';
 }
 function getBankingBranchKpiLibrary(){
-  return BANKING_BRANCH_KPI_LIBRARY.map(x=>({...x,defaultChart:defaultChartKind(x.name)}));
+  return BANKING_BRANCH_KPI_LIBRARY.map(x=>({...x,unit:(x.unit==='Value'&&isCurrencyKpi(x.name))?'₹':x.unit,defaultChart:defaultChartKind(x.name)}));
 }
 const KPI_DEFS = [
   // Management / Finance
@@ -2750,13 +2752,53 @@ function kpiAliasScore(colName, alias){
 // All other generic KPI charts -> Donut.
 // Specialist chart types remain available when explicitly selected.
 const BANKING_CURRENCY_KPI_NAMES = new Set(["Deposit Growth ₹", "Deposit Target Gap ₹", "Credit Growth ₹", "Advances Target Gap ₹", "Sanction Amount ₹", "Disbursement Amount ₹", "Average Ticket Size ₹", "Total Business Growth ₹", "Business Target Gap ₹", "Business per Employee ₹", "Business per Branch ₹", "Business per Customer ₹", "Opening Gross NPA ₹", "Opening Net NPA ₹", "Fresh Slippage ₹", "SMA-to-NPA Slippage ₹", "NPA Recovery ₹", "NPA Upgradation ₹", "Write-off ₹", "Technical Write-off ₹", "Sale/Transfer of NPA ₹", "Provision Adjustment ₹", "Interest Reversal ₹", "Closing Gross NPA ₹", "Closing Net NPA ₹", "Sub-standard Assets ₹", "Doubtful Assets ₹", "Loss Assets ₹", "SMA-0 ₹", "SMA-1 ₹", "SMA-2 ₹", "SMA-1 to SMA-2 Movement ₹", "SMA-2 to NPA Movement ₹", "SMA Recovery/Regularisation ₹", "SMA-3 – Bank-defined/Management Category ₹", "Total Recovery Target ₹", "Total Recovery Actual ₹", "NPA Recovery Target ₹", "NPA Recovery Actual ₹", "NPA Recovery Gap ₹", "Written-off Recovery ₹", "Written-off Recovery Target ₹", "OTS Recovery ₹", "Legal Recovery ₹", "SARFAESI Recovery ₹", "Recovery from Top 20 NPAs ₹", "Recovery from Large NPAs ₹", "Average Recovery per Account ₹", "Total Operating Expenses ₹", "Staff Expenses ₹", "Establishment Expenses ₹", "Rent ₹", "Electricity ₹", "Administrative Expenses ₹", "Technology/IT Expenses ₹", "Marketing Expenses ₹", "Security Expenses ₹", "Depreciation ₹", "Other Operating Expenses ₹", "Interest Expense ₹", "Expense per Employee ₹", "Expense per Branch ₹", "Expense Target ₹", "Expense Actual ₹", "Expense Variance ₹", "Total Income ₹", "Interest Income ₹", "Interest Expense ₹", "Net Interest Income ₹", "Non-Interest Income ₹", "Commission Income ₹", "Fee Income ₹", "Other Income ₹", "Operating Profit ₹", "PBT ₹", "PAT ₹", "Profit Target ₹", "Profit Gap ₹", "Restructured Advances ₹", "Large NPA Exposure ₹", "Top 20 NPA Exposure ₹", "Deposits Target ₹", "Deposits Actual ₹", "Deposits Gap ₹", "Advances Target ₹", "Advances Actual ₹", "Advances Gap ₹", "Business Target ₹", "Business Actual ₹", "Business Gap ₹", "Recovery Target ₹", "Recovery Actual ₹", "Recovery Gap ₹", "Expense Target ₹", "Expense Actual ₹", "Expense Variance ₹", "PAT Target ₹", "PAT Actual ₹", "Complaint Compensation/Refund ₹", "YTD Actual ₹", "YTD Target ₹", "Year-end Projection ₹", "Year-end Target ₹"]);
+
+// ---------- BANKING KPI METADATA AUTHORITY ----------
+// The banking directory is not merely descriptive: it is the source of truth
+// for chart type and unit when a banking KPI is recognised.
+const BANKING_MONETARY_NAME_RE=/deposit|advance|loan|business|income|expense|profit|loss|interest|commission|recovery|npa|npa|slippage|provision|write.?off|target|actual|gap|variance|cost|revenue|sales|turnover|balance|capital|cash|premium|sanction|disbursement|fund|asset|liabilit|receivable|payable|refund|compensation|pat|pbt|nii|earnings|salary|wages/i;
+function bankingKpiMeta(name){
+  const n=String(name||'').trim().toLowerCase();
+  if(!n) return null;
+  let best=null, score=0;
+  (BANKING_BRANCH_KPI_LIBRARY||[]).forEach(k=>{
+    const a=[k.name,...(k.aliases||[])].map(x=>String(x||'').toLowerCase().replace(/[₹%]/g,'').trim());
+    for(const x of a){
+      if(n===x){best=k;score=1;break;}
+      if(n.includes(x) && x.length>3) score=Math.max(score,.9);
+      else if(x.includes(n) && n.length>5) score=Math.max(score,.8);
+    }
+    if(score===1) return;
+  });
+  if(best) return best;
+  return null;
+}
+// Normalise all banking monetary definitions that were previously labelled
+// merely "Value". This fixes the earlier contradiction where the directory
+// said Donut for Total Deposits/Advances while the application requirement is ₹ → Bar.
+(BANKING_BRANCH_KPI_LIBRARY||[]).forEach(k=>{
+  if(String(k.area||'').toLowerCase()==='banking branch & bank performance'){
+    if(k.unit==='Value' && BANKING_MONETARY_NAME_RE.test(k.name)){
+      k.unit='₹';
+      k.defaultChart='bar';
+    }
+  }
+});
+const BANKING_KPI_META=new Map((BANKING_BRANCH_KPI_LIBRARY||[]).map(k=>[String(k.name).trim().toLowerCase(),k]));
+
 function isCurrencyKpi(name){
   const n=String(name||'').trim();
+  const meta=BANKING_KPI_META.get(n.toLowerCase()) || bankingKpiMeta(n);
+  if(meta && (meta.unit==='₹' || meta.bankingUnit==='currency' || meta.defaultChart==='bar')) return true;
   if(BANKING_CURRENCY_KPI_NAMES.has(n)) return true;
   const x=n.toLowerCase();
-  return /₹|rs\.?\b|inr\b|rupee|amount|revenue|sales|income|expense|profit|loss|pat\b|pbt\b|nii\b|interest|commission|deposit|advance|loan|balance|turnover|capital|net worth|earnings|dividend|premium|cost|salary|wages|cash|assets?|liabilit|receivable|payable|stock|inventory/.test(x);
+  return /₹|rs\.?\b|inr\b|rupee|rupees|amount|revenue|sales|income|expense|profit|loss|pat\b|pbt\b|nii\b|interest|commission|deposit|advance|loan|balance|turnover|capital|net worth|earnings|dividend|premium|cost|salary|wages|cash|assets?|liabilit|receivable|payable|stock|inventory/.test(x);
 }
-function defaultChartKind(name){ return isCurrencyKpi(name) ? 'bar' : 'doughnut'; }
+function defaultChartKind(name){
+  const meta=BANKING_KPI_META.get(String(name||'').trim().toLowerCase()) || bankingKpiMeta(name);
+  if(meta) return (meta.unit==='₹' || meta.bankingUnit==='currency' || meta.defaultChart==='bar') ? 'bar' : 'doughnut';
+  return isCurrencyKpi(name) ? 'bar' : 'doughnut';
+}
 function enforceAutomaticChartDefault(spec){
   if(!spec) return spec;
   // Database-defined chart types are authoritative.
@@ -3289,13 +3331,13 @@ function normaliseChartKind(v){
   return null;
 }
 function databaseChartKindForRow(row){
-  // The uploaded Test_Data contains Default Chart, which is the most
-  // reliable row-level source because it is already linked to the KPI.
+  const kpi=String(row?.KPI??row?.Metric??row?.Particulars??row?.Indicator??'').trim();
+  const unit=String(row?.Unit??row?.unit??row?.UOM??'').trim();
+  const meta=BANKING_KPI_META.get(kpi.toLowerCase()) || bankingKpiMeta(kpi);
+  if(meta) return (meta.unit==='₹' || meta.bankingUnit==='currency' || meta.defaultChart==='bar') ? 'bar' : 'doughnut';
   const direct=normaliseChartKind(row?.['Default Chart'] ?? row?.['default chart'] ?? row?.DefaultChart);
-  if(direct) return direct;
-  const unit=String(row?.Unit??row?.unit??'');
-  if(/₹|inr|rs\\.?|rupee/i.test(unit)) return 'bar';
-  return 'doughnut';
+  if(/₹|inr|rs\.?|rupee|rupees/i.test(unit)) return 'bar';
+  return direct || 'doughnut';
 }
 function buildLongFormKpiCharts(){
   const lf=detectLongFormKpiDataset();
@@ -3320,7 +3362,7 @@ function buildLongFormKpiCharts(){
 
   const specs=[];
   Object.values(groups).forEach(g=>{
-    const isCurrency=/₹|inr|rs\\.?|rupee/i.test(g.unit);
+    const isCurrency=/₹|inr|rs\.?|rupee|rupees/i.test(g.unit) || g.kpis.some(isCurrencyKpi);
     const isPercent=/%|percent|ratio|rate/i.test(g.unit);
     const agg=isPercent?'avg':'sum';
     const title=isCurrency ? '₹ Actual by KPI'
@@ -3337,7 +3379,8 @@ function buildLongFormKpiCharts(){
       unitColumn:lf.unit,
       x:lf.kpi,y:lf.actual,agg,
       top10:false,horizontal:false,
-      title
+      title,
+      isCurrency
     });
 
     if(lf.target){
@@ -3349,13 +3392,14 @@ function buildLongFormKpiCharts(){
         unitColumn:lf.unit,
         x:lf.kpi,y:lf.target,agg,
         top10:false,horizontal:false,
-        title:isCurrency?'₹ Target by KPI':(isPercent?'Percentage KPI — Target':`${g.unit||'KPI'} — Target`)
+        title:isCurrency?'₹ Target by KPI':(isPercent?'Percentage KPI — Target':`${g.unit||'KPI'} — Target`),
+        isCurrency
       });
     }
   });
 
   // A target-vs-actual bar is useful only where the database says Bar.
-  const currencyGroups=Object.values(groups).filter(g=>/₹|inr|rs\\.?|rupee/i.test(g.unit)&&g.kind==='bar');
+  const currencyGroups=Object.values(groups).filter(g=>(/₹|inr|rs\.?|rupee|rupees/i.test(g.unit)||g.kpis.some(isCurrencyKpi))&&g.kind==='bar');
   if(lf.target && currencyGroups.length){
     const g=currencyGroups[0];
     specs.push({
@@ -3497,7 +3541,7 @@ function createChartCard(spec, custom){
   const dimOptions=dimensionsList().concat(highCardList()).concat(timeList()).map(d=>`<option value="${escapeHtml(d)}" ${d===spec.x?'selected':''}>${escapeHtml(d)}</option>`).join('');
   card.innerHTML=`
     <div class="chart-head">
-      <div class="chart-title">${escapeHtml(spec.title)}</div>
+      <div class="chart-title">${escapeHtml(spec.title)} <span class="chart-rule-badge" title="Effective chart rule">${spec.databaseDefault?'DB: ':''}${spec.kind==='doughnut'?'Donut':spec.kind==='bar'?'Bar':spec.kind}</span></div>
       <div class="chart-actions">
         <button data-act="explain" title="Explain this chart" aria-label="Explain this chart">🔍</button>
         <button data-act="png" title="Download or share as PNG" aria-label="Download or share this chart as an image">⬇</button>
@@ -3537,6 +3581,15 @@ function createChartCard(spec, custom){
   const entry={id, spec:{...spec}, canvas, card};
   STATE.charts.push(entry);
   renderChart(entry);
+  requestAnimationFrame(()=>renderChart(entry));
+  requestAnimationFrame(()=>requestAnimationFrame(()=>renderChart(entry)));
+  setTimeout(()=>renderChart(entry),120);
+  setTimeout(()=>renderChart(entry),350);
+  if(window.ResizeObserver){
+    const ro=new ResizeObserver(()=>{ clearTimeout(entry._roTimer); entry._roTimer=setTimeout(()=>renderChart(entry),60); });
+    ro.observe(canvas.parentElement);
+    entry._ro=ro;
+  }
 
   card.querySelector('[data-act="explain"]').addEventListener('click',(e)=>{
     if(!entry.spec.y){ showMessage('This chart has no measure to explain (it\'s a row-count chart).','info'); return; }
@@ -3561,6 +3614,7 @@ function createChartCard(spec, custom){
 }
 
 function updateAllCharts(){ STATE.charts.forEach(renderChart); }
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden) requestAnimationFrame(updateAllCharts); });
 
 
 function isCurrencyMeasure(name, rows){
@@ -3599,6 +3653,20 @@ function defaultChartKind(name, rows){
   })) return 'bar';
   return isCurrencyMeasure(name, rows) ? 'bar' : 'doughnut';
 }
+
+function chartIsCurrency(spec){
+  const candidates=[spec?.y,spec?.x].filter(Boolean);
+  if(spec?.unitFilter==='currency') return true;
+  return candidates.some(n=>isCurrencyKpi(n));
+}
+function fmtCurrency(n){
+  if(n===null||n===undefined||isNaN(n)) return '—';
+  const s=STATE.settings;
+  const locale=s.numberFormat==='indian'?'en-IN':'en-US';
+  const decimals=s.decimals!==undefined?s.decimals:2;
+  return '₹'+Number(n).toLocaleString(locale,{minimumFractionDigits:decimals,maximumFractionDigits:decimals});
+}
+
 function buildChartDataset(spec){
   spec=enforceAutomaticChartDefault(spec);
   let rows=STATE.filteredData;
@@ -3703,7 +3771,7 @@ function buildChartDataset(spec){
   const labels=agg.map(a=>a.key);
   const values=agg.map(a=>a.value);
   const bg = spec.kind==='doughnut'? labels.map((_,i)=>PALETTE[i%PALETTE.length]) : cssVar('--amber');
-  return {type: spec.kind==='doughnut'?'doughnut':(spec.horizontal?'bar':spec.kind), labels, datasets:[{label:spec.y? (spec.agg==='count'?'Count':spec.y) : 'Count', data:values, backgroundColor:bg, borderColor:spec.kind==='line'?cssVar('--rust'):undefined}], horizontal:spec.horizontal, isPercentage: spec.y? !!(STATE.profile[spec.y]||{}).isPercentage : false};
+  return {type: spec.kind==='doughnut'?'doughnut':(spec.horizontal?'bar':spec.kind), labels, datasets:[{label:spec.y? (spec.agg==='count'?'Count':spec.y) : 'Count', data:values, backgroundColor:bg, borderColor:spec.kind==='line'?cssVar('--rust'):undefined}], horizontal:spec.horizontal, isPercentage: spec.y? !!(STATE.profile[spec.y]||{}).isPercentage : false, isCurrency:chartIsCurrency(spec)};
 }
 
 /* ================================================================
@@ -3735,11 +3803,16 @@ const MiniChart=(function(){
 
   function setupCanvas(canvas){
     const parent=canvas.parentElement;
-    const rect=parent.getBoundingClientRect();
-    const dpr=window.devicePixelRatio||1;
-    const w=Math.max(60, Math.floor(rect.width));
-    const h=Math.max(60, Math.floor(rect.height));
-    canvas.style.width=w+'px'; canvas.style.height=h+'px';
+    const card=canvas.closest('.chart-card');
+    const rect=parent ? parent.getBoundingClientRect() : {width:0,height:0};
+    const cardRect=card ? card.getBoundingClientRect() : {width:0,height:0};
+    const dpr=Math.max(1,Math.min(3,window.devicePixelRatio||1));
+    const cssW=parseFloat(getComputedStyle(parent||canvas).width)||0;
+    const cssH=parseFloat(getComputedStyle(parent||canvas).height)||0;
+    const w=Math.max(280, Math.floor(rect.width||parent?.clientWidth||cssW||cardRect.width||320));
+    const h=Math.max(300, Math.floor(rect.height||parent?.clientHeight||cssH||320));
+    canvas.style.display='block';
+    canvas.style.width='100%'; canvas.style.height='100%';
     canvas.width=Math.round(w*dpr); canvas.height=Math.round(h*dpr);
     const ctx=canvas.getContext('2d');
     ctx.setTransform(dpr,0,0,dpr,0,0);
@@ -3775,11 +3848,12 @@ const MiniChart=(function(){
 
   function render(canvas, ds, spec, isDark){
     const {ctx,w,h}=setupCanvas(canvas);
-    canvas._hit=[]; // hit regions for tooltip: {x,y,w,h,label,value,color} or {cx,cy,r,label,value}
+    canvas._hit=[];
+    canvas._isCurrency=!!(ds.isCurrency || chartIsCurrency(spec)); // hit regions for tooltip: {x,y,w,h,label,value,color} or {cx,cy,r,label,value}
     canvas._isPercentage=!!ds.isPercentage; // read by the hover tooltip
     const textColor= isDark? '#D8D4CC':'#4a453f';
     const gridColor= isDark? 'rgba(255,255,255,.10)':'rgba(0,0,0,.08)';
-    const fmtVal = ds.isPercentage? (v=>fmtPercent(v)) : (v=>fmtNum(v,{compact:true}));
+    const fmtVal = ds.isPercentage ? (v=>fmtPercent(v)) : (canvas._isCurrency ? (v=>fmtCurrency(v)) : (v=>fmtNum(v,{compact:true})));
     ctx.clearRect(0,0,w,h);
     ctx.font='11px -apple-system,BlinkMacSystemFont,sans-serif';
     ctx.textBaseline='middle';
@@ -4107,7 +4181,7 @@ const MiniChart=(function(){
       const mx=clientX-rect.left, my=clientY-rect.top;
       const hit=findHit(mx,my);
       if(hit){
-        const valTxt = hit.value===null? '' : ': '+(canvas._isPercentage? fmtPercent(hit.value) : fmtNum(hit.value,{compact:true}));
+        const valTxt = hit.value===null? '' : ': '+(canvas._isPercentage? fmtPercent(hit.value) : (canvas._isCurrency? fmtCurrency(hit.value) : fmtNum(hit.value,{compact:true})));
         const pctTxt = hit.pct!==undefined? ` (${hit.pct.toFixed(1)}%)`:'';
         showTooltip(clientX, clientY, `<strong>${escapeHtml(String(hit.label))}</strong>${escapeHtml(valTxt)}${pctTxt}`);
       } else hideTooltip();
@@ -4180,10 +4254,8 @@ function renderChart(entry){
 // Redraw all charts responsively when the viewport changes size (e.g.
 // rotating the phone) — debounced so it doesn't redraw on every pixel.
 let _resizeTimer=null;
-window.addEventListener('resize',()=>{
-  clearTimeout(_resizeTimer);
-  _resizeTimer=setTimeout(updateAllCharts, 200);
-});
+window.addEventListener('resize',()=>{ clearTimeout(_resizeTimer); _resizeTimer=setTimeout(updateAllCharts,200); });
+window.addEventListener('orientationchange',()=>setTimeout(updateAllCharts,300));
 
 // ---------- 7. DATA QUALITY ----------
 // Missing/mixed-type/outlier/constant stats come from the column PROFILE,
