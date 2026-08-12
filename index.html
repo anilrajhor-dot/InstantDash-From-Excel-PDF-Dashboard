@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<title>InstantDash — Excel to Dashboard v3.5.9</title>
+<title>InstantDash — Excel to Dashboard v4.0.0</title>
 <meta name="author" content="Developed by Anil Sharma, Former General Manager, Central Bank of India">
-<meta name="application-name" content="InstantDash v3.5.9">
-<meta name="description" content="InstantDash — Excel to Dashboard v3.5.9, developed by Anil Sharma">
+<meta name="application-name" content="InstantDash v4.0.0">
+<meta name="description" content="InstantDash — Excel to Dashboard v4.0.0, developed by Anil Sharma">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js';document.head.appendChild(s);"></script>
@@ -217,7 +217,7 @@ select, .input{
 .chart-body{position:relative; height:320px; min-height:320px; width:100%; overflow:hidden;}
 .chart-body canvas{display:block !important; width:100% !important; height:100% !important; min-height:300px;}
 .chart-controls-row{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; border-top:1px dashed var(--line); padding-top:8px;}
-/* ---------- v3.5.9 mobile-first dashboard polish ---------- */
+/* ---------- v4.0.0 mobile-first dashboard polish ---------- */
 .kpi-card{position:relative;overflow:hidden;min-height:196px;padding:18px 18px 16px;border-radius:18px;border:1px solid rgba(255,255,255,.06);background:linear-gradient(145deg,var(--card),rgba(255,255,255,.018));box-shadow:0 8px 24px rgba(0,0,0,.18);}
 .kpi-card:before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:var(--amber);}
 .kpi-card.kpi-derived:before{background:#304968;}
@@ -476,11 +476,28 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 .scorecard-sub{font-size:12px;color:var(--muted)}
 .scorecard-good{border-top-color:#39b56a}.scorecard-warn{border-top-color:#f5a623}.scorecard-bad{border-top-color:#e05252}
 @media(max-width:720px){.scorecard-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.scorecard-card{padding:12px}.scorecard-value{font-size:22px}}
-</style></head>
+</style>
+<style id="v4Styles">
+.banking-mis-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:8px 0 18px}
+.banking-mis-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px;min-height:120px;box-shadow:var(--shadow)}
+.banking-mis-card.good{border-top:4px solid #39b56a}.banking-mis-card.warn{border-top:4px solid #f5a623}.banking-mis-card.bad{border-top:4px solid #e05252}.banking-mis-card.info{border-top:4px solid #6887ff}
+.banking-mis-title{font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase}
+.banking-mis-value{font-size:25px;font-weight:900;margin:7px 0}
+.banking-mis-meta{font-size:12px;color:var(--muted);line-height:1.5}
+.kpi-intel-toolbar{display:flex;gap:8px;margin:8px 0 12px}
+.kpi-intel-search,.kpi-intel-toolbar select{padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--text)}
+.kpi-intel-search{flex:1}
+.kpi-intel-panel{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:18px}
+.kpi-intel-card{border:1px solid var(--line);border-radius:13px;padding:12px;background:var(--panel)}
+.kpi-intel-name{font-weight:800}.kpi-intel-meta{font-size:11px;color:var(--muted);margin-top:5px}.kpi-chart-pill{display:inline-block;padding:3px 7px;border-radius:999px;background:var(--soft);font-size:10px;font-weight:800;margin-top:7px}
+@media(max-width:900px){.banking-mis-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.kpi-intel-panel{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.banking-mis-grid{grid-template-columns:1fr 1fr;gap:8px}.banking-mis-card{padding:10px;min-height:105px}.banking-mis-value{font-size:20px}.kpi-intel-panel{grid-template-columns:1fr}.kpi-intel-toolbar{flex-direction:column}}
+</style>
+</head>
 <body>
 
 <div class="topbar">
-  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v3.5.9</span></div>
+  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v4.0.0</span></div>
   <div class="topbar-right">
     <div class="privacy-badge">🔒 <span class="txt">Processed locally — not uploaded to any server</span></div>
     <button class="icon-btn" id="shareTopBtn" title="Share dashboard" aria-label="Share dashboard as an image" style="display:none;">📤</button>
@@ -598,6 +615,16 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 
     <div class="section-title"><h2>🎯 Performance Scorecard</h2><span class="hint">Target vs Actual • RAG status • current filtered data</span></div>
     <div id="performanceScorecard" class="scorecard-grid"></div>
+    <div class="section-title"><h2>🏦 Banking Management MIS</h2><span class="hint">Automatic banking KPI scorecard • target • movement • RAG</span></div>
+    <div id="bankingMisPanel" class="banking-mis-grid"></div>
+
+    <div class="section-title"><h2>🔎 KPI Intelligence</h2><span class="hint">Detected KPI • unit • target/actual • default chart</span></div>
+    <div class="kpi-intel-toolbar">
+      <input id="kpiIntelSearch" class="kpi-intel-search" placeholder="Search KPI, area, branch, NPA, CASA, complaints…">
+      <select id="kpiIntelArea"><option value="">All Areas</option></select>
+    </div>
+    <div id="kpiIntelPanel" class="kpi-intel-panel"></div>
+
 
     <div class="section-title">
       <h2>Dashboard</h2>
@@ -1890,6 +1917,143 @@ function renderPerformanceScorecard(){
   </div>`).join('');
 }
 
+
+/* ===================== InstantDash v4.0.0 =====================
+   Consolidated management/KPI intelligence layer.
+   It is additive: existing v3.5.9 chart engine remains intact.
+================================================================ */
+
+function v4Cols(){
+  return (STATE.columns||[]).map(c=>String(c.name||'').trim());
+}
+function v4Find(rx){
+  return v4Cols().find(n=>rx.test(n));
+}
+function v4Rows(){ return STATE.filteredData||STATE.data||[]; }
+function v4Num(v){
+  if(v===null||v===undefined||v==='') return NaN;
+  if(typeof v==='number') return Number.isFinite(v)?v:NaN;
+  const x=String(v).replace(/[₹,\s%]/g,'').replace(/^\((.*)\)$/,'-$1').trim();
+  const n=Number(x);
+  return Number.isFinite(n)?n:NaN;
+}
+function v4Sum(col){
+  if(!col) return NaN;
+  let total=0,n=0;
+  v4Rows().forEach(r=>{const x=v4Num(r[col]);if(!isNaN(x)){total+=x;n++;}});
+  return n?total:NaN;
+}
+function v4CurrencyName(k){
+  return /₹|inr\b|rs\.?\b|rupee|amount|deposit|advance|loan|recovery|npa.*amount|expense|cost|income|profit|revenue|sales|premium|commission|cash|balance|asset|liabilit|capital|turnover|pat\b|pbt\b|nii\b/i.test(String(k||''));
+}
+function v4DefaultChart(k,unit,dbDefault){
+  if(v4CurrencyName(k)||/₹|inr|rs\.?|rupee/i.test(String(unit||''))) return 'Bar';
+  if(dbDefault) return String(dbDefault).toLowerCase()==='bar'?'Bar':String(dbDefault).toLowerCase()==='pie'?'Pie':'Donut';
+  return 'Donut';
+}
+function v4Achievement(actual,target){
+  const a=v4Num(actual),t=v4Num(target);
+  return Number.isFinite(a)&&Number.isFinite(t)&&t!==0 ? a/t*100 : NaN;
+}
+function v4Status(pct,lowerBetter=false){
+  if(!Number.isFinite(pct)) return 'info';
+  if(lowerBetter) return pct<=100?'good':pct<=120?'warn':'bad';
+  return pct>=100?'good':pct>=80?'warn':'bad';
+}
+function v4Format(v,currency=false){
+  if(!Number.isFinite(v)) return '—';
+  if(currency && typeof formatINR==='function') return formatINR(v);
+  return typeof fmtNum==='function' ? fmtNum(v,{compact:true}) : Number(v).toLocaleString('en-IN',{maximumFractionDigits:2});
+}
+
+function v4BuildBankingCards(){
+  const panel=document.getElementById('bankingMisPanel'); if(!panel)return;
+  const rows=v4Rows(), cols=v4Cols();
+  const actualCol=v4Find(/^actual$|^actual value$|^value$/i);
+  const targetCol=v4Find(/^target$|^target value$|^budget$/i);
+  const unitCol=v4Find(/^unit$|^measure$|^uom$/i);
+  const kpiCol=v4Find(/^kpi$|^metric$|^indicator$|^particulars$/i);
+  const areaCol=v4Find(/^area$|^department$|^category$/i);
+
+  // Wide-format detection: score important banking columns directly.
+  const candidates=[
+    ['Deposits',v4Find(/total deposits|deposits actual/i),v4Find(/deposit target/i),true],
+    ['Advances',v4Find(/total advances|advances actual/i),v4Find(/advances target/i),true],
+    ['Total Business',v4Find(/total business/i),v4Find(/business target/i),true],
+    ['Gross NPA',v4Find(/closing gross npa ₹|gross npa ₹|gnpa amount/i),v4Find(/gnpa target ₹|gross npa target/i),true],
+    ['NPA Recovery',v4Find(/npa recovery ₹|recovery actual/i),v4Find(/npa recovery target/i),true],
+    ['Operating Expenses',v4Find(/total operating expenses|expense actual/i),v4Find(/expense target/i),true],
+    ['PAT',v4Find(/^pat ₹$|pat actual/i),v4Find(/^pat target ₹$/i),true],
+    ['Complaints',v4Find(/^complaints actual$|complaints received/i),v4Find(/^complaint target$/i),false]
+  ];
+  let cards=[];
+  candidates.forEach(([label,a,t,curr])=>{
+    if(!a)return;
+    const av=v4Sum(a),tv=t?v4Sum(t):NaN,p=v4Achievement(av,tv);
+    cards.push({label,actual:av,target:tv,pct:p,curr,cls:v4Status(p,false),sub:t?(Number.isFinite(p)?`${p.toFixed(1)}% of target`:'Target unavailable'):'Actual/volume'});
+  });
+  // Long-form KPI data: create important KPI cards from rows.
+  if(!cards.length && kpiCol && actualCol){
+    const map=new Map();
+    rows.forEach(r=>{
+      const k=String(r[kpiCol]??'').trim(); if(!k)return;
+      const a=v4Num(r[actualCol]); const t=targetCol?v4Num(r[targetCol]):NaN;
+      if(!map.has(k))map.set(k,{a:0,t:0,ac:0,tc:0,unit:unitCol?String(r[unitCol]??''):''});
+      const o=map.get(k); if(!isNaN(a)){o.a+=a;o.ac++} if(!isNaN(t)){o.t+=t;o.tc++}
+    });
+    [...map.entries()].slice(0,12).forEach(([k,o])=>{
+      const p=o.tc&&o.t?v4Achievement(o.a,o.t):NaN;
+      cards.push({label:k,actual:o.a,target:o.tc?o.t:NaN,pct:p,curr:v4CurrencyName(k)||/₹|inr/i.test(o.unit),cls:v4Status(p,false),sub:Number.isFinite(p)?`${p.toFixed(1)}% of target`:'Actual'});
+    });
+  }
+  if(!cards.length){
+    panel.innerHTML='<div class="banking-mis-card info"><div class="banking-mis-title">Banking MIS</div><div class="banking-mis-meta">Upload a performance dataset containing KPI/Actual/Target or banking-specific columns to populate the management scorecard.</div></div>';
+    return;
+  }
+  panel.innerHTML=cards.slice(0,8).map(c=>`
+    <div class="banking-mis-card ${c.cls}">
+      <div class="banking-mis-title">${escapeHtml(c.label)}</div>
+      <div class="banking-mis-value">${v4Format(c.actual,c.curr)}</div>
+      <div class="banking-mis-meta">${Number.isFinite(c.target)?`Target: ${v4Format(c.target,c.curr)}<br>`:''}${escapeHtml(c.sub)}</div>
+    </div>`).join('');
+}
+
+function v4BuildKpiIntelligence(){
+  const panel=document.getElementById('kpiIntelPanel'); if(!panel)return;
+  const search=(document.getElementById('kpiIntelSearch')?.value||'').toLowerCase();
+  const area=(document.getElementById('kpiIntelArea')?.value||'').toLowerCase();
+  const rows=v4Rows(), cols=v4Cols();
+  const kpiCol=v4Find(/^kpi$|^metric$|^indicator$|^particulars$/i);
+  const unitCol=v4Find(/^unit$|^measure$|^uom$/i);
+  const areaCol=v4Find(/^area$|^department$|^category$/i);
+  const dbChart=v4Find(/^default chart$|^chart type$/i);
+  if(!kpiCol){
+    panel.innerHTML='<div class="kpi-intel-card">No KPI column detected in this dataset.</div>'; return;
+  }
+  const map=new Map();
+  rows.forEach(r=>{
+    const k=String(r[kpiCol]??'').trim(); if(!k)return;
+    const a=areaCol?String(r[areaCol]??''):'';
+    const u=unitCol?String(r[unitCol]??''):'';
+    const d=dbChart?String(r[dbChart]??''):'';
+    if(!map.has(k))map.set(k,{area:a,unit:u,db:d});
+  });
+  const list=[...map.entries()].map(([name,o])=>({name,...o,chart:v4DefaultChart(name,o.unit,o.db)}))
+    .filter(x=>(!search||`${x.name} ${x.area} ${x.unit}`.toLowerCase().includes(search))&&(!area||x.area.toLowerCase()===area))
+    .slice(0,60);
+  const areas=[...new Set([...map.values()].map(x=>x.area).filter(Boolean))].sort();
+  const sel=document.getElementById('kpiIntelArea');
+  if(sel && sel.options.length===1) areas.forEach(a=>{const o=document.createElement('option');o.value=a.toLowerCase();o.textContent=a;sel.appendChild(o)});
+  panel.innerHTML=list.map(x=>`<div class="kpi-intel-card">
+    <div class="kpi-intel-name">${escapeHtml(x.name)}</div>
+    <div class="kpi-intel-meta">${escapeHtml(x.area||'General')} • ${escapeHtml(x.unit||'Value')}</div>
+    <span class="kpi-chart-pill">${escapeHtml(x.chart)} default</span>
+  </div>`).join('') || '<div class="kpi-intel-card">No matching KPIs.</div>';
+}
+function v4RefreshManagement(){
+  try{v4BuildBankingCards();v4BuildKpiIntelligence();}catch(e){console.warn('v4 management layer',e);}
+}
+
 function applyFiltersAndRender(rebuildCharts){
   let rows=STATE.data;
   Object.entries(STATE.filters).forEach(([colName,f])=>{
@@ -1910,6 +2074,7 @@ function applyFiltersAndRender(rebuildCharts){
   STATE.filteredData=rows;
   renderKPIs();
   renderPerformanceScorecard();
+  v4RefreshManagement();
   if(rebuildCharts){ chooseAndBuildCharts(); }
   else { updateAllCharts(); }
   renderDataQuality();
@@ -5713,6 +5878,15 @@ document.getElementById('themeToggle').addEventListener('click',()=>{
     if(input)input.addEventListener('input',e=>renderBankingKpiDirectory(e.target.value));
   });
 })();
+</script>
+
+<script id="v4ManagementHooks">
+document.addEventListener('DOMContentLoaded',()=>{
+  const si=document.getElementById('kpiIntelSearch'), sa=document.getElementById('kpiIntelArea');
+  if(si)si.addEventListener('input',()=>v4BuildKpiIntelligence());
+  if(sa)sa.addEventListener('change',()=>v4BuildKpiIntelligence());
+  setTimeout(()=>v4RefreshManagement(),100);
+});
 </script>
 </body>
 </html>
