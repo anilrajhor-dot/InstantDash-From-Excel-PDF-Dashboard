@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<title>InstantDash — Excel to Dashboard v4.2.4</title>
+<title>InstantDash — Excel to Dashboard v4.2.5</title>
 <meta name="author" content="Developed by Anil Sharma, Former General Manager, Central Bank of India">
-<meta name="application-name" content="InstantDash v4.2.4">
-<meta name="description" content="InstantDash — Excel to Dashboard v4.2.4, developed by Anil Sharma">
+<meta name="application-name" content="InstantDash v4.2.5">
+<meta name="description" content="InstantDash — Excel to Dashboard v4.2.5, developed by Anil Sharma">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js';document.head.appendChild(s);"></script>
@@ -217,7 +217,7 @@ select, .input{
 .chart-body{position:relative; height:320px; min-height:320px; width:100%; overflow:hidden;}
 .chart-body canvas{display:block !important; width:100% !important; height:100% !important; min-height:300px;}
 .chart-controls-row{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; border-top:1px dashed var(--line); padding-top:8px;}
-/* ---------- v4.2.4 mobile-first dashboard polish ---------- */
+/* ---------- v4.2.5 mobile-first dashboard polish ---------- */
 .kpi-card{position:relative;overflow:hidden;min-height:196px;padding:18px 18px 16px;border-radius:18px;border:1px solid rgba(255,255,255,.06);background:linear-gradient(145deg,var(--card),rgba(255,255,255,.018));box-shadow:0 8px 24px rgba(0,0,0,.18);}
 .kpi-card:before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:var(--amber);}
 .kpi-card.kpi-derived:before{background:#304968;}
@@ -507,7 +507,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v403UiFix">
-/* v4.2.4: KPI directory is part of the loaded dashboard, never the landing page. */
+/* v4.2.5: KPI directory is part of the loaded dashboard, never the landing page. */
 #bankingKpiDirectory{display:block}
 #emptyState ~ #bankingKpiDirectory{display:none !important}
 </style>
@@ -539,7 +539,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v412InsightVisibility">
-/* v4.2.4 — high-contrast KPI Insight */
+/* v4.2.5 — high-contrast KPI Insight */
 .click-insight-backdrop{
   background:rgba(0,0,0,.62) !important;
 }
@@ -721,11 +721,25 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 @media(max-width:900px){.dq-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:500px){.dq-grid{grid-template-columns:1fr}}
 </style>
+
+<style id="v425ExecutiveReviewStyle">
+.executive-review{margin:12px 0 18px;padding:14px;border:1px solid var(--line);border-radius:16px;background:var(--panel);box-shadow:var(--shadow)}
+.executive-review h3{margin:0 0 4px;font-size:16px}
+.executive-review .er-sub{margin:0;color:var(--muted);font-size:11px;line-height:1.45}
+.er-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-top:10px}
+.er-card{padding:11px;border:1px solid var(--line);border-radius:11px;background:var(--soft)}
+.er-title{font-weight:900;font-size:12px}
+.er-text{font-size:10px;color:var(--muted);line-height:1.5;margin-top:4px}
+.er-priority{border-left:4px solid #b91c1c}
+.er-watch{border-left:4px solid #b45309}
+.er-strength{border-left:4px solid #15803d}
+@media(max-width:800px){.er-grid{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
 
 <div class="topbar">
-  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v4.2.4</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
+  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v4.2.5</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
   <div class="topbar-right">
     <div class="privacy-badge">🔒 <span class="txt">Processed locally — not uploaded to any server</span></div>
     <button class="icon-btn" id="shareTopBtn" title="Share dashboard" aria-label="Share dashboard as an image" style="display:none;">📤</button>
@@ -938,6 +952,28 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
     <div class="dq-card"><div class="dq-title">Management Conclusion</div><div class="dq-text">Use chart insight only when the underlying data supports the conclusion.</div></div>
   </div>
 </div>
+<div class="executive-review" id="executiveReviewSummary">
+  <h3>🧭 Executive Review Summary</h3>
+  <p class="er-sub">Use this three-part structure when presenting branch or bank performance to senior management.</p>
+  <div class="er-grid">
+    <div class="er-card er-strength">
+      <div class="er-title">Strengths</div>
+      <div class="er-text">Identify KPIs where actual performance is favourable against target or previous period, considering whether the KPI is Higher or Lower is Better.</div>
+    </div>
+    <div class="er-card er-watch">
+      <div class="er-title">Watch Areas</div>
+      <div class="er-text">Identify adverse movement, target gaps, rising complaints, weakening recovery or deterioration in asset quality.</div>
+    </div>
+    <div class="er-card er-priority">
+      <div class="er-title">Priority Actions</div>
+      <div class="er-text">Focus management attention on material gaps and adverse trends first, then assign responsibility and a review date.</div>
+    </div>
+  </div>
+  <p style="margin:9px 0 0;color:var(--muted);font-size:11px">
+    This is a review framework, not an automatic conclusion. Actual strengths, watch areas and actions must be supported by the uploaded data.
+  </p>
+</div>
+
 
 
 
@@ -1012,7 +1048,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
   </div>
 </div>
 
-<footer class="app-footer">InstantDash <strong>v4.2.4</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
+<footer class="app-footer">InstantDash <strong>v4.2.5</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
 </div>
 
 <!-- Ask Your Data floating widget -->
@@ -1683,7 +1719,7 @@ function fail(msg){
 
 
 
-// v4.2.4: expose the real file handler for the independent mobile file-picker hook.
+// v4.2.5: expose the real file handler for the independent mobile file-picker hook.
 window.instantDashHandleFile = handleFile;
 
 function chooseBestDataSheet(names, wb){
@@ -2262,7 +2298,7 @@ function renderPerformanceScorecard(){
 }
 
 
-/* ===================== InstantDash v4.2.4 =====================
+/* ===================== InstantDash v4.2.5 =====================
    Consolidated management/KPI intelligence layer.
    It is additive: existing v3.5.9 chart engine remains intact.
 ================================================================ */
