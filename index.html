@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<title>InstantDash — Excel to Dashboard v4.5.13</title>
+<title>InstantDash — Excel to Dashboard v4.5.14</title>
 <meta name="author" content="Developed by Anil Sharma, Former General Manager, Central Bank of India">
-<meta name="application-name" content="InstantDash v4.5.13">
-<meta name="description" content="InstantDash — Excel to Dashboard v4.5.13, developed by Anil Sharma">
+<meta name="application-name" content="InstantDash v4.5.14">
+<meta name="description" content="InstantDash — Excel to Dashboard v4.5.14, developed by Anil Sharma">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js';document.head.appendChild(s);"></script>
@@ -217,7 +217,7 @@ select, .input{
 .chart-body{position:relative; height:320px; min-height:320px; width:100%; overflow:hidden;}
 .chart-body canvas{display:block !important; width:100% !important; height:100% !important; min-height:300px;}
 .chart-controls-row{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; border-top:1px dashed var(--line); padding-top:8px;}
-/* ---------- v4.5.13 mobile-first dashboard polish ---------- */
+/* ---------- v4.5.14 mobile-first dashboard polish ---------- */
 .kpi-card{position:relative;overflow:hidden;min-height:196px;padding:18px 18px 16px;border-radius:18px;border:1px solid rgba(255,255,255,.06);background:linear-gradient(145deg,var(--card),rgba(255,255,255,.018));box-shadow:0 8px 24px rgba(0,0,0,.18);}
 .kpi-card:before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:var(--amber);}
 .kpi-card.kpi-derived:before{background:#304968;}
@@ -507,7 +507,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v403UiFix">
-/* v4.5.13: KPI directory is part of the loaded dashboard, never the landing page. */
+/* v4.5.14: KPI directory is part of the loaded dashboard, never the landing page. */
 #bankingKpiDirectory{display:block}
 #emptyState ~ #bankingKpiDirectory{display:block !important}
 </style>
@@ -539,7 +539,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v412InsightVisibility">
-/* v4.5.13 — high-contrast KPI Insight */
+/* v4.5.14 — high-contrast KPI Insight */
 .click-insight-backdrop{
   background:rgba(0,0,0,.62) !important;
 }
@@ -820,7 +820,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 @media(max-width:480px){.cc-grid{grid-template-columns:1fr}}
 </style>
 <style id="v441AreaDirectoryThemeFix">
-/* v4.5.13: the directory must follow the app theme. Earlier versions used
+/* v4.5.14: the directory must follow the app theme. Earlier versions used
    hard-coded white backgrounds, which made the dark-mode text almost invisible. */
 .banking-kpi-directory{
   margin:18px 0;
@@ -909,7 +909,7 @@ document.addEventListener('DOMContentLoaded', function(){
 </script>
 
 <style id="v444LandingDirectoryVisibility">
-/* v4.5.13 — Landing page is for file upload only.
+/* v4.5.14 — Landing page is for file upload only.
    Area/KPI directories appear after a dashboard is loaded. */
 #areaDirectoryBlock,
 #bankingKpiDirectory{
@@ -1285,11 +1285,16 @@ body.v4510-pdf-session .v4510-pdf-only{display:flex!important}
 .v4513-actions button{padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:var(--soft,var(--cream));color:var(--ink);font-weight:900}
 @media(max-width:560px){.v4513-row{grid-template-columns:1fr}}
 </style>
+
+<style id="v4514ComparisonSafety">
+.v4514-safe-banner{margin:12px 0;padding:11px 13px;border-radius:12px;border:1px solid rgba(54,180,110,.5);background:rgba(54,180,110,.07);color:var(--ink);font-size:11px;line-height:1.45}
+.v4514-safe-banner b{color:#57d68d}
+</style>
 </head>
 <body>
 
 <div class="topbar">
-  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v4.5.13</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
+  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v4.5.14</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
   <div class="topbar-right">
     <div class="privacy-badge">🔒 <span class="txt">Processed locally — not uploaded to any server</span></div>
     <button class="btn secondary small share-dashboard-visible" id="shareTopBtn" title="Share dashboard" aria-label="Share dashboard" disabled>📤 Share dashboard</button>
@@ -1715,7 +1720,7 @@ body.v4510-pdf-session .v4510-pdf-only{display:flex!important}
   </div>
 </div>
 
-<footer class="app-footer">InstantDash <strong>v4.5.13</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
+<footer class="app-footer">InstantDash <strong>v4.5.14</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
 </div>
 
 <!-- Ask Your Data floating widget -->
@@ -2489,7 +2494,7 @@ function fail(msg){
 
 
 
-// v4.5.13: expose the real file handler for the independent mobile file-picker hook.
+// v4.5.14: expose the real file handler for the independent mobile file-picker hook.
 window.instantDashHandleFile = handleFile;
 
 function chooseBestDataSheet(names, wb){
@@ -3085,7 +3090,7 @@ function renderPerformanceScorecard(){
 }
 
 
-/* ===================== InstantDash v4.5.13 =====================
+/* ===================== InstantDash v4.5.14 =====================
    Consolidated management/KPI intelligence layer.
    It is additive: existing v3.5.9 chart engine remains intact.
 ================================================================ */
@@ -5910,7 +5915,16 @@ function clickInsightReason(spec,hit,ds){
   }
 
   const selectedRows=clickInsightRowsForCategory(spec,hit.label);
-  if(targetCol){
+  const isPdfCompanyResults=!!STATE.documentMeta?.isCompanyResults;
+  // PDF comparative tables often contain one current-period value per company,
+  // not a current/previous pair. Never borrow a numeric value from another row,
+  // another company, or another KPI to manufacture a comparison.
+  if(isPdfCompanyResults){
+    previous=NaN;
+    previousLabel='';
+    target=NaN;
+  }
+  if(targetCol && !isPdfCompanyResults){
     const targetVals=selectedRows.map(r=>getNumeric(r,targetCol)).filter(v=>Number.isFinite(v));
     if(targetVals.length) target=targetVals.reduce((a,b)=>a+b,0);
   }
@@ -5918,7 +5932,7 @@ function clickInsightReason(spec,hit,ds){
   // Company/bank-results PDF rows are extracted with explicit comparison columns.
   // When a KPI bar represents one extracted KPI row (x = KPI), use those columns
   // directly instead of treating the KPI name as a non-time category.
-  if(!Number.isFinite(previous) && Array.isArray(selectedRows) && selectedRows.length){
+  if(!Number.isFinite(previous) && !isPdfCompanyResults && Array.isArray(selectedRows) && selectedRows.length){
     const r=selectedRows[0]||{};
     const previousNames=['Previous Period','Previous Quarter','Previous-year Period','Previous Year','Prior Period'];
     const prevName=previousNames.find(n=>Object.prototype.hasOwnProperty.call(r,n) && Number.isFinite(getNumeric(r,n)));
@@ -5931,7 +5945,9 @@ function clickInsightReason(spec,hit,ds){
   let growth=NaN;
   if(Number.isFinite(previous)&&previous!==0) growth=(current-previous)/Math.abs(previous)*100;
   let reason=[];
-  if(Number.isFinite(growth)){
+  if(isPdfCompanyResults && !Number.isFinite(previous)){
+    reason.push('Comparison withheld: the PDF provides a current-period company/bank value here, but no verified previous-period value for the same KPI, company/bank and unit.');
+  }else if(Number.isFinite(growth)){
     reason.push(`${growth>=0?'Growth':'Degrowth'} of ${Math.abs(growth).toFixed(1)}% versus ${previousLabel}.`);
   }else if(prof?.role==='Time' || prof?.type==='Date'){
     reason.push('No directly comparable previous period is available in the current filtered data.');
@@ -5940,7 +5956,7 @@ function clickInsightReason(spec,hit,ds){
   }
   // If the source is a financial-results row and a previous-year value is present,
   // provide the second comparison as well. This is factual arithmetic, not a guessed cause.
-  if(Array.isArray(selectedRows) && selectedRows.length && Number.isFinite(current)){
+  if(!isPdfCompanyResults && Array.isArray(selectedRows) && selectedRows.length && Number.isFinite(current)){
     const r=selectedRows[0]||{};
     const pyNames=['Previous-year Period','Previous Year','YoY Previous Period'];
     const pyName=pyNames.find(n=>Object.prototype.hasOwnProperty.call(r,n) && Number.isFinite(getNumeric(r,n)));
@@ -5952,14 +5968,14 @@ function clickInsightReason(spec,hit,ds){
       }
     }
   }
-  if(Number.isFinite(target)&&target!==0){
+  if(!isPdfCompanyResults && Number.isFinite(target)&&target!==0){
     const ach=current/target*100, gap=current-target;
     reason.push(`${ach.toFixed(1)}% of target; gap is ${clickInsightFormat(gap,currency,false)}.`);
   }
 
   // Explain the movement using the strongest categorical contributor available
   // in the same period/category. Never invent a cause if the data cannot prove it.
-  const dims=cols.filter(c=>c!==x&&c!==y&&STATE.profile?.[c]?.role==='Categorical');
+  const dims=isPdfCompanyResults ? [] : cols.filter(c=>c!==x&&c!==y&&STATE.profile?.[c]?.role==='Categorical');
   let driver='';
   for(const d of dims.slice(0,8)){
     const groups=new Map();
@@ -5977,7 +5993,7 @@ function clickInsightReason(spec,hit,ds){
     }
   }
   if(driver) reason.push(driver);
-  if(!Number.isFinite(growth)&&!Number.isFinite(target)&&!driver){
+  if(!Number.isFinite(growth)&&!Number.isFinite(target)&&!driver&&!isPdfCompanyResults){
     reason.push('The uploaded data does not contain enough supporting dimensions or a prior period to establish a factual reason for the movement.');
   }
   return {current,previous,previousLabel,target,growth,reason,currency,pct};
@@ -5999,7 +6015,7 @@ function showClickInsight(spec,hit,ds){
       <div class="click-insight-stat"><span class="click-insight-label">Target</span><b>${clickInsightEscape(clickInsightFormat(info.target,info.currency,false))}</b></div>
       <div class="click-insight-stat"><span class="click-insight-label">KPI nature</span><b>${clickInsightEscape(kpiNature(hit.measure||spec.y||''))}</b></div>
     </div>
-    <div class="click-insight-reason"><strong>Why did it move?</strong><br>${info.reason.map(clickInsightEscape).join('<br>')}</div>`;
+    <div class="click-insight-reason"><strong>${Number.isFinite(info.growth)?'Why did it move?':'Comparison status'}</strong><br>${info.reason.map(clickInsightEscape).join('<br>')}</div>`;
   back.style.display='flex';
   const drillMeasure=String(hit.measure||spec?.y||spec?.measure||ds?.datasets?.[0]?.label||'').trim();
   back.dataset.drillColumn=spec.x||'';
@@ -8447,6 +8463,19 @@ document.addEventListener('DOMContentLoaded',function(){
     }
   });
 })();
+</script>
+
+<script id="v4514ComparisonSafety">
+document.addEventListener('DOMContentLoaded',function(){
+  setTimeout(function(){
+    if(!window.STATE?.documentMeta?.isCompanyResults)return;
+    const host=document.getElementById('appContent')||document.querySelector('main');
+    if(!host||document.getElementById('v4514SafeBanner'))return;
+    const b=document.createElement('div');b.id='v4514SafeBanner';b.className='v4514-safe-banner';
+    b.innerHTML='<b>✓ Comparison integrity active</b> — Growth/de-growth is calculated only when the same KPI, company/bank, unit and comparable periods are verified. Otherwise the comparison is withheld.';
+    host.prepend(b);
+  },3200);
+});
 </script>
 </body>
 </html>
