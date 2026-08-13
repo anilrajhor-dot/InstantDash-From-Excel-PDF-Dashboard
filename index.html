@@ -2405,7 +2405,16 @@ async function extractPdfDashboard(file){
     if(seen.has(k)) return false; seen.add(k); return true;
   });
   const headers=['KPI','Area','KPI Nature','Nature','Basis','Company','Period','Current Period','Previous Period','Previous-year Period','Financial Year','Target','Unit','Page','Source Text'];
-  const meta={isCompanyResults:true,company:'Banks, HFCs & NBFCs',nature:'Comparative banking, HFC and NBFC financial-results and performance KPIs',basis:[...new Set(clean.map(r=>r.Basis))].join(' / ')||'Not detected',period:lastPeriod,comparison:'FY2026 vs FY2025 vs FY2024 retained from source tables; target retained separately',unit:[...new Set(clean.map(r=>r.Unit))].join(' / '),source:file.name,description:'PDF extracted page-by-page. Each KPI keeps its FY2026, FY2025, FY2024 and target values from the same source page; no columns are shifted or guessed.'};
+  const companies=[...new Set(clean.map(r=>norm(r.Company)).filter(Boolean))];
+  const areas=[...new Set(clean.map(r=>norm(r.Area)).filter(Boolean))];
+  const hasCompany=companies.some(x=>/company results/i.test(x)) || areas.some(x=>/company results/i.test(x));
+  const hasBank=companies.some(x=>/bank/i.test(x)) || areas.some(x=>/banking branch|bank performance/i.test(x));
+  const hasHfc=companies.some(x=>/hfc|housing finance/i.test(x)) || areas.some(x=>/hfc|housing finance/i.test(x));
+  const hasNbfc=companies.some(x=>/nbfc|non.?banking financial/i.test(x)) || areas.some(x=>/nbfc|non.?banking financial/i.test(x));
+  const types=[hasCompany?'Companies':null,hasBank?'Banks':null,hasHfc?'HFCs':null,hasNbfc?'NBFCs':null].filter(Boolean);
+  const title=types.length?types.join(' & ')+' Financial Results':'Financial Results';
+  const nature=types.length?types.join(', ')+' financial results and performance KPIs':'Financial results and performance KPIs';
+  const meta={isCompanyResults:true,title,company:title,nature,basis:[...new Set(clean.map(r=>r.Basis))].join(' / ')||'Not detected',period:lastPeriod,comparison:'FY2026 vs FY2025 vs FY2024 retained from source tables; target retained separately',unit:[...new Set(clean.map(r=>r.Unit))].join(' / '),source:file.name,description:'PDF extracted page-by-page. Each KPI retains its entity and FY2026, FY2025, FY2024 and target values from the same source page. No company/bank identity is guessed or silently merged.'};
   STATE.documentMeta=meta;
   return {aoa:[headers,...clean.map(r=>headers.map(h=>r[h]??null))],pages:pdf.numPages,found:clean.length,meta};
 }
@@ -2805,7 +2814,7 @@ function renderDocumentContext(meta){
   if(!box)return;
   if(!meta || !meta.isCompanyResults){ box.style.display='none'; return; }
   const clean=v=>(v===null||v===undefined||String(v).trim()==='')?'Not detected':String(v);
-  document.getElementById('companyContextTitle').textContent=clean(meta.company)+' — Company Results Dashboard';
+  document.getElementById('companyContextTitle').textContent=clean(meta.title || meta.company)+' — Results Dashboard';
   document.getElementById('companyContextDescription').textContent=clean(meta.description);
   const fields=[['Data nature',meta.nature],['Reporting basis',meta.basis],['Reporting period',meta.period],['Comparison',meta.comparison],['Unit',meta.unit],['Source',meta.source]];
   document.getElementById('companyContextGrid').innerHTML=fields.map(([k,v])=>`<div class="cc-item"><div class="cc-label">${escapeHtml(k)}</div><div class="cc-value">${escapeHtml(clean(v))}</div></div>`).join('');
@@ -9037,18 +9046,28 @@ document.addEventListener('DOMContentLoaded',function(){
 })();
 </script>
 
-<script id="v4523PdfKpiIntegrity">
+<script id="v4524PdfKpiIntegrity">
 (function(){
-  // v4.5.23: PDF KPI integrity. The PDF extractor already preserves each
-  // entity's FY2026/FY2025/FY2024 values. Do not remap those rows through the
-  // generic banking KPI library: that library contains aliases such as ROA,
-  // Revenue and Advances which can select the first matching entity or sum a
-  // percentage. For a comparative-results PDF, build cards directly from the
-  // extracted source rows.
+  // v4.5.24: one authoritative PDF KPI identity. Revenue and Revenue / Sales
+  // are the same KPI; entities remain separate in the source rows and are
+  // only aggregated when the user has not filtered to a specific entity.
   function pdfRows(){
     return (window.STATE && Array.isArray(STATE.filteredData) ? STATE.filteredData : []).filter(r=>r && r.KPI);
   }
   function pdfNorm(v){return String(v??'').trim().toLowerCase().replace(/[–—]/g,'-').replace(/\s+/g,' ');}
+  function pdfKpiKey(v){
+    const n=pdfNorm(v).replace(/[\/]+/g,'/');
+    if(/^revenue(?:\s*\/\s*sales)?$/.test(n) || /^sales$/.test(n)) return 'revenue';
+    if(/^gross\s*profit$/.test(n)) return 'gross_profit';
+    if(/^net\s*profit(?:\s*\/\s*pat)?$/.test(n) || /^pat$/.test(n)) return 'net_profit';
+    if(/^roa(?:\s*%)?$/.test(n) || /return on assets/.test(n)) return 'roa';
+    if(/^npa(?:\s*%)?$/.test(n) || /non[- ]performing assets/.test(n)) return 'npa';
+    return n;
+  }
+  function pdfDisplayName(key,rows){
+    const preferred={revenue:'Revenue / Sales',gross_profit:'Gross Profit',net_profit:'Net Profit',roa:'ROA',npa:'NPA'}[key];
+    return preferred || String(rows[0]?.KPI||key).trim();
+  }
   function pdfNum(v){
     if(typeof v==='number' && Number.isFinite(v)) return v;
     const n=Number(String(v??'').replace(/[₹,%\s,]/g,''));
@@ -9059,6 +9078,8 @@ document.addEventListener('DOMContentLoaded',function(){
     const a=rows.map(r=>pdfNum(r?.[key])).filter(Number.isFinite);
     if(!a.length)return NaN;
     if(pct){
+      // Source PDF stores 16.8% as the numeric value 16.8. Internally convert
+      // to fraction once; fmtPercent() then converts it back exactly once.
       const vals=a.map(v=>Math.abs(v)>1?v/100:v);
       return vals.reduce((x,y)=>x+y,0)/vals.length;
     }
@@ -9068,31 +9089,30 @@ document.addEventListener('DOMContentLoaded',function(){
     return /npa|slippage|cost|expense|loss|debt|complaint/i.test(String(name)) ? 'Lower is Better' :
       /profit|income|revenue|sales|advance|deposit|roa|roe|capital|business|recovery/i.test(String(name)) ? 'Higher is Better' : 'Neutral';
   }
-  function pdfSlug(name){return 'pdf_'+pdfNorm(name).replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');}
+  function pdfSlug(name){return 'pdf_'+pdfKpiKey(name).replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');}
 
   function buildPdfKpis(){
     const rows=pdfRows();
     if(!STATE?.documentMeta?.isCompanyResults || !rows.length) return null;
-    const groups=[];
-    const seen=new Map();
+    const groups=[]; const seen=new Map();
     rows.forEach(r=>{
-      const name=String(r.KPI??'').trim();
-      const key=pdfNorm(name);
-      if(!name || seen.has(key)) return;
-      const same=rows.filter(x=>pdfNorm(x.KPI)===key);
+      const rawName=String(r.KPI??'').trim();
+      const key=pdfKpiKey(rawName);
+      if(!rawName || seen.has(key)) return;
+      const same=rows.filter(x=>pdfKpiKey(x.KPI)===key);
       const pct=same.some(pdfPct);
       const cur=pdfAgg(same,'Current Period',pct);
       if(!Number.isFinite(cur)) return;
       const prev=pdfAgg(same,'Previous Period',pct);
       const py=pdfAgg(same,'Previous-year Period',pct);
-      // Target in this reliability PDF is a page/entity target for the main
-      // financial target, not a standalone target for every KPI (e.g. ROA/NPA).
-      const target=/revenue|sales/i.test(name) ? pdfAgg(same,'Target',false) : NaN;
+      // Target is a page-level comparator in this test PDF. It is meaningful
+      // for the Revenue/Sales KPI and is never presented as a separate KPI.
+      const target=key==='revenue' ? pdfAgg(same,'Target',false) : NaN;
       const def={
-        id:pdfSlug(name), name, dept:String(same[0].Area||'Company Results'), cat:'PDF Results',
-        aliases:[name], direct:true, agg:pct?'avg':'sum', higher:pdfDirection(name)==='Higher is Better',
-        lower:pdfDirection(name)==='Lower is Better', percent:pct, unit:pct?'percent':'currency',
-        value:cur, source:'PDF extracted FY2026', confidence:'high', formula:'Direct source value — FY2026',
+        id:pdfSlug(key), name:pdfDisplayName(key,same), dept:'PDF Results', cat:'PDF Results',
+        aliases:[rawName], direct:true, agg:pct?'avg':'sum', higher:pdfDirection(rawName)==='Higher is Better',
+        lower:pdfDirection(rawName)==='Lower is Better', percent:pct, unit:pct?'percent':'currency',
+        value:cur, source:'PDF extracted · current period', confidence:'high', formula:'Direct source value — current period',
         pdfPrevious:prev, pdfPreviousYear:py, pdfTarget:target, pdfRows:same
       };
       seen.set(key,def); groups.push(def);
@@ -9106,33 +9126,21 @@ document.addEventListener('DOMContentLoaded',function(){
     if(pdf) return pdf;
     return typeof _oldBuild==='function' ? _oldBuild() : [];
   };
-  // Keep the local function binding used by renderKPIs in sync in classic
-  // script environments.
   try{ buildUniversalKpisWithManual=window.buildUniversalKpisWithManual; }catch(e){}
 
   const _oldInsight=window.clickInsightReason;
   window.clickInsightReason=function(spec,hit,ds){
     if(!STATE?.documentMeta?.isCompanyResults) return _oldInsight(spec,hit,ds);
     const rows=pdfRows();
-    const wanted=pdfNorm(hit?.measure||spec?.y||hit?.label||'');
-    let matched=rows.filter(r=>pdfNorm(r.KPI)===wanted);
-    if(!matched.length && hit?.label) matched=rows.filter(r=>pdfNorm(r.KPI)===pdfNorm(hit.label));
-    // If the chart uses a shortened/aliased label, use the exact KPI library
-    // alias only as a fallback; never take the first row merely because it is
-    // the first entity in the PDF.
-    if(!matched.length){
-      const defs=buildPdfKpis()||[];
-      const d=defs.find(x=>pdfNorm(x.name)===wanted || (x.aliases||[]).some(a=>pdfNorm(a)===wanted));
-      if(d) matched=d.pdfRows||[];
-    }
+    const wanted=pdfKpiKey(hit?.measure||spec?.y||hit?.label||'');
+    const matched=rows.filter(r=>pdfKpiKey(r.KPI)===wanted);
     if(!matched.length) return _oldInsight(spec,hit,ds);
 
     const pct=matched.some(pdfPct);
     const current=pdfAgg(matched,'Current Period',pct);
     const previous=pdfAgg(matched,'Previous Period',pct);
     const previousYear=pdfAgg(matched,'Previous-year Period',pct);
-    const isRevenue=/revenue|sales/i.test(String(matched[0].KPI||''));
-    const target=isRevenue?pdfAgg(matched,'Target',false):NaN;
+    const target=wanted==='revenue'?pdfAgg(matched,'Target',false):NaN;
     const growth=Number.isFinite(previous)&&previous!==0 ? (current-previous)/Math.abs(previous)*100 : NaN;
     const yoy=Number.isFinite(previousYear)&&previousYear!==0 ? (current-previousYear)/Math.abs(previousYear)*100 : NaN;
     const currency=!pct;
@@ -9142,17 +9150,39 @@ document.addEventListener('DOMContentLoaded',function(){
     if(Number.isFinite(yoy)) reason.push(`Year-on-year ${yoy>=0?'growth':'degrowth'} of ${Math.abs(yoy).toFixed(1)}% versus FY2024.`);
     if(Number.isFinite(target)&&target!==0){
       const ach=current/target*100;
-      reason.push(`${ach.toFixed(1)}% of target; gap is ${clickInsightFormat(current-target,true,false)}.`);
+      const gap=current-target;
+      const gapText=typeof clickInsightFormat==='function'?clickInsightFormat(gap,true,false):`${gap.toFixed(2)}`;
+      reason.push(`${ach.toFixed(1)}% of target; gap is ${gapText}.`);
     }
     if(!reason.length) reason.push('No verified comparison value is available in the extracted PDF rows for this KPI.');
     return {current,previous,previousLabel:'FY2025',target,growth,reason,currency,pct,nature};
   };
   try{ clickInsightReason=window.clickInsightReason; }catch(e){}
 
-  // Ensure a PDF refresh immediately uses the source-row KPI builder.
-  if(typeof window.renderKPIs==='function'){
-    try{ window.renderKPIs(); }catch(e){ console.warn('v4.5.23 PDF KPI refresh',e); }
+  // Replace the old generic context wording with source-derived wording.
+  const oldRenderContext=window.renderDocumentContext;
+  if(typeof oldRenderContext==='function'){
+    window.renderDocumentContext=function(meta){
+      if(meta?.isCompanyResults && meta.title){
+        const box=document.getElementById('companyContext');
+        if(!box)return;
+        const clean=v=>(v===null||v===undefined||String(v).trim()==='')?'Not detected':String(v);
+        document.getElementById('companyContextTitle').textContent=clean(meta.title)+' — Results Dashboard';
+        document.getElementById('companyContextDescription').textContent=clean(meta.description);
+        const fields=[['Data nature',meta.nature],['Reporting basis',meta.basis],['Reporting period',meta.period],['Comparison',meta.comparison],['Unit',meta.unit],['Source',meta.source]];
+        document.getElementById('companyContextGrid').innerHTML=fields.map(([k,v])=>`<div class="cc-item"><div class="cc-label">${escapeHtml(k)}</div><div class="cc-value">${escapeHtml(clean(v))}</div></div>`).join('');
+        box.style.display='block';
+        return;
+      }
+      return oldRenderContext(meta);
+    };
   }
+})();
+</script>
+<script id="v4524ReleaseGuard">
+(function(){
+  const oldTitle=window.document?.title;
+  if(oldTitle && !/v4\.5\.24/i.test(oldTitle)) document.title=oldTitle.replace(/v4\.5\.23/gi,'v4.5.24');
 })();
 </script>
 </body>
