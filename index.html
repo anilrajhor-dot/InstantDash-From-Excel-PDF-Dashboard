@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<title>InstantDash — Excel to Dashboard v4.4.1</title>
+<title>InstantDash — Excel to Dashboard v4.4.3</title>
 <meta name="author" content="Developed by Anil Sharma, Former General Manager, Central Bank of India">
-<meta name="application-name" content="InstantDash v4.4.1">
-<meta name="description" content="InstantDash — Excel to Dashboard v4.4.1, developed by Anil Sharma">
+<meta name="application-name" content="InstantDash v4.4.3">
+<meta name="description" content="InstantDash — Excel to Dashboard v4.4.3, developed by Anil Sharma">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js';document.head.appendChild(s);"></script>
@@ -217,7 +217,7 @@ select, .input{
 .chart-body{position:relative; height:320px; min-height:320px; width:100%; overflow:hidden;}
 .chart-body canvas{display:block !important; width:100% !important; height:100% !important; min-height:300px;}
 .chart-controls-row{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; border-top:1px dashed var(--line); padding-top:8px;}
-/* ---------- v4.4.1 mobile-first dashboard polish ---------- */
+/* ---------- v4.4.3 mobile-first dashboard polish ---------- */
 .kpi-card{position:relative;overflow:hidden;min-height:196px;padding:18px 18px 16px;border-radius:18px;border:1px solid rgba(255,255,255,.06);background:linear-gradient(145deg,var(--card),rgba(255,255,255,.018));box-shadow:0 8px 24px rgba(0,0,0,.18);}
 .kpi-card:before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:var(--amber);}
 .kpi-card.kpi-derived:before{background:#304968;}
@@ -507,7 +507,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v403UiFix">
-/* v4.4.1: KPI directory is part of the loaded dashboard, never the landing page. */
+/* v4.4.3: KPI directory is part of the loaded dashboard, never the landing page. */
 #bankingKpiDirectory{display:block}
 #emptyState ~ #bankingKpiDirectory{display:block !important}
 </style>
@@ -539,7 +539,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v412InsightVisibility">
-/* v4.4.1 — high-contrast KPI Insight */
+/* v4.4.3 — high-contrast KPI Insight */
 .click-insight-backdrop{
   background:rgba(0,0,0,.62) !important;
 }
@@ -820,7 +820,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 @media(max-width:480px){.cc-grid{grid-template-columns:1fr}}
 </style>
 <style id="v441AreaDirectoryThemeFix">
-/* v4.4.1: the directory must follow the app theme. Earlier versions used
+/* v4.4.3: the directory must follow the app theme. Earlier versions used
    hard-coded white backgrounds, which made the dark-mode text almost invisible. */
 .banking-kpi-directory{
   margin:18px 0;
@@ -876,11 +876,42 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 }
 @media(max-width:640px){.area-directory-cards{grid-template-columns:1fr}}
 </style>
+
+<script id="v442RuntimeGuard">
+window.addEventListener('error', function(ev){
+  try{
+    const box=document.getElementById('messageBox');
+    if(box){
+      box.style.display='block';
+      box.textContent='⚠️ InstantDash error: '+(ev.error?.message || ev.message || 'Unexpected error');
+    }
+  }catch(_){}
+});
+window.addEventListener('unhandledrejection', function(ev){
+  try{
+    const box=document.getElementById('messageBox');
+    if(box){
+      box.style.display='block';
+      box.textContent='⚠️ InstantDash error: '+(ev.reason?.message || ev.reason || 'Unexpected error');
+    }
+  }catch(_){}
+});
+</script>
+
+<script id="v443BrowseGuard">
+document.addEventListener('DOMContentLoaded', function(){
+  const b=document.getElementById('browseBtn');
+  const input=document.getElementById('fileInput');
+  if(!b||!input) return;
+  b.setAttribute('type','button');
+  b.removeAttribute('disabled');
+});
+</script>
 </head>
 <body>
 
 <div class="topbar">
-  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v4.4.1</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
+  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v4.4.3</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
   <div class="topbar-right">
     <div class="privacy-badge">🔒 <span class="txt">Processed locally — not uploaded to any server</span></div>
     <button class="icon-btn" id="shareTopBtn" title="Share dashboard" aria-label="Share dashboard as an image" style="display:none;">📤</button>
@@ -908,7 +939,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
     <p>Drop an Excel, CSV or PDF file below. Files are processed in your browser. Excel/CSV build dashboards automatically; PDFs can be previewed and, for recognised financial-results PDFs, converted into a dashboard.</p>
     <button class="btn" id="browseBtn">📂 Browse Excel / CSV / PDF</button>
     <div style="margin-top:10px; font-size:12px; color:var(--muted);">or drag &amp; drop a <strong>.xlsx</strong>, <strong>.xls</strong>, <strong>.csv</strong> or <strong>.pdf</strong> file anywhere on this page</div>
-    <input type="file" id="fileInput" accept=".xlsx,.xls,.csv,.pdf,application/pdf">
+    <input type="file" id="fileInput" accept=".xlsx,.xls,.csv,.pdf,application/pdf" aria-label="Choose Excel CSV or PDF file">
     <div style="margin-top:12px;display:flex;gap:6px;justify-content:center;flex-wrap:wrap;font-size:11px;"><span class="chip">📊 Excel</span><span class="chip">🧾 CSV</span><span class="chip" style="border-color:rgba(196,61,61,.35);color:var(--rust);background:rgba(196,61,61,.07);">📕 PDF</span></div>
   </div>
 
@@ -1299,7 +1330,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
   </div>
 </div>
 
-<footer class="app-footer">InstantDash <strong>v4.4.1</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
+<footer class="app-footer">InstantDash <strong>v4.4.3</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
 </div>
 
 <!-- Ask Your Data floating widget -->
@@ -1772,14 +1803,22 @@ function resetLoadedDataForNewFile(){
   if(meta) meta.textContent='';
 }
 
-document.getElementById('browseBtn').addEventListener('click',()=>{
+function openInstantDashFilePicker(ev){
+  if(ev){ ev.preventDefault(); ev.stopPropagation(); }
+  // Must be executed directly from the user's tap for iOS/iPadOS.
   fileInput.value='';
   fileInput.click();
-});
+}
+document.getElementById('browseBtn').addEventListener('click',openInstantDashFilePicker);
 fileInput.addEventListener('change',e=>{
   const f=e.target.files && e.target.files[0];
+  if(!f){ e.target.value=''; return; }
+  // Clear only after capturing the File object.
   e.target.value='';
-  if(f) handleFile(f);
+  Promise.resolve(handleFile(f)).catch(err=>{
+    console.error('InstantDash file processing error',err);
+    showMessage('Could not process the selected file: '+String(err?.message||err),'error');
+  });
 });
 fileInput.addEventListener('cancel',()=>{ fileInput.value=''; });
 
@@ -2185,7 +2224,7 @@ function fail(msg){
 
 
 
-// v4.4.1: expose the real file handler for the independent mobile file-picker hook.
+// v4.4.3: expose the real file handler for the independent mobile file-picker hook.
 window.instantDashHandleFile = handleFile;
 
 function chooseBestDataSheet(names, wb){
@@ -2781,7 +2820,7 @@ function renderPerformanceScorecard(){
 }
 
 
-/* ===================== InstantDash v4.4.1 =====================
+/* ===================== InstantDash v4.4.3 =====================
    Consolidated management/KPI intelligence layer.
    It is additive: existing v3.5.9 chart engine remains intact.
 ================================================================ */
@@ -7244,53 +7283,7 @@ document.addEventListener('click',(e)=>{
 },true);
 </script>
 
-<script id="robustFilePickerFix">
-(function(){
-  function init(){
-    const b=document.getElementById('browseBtn');
-    const input=document.getElementById('fileInput');
-    if(!b||!input) return;
 
-    // Do not replace the app's normal listener. Add a capture-phase listener
-    // so iOS selection is always handed to the actual app handler.
-    input.addEventListener('change', function(ev){
-      const f=ev.target && ev.target.files && ev.target.files[0];
-      if(!f) return;
-      const handler=window.instantDashHandleFile;
-      if(typeof handler!=='function'){
-        const msg=document.getElementById('messageArea');
-        if(msg) msg.innerHTML='<div class="message error">The file handler did not initialise. Please reload the app and try again.</div>';
-        return;
-      }
-      try{
-        const result=handler(f);
-        if(result && typeof result.catch==='function'){
-          result.catch(err=>{
-            console.error(err);
-            const msg=document.getElementById('messageArea');
-            if(msg) msg.innerHTML='<div class="message error">Could not process the selected file: '+String(err.message||err)+'</div>';
-          });
-        }
-      }catch(err){
-        console.error(err);
-        const msg=document.getElementById('messageArea');
-        if(msg) msg.innerHTML='<div class="message error">Could not process the selected file: '+String(err.message||err)+'</div>';
-      }
-    }, true);
-
-    // Keep the Browse action simple and native on iPhone/iPad.
-    b.addEventListener('click', function(ev){
-      ev.preventDefault();
-      ev.stopImmediatePropagation();
-      input.value='';
-      try{ input.click(); }
-      catch(err){ console.error('Native file picker failed',err); }
-    }, true);
-  }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init);
-  else init();
-})();
-</script>
 </body>
 </html>
 
