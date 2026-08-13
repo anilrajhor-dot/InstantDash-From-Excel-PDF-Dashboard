@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<title>InstantDash — Excel to Dashboard v4.5.3</title>
+<title>InstantDash — Excel to Dashboard v4.5.4</title>
 <meta name="author" content="Developed by Anil Sharma, Former General Manager, Central Bank of India">
-<meta name="application-name" content="InstantDash v4.5.3">
-<meta name="description" content="InstantDash — Excel to Dashboard v4.5.3, developed by Anil Sharma">
+<meta name="application-name" content="InstantDash v4.5.4">
+<meta name="description" content="InstantDash — Excel to Dashboard v4.5.4, developed by Anil Sharma">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js';document.head.appendChild(s);"></script>
@@ -217,7 +217,7 @@ select, .input{
 .chart-body{position:relative; height:320px; min-height:320px; width:100%; overflow:hidden;}
 .chart-body canvas{display:block !important; width:100% !important; height:100% !important; min-height:300px;}
 .chart-controls-row{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; border-top:1px dashed var(--line); padding-top:8px;}
-/* ---------- v4.5.3 mobile-first dashboard polish ---------- */
+/* ---------- v4.5.4 mobile-first dashboard polish ---------- */
 .kpi-card{position:relative;overflow:hidden;min-height:196px;padding:18px 18px 16px;border-radius:18px;border:1px solid rgba(255,255,255,.06);background:linear-gradient(145deg,var(--card),rgba(255,255,255,.018));box-shadow:0 8px 24px rgba(0,0,0,.18);}
 .kpi-card:before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:var(--amber);}
 .kpi-card.kpi-derived:before{background:#304968;}
@@ -507,7 +507,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v403UiFix">
-/* v4.5.3: KPI directory is part of the loaded dashboard, never the landing page. */
+/* v4.5.4: KPI directory is part of the loaded dashboard, never the landing page. */
 #bankingKpiDirectory{display:block}
 #emptyState ~ #bankingKpiDirectory{display:block !important}
 </style>
@@ -539,7 +539,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v412InsightVisibility">
-/* v4.5.3 — high-contrast KPI Insight */
+/* v4.5.4 — high-contrast KPI Insight */
 .click-insight-backdrop{
   background:rgba(0,0,0,.62) !important;
 }
@@ -820,7 +820,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 @media(max-width:480px){.cc-grid{grid-template-columns:1fr}}
 </style>
 <style id="v441AreaDirectoryThemeFix">
-/* v4.5.3: the directory must follow the app theme. Earlier versions used
+/* v4.5.4: the directory must follow the app theme. Earlier versions used
    hard-coded white backgrounds, which made the dark-mode text almost invisible. */
 .banking-kpi-directory{
   margin:18px 0;
@@ -909,7 +909,7 @@ document.addEventListener('DOMContentLoaded', function(){
 </script>
 
 <style id="v444LandingDirectoryVisibility">
-/* v4.5.3 — Landing page is for file upload only.
+/* v4.5.4 — Landing page is for file upload only.
    Area/KPI directories appear after a dashboard is loaded. */
 #areaDirectoryBlock,
 #bankingKpiDirectory{
@@ -1126,11 +1126,36 @@ button,#clickInsightDrill,.kpi-drill-selected{
 .v453-action{border-color:rgba(245,180,0,.65)!important}
 @media(max-width:700px){.v453-insight-grid{grid-template-columns:1fr}}
 </style>
+
+<style id="v454DataQualityStyle">
+.v454-quality-card{
+  margin:16px 0;padding:16px;border:1px solid var(--line);border-radius:16px;
+  background:var(--card);color:var(--ink);box-shadow:var(--shadow)
+}
+.v454-quality-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.v454-quality-head h3{margin:0;color:var(--ink)}
+.v454-quality-sub{font-size:12px;color:var(--muted);margin-top:4px}
+.v454-quality-badge{padding:5px 9px;border-radius:999px;font-size:11px;font-weight:900}
+.v454-good{background:rgba(54,180,110,.14);color:#57d68d}
+.v454-warn{background:rgba(245,180,0,.14);color:#f5c84b}
+.v454-bad{background:rgba(220,80,80,.14);color:#ff8a8a}
+.v454-quality-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:14px}
+.v454-quality-item{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--soft,var(--cream))}
+.v454-quality-label{font-size:11px;color:var(--muted);font-weight:800;text-transform:uppercase}
+.v454-quality-value{font-size:20px;font-weight:900;color:var(--ink);margin-top:4px}
+.v454-quality-note{font-size:11px;color:var(--muted);margin-top:3px}
+.v454-reason{
+  margin-top:12px;padding:11px 12px;border-left:4px solid #f5b400;
+  background:rgba(245,180,0,.08);border-radius:8px;font-size:12px;line-height:1.45
+}
+@media(max-width:800px){.v454-quality-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:500px){.v454-quality-grid{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
 
 <div class="topbar">
-  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v4.5.3</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
+  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v4.5.4</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
   <div class="topbar-right">
     <div class="privacy-badge">🔒 <span class="txt">Processed locally — not uploaded to any server</span></div>
     <button class="icon-btn" id="shareTopBtn" title="Share dashboard" aria-label="Share dashboard as an image" style="display:none;">📤</button>
@@ -1549,7 +1574,7 @@ button,#clickInsightDrill,.kpi-drill-selected{
   </div>
 </div>
 
-<footer class="app-footer">InstantDash <strong>v4.5.3</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
+<footer class="app-footer">InstantDash <strong>v4.5.4</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
 </div>
 
 <!-- Ask Your Data floating widget -->
@@ -2443,7 +2468,7 @@ function fail(msg){
 
 
 
-// v4.5.3: expose the real file handler for the independent mobile file-picker hook.
+// v4.5.4: expose the real file handler for the independent mobile file-picker hook.
 window.instantDashHandleFile = handleFile;
 
 function chooseBestDataSheet(names, wb){
@@ -3039,7 +3064,7 @@ function renderPerformanceScorecard(){
 }
 
 
-/* ===================== InstantDash v4.5.3 =====================
+/* ===================== InstantDash v4.5.4 =====================
    Consolidated management/KPI intelligence layer.
    It is additive: existing v3.5.9 chart engine remains intact.
 ================================================================ */
@@ -7751,6 +7776,62 @@ document.addEventListener('DOMContentLoaded',function(){
     if(e.target?.closest?.('#browseBtn,#newFileBtn')){
       document.getElementById('v453ManagementInsightCard')?.remove();
       setTimeout(render,1700);
+    }
+  },false);
+});
+</script>
+
+<script id="v454DataQuality">
+document.addEventListener('DOMContentLoaded',function(){
+  function render(){
+    document.getElementById('v454DataQualityCard')?.remove();
+    const data=window.STATE?.data;
+    if(!Array.isArray(data)||!data.length)return;
+    const rows=data;
+    const keys=[...new Set(rows.flatMap(r=>Object.keys(r||{})))];
+    let cells=0, blanks=0, numeric=0, invalidNumeric=0;
+    rows.forEach(r=>keys.forEach(k=>{
+      cells++;
+      const v=r?.[k];
+      if(v===null||v===undefined||String(v).trim()==='') blanks++;
+      else if(typeof v==='number'&&Number.isFinite(v)) numeric++;
+    }));
+    const total=cells||1;
+    const completeness=Math.max(0,Math.min(100,100-(blanks/total*100)));
+    const areaKey=keys.find(k=>/^(area|department|category|kpi area|business area|segment)$/i.test(String(k).trim()));
+    const kpiKey=keys.find(k=>/^(kpi|metric|indicator|particulars|head)$/i.test(String(k).trim()));
+    const areas=areaKey?[...new Set(rows.map(r=>String(r?.[areaKey]??'').trim()).filter(Boolean))]:[];
+    const kpis=kpiKey?[...new Set(rows.map(r=>String(r?.[kpiKey]??'').trim()).filter(Boolean))]:[];
+    const status=completeness>=95?'good':completeness>=80?'warn':'bad';
+    const statusText=status==='good'?'Good':status==='warn'?'Review':'Attention required';
+
+    const card=document.createElement('section');
+    card.id='v454DataQualityCard';card.className='v454-quality-card';
+    card.innerHTML=`
+      <div class="v454-quality-head">
+        <div><h3>Data Quality Check</h3>
+        <div class="v454-quality-sub">A quick structural check of the uploaded data before relying on KPI conclusions.</div></div>
+        <span class="v454-quality-badge v454-${status}">${statusText}</span>
+      </div>
+      <div class="v454-quality-grid">
+        <div class="v454-quality-item"><div class="v454-quality-label">Rows</div><div class="v454-quality-value">${rows.length.toLocaleString('en-IN')}</div></div>
+        <div class="v454-quality-item"><div class="v454-quality-label">Columns</div><div class="v454-quality-value">${keys.length}</div></div>
+        <div class="v454-quality-item"><div class="v454-quality-label">Completeness</div><div class="v454-quality-value">${completeness.toFixed(1)}%</div><div class="v454-quality-note">${blanks.toLocaleString('en-IN')} blank cells</div></div>
+        <div class="v454-quality-item"><div class="v454-quality-label">Areas / KPIs</div><div class="v454-quality-value">${areas.length||'—'} / ${kpis.length||'—'}</div></div>
+      </div>
+      <div class="v454-reason"><b>Interpretation:</b> ${status==='good'
+        ? 'The uploaded dataset is structurally complete enough for normal dashboard review.'
+        : status==='warn'
+        ? 'Some fields are blank. Review the source data before drawing conclusions from affected KPIs.'
+        : 'A significant amount of information is blank. KPI conclusions should be treated cautiously until the source data is reviewed.'}</div>`;
+    const host=document.getElementById('appContent')||document.querySelector('main');
+    if(host)host.prepend(card);
+  }
+  setTimeout(render,1800);
+  document.addEventListener('click',function(e){
+    if(e.target?.closest?.('#browseBtn,#newFileBtn')){
+      document.getElementById('v454DataQualityCard')?.remove();
+      setTimeout(render,1900);
     }
   },false);
 });
