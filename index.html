@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<title>InstantDash — Excel to Dashboard v4.5.6</title>
+<title>InstantDash — Excel to Dashboard v4.5.7</title>
 <meta name="author" content="Developed by Anil Sharma, Former General Manager, Central Bank of India">
-<meta name="application-name" content="InstantDash v4.5.6">
-<meta name="description" content="InstantDash — Excel to Dashboard v4.5.6, developed by Anil Sharma">
+<meta name="application-name" content="InstantDash v4.5.7">
+<meta name="description" content="InstantDash — Excel to Dashboard v4.5.7, developed by Anil Sharma">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js';document.head.appendChild(s);"></script>
@@ -217,7 +217,7 @@ select, .input{
 .chart-body{position:relative; height:320px; min-height:320px; width:100%; overflow:hidden;}
 .chart-body canvas{display:block !important; width:100% !important; height:100% !important; min-height:300px;}
 .chart-controls-row{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; border-top:1px dashed var(--line); padding-top:8px;}
-/* ---------- v4.5.6 mobile-first dashboard polish ---------- */
+/* ---------- v4.5.7 mobile-first dashboard polish ---------- */
 .kpi-card{position:relative;overflow:hidden;min-height:196px;padding:18px 18px 16px;border-radius:18px;border:1px solid rgba(255,255,255,.06);background:linear-gradient(145deg,var(--card),rgba(255,255,255,.018));box-shadow:0 8px 24px rgba(0,0,0,.18);}
 .kpi-card:before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:var(--amber);}
 .kpi-card.kpi-derived:before{background:#304968;}
@@ -507,7 +507,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v403UiFix">
-/* v4.5.6: KPI directory is part of the loaded dashboard, never the landing page. */
+/* v4.5.7: KPI directory is part of the loaded dashboard, never the landing page. */
 #bankingKpiDirectory{display:block}
 #emptyState ~ #bankingKpiDirectory{display:block !important}
 </style>
@@ -539,7 +539,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v412InsightVisibility">
-/* v4.5.6 — high-contrast KPI Insight */
+/* v4.5.7 — high-contrast KPI Insight */
 .click-insight-backdrop{
   background:rgba(0,0,0,.62) !important;
 }
@@ -820,7 +820,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 @media(max-width:480px){.cc-grid{grid-template-columns:1fr}}
 </style>
 <style id="v441AreaDirectoryThemeFix">
-/* v4.5.6: the directory must follow the app theme. Earlier versions used
+/* v4.5.7: the directory must follow the app theme. Earlier versions used
    hard-coded white backgrounds, which made the dark-mode text almost invisible. */
 .banking-kpi-directory{
   margin:18px 0;
@@ -909,7 +909,7 @@ document.addEventListener('DOMContentLoaded', function(){
 </script>
 
 <style id="v444LandingDirectoryVisibility">
-/* v4.5.6 — Landing page is for file upload only.
+/* v4.5.7 — Landing page is for file upload only.
    Area/KPI directories appear after a dashboard is loaded. */
 #areaDirectoryBlock,
 #bankingKpiDirectory{
@@ -1184,11 +1184,30 @@ button,#clickInsightDrill,.kpi-drill-selected{
 .v456-action-btn{margin-left:auto;border:1px solid #f5b400!important;background:rgba(245,180,0,.10)!important;color:#f5c84b!important;border-radius:999px!important;padding:7px 10px!important;font-size:11px!important;font-weight:900!important}
 @media(max-width:650px){.v456-action-btn{display:block;margin:8px 0 0}.v456-action-row{flex-wrap:wrap}}
 </style>
+
+<style id="v457PdfMapperStyle">
+.v457-pdf-card{margin:16px 0;padding:16px;border:1px solid var(--line);border-radius:16px;background:var(--card);color:var(--ink);box-shadow:var(--shadow)}
+.v457-pdf-card h3{margin:0;color:var(--ink)}
+.v457-pdf-sub{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.45}
+.v457-pdf-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:13px}
+.v457-pdf-field{display:flex;flex-direction:column;gap:5px}
+.v457-pdf-field label{font-size:11px;font-weight:900;color:var(--muted);text-transform:uppercase}
+.v457-pdf-field select,.v457-pdf-field input{width:100%;box-sizing:border-box;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--soft,var(--cream));color:var(--ink)}
+.v457-pdf-status{margin-top:12px;padding:10px 12px;border-radius:10px;background:rgba(245,180,0,.10);border-left:4px solid #f5b400;font-size:12px}
+.v457-pdf-table-wrap{overflow:auto;margin-top:12px;border:1px solid var(--line);border-radius:10px}
+.v457-pdf-table{width:100%;border-collapse:collapse;font-size:11px;min-width:620px}
+.v457-pdf-table th,.v457-pdf-table td{padding:8px;border-bottom:1px solid var(--line);text-align:left}
+.v457-pdf-table th{position:sticky;top:0;background:var(--card);color:var(--ink);font-weight:900}
+.v457-pdf-highlight{background:rgba(245,180,0,.18)!important;outline:2px solid rgba(245,180,0,.65)}
+.v457-pdf-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.v457-pdf-actions button{border:1px solid #f5b400!important;background:rgba(245,180,0,.10)!important;color:#f5c84b!important;border-radius:999px!important;padding:8px 12px!important;font-weight:900!important}
+@media(max-width:700px){.v457-pdf-grid{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
 
 <div class="topbar">
-  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v4.5.6</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
+  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v4.5.7</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
   <div class="topbar-right">
     <div class="privacy-badge">🔒 <span class="txt">Processed locally — not uploaded to any server</span></div>
     <button class="icon-btn" id="shareTopBtn" title="Share dashboard" aria-label="Share dashboard as an image" style="display:none;">📤</button>
@@ -1607,7 +1626,7 @@ button,#clickInsightDrill,.kpi-drill-selected{
   </div>
 </div>
 
-<footer class="app-footer">InstantDash <strong>v4.5.6</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
+<footer class="app-footer">InstantDash <strong>v4.5.7</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
 </div>
 
 <!-- Ask Your Data floating widget -->
@@ -2501,7 +2520,7 @@ function fail(msg){
 
 
 
-// v4.5.6: expose the real file handler for the independent mobile file-picker hook.
+// v4.5.7: expose the real file handler for the independent mobile file-picker hook.
 window.instantDashHandleFile = handleFile;
 
 function chooseBestDataSheet(names, wb){
@@ -3097,7 +3116,7 @@ function renderPerformanceScorecard(){
 }
 
 
-/* ===================== InstantDash v4.5.6 =====================
+/* ===================== InstantDash v4.5.7 =====================
    Consolidated management/KPI intelligence layer.
    It is additive: existing v3.5.9 chart engine remains intact.
 ================================================================ */
@@ -8018,6 +8037,135 @@ document.addEventListener('DOMContentLoaded',function(){
     }
   },false);
 });
+</script>
+
+<script id="v457UniversalPdfMapper">
+(function(){
+  const AREA_FALLBACK=[
+    "Audit","Bank & NBFC Earnings / Investor Analysis","Banking","Banking Branch & Bank Performance",
+    "Company Results","Expenses","Financial Results","Management","Profitability","Recovery"
+  ];
+  const UNIT_FALLBACK=["%","₹ Crore","₹ Mn","₹ billion","₹/share","Count","Ratio","Number","Donut","Bar"];
+
+  function text(v){return String(v??'').trim()}
+  function esc(v){const d=document.createElement('div');d.textContent=text(v);return d.innerHTML}
+  function pdfRows(){
+    const s=window.STATE||{};
+    const candidates=[s.pdfData,s.pdfRows,s.extractedPdfData,s.extractedRows,s.tableData,s.data];
+    for(const x of candidates) if(Array.isArray(x)&&x.length) return x;
+    return [];
+  }
+  function keys(rows){return [...new Set(rows.flatMap(r=>Object.keys(r||{})))]}
+  function findKey(ks,rx){return ks.find(k=>rx.test(text(k).replace(/\s+/g,' ').trim()))}
+  function values(rows,k){
+    return [...new Set(rows.map(r=>text(r?.[k])).filter(Boolean))].slice(0,500)
+  }
+
+  function render(){
+    if(document.getElementById('v457PdfMapper')) return;
+    const rows=pdfRows();
+    if(!rows.length) return;
+
+    const ks=keys(rows);
+    const kpiKey=findKey(ks,/^(kpi|metric|indicator|particulars|particular|head|item|description|parameter)$/i);
+    const areaKey=findKey(ks,/^(area|kpi area|category|section|segment|department)$/i);
+    const companyKey=findKey(ks,/^(company|bank|entity|issuer|name)$/i);
+    const periodKey=findKey(ks,/^(period|reporting period|year|quarter|fy)$/i);
+    const unitKey=findKey(ks,/^(unit|units)$/i);
+    const valueKey=findKey(ks,/^(value|actual|current|amount|result)$/i);
+
+    const card=document.createElement('section');
+    card.id='v457PdfMapper'; card.className='v457-pdf-card';
+    card.innerHTML=`
+      <h3>PDF Data Mapping</h3>
+      <div class="v457-pdf-sub">
+        Universal PDF fallback for financial and comparative tables. Auto Detect is used where reliable;
+        when uncertain, select the field manually. The app does not invent missing values.
+      </div>
+      <div class="v457-pdf-grid">
+        <div class="v457-pdf-field"><label>Area</label><select id="v457Area"></select></div>
+        <div class="v457-pdf-field"><label>Company / Bank</label><select id="v457Company"></select></div>
+        <div class="v457-pdf-field"><label>KPI</label><select id="v457Kpi"></select></div>
+        <div class="v457-pdf-field"><label>Period</label><select id="v457Period"></select></div>
+        <div class="v457-pdf-field"><label>Unit</label><select id="v457Unit"></select></div>
+        <div class="v457-pdf-field"><label>Value field</label><select id="v457Value"></select></div>
+      </div>
+      <div id="v457Status" class="v457-pdf-status">Checking extracted PDF structure…</div>
+      <div class="v457-pdf-actions">
+        <button type="button" id="v457Apply">Apply Mapping</button>
+        <button type="button" id="v457Clear">Clear Mapping</button>
+      </div>
+      <div id="v457Preview"></div>`;
+    const host=document.getElementById('appContent')||document.querySelector('main');
+    if(!host) return;
+    host.prepend(card);
+
+    const area=[...new Set([...AREA_FALLBACK,...(areaKey?values(rows,areaKey):[])])].sort((a,b)=>a.localeCompare(b));
+    const companies=companyKey?values(rows,companyKey).sort((a,b)=>a.localeCompare(b)):[];
+    const kpis=kpiKey?values(rows,kpiKey).sort((a,b)=>a.localeCompare(b)):[];
+    const periods=periodKey?values(rows,periodKey).sort((a,b)=>a.localeCompare(b)):[];
+    const units=[...new Set([...UNIT_FALLBACK,...(unitKey?values(rows,unitKey):[])])].sort((a,b)=>a.localeCompare(b));
+
+    function fill(id,arr,detected){
+      const el=document.getElementById(id); if(!el)return;
+      el.innerHTML='<option value="">— Select / confirm —</option>'+arr.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('');
+      if(detected&&arr.includes(detected)) el.value=detected;
+    }
+    fill('v457Area',area,areaKey?text(rows[0]?.[areaKey]):'');
+    fill('v457Company',companies,companyKey?text(rows[0]?.[companyKey]):'');
+    fill('v457Kpi',kpis,kpiKey?text(rows[0]?.[kpiKey]):'');
+    fill('v457Period',periods,periodKey?text(rows[0]?.[periodKey]):'');
+    fill('v457Unit',units,unitKey?text(rows[0]?.[unitKey]):'');
+    fill('v457Value',valueKey?[valueKey]:ks, valueKey||'');
+
+    const reliable=!!(kpiKey&&valueKey);
+    document.getElementById('v457Status').textContent=reliable
+      ? 'Auto Detect found KPI and value fields. Please confirm Company/Bank, Period and Unit when applicable.'
+      : 'Manual Mapping Required: the PDF contains usable data, but the field structure is not sufficiently certain for automatic KPI mapping.';
+
+    function preview(){
+      const p=document.getElementById('v457Preview');
+      const selectedKpi=document.getElementById('v457Kpi').value;
+      const selectedCompany=document.getElementById('v457Company').value;
+      const selectedPeriod=document.getElementById('v457Period').value;
+      let subset=rows;
+      if(kpiKey&&selectedKpi)subset=subset.filter(r=>text(r[kpiKey])===selectedKpi);
+      if(companyKey&&selectedCompany)subset=subset.filter(r=>text(r[companyKey])===selectedCompany);
+      if(periodKey&&selectedPeriod)subset=subset.filter(r=>text(r[periodKey])===selectedPeriod);
+      subset=subset.slice(0,25);
+      p.innerHTML=subset.length?`<div class="v457-pdf-table-wrap"><table class="v457-pdf-table"><thead><tr>${ks.slice(0,12).map(k=>`<th>${esc(k)}</th>`).join('')}</tr></thead><tbody>${subset.map(r=>`<tr>${ks.slice(0,12).map(k=>`<td>${esc(r[k])}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`:'<div class="v457-pdf-status">No rows match the current selection.</div>';
+    }
+    ['v457Kpi','v457Company','v457Period'].forEach(id=>document.getElementById(id)?.addEventListener('change',preview));
+    document.getElementById('v457Apply').addEventListener('click',function(){
+      const m={
+        area:document.getElementById('v457Area').value,
+        company:document.getElementById('v457Company').value,
+        kpi:document.getElementById('v457Kpi').value,
+        period:document.getElementById('v457Period').value,
+        unit:document.getElementById('v457Unit').value,
+        valueField:document.getElementById('v457Value').value
+      };
+      window.InstantDashPdfMapping=m;
+      document.getElementById('v457Status').textContent='Mapping applied for this session. Use the KPI Library / Dashboard to continue.';
+      document.querySelectorAll('[data-v457-selected]').forEach(x=>x.removeAttribute('data-v457-selected'));
+    });
+    document.getElementById('v457Clear').addEventListener('click',function(){
+      window.InstantDashPdfMapping=null;
+      card.querySelectorAll('select').forEach(x=>x.value='');
+      preview();
+      document.getElementById('v457Status').textContent='Mapping cleared. Select fields manually when Auto Detect is uncertain.';
+    });
+    preview();
+  }
+
+  document.addEventListener('DOMContentLoaded',()=>setTimeout(render,2600));
+  document.addEventListener('click',e=>{
+    if(e.target?.closest?.('#browseBtn,#newFileBtn')){
+      document.getElementById('v457PdfMapper')?.remove();
+      setTimeout(render,2800);
+    }
+  });
+})();
 </script>
 </body>
 </html>
