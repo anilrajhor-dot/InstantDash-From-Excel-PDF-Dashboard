@@ -2082,13 +2082,6 @@ const STATE = {
   loadToken:0
 };
 
-// v4.5.18: expose the live application state for the mobile/PWA extension
-// hooks.  Several reliability helpers intentionally access window.STATE;
-// const STATE is lexical and is NOT automatically attached to window.  On
-// iOS/Safari this caused a successful XLSX parse to be followed by:
-// "undefined is not an object (evaluating 'window.STATE.filteredData')".
-window.STATE = STATE;
-
 const PALETTE = ['--chart-1','--chart-2','--chart-3','--chart-4','--chart-5','--chart-6','--chart-7','--chart-8']
   .map(v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim());
 
@@ -2505,14 +2498,8 @@ async function handleFile(file){
         return;
       }
       STATE.workbook=wb;
-      window.STATE = STATE; // keep extension hooks on the same live object
       populateSheetSelect(wb.SheetNames);
-      const bestSheet=chooseBestDataSheet(wb.SheetNames, wb);
-      if(!bestSheet || !wb.Sheets[bestSheet]){
-        fail('This workbook was opened, but no usable data sheet could be selected. Please choose a sheet containing the table headings and data.');
-        return;
-      }
-      loadSheet(bestSheet);
+      loadSheet(chooseBestDataSheet(wb.SheetNames, wb));
     }catch(err){
       console.error(err);
       fail('Something went wrong opening this file: '+err.message);
@@ -2735,8 +2722,6 @@ function parseCleanNumber(val){
 }
 
 function buildFromHeaderRow(headerIdx){
-  // Defensive sync for iOS/Safari extension hooks.
-  if(window.STATE!==STATE) window.STATE=STATE;
   STATE.headerRow=headerIdx;
   const aoa=STATE.rawRows;
   const headerRaw=aoa[headerIdx]||[];
@@ -4309,6 +4294,98 @@ function enforceAutomaticChartDefault(spec){
   const desired=defaultChartKind(spec.y, STATE.filteredData);
   return {...spec, kind:desired, horizontal:false};
 }
+// ---------- v4.5.18 RELIABILITY: long-form KPI rows ----------
+// Many banking/company spreadsheets are normalised tables with one row per
+// Entity + Period + KPI and separate Actual / Previous Actual / Target fields.
+// In that structure the KPI identity lives in the KPI column, NOT in a numeric
+// column header. Never infer Revenue from a generic column called "Actual".
+function isReliabilityLongForm(){
+  const cols=v4Cols();
+  const kpiCol=cols.find(n=>/^(kpi|metric|indicator|particulars|item|description)$/i.test(n));
+  const actualCol=cols.find(n=>/^(actual|actual value|value|result|current actual|current period)$/i.test(n));
+  return !!(kpiCol && actualCol);
+}
+function reliabilityKpiColumns(){
+  const cols=v4Cols();
+  return {
+    kpi:cols.find(n=>/^(kpi|metric|indicator|particulars|item|description)$/i.test(n))||null,
+    entity:cols.find(n=>/^(entity|company|bank|company\/bank|issuer|branch)$/i.test(n))||null,
+    area:cols.find(n=>/^(area|department|category|kpi area|business area|segment)$/i.test(n))||null,
+    period:cols.find(n=>/^(period|reporting period|quarter|year|fy|financial year)$/i.test(n))||null,
+    actual:cols.find(n=>/^(actual|actual value|value|result|current actual|current period)$/i.test(n))||null,
+    previousPeriod:cols.find(n=>/^(previous period|previous quarter|previous-year period|previous year|prior period)$/i.test(n))||null,
+    previousActual:cols.find(n=>/^(previous actual|previous value|prior actual)$/i.test(n))||null,
+    target:cols.find(n=>/^(target|target value|budget|plan|planned)$/i.test(n))||null,
+    unit:cols.find(n=>/^(unit|units|uom|measure)$/i.test(n))||null,
+    nature:cols.find(n=>/^(kpi nature|nature|direction)$/i.test(n))||null,
+    basis:cols.find(n=>/^(reporting basis|basis|standalone\/consolidated)$/i.test(n))||null
+  };
+}
+function reliabilityTextNorm(v){return String(v??'').trim().toLowerCase().replace(/[–—]/g,'-').replace(/\s+/g,' ');}
+function reliabilityAliasScore(name, aliases){
+  const n=reliabilityTextNorm(name);
+  let best=0;
+  (aliases||[]).forEach(a=>{
+    const x=reliabilityTextNorm(a);
+    if(!x)return;
+    if(n===x) best=Math.max(best,1);
+    else if(n.includes(x) || x.includes(n)) best=Math.max(best,0.90);
+    else {
+      const nt=new Set(n.split(/[^a-z0-9%]+/).filter(Boolean));
+      const at=x.split(/[^a-z0-9%]+/).filter(Boolean);
+      const hits=at.filter(t=>t.length>2 && nt.has(t)).length;
+      if(hits && hits/Math.max(1,at.length)>=.7) best=Math.max(best,.72);
+    }
+  });
+  return best;
+}
+function reliabilityLatestPeriod(rows, periodCol){
+  if(!periodCol) return null;
+  const vals=[...new Set((rows||[]).map(r=>String(r?.[periodCol]??'').trim()).filter(Boolean))];
+  if(!vals.length)return null;
+  const fy=vals.map(v=>{const m=v.match(/(?:FY|FY\s*)?(\d{4})$/i);return m?Number(m[1]):NaN;}).filter(Number.isFinite);
+  if(fy.length===vals.length) return vals[fy.indexOf(Math.max(...fy))];
+  const dates=vals.map(v=>({v,d:Date.parse(v)})).filter(x=>Number.isFinite(x.d));
+  if(dates.length===vals.length) return dates.sort((a,b)=>b.d-a.d)[0].v;
+  return vals.slice().sort((a,b)=>a.localeCompare(b,undefined,{numeric:true,sensitivity:'base'})).pop();
+}
+function reliabilityRowsForKpi(def, rows){
+  rows=Array.isArray(rows)?rows:[];
+  if(!isReliabilityLongForm()) return null;
+  const c=reliabilityKpiColumns();
+  if(!c.kpi || !c.actual) return null;
+  const matched=rows.filter(r=>reliabilityAliasScore(r?.[c.kpi],def.aliases)>=.72);
+  if(!matched.length)return null;
+  // Prefer the latest reporting period when a period field exists. This keeps
+  // KPI cards current while preserving all historical rows for drill-down.
+  if(c.period){
+    const latest=reliabilityLatestPeriod(matched,c.period);
+    const current=matched.filter(r=>String(r?.[c.period]??'').trim()===String(latest??'').trim());
+    if(current.length)return current;
+  }
+  return matched;
+}
+function reliabilityAggregateRows(rows,col,agg){
+  const nums=(rows||[]).map(r=>getNumeric(r,col)).filter(Number.isFinite);
+  if(!nums.length)return null;
+  if(agg==='avg')return nums.reduce((a,b)=>a+b,0)/nums.length;
+  if(agg==='min')return Math.min(...nums);
+  if(agg==='max')return Math.max(...nums);
+  return nums.reduce((a,b)=>a+b,0);
+}
+function reliabilityDirectValue(def){
+  const rows=reliabilityRowsForKpi(def,STATE.filteredData||STATE.data||[]);
+  if(!rows)return null;
+  const c=reliabilityKpiColumns();
+  return {value:reliabilityAggregateRows(rows,c.actual,def.agg),source:c.actual,rows,confidence:'high'};
+}
+function reliabilityContextValue(id){
+  const def=KPI_DEFS.find(d=>d.id===id);
+  if(!def)return null;
+  const hit=reliabilityDirectValue(def);
+  return hit?hit.value:null;
+}
+
 function sourceMatchForKpi(def){
   const cols=STATE.columns||[]; let best=null;
   cols.forEach(col=>{ const p=STATE.profile[col.name]; if(!p||p.type!=='Number') return;
@@ -4403,9 +4480,23 @@ function kpiPeriodDays(){
 }
 function buildKpiContext(){
   const ctx={days:kpiPeriodDays()};
-  const keyToDef={}; KPI_DEFS.forEach(d=>keyToDef[d.id]=d);
-  KPI_DEFS.forEach(def=>{ if(def.direct){const m=getKpiSource(def); ctx[def.id]=m?kpiAggregate(m.column,def.agg):null; ctx[def.id+'_source']=m?m.column:null; }});
-  ctx.rev=ctx.revenue; ctx.gp=ctx.gross_profit; ctx.np=ctx.net_profit; ctx.cogs=ctx.cogs; ctx.debtors=ctx.debtors; ctx.creditors=ctx.creditors; ctx.stock=ctx.stock; ctx.purchases=ctx.purchases; ctx.ca=ctx.current_assets; ctx.cl=ctx.current_liabilities; ctx.ebitda=ctx.ebitda; ctx.contribution=ctx.contribution; ctx.target=ctx.target; ctx.actual=ctx.actual; ctx.orders=ctx.orders;
+  KPI_DEFS.forEach(def=>{
+    if(!def.direct)return;
+    if(isReliabilityLongForm()) {
+      const hit=reliabilityDirectValue(def);
+      ctx[def.id]=hit?hit.value:null;
+      ctx[def.id+'_source']=hit?hit.source:null;
+    } else {
+      const m=getKpiSource(def);
+      ctx[def.id]=m?kpiAggregate(m.column,def.agg):null;
+      ctx[def.id+'_source']=m?m.column:null;
+    }
+  });
+  ctx.rev=ctx.revenue; ctx.gp=ctx.gross_profit; ctx.np=ctx.net_profit;
+  ctx.cogs=ctx.cogs; ctx.debtors=ctx.debtors; ctx.creditors=ctx.creditors;
+  ctx.stock=ctx.stock; ctx.purchases=ctx.purchases; ctx.ca=ctx.current_assets;
+  ctx.cl=ctx.current_liabilities; ctx.ebitda=ctx.ebitda; ctx.contribution=ctx.contribution;
+  ctx.target=ctx.target; ctx.actual=ctx.actual; ctx.orders=ctx.orders;
   return ctx;
 }
 function deriveTrendKpi(def){
@@ -4466,6 +4557,7 @@ function v4516BuildReliabilityAudit(){
     const pairs=new Set(rows.map(r=>`${String(r[kpiCol]??'').trim().toLowerCase()}|${String(r[unitCol]??'').trim().toLowerCase()}`).filter(x=>x!=='|'));
     if(pairs.size) issues.push(['ok','KPI/unit pairing detected; calculations use the mapped measure.']);
   }
+  if(isReliabilityLongForm()) issues.push(['ok','Long-form KPI table recognised: Actual, Previous Actual and Target are treated as row-level comparators, not generic KPI columns.']);
   if(!issues.length) issues.push(['ok','No critical data-integrity exception detected.']);
   return {rows:rows.length,cols:cols.length,issues};
 }
@@ -4506,16 +4598,33 @@ function getKpiSource(def){
   return sourceMatchForKpi(def);
 }
 function buildUniversalKpisWithManual(){
-  const original=sourceMatchForKpi; const ctx=buildKpiContext(); const found=[];
+  const ctx=buildKpiContext(); const found=[];
   KPI_DEFS.forEach(def=>{
-    let source=def.direct?getKpiSource(def):null, value=null, confidence='low', formula=def.formula||'Direct source value';
-    if(def.direct&&source){confidence=source.alias==='manual'?'high':source.score>=.88?'high':'medium';if(confidence!=='high')return;value=kpiAggregate(source.column,def.agg);if(value===null)return;}
-    else if(def.derived){if(def.trend)value=deriveTrendKpi(def);else{try{value=def.calc(ctx);}catch(e){value=null;}}if(value===null||value===undefined||isNaN(value))return;confidence='high';}
-    else return;
-    const sourceName=source?String(source.column||''):'';
-    // A target/budget/plan column is a comparator, not a standalone KPI card.
-    if(sourceName && /\b(target|budget|plan)\b/i.test(sourceName)) return;
-    found.push({...def,value,source:sourceName||null,confidence,formula});
+    let source=null, value=null, confidence='low', formula=def.formula||'Direct source value';
+    if(def.direct){
+      if(isReliabilityLongForm()) {
+        const hit=reliabilityDirectValue(def);
+        if(!hit || hit.value===null || hit.value===undefined || !Number.isFinite(hit.value)) return;
+        value=hit.value; source=hit.source; confidence='high';
+      } else {
+        source=getKpiSource(def);
+        if(!source)return;
+        confidence=source.alias==='manual'?'high':source.score>=.88?'high':'medium';
+        if(confidence!=='high')return;
+        value=kpiAggregate(source.column,def.agg); if(value===null)return;
+      }
+    } else if(def.derived){
+      if(def.trend)value=deriveTrendKpi(def);
+      else {try{value=def.calc(ctx);}catch(e){value=null;}}
+      // Derived KPIs require every declared input to be genuinely available.
+      if(Array.isArray(def.needs) && def.needs.some(id=>ctx[id]===null || ctx[id]===undefined || !Number.isFinite(ctx[id]))) return;
+      if(value===null||value===undefined||!Number.isFinite(value))return;
+      confidence='high';
+    } else return;
+    // Comparator fields such as Target/Actual are not standalone KPI cards in
+    // long-form data; they are used by the KPI insight and scorecard.
+    if(isReliabilityLongForm() && /^(target|actual)$/i.test(def.id)) return;
+    found.push({...def,value,source:source?source.column||source:null,confidence,formula});
   });
   return found;
 }
@@ -6001,8 +6110,37 @@ function clickInsightReason(spec,hit,ds){
     }
   }
 
-  const selectedRows=clickInsightRowsForCategory(spec,hit.label);
+  let selectedRows=clickInsightRowsForCategory(spec,hit.label);
   const isPdfCompanyResults=!!STATE.documentMeta?.isCompanyResults;
+  const longForm=isReliabilityLongForm();
+  if(longForm){
+    const c=reliabilityKpiColumns();
+    const allRows=STATE.filteredData||STATE.data||[];
+    // In a normalised KPI table the chart label is the KPI name. Select the
+    // exact KPI rows and keep Entity/Period/Unit together; never borrow a
+    // value from another KPI.
+    const exact=allRows.filter(r=>{
+      const name=String(r?.[c.kpi]??'').trim();
+      return name && (reliabilityTextNorm(name)===reliabilityTextNorm(hit.measure||hit.label) ||
+        reliabilityTextNorm(name)===reliabilityTextNorm(spec?.y||'') ||
+        reliabilityTextNorm(name)===reliabilityTextNorm(hit.label));
+    });
+    if(exact.length) selectedRows=exact;
+    const row=selectedRows.find(r=>Number.isFinite(getNumeric(r,c.actual))) || selectedRows[0];
+    if(row){
+      const a=getNumeric(row,c.actual);
+      if(Number.isFinite(a)) current=a;
+      const p=getNumeric(row,c.previousActual);
+      if(Number.isFinite(p)){ previous=p; previousLabel=String(row[c.previousPeriod]??c.previousActual??'Previous Period'); }
+      const t=getNumeric(row,c.target);
+      if(Number.isFinite(t)) target=t;
+      // For a long-form KPI row, the source unit controls formatting.
+      if(c.unit && row[c.unit]!=null) {
+        const u=String(row[c.unit]);
+        if(/%/.test(u)) pct=true;
+      }
+    }
+  }
   // PDF comparative tables often contain one current-period value per company,
   // not a current/previous pair. Never borrow a numeric value from another row,
   // another company, or another KPI to manufacture a comparison.
@@ -6011,7 +6149,7 @@ function clickInsightReason(spec,hit,ds){
     previousLabel='';
     target=NaN;
   }
-  if(targetCol && !isPdfCompanyResults){
+  if(targetCol && !isPdfCompanyResults && !longForm){
     const targetVals=selectedRows.map(r=>getNumeric(r,targetCol)).filter(v=>Number.isFinite(v));
     if(targetVals.length) target=targetVals.reduce((a,b)=>a+b,0);
   }
@@ -6019,7 +6157,7 @@ function clickInsightReason(spec,hit,ds){
   // Company/bank-results PDF rows are extracted with explicit comparison columns.
   // When a KPI bar represents one extracted KPI row (x = KPI), use those columns
   // directly instead of treating the KPI name as a non-time category.
-  if(!Number.isFinite(previous) && !isPdfCompanyResults && Array.isArray(selectedRows) && selectedRows.length){
+  if(!Number.isFinite(previous) && !isPdfCompanyResults && !longForm && Array.isArray(selectedRows) && selectedRows.length){
     const r=selectedRows[0]||{};
     const previousNames=['Previous Period','Previous Quarter','Previous-year Period','Previous Year','Prior Period'];
     const prevName=previousNames.find(n=>Object.prototype.hasOwnProperty.call(r,n) && Number.isFinite(getNumeric(r,n)));
@@ -6062,7 +6200,7 @@ function clickInsightReason(spec,hit,ds){
 
   // Explain the movement using the strongest categorical contributor available
   // in the same period/category. Never invent a cause if the data cannot prove it.
-  const dims=isPdfCompanyResults ? [] : cols.filter(c=>c!==x&&c!==y&&STATE.profile?.[c]?.role==='Categorical');
+  const dims=(isPdfCompanyResults||longForm) ? [] : cols.filter(c=>c!==x&&c!==y&&STATE.profile?.[c]?.role==='Categorical');
   let driver='';
   for(const d of dims.slice(0,8)){
     const groups=new Map();
