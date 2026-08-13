@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<title>InstantDash — Excel to Dashboard v4.3.9</title>
+<title>InstantDash — Excel to Dashboard v4.4.0</title>
 <meta name="author" content="Developed by Anil Sharma, Former General Manager, Central Bank of India">
-<meta name="application-name" content="InstantDash v4.3.9">
-<meta name="description" content="InstantDash — Excel to Dashboard v4.3.9, developed by Anil Sharma">
+<meta name="application-name" content="InstantDash v4.4.0">
+<meta name="description" content="InstantDash — Excel to Dashboard v4.4.0, developed by Anil Sharma">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js';document.head.appendChild(s);"></script>
@@ -217,7 +217,7 @@ select, .input{
 .chart-body{position:relative; height:320px; min-height:320px; width:100%; overflow:hidden;}
 .chart-body canvas{display:block !important; width:100% !important; height:100% !important; min-height:300px;}
 .chart-controls-row{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; border-top:1px dashed var(--line); padding-top:8px;}
-/* ---------- v4.3.9 mobile-first dashboard polish ---------- */
+/* ---------- v4.4.0 mobile-first dashboard polish ---------- */
 .kpi-card{position:relative;overflow:hidden;min-height:196px;padding:18px 18px 16px;border-radius:18px;border:1px solid rgba(255,255,255,.06);background:linear-gradient(145deg,var(--card),rgba(255,255,255,.018));box-shadow:0 8px 24px rgba(0,0,0,.18);}
 .kpi-card:before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:var(--amber);}
 .kpi-card.kpi-derived:before{background:#304968;}
@@ -507,7 +507,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v403UiFix">
-/* v4.3.9: KPI directory is part of the loaded dashboard, never the landing page. */
+/* v4.4.0: KPI directory is part of the loaded dashboard, never the landing page. */
 #bankingKpiDirectory{display:block}
 #emptyState ~ #bankingKpiDirectory{display:block !important}
 </style>
@@ -539,7 +539,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v412InsightVisibility">
-/* v4.3.9 — high-contrast KPI Insight */
+/* v4.4.0 — high-contrast KPI Insight */
 .click-insight-backdrop{
   background:rgba(0,0,0,.62) !important;
 }
@@ -829,7 +829,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 <body>
 
 <div class="topbar">
-  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v4.3.9</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
+  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v4.4.0</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
   <div class="topbar-right">
     <div class="privacy-badge">🔒 <span class="txt">Processed locally — not uploaded to any server</span></div>
     <button class="icon-btn" id="shareTopBtn" title="Share dashboard" aria-label="Share dashboard as an image" style="display:none;">📤</button>
@@ -1248,7 +1248,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
   </div>
 </div>
 
-<footer class="app-footer">InstantDash <strong>v4.3.9</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
+<footer class="app-footer">InstantDash <strong>v4.4.0</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
 </div>
 
 <!-- Ask Your Data floating widget -->
@@ -2134,7 +2134,7 @@ function fail(msg){
 
 
 
-// v4.3.9: expose the real file handler for the independent mobile file-picker hook.
+// v4.4.0: expose the real file handler for the independent mobile file-picker hook.
 window.instantDashHandleFile = handleFile;
 
 function chooseBestDataSheet(names, wb){
@@ -2730,7 +2730,7 @@ function renderPerformanceScorecard(){
 }
 
 
-/* ===================== InstantDash v4.3.9 =====================
+/* ===================== InstantDash v4.4.0 =====================
    Consolidated management/KPI intelligence layer.
    It is additive: existing v3.5.9 chart engine remains intact.
 ================================================================ */
@@ -2879,7 +2879,8 @@ function v4BuildKpiIntelligence(focusMeasure){
   const libraryAreas=(typeof BANKING_BRANCH_KPI_LIBRARY!=='undefined'&&Array.isArray(BANKING_BRANCH_KPI_LIBRARY))
     ? [...new Set(BANKING_BRANCH_KPI_LIBRARY.map(x=>x.area).filter(Boolean))] : [];
   const workbookAreas=typeof collectWorkbookAreas==='function'?collectWorkbookAreas():[];
-  const areas=[...new Set([...datasetAreas,...libraryAreas,...workbookAreas,'Banking Branch & Bank Performance','Company Results'])]
+  const standardAreas=(typeof KPI_LIBRARY_AREAS!=='undefined'&&Array.isArray(KPI_LIBRARY_AREAS))?KPI_LIBRARY_AREAS:[];
+  const areas=[...new Set([...standardAreas,...datasetAreas,...libraryAreas,...workbookAreas,'Banking Branch & Bank Performance','Company Results'])]
     .filter(Boolean)
     .sort((a,b)=>String(a).localeCompare(String(b),undefined,{sensitivity:'base',numeric:true}));
   const sel=document.getElementById('kpiIntelArea');
@@ -3926,6 +3927,29 @@ function sourceMatchForKpi(def){
   return best;
 }
 function detectDepartment(){
+  // Prefer an explicit Area/Department/Category field in the uploaded data.
+  // This prevents generic columns such as Target / Actual / KPI from incorrectly
+  // classifying a banking workbook as "Management".
+  const areaCol=STATE.columns.find(c=>/^(area|department|category|kpi area|business area|segment)$/i.test(String(c.name||'').trim()));
+  if(areaCol){
+    const vals=STATE.filteredData?.length?STATE.filteredData:STATE.data;
+    const counts={};
+    (vals||[]).forEach(r=>{
+      const v=String(r[areaCol.name]??'').trim();
+      if(v) counts[v]=(counts[v]||0)+1;
+    });
+    const top=Object.entries(counts).sort((a,b)=>b[1]-a[1])[0];
+    if(top && top[0]) return top[0];
+  }
+
+  // If the workbook/file title clearly identifies banking/company results,
+  // use that as a secondary signal.
+  const fileText=String(STATE.documentMeta?.name||STATE.fileName||STATE.sheetName||'').toLowerCase();
+  if(/bank|branch|casa|npa|advances|deposit|banking/.test(fileText))
+    return 'Banking Branch & Bank Performance';
+  if(/company|financial result|quarterly result|earnings|investor|annual report/.test(fileText))
+    return 'Company Results';
+
   const names=STATE.columns.map(c=>c.name.toLowerCase()).join(' | ');
   const scores={HR:0,Finance:0,'Sales / Business':0,Marketing:0,'Operations / Manufacturing':0,Procurement:0,'Supply Chain':0,'Customer Service':0,'Project Management':0,Banking:0,'BC Performance':0,'Bank & NBFC Earnings / Investor Analysis':0,Management:0};
   const rules={
@@ -4005,7 +4029,15 @@ function fmtKpiValue(k){
 }
 function renderKpiMapping(kpis){
   const box=document.getElementById('kpiMappingBody'); if(!box)return;
-  const autoDept=detectDepartment(); const dept=STATE.kpiDepartment&&STATE.kpiDepartment!=='Auto Detect'?STATE.kpiDepartment:autoDept; const hint=document.getElementById('kpiDepartmentHint'); if(hint)hint.textContent='Detected area: '+dept+' · '+kpis.length+' KPI(s) available'; const ds=document.getElementById('kpiDepartmentSelect'); if(ds)ds.value=STATE.kpiDepartment||'Auto Detect';
+  const autoDept=detectDepartment();
+  const dept=STATE.kpiDepartment&&STATE.kpiDepartment!=='Auto Detect'?STATE.kpiDepartment:autoDept;
+  const hint=document.getElementById('kpiDepartmentHint');
+  if(hint)hint.textContent='Detected area: '+dept+' · '+kpis.length+' KPI(s) available';
+  const ds=document.getElementById('kpiDepartmentSelect');
+  if(ds && (!STATE.kpiDepartment || STATE.kpiDepartment==='Auto Detect')){
+    const opt=[...ds.options].find(o=>o.textContent===dept);
+    if(opt) ds.value=opt.value;
+  } const ds=document.getElementById('kpiDepartmentSelect'); if(ds)ds.value=STATE.kpiDepartment||'Auto Detect';
   if(!kpis.length){box.innerHTML='<div class="kpi-empty">No reliable KPI mappings were found. Review the Data Profile or add a custom mapping.</div>';return;}
   const opts=STATE.columns.map(c=>`<option value="${escapeHtml(c.name)}">${escapeHtml(c.name)}</option>`).join('');
   box.innerHTML=`<table class="kpi-mapping-table"><thead><tr><th>KPI</th><th>Department</th><th>Category</th><th>Source column</th><th>Confidence</th><th>Value</th><th>Formula / method</th></tr></thead><tbody>${kpis.map(k=>`<tr><td><strong>${escapeHtml(k.name)}</strong></td><td>${escapeHtml(k.dept)}</td><td>${escapeHtml(k.cat)}</td><td>${k.source?`<select class="kpi-map-select" data-kpi="${escapeHtml(k.id)}"><option value="" ${!(STATE.kpiManualMap&&STATE.kpiManualMap[k.id])?'selected':''}>Auto: ${escapeHtml(k.source)}</option>${STATE.columns.map(c=>`<option value="${escapeHtml(c.name)}" ${(STATE.kpiManualMap&&STATE.kpiManualMap[k.id]===c.name)?'selected':''}>${escapeHtml(c.name)}</option>`).join('')}</select>`:'Calculated'}</td><td><span class="kpi-badge ${k.confidence}">${k.confidence}</span></td><td><strong>${escapeHtml(fmtKpiValue(k))}</strong></td><td>${escapeHtml(k.formula)}</td></tr>`).join('')}</tbody></table>`;
@@ -5107,7 +5139,7 @@ const MiniChart=(function(){
           const x0=xOf(Math.min(0,v)), x1=xOf(Math.max(0,v));
           const color=datasets[0].backgroundColor;
           ctx.fillStyle=color; ctx.fillRect(x0, yc-barH/2, Math.max(1,x1-x0), barH);
-          canvas._hit.push({x:x0,y:yc-barH/2,w:Math.max(1,x1-x0),h:barH,label:lab,value:v,color});
+          canvas._hit.push({x:x0,y:yc-barH/2,w:Math.max(1,x1-x0),h:barH,label:lab,value:v,color,measure:d.label||spec?.y||spec?.measure||''});
         });
         return;
       }
@@ -5139,12 +5171,12 @@ const MiniChart=(function(){
             if(v>=0){
               const y0=yOf(cumPos), y1=yOf(cumPos+v);
               ctx.fillStyle=d.backgroundColor; ctx.fillRect(bandCenter-barW/2, y1, barW, y0-y1);
-              canvas._hit.push({x:bandCenter-barW/2,y:y1,w:barW,h:y0-y1,label:lab+' · '+d.label,value:v,color:d.backgroundColor});
+              canvas._hit.push({x:bandCenter-barW/2,y:y1,w:barW,h:y0-y1,label:lab+' · '+d.label,value:v,color:d.backgroundColor,measure:d.label||spec?.y||spec?.measure||''});
               cumPos+=v;
             } else {
               const y0=yOf(cumNeg), y1=yOf(cumNeg+v);
               ctx.fillStyle=d.backgroundColor; ctx.fillRect(bandCenter-barW/2, y0, barW, y1-y0);
-              canvas._hit.push({x:bandCenter-barW/2,y:y0,w:barW,h:y1-y0,label:lab+' · '+d.label,value:v,color:d.backgroundColor});
+              canvas._hit.push({x:bandCenter-barW/2,y:y0,w:barW,h:y1-y0,label:lab+' · '+d.label,value:v,color:d.backgroundColor,measure:d.label||spec?.y||spec?.measure||''});
               cumNeg+=v;
             }
           });
@@ -5159,7 +5191,7 @@ const MiniChart=(function(){
             const r=Math.min(5, barW/2, rh/2);
             roundRectTop(ctx, x, y1, barW, rh, r);
             ctx.fill();
-            canvas._hit.push({x,y:y1,w:barW,h:rh,label: datasets.length>1? lab+' · '+d.label : lab, value:v, color:d.backgroundColor});
+            canvas._hit.push({x,y:y1,w:barW,h:rh,label: datasets.length>1? lab+' · '+d.label : lab, value:v, color:d.backgroundColor,measure:d.label||spec?.y||spec?.measure||''});
           });
         }
         // x-axis label
@@ -5602,8 +5634,11 @@ function showClickInsight(spec,hit,ds){
     </div>
     <div class="click-insight-reason"><strong>Why did it move?</strong><br>${info.reason.map(clickInsightEscape).join('<br>')}</div>`;
   back.style.display='flex';
+  const drillMeasure=String(hit.measure||spec?.y||spec?.measure||ds?.datasets?.[0]?.label||'').trim();
   back.dataset.drillColumn=spec.x||'';
-  back.dataset.drillLabel=String(hit.label); window._clickInsightContext={spec,hit,ds};
+  back.dataset.drillLabel=String(hit.label);
+  back.dataset.drillMeasure=drillMeasure;
+  window._clickInsightContext={spec,hit:{...hit,measure:drillMeasure},ds};
 }
 function closeClickInsight(e){
   if(e){e.preventDefault();e.stopPropagation();}
@@ -7044,7 +7079,10 @@ document.getElementById('themeToggle').addEventListener('click',()=>{
     const libraryAreas=lib.map(x=>String(x.area||'').trim()).filter(Boolean);
     const dataAreas=(STATE?.data||[]).map(r=>String(r.Area??r.area??'').trim()).filter(Boolean);
     const workbookAreas=collectWorkbookAreas();
+    const standardAreas=(typeof KPI_LIBRARY_AREAS!=='undefined'&&Array.isArray(KPI_LIBRARY_AREAS))
+      ? KPI_LIBRARY_AREAS : [];
     const areas=[...new Set([
+      ...standardAreas,
       ...libraryAreas,
       ...dataAreas,
       ...workbookAreas,
@@ -7117,7 +7155,14 @@ document.addEventListener('click',(e)=>{
   const c=window._clickInsightContext;
   if(!b||!c)return;
 
-  const measure=String(c.hit?.measure||c.spec?.y||c.spec?.measure||'').trim();
+  const measure=String(
+    c.hit?.measure ||
+    b.dataset.drillMeasure ||
+    c.spec?.y ||
+    c.spec?.measure ||
+    c.ds?.datasets?.[0]?.label ||
+    ''
+  ).trim();
   if(!measure){
     showMessage('The selected chart point does not have a KPI/measure name available for drill-down.','warn');
     return;
