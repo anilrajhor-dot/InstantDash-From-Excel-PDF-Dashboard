@@ -9036,6 +9036,125 @@ document.addEventListener('DOMContentLoaded',function(){
   });
 })();
 </script>
+
+<script id="v4523PdfKpiIntegrity">
+(function(){
+  // v4.5.23: PDF KPI integrity. The PDF extractor already preserves each
+  // entity's FY2026/FY2025/FY2024 values. Do not remap those rows through the
+  // generic banking KPI library: that library contains aliases such as ROA,
+  // Revenue and Advances which can select the first matching entity or sum a
+  // percentage. For a comparative-results PDF, build cards directly from the
+  // extracted source rows.
+  function pdfRows(){
+    return (window.STATE && Array.isArray(STATE.filteredData) ? STATE.filteredData : []).filter(r=>r && r.KPI);
+  }
+  function pdfNorm(v){return String(v??'').trim().toLowerCase().replace(/[–—]/g,'-').replace(/\s+/g,' ');}
+  function pdfNum(v){
+    if(typeof v==='number' && Number.isFinite(v)) return v;
+    const n=Number(String(v??'').replace(/[₹,%\s,]/g,''));
+    return Number.isFinite(n)?n:NaN;
+  }
+  function pdfPct(r){return /%|percent|percentage|ratio|margin|rate/i.test(String(r?.Unit??'')) || /%/.test(String(r?.KPI??''));}
+  function pdfAgg(rows,key,pct){
+    const a=rows.map(r=>pdfNum(r?.[key])).filter(Number.isFinite);
+    if(!a.length)return NaN;
+    if(pct){
+      const vals=a.map(v=>Math.abs(v)>1?v/100:v);
+      return vals.reduce((x,y)=>x+y,0)/vals.length;
+    }
+    return a.reduce((x,y)=>x+y,0);
+  }
+  function pdfDirection(name){
+    return /npa|slippage|cost|expense|loss|debt|complaint/i.test(String(name)) ? 'Lower is Better' :
+      /profit|income|revenue|sales|advance|deposit|roa|roe|capital|business|recovery/i.test(String(name)) ? 'Higher is Better' : 'Neutral';
+  }
+  function pdfSlug(name){return 'pdf_'+pdfNorm(name).replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');}
+
+  function buildPdfKpis(){
+    const rows=pdfRows();
+    if(!STATE?.documentMeta?.isCompanyResults || !rows.length) return null;
+    const groups=[];
+    const seen=new Map();
+    rows.forEach(r=>{
+      const name=String(r.KPI??'').trim();
+      const key=pdfNorm(name);
+      if(!name || seen.has(key)) return;
+      const same=rows.filter(x=>pdfNorm(x.KPI)===key);
+      const pct=same.some(pdfPct);
+      const cur=pdfAgg(same,'Current Period',pct);
+      if(!Number.isFinite(cur)) return;
+      const prev=pdfAgg(same,'Previous Period',pct);
+      const py=pdfAgg(same,'Previous-year Period',pct);
+      // Target in this reliability PDF is a page/entity target for the main
+      // financial target, not a standalone target for every KPI (e.g. ROA/NPA).
+      const target=/revenue|sales/i.test(name) ? pdfAgg(same,'Target',false) : NaN;
+      const def={
+        id:pdfSlug(name), name, dept:String(same[0].Area||'Company Results'), cat:'PDF Results',
+        aliases:[name], direct:true, agg:pct?'avg':'sum', higher:pdfDirection(name)==='Higher is Better',
+        lower:pdfDirection(name)==='Lower is Better', percent:pct, unit:pct?'percent':'currency',
+        value:cur, source:'PDF extracted FY2026', confidence:'high', formula:'Direct source value — FY2026',
+        pdfPrevious:prev, pdfPreviousYear:py, pdfTarget:target, pdfRows:same
+      };
+      seen.set(key,def); groups.push(def);
+    });
+    return groups;
+  }
+
+  const _oldBuild=window.buildUniversalKpisWithManual;
+  window.buildUniversalKpisWithManual=function(){
+    const pdf=buildPdfKpis();
+    if(pdf) return pdf;
+    return typeof _oldBuild==='function' ? _oldBuild() : [];
+  };
+  // Keep the local function binding used by renderKPIs in sync in classic
+  // script environments.
+  try{ buildUniversalKpisWithManual=window.buildUniversalKpisWithManual; }catch(e){}
+
+  const _oldInsight=window.clickInsightReason;
+  window.clickInsightReason=function(spec,hit,ds){
+    if(!STATE?.documentMeta?.isCompanyResults) return _oldInsight(spec,hit,ds);
+    const rows=pdfRows();
+    const wanted=pdfNorm(hit?.measure||spec?.y||hit?.label||'');
+    let matched=rows.filter(r=>pdfNorm(r.KPI)===wanted);
+    if(!matched.length && hit?.label) matched=rows.filter(r=>pdfNorm(r.KPI)===pdfNorm(hit.label));
+    // If the chart uses a shortened/aliased label, use the exact KPI library
+    // alias only as a fallback; never take the first row merely because it is
+    // the first entity in the PDF.
+    if(!matched.length){
+      const defs=buildPdfKpis()||[];
+      const d=defs.find(x=>pdfNorm(x.name)===wanted || (x.aliases||[]).some(a=>pdfNorm(a)===wanted));
+      if(d) matched=d.pdfRows||[];
+    }
+    if(!matched.length) return _oldInsight(spec,hit,ds);
+
+    const pct=matched.some(pdfPct);
+    const current=pdfAgg(matched,'Current Period',pct);
+    const previous=pdfAgg(matched,'Previous Period',pct);
+    const previousYear=pdfAgg(matched,'Previous-year Period',pct);
+    const isRevenue=/revenue|sales/i.test(String(matched[0].KPI||''));
+    const target=isRevenue?pdfAgg(matched,'Target',false):NaN;
+    const growth=Number.isFinite(previous)&&previous!==0 ? (current-previous)/Math.abs(previous)*100 : NaN;
+    const yoy=Number.isFinite(previousYear)&&previousYear!==0 ? (current-previousYear)/Math.abs(previousYear)*100 : NaN;
+    const currency=!pct;
+    const nature=pdfDirection(matched[0].KPI);
+    const reason=[];
+    if(Number.isFinite(growth)) reason.push(`${growth>=0?'Growth':'Degrowth'} of ${Math.abs(growth).toFixed(1)}% versus FY2025.`);
+    if(Number.isFinite(yoy)) reason.push(`Year-on-year ${yoy>=0?'growth':'degrowth'} of ${Math.abs(yoy).toFixed(1)}% versus FY2024.`);
+    if(Number.isFinite(target)&&target!==0){
+      const ach=current/target*100;
+      reason.push(`${ach.toFixed(1)}% of target; gap is ${clickInsightFormat(current-target,true,false)}.`);
+    }
+    if(!reason.length) reason.push('No verified comparison value is available in the extracted PDF rows for this KPI.');
+    return {current,previous,previousLabel:'FY2025',target,growth,reason,currency,pct,nature};
+  };
+  try{ clickInsightReason=window.clickInsightReason; }catch(e){}
+
+  // Ensure a PDF refresh immediately uses the source-row KPI builder.
+  if(typeof window.renderKPIs==='function'){
+    try{ window.renderKPIs(); }catch(e){ console.warn('v4.5.23 PDF KPI refresh',e); }
+  }
+})();
+</script>
 </body>
 </html>
 
