@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<title>InstantDash — Excel to Dashboard v4.5.7</title>
+<title>InstantDash — Excel to Dashboard v4.5.8</title>
 <meta name="author" content="Developed by Anil Sharma, Former General Manager, Central Bank of India">
-<meta name="application-name" content="InstantDash v4.5.7">
-<meta name="description" content="InstantDash — Excel to Dashboard v4.5.7, developed by Anil Sharma">
+<meta name="application-name" content="InstantDash v4.5.8">
+<meta name="description" content="InstantDash — Excel to Dashboard v4.5.8, developed by Anil Sharma">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js';document.head.appendChild(s);"></script>
@@ -217,7 +217,7 @@ select, .input{
 .chart-body{position:relative; height:320px; min-height:320px; width:100%; overflow:hidden;}
 .chart-body canvas{display:block !important; width:100% !important; height:100% !important; min-height:300px;}
 .chart-controls-row{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; border-top:1px dashed var(--line); padding-top:8px;}
-/* ---------- v4.5.7 mobile-first dashboard polish ---------- */
+/* ---------- v4.5.8 mobile-first dashboard polish ---------- */
 .kpi-card{position:relative;overflow:hidden;min-height:196px;padding:18px 18px 16px;border-radius:18px;border:1px solid rgba(255,255,255,.06);background:linear-gradient(145deg,var(--card),rgba(255,255,255,.018));box-shadow:0 8px 24px rgba(0,0,0,.18);}
 .kpi-card:before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:var(--amber);}
 .kpi-card.kpi-derived:before{background:#304968;}
@@ -507,7 +507,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v403UiFix">
-/* v4.5.7: KPI directory is part of the loaded dashboard, never the landing page. */
+/* v4.5.8: KPI directory is part of the loaded dashboard, never the landing page. */
 #bankingKpiDirectory{display:block}
 #emptyState ~ #bankingKpiDirectory{display:block !important}
 </style>
@@ -539,7 +539,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v412InsightVisibility">
-/* v4.5.7 — high-contrast KPI Insight */
+/* v4.5.8 — high-contrast KPI Insight */
 .click-insight-backdrop{
   background:rgba(0,0,0,.62) !important;
 }
@@ -820,7 +820,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 @media(max-width:480px){.cc-grid{grid-template-columns:1fr}}
 </style>
 <style id="v441AreaDirectoryThemeFix">
-/* v4.5.7: the directory must follow the app theme. Earlier versions used
+/* v4.5.8: the directory must follow the app theme. Earlier versions used
    hard-coded white backgrounds, which made the dark-mode text almost invisible. */
 .banking-kpi-directory{
   margin:18px 0;
@@ -909,7 +909,7 @@ document.addEventListener('DOMContentLoaded', function(){
 </script>
 
 <style id="v444LandingDirectoryVisibility">
-/* v4.5.7 — Landing page is for file upload only.
+/* v4.5.8 — Landing page is for file upload only.
    Area/KPI directories appear after a dashboard is loaded. */
 #areaDirectoryBlock,
 #bankingKpiDirectory{
@@ -1203,11 +1203,34 @@ button,#clickInsightDrill,.kpi-drill-selected{
 .v457-pdf-actions button{border:1px solid #f5b400!important;background:rgba(245,180,0,.10)!important;color:#f5c84b!important;border-radius:999px!important;padding:8px 12px!important;font-weight:900!important}
 @media(max-width:700px){.v457-pdf-grid{grid-template-columns:1fr}}
 </style>
+
+<style id="v458PdfShareStyle">
+.v458-share-panel{margin:14px 0;padding:14px;border:1px solid var(--line);border-radius:15px;background:var(--card);color:var(--ink)}
+.v458-share-title{font-weight:900;font-size:16px}
+.v458-share-sub{font-size:12px;color:var(--muted);margin-top:4px}
+.v458-share-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.v458-share-actions button{border:1px solid #f5b400!important;background:rgba(245,180,0,.10)!important;color:#f5c84b!important;border-radius:999px!important;padding:9px 13px!important;font-weight:900!important}
+.v458-pdf-result{margin-top:12px;padding:11px;border:1px solid var(--line);border-radius:10px;background:rgba(245,180,0,.06);font-size:12px;line-height:1.45}
+.v458-pdf-error{border-left:4px solid #d9534f}
+</style>
+
+
+<script id="v458PdfRuntime">
+(function(){
+  window.InstantDashLoadPdfJs=function(){
+    if(window.__instantDashPdfJsPromise) return window.__instantDashPdfJsPromise;
+    window.__instantDashPdfJsPromise=import('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs')
+      .then(function(mod){ window.InstantDashPdfJs=mod; return mod; });
+    return window.__instantDashPdfJsPromise;
+  };
+})();
+</script>
+
 </head>
 <body>
 
 <div class="topbar">
-  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v4.5.7</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
+  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v4.5.8</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
   <div class="topbar-right">
     <div class="privacy-badge">🔒 <span class="txt">Processed locally — not uploaded to any server</span></div>
     <button class="icon-btn" id="shareTopBtn" title="Share dashboard" aria-label="Share dashboard as an image" style="display:none;">📤</button>
@@ -1626,7 +1649,7 @@ button,#clickInsightDrill,.kpi-drill-selected{
   </div>
 </div>
 
-<footer class="app-footer">InstantDash <strong>v4.5.7</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
+<footer class="app-footer">InstantDash <strong>v4.5.8</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
 </div>
 
 <!-- Ask Your Data floating widget -->
@@ -2520,7 +2543,7 @@ function fail(msg){
 
 
 
-// v4.5.7: expose the real file handler for the independent mobile file-picker hook.
+// v4.5.8: expose the real file handler for the independent mobile file-picker hook.
 window.instantDashHandleFile = handleFile;
 
 function chooseBestDataSheet(names, wb){
@@ -3116,7 +3139,7 @@ function renderPerformanceScorecard(){
 }
 
 
-/* ===================== InstantDash v4.5.7 =====================
+/* ===================== InstantDash v4.5.8 =====================
    Consolidated management/KPI intelligence layer.
    It is additive: existing v3.5.9 chart engine remains intact.
 ================================================================ */
@@ -8163,6 +8186,138 @@ document.addEventListener('DOMContentLoaded',function(){
     if(e.target?.closest?.('#browseBtn,#newFileBtn')){
       document.getElementById('v457PdfMapper')?.remove();
       setTimeout(render,2800);
+    }
+  });
+})();
+</script>
+
+<script id="v458PdfReadAndShare">
+(function(){
+  function esc(v){const d=document.createElement('div');d.textContent=String(v??'');return d.innerHTML;}
+  function isPdf(file){return file && (file.type==='application/pdf'||/\.pdf$/i.test(file.name||''));}
+
+  async function extractPdf(file){
+    if(!window.InstantDashLoadPdfJs) throw new Error('PDF engine not installed');
+    const pdfjs=await window.InstantDashLoadPdfJs();
+    const buf=await file.arrayBuffer();
+    const pdf=await pdfjs.getDocument({data:buf}).promise;
+    const pages=[];
+    for(let p=1;p<=pdf.numPages;p++){
+      const page=await pdf.getPage(p);
+      const content=await page.getTextContent();
+      const items=content.items.map(x=>({text:x.str||'',x:x.transform?.[4]||0,y:x.transform?.[5]||0}));
+      // Group text into approximate lines, preserving reading order.
+      items.sort((a,b)=>Math.abs(b.y-a.y)>3 ? b.y-a.y : a.x-b.x);
+      const lines=[];
+      for(const it of items){
+        let line=lines.find(l=>Math.abs(l.y-it.y)<4);
+        if(!line){line={y:it.y,items:[]};lines.push(line);}
+        line.items.push(it);
+      }
+      lines.sort((a,b)=>b.y-a.y);
+      pages.push(lines.map(l=>l.items.sort((a,b)=>a.x-b.x).map(i=>i.text).join(' ').replace(/\s+/g,' ').trim()).filter(Boolean));
+    }
+    return {pages,totalPages:pdf.numPages};
+  }
+
+  function installFileHook(){
+    const input=[...document.querySelectorAll('input[type=file]')].find(x=>[...x.accept.split(',')].some(a=>/pdf/i.test(a))||x.accept==='' );
+    if(!input||input.dataset.v458Hooked)return;
+    input.dataset.v458Hooked='1';
+    input.addEventListener('change',async function(){
+      const file=this.files?.[0];
+      if(!isPdf(file))return;
+      const status=document.getElementById('v458PdfStatus');
+      if(status)status.textContent='Reading PDF tables and text…';
+      try{
+        const result=await extractPdf(file);
+        // Keep a clean neutral representation for the mapper.
+        window.InstantDashPdfExtract={fileName:file.name,pages:result.pages,totalPages:result.totalPages};
+        window.STATE=window.STATE||{};
+        window.STATE.pdfRows=result.pages.flatMap((lines,pi)=>lines.map((line,li)=>({
+          page:pi+1,row:li+1,text:line
+        })));
+        if(status)status.innerHTML='<b>PDF read successfully.</b> '+result.totalPages+' page(s) extracted. Table/KPI mapping can now be reviewed manually.';
+        window.dispatchEvent(new CustomEvent('instantdash:pdfready'));
+      }catch(e){
+        console.error(e);
+        if(status)status.innerHTML='<b>PDF reading failed:</b> '+esc(e.message||e);
+      }
+    });
+  }
+
+  function addPdfStatus(){
+    if(document.getElementById('v458PdfStatus'))return;
+    const card=document.createElement('div');
+    card.className='v458-pdf-result';
+    card.id='v458PdfStatus';
+    card.textContent='PDF reader ready. Select a PDF to extract its text and table structure.';
+    const host=document.getElementById('appContent')||document.querySelector('main');
+    if(host)host.prepend(card);
+  }
+
+  async function shareDashboard(){
+    const title='InstantDash Dashboard v4.5.8';
+    try{
+      const html='<!doctype html>\n'+document.documentElement.outerHTML;
+      const file=new File([html],'InstantDash_Dashboard_v4.5.8.html',{type:'text/html'});
+      if(navigator.share && (!navigator.canShare || navigator.canShare({files:[file]}))){
+        await navigator.share({
+          title,
+          text:'Interactive InstantDash dashboard',
+          files:[file]
+        });
+        return;
+      }
+      if(navigator.share){
+        await navigator.share({title,text:'Interactive InstantDash dashboard'});
+        return;
+      }
+      const url=URL.createObjectURL(file);
+      const a=document.createElement('a');
+      a.href=url;a.download=file.name;
+      document.body.appendChild(a);a.click();a.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),2000);
+      alert('Dashboard file created. You can now attach it in Mail or WhatsApp.');
+    }catch(e){
+      if(e && e.name==='AbortError') return;
+      console.error(e);
+      alert('Sharing was not completed. Use the Share Dashboard button again or save the dashboard file and attach it in Mail/WhatsApp.');
+    }
+  }
+
+  function addShareButton(){
+    if(document.getElementById('v458SharePanel'))return;
+    const host=document.getElementById('appContent')||document.querySelector('main');
+    if(!host)return;
+    const panel=document.createElement('section');
+    panel.id='v458SharePanel';panel.className='v458-share-panel';
+    panel.innerHTML=`<div class="v458-share-title">📤 Share Dashboard</div>
+      <div class="v458-share-sub">Share the current dashboard through your device's Mail, WhatsApp or other sharing apps.</div>
+      <div class="v458-share-actions">
+        <button type="button" id="v458Share">📤 Share Dashboard</button>
+        <button type="button" id="v458Mail">📧 Email</button>
+        <button type="button" id="v458Copy">🔗 Copy share text</button>
+      </div>`;
+    host.prepend(panel);
+    document.getElementById('v458Share').onclick=shareDashboard;
+    document.getElementById('v458Mail').onclick=async function(){
+      await shareDashboard();
+      const subject=encodeURIComponent('InstantDash Dashboard v4.5.8');
+      const body=encodeURIComponent('I am sharing the InstantDash interactive dashboard. Please open the attached HTML dashboard in a browser.');
+      setTimeout(()=>{ location.href='mailto:?subject='+subject+'&body='+body; },500);
+    };
+    document.getElementById('v458Copy').onclick=function(){
+      navigator.clipboard?.writeText('InstantDash Dashboard v4.5.8').then(()=>alert('Copied.'));
+    };
+  }
+
+  document.addEventListener('DOMContentLoaded',function(){
+    setTimeout(function(){installFileHook();addPdfStatus();addShareButton();},1800);
+  });
+  document.addEventListener('click',function(e){
+    if(e.target?.closest?.('#browseBtn,#newFileBtn')){
+      setTimeout(function(){installFileHook();},500);
     }
   });
 })();
