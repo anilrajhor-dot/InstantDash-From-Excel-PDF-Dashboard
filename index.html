@@ -1810,16 +1810,30 @@ async function extractPdfDashboard(file){
     [/^(?:gross )?advances\b/i,'Gross Advances','Banking Performance','₹ crore'],
     [/^net advances\b/i,'Net Advances','Banking Performance','₹ crore'],
     [/^casa(?: deposits)?\b/i,'CASA Deposits','Banking Performance','₹ crore'],
-    [/^casa ratio\b/i,'CASA Ratio %','Banking Performance','%'],
-    [/^gross npa(?: %)?\b|^gnpa(?: %)?\b/i,'GNPA %','Asset Quality','%'],
-    [/^net npa(?: %)?\b|^nnpa(?: %)?\b/i,'NNPA %','Asset Quality','%'],
-    [/^gross npa\b|^gnpa\b/i,'GNPA','Asset Quality','₹ crore'],
-    [/^net npa\b|^nnpa\b/i,'NNPA','Asset Quality','₹ crore'],
-    [/^provision coverage ratio\b|^pcr\b/i,'Provision Coverage Ratio %','Asset Quality','%'],
+    [/^% of total deposits\b/i,'CASA Ratio %','Banking Performance','%'],
+    [/^gross npa[s]?\b|^gnpa\b/i,'GNPA','Asset Quality','₹ crore'],
+    [/^net npa[s]?\b|^nnpa\b/i,'NNPA','Asset Quality','₹ crore'],
+    [/^% of gross npa[s]?\b|^gnpa %\b/i,'GNPA Ratio %','Asset Quality','%'],
+    [/^% of net npa[s]?\b|^nnpa %\b/i,'NNPA Ratio %','Asset Quality','%'],
+    [/^pcr without tech w\/off\b/i,'PCR without Technical Write-off %','Asset Quality','%'],
+    [/^pcr with tech w\/off\b/i,'PCR with Technical Write-off %','Asset Quality','%'],
+    [/^provision coverage ratio\b/i,'Provision Coverage Ratio %','Asset Quality','%'],
     [/^slippage ratio\b/i,'Slippage Ratio %','Asset Quality','%'],
     [/^credit cost\b/i,'Credit Cost %','Asset Quality','%'],
+    [/^total fund based income\b/i,'Total Fund-based Income','Profitability','₹ crore'],
+    [/^other income\b/i,'Other Income','Profitability','₹ crore'],
+    [/^total income\b/i,'Total Income','Profitability','₹ crore'],
+    [/^total interest expense\b/i,'Total Interest Expense','Expenses','₹ crore'],
     [/^net interest income\b|^nii\b/i,'Net Interest Income','Profitability','₹ crore'],
     [/^net interest margin\b|^nim\b/i,'NIM %','Profitability','%'],
+    [/^employee cost\b|^wages\b/i,'Employee Cost','Expenses','₹ crore'],
+    [/^other administrative exps?\b/i,'Other Administrative Expenses','Expenses','₹ crore'],
+    [/^total operating expenses\b/i,'Total Operating Expenses','Efficiency','₹ crore'],
+    [/^profit before tax and provisions\b/i,'Profit Before Tax and Provisions','Profitability','₹ crore'],
+    [/^provision for npa\b/i,'Provision for NPA','Asset Quality','₹ crore'],
+    [/^total provisions\b/i,'Total Provisions','Asset Quality','₹ crore'],
+    [/^income tax\b/i,'Income Tax','Profitability','₹ crore'],
+    [/^effective tax rate\b/i,'Effective Tax Rate %','Profitability','%'],
     [/^operating profit\b|^popp\b|^pre[- ]?provision operating profit\b/i,'Operating Profit','Profitability','₹ crore'],
     [/^profit before tax\b|^pbt\b/i,'PBT','Profitability','₹ crore'],
     [/^net profit\b|^profit after tax\b|^pat\b/i,'PAT','Profitability','₹ crore'],
@@ -1827,9 +1841,16 @@ async function extractPdfDashboard(file){
     [/^return on equity\b|^roe\b/i,'RoE %','Profitability','%'],
     [/^cost to income\b/i,'Cost-to-Income Ratio %','Efficiency','%'],
     [/^capital adequacy ratio\b|^car\b/i,'CAR %','Capital Adequacy','%'],
-    [/^cet1\b/i,'CET1 %','Capital Adequacy','%'],
+    [/^cet 1\b|^cet1\b/i,'CET1 %','Capital Adequacy','%'],
     [/^tier 1\b/i,'Tier 1 Capital %','Capital Adequacy','%'],
-    [/^net worth\b/i,'Net Worth','Capital Adequacy','₹ crore'],
+    [/^networth\b|^net worth\b/i,'Net Worth','Capital Adequacy','₹ crore'],
+    [/^equity share capital\b/i,'Equity Share Capital','Capital Adequacy','₹ crore'],
+    [/^govt holding\b/i,'Government Holding %','Ownership','%'],
+    [/^book value per share\b/i,'Book Value per Share','Per Share & Market','₹/share'],
+    [/^adj book value\b/i,'Adjusted Book Value','Per Share & Market','₹/share'],
+    [/^earning per share\b|^eps\b/i,'Earnings per Share','Per Share & Market','₹/share'],
+    [/^dps\b/i,'Dividend per Share','Per Share & Market','₹/share'],
+    [/^dividend payout\b/i,'Dividend Payout %','Per Share & Market','%'],
     [/^branches\b/i,'Branches','Network','Count'],
     [/^atms?\b/i,'ATMs','Network','Count']
   ];
@@ -1896,7 +1917,7 @@ async function extractPdfDashboard(file){
       const unit=(def.unit==='currency' || (def.unit!=='%' && def.unit!=='Count')) ? (unitFromText(trimmed,pageText)||def.unit||'₹') : def.unit;
       // Do not blindly assume a four-column order for bank snapshots. For company result statements,
       // four values normally map current quarter / preceding quarter / previous-year quarter / FY.
-      const vals=nums.slice(-4);
+      const vals=nums.slice(0,4);
       while(vals.length<4) vals.unshift(null);
       rows.push({
         KPI:def.label,Area:'Company Results','KPI Nature':def.area,
@@ -5384,6 +5405,19 @@ function clickInsightReason(spec,hit,ds){
     if(targetVals.length) target=targetVals.reduce((a,b)=>a+b,0);
   }
 
+  // Company/bank-results PDF rows are extracted with explicit comparison columns.
+  // When a KPI bar represents one extracted KPI row (x = KPI), use those columns
+  // directly instead of treating the KPI name as a non-time category.
+  if(!Number.isFinite(previous) && Array.isArray(selectedRows) && selectedRows.length){
+    const r=selectedRows[0]||{};
+    const previousNames=['Previous Period','Previous Quarter','Previous-year Period','Previous Year','Prior Period'];
+    const prevName=previousNames.find(n=>Object.prototype.hasOwnProperty.call(r,n) && Number.isFinite(getNumeric(r,n)));
+    if(prevName){ previous=getNumeric(r,prevName); previousLabel=prevName; }
+    if(!Number.isFinite(target)){
+      const sourceTarget=cols.find(n=>/^target$|^target value$|^budget$/i.test(n));
+      if(sourceTarget && Number.isFinite(getNumeric(r,sourceTarget))) target=getNumeric(r,sourceTarget);
+    }
+  }
   let growth=NaN;
   if(Number.isFinite(previous)&&previous!==0) growth=(current-previous)/Math.abs(previous)*100;
   let reason=[];
@@ -5392,7 +5426,21 @@ function clickInsightReason(spec,hit,ds){
   }else if(prof?.role==='Time' || prof?.type==='Date'){
     reason.push('No directly comparable previous period is available in the current filtered data.');
   }else{
-    reason.push('Growth / degrowth is not applicable because this chart compares categories rather than time periods.');
+    reason.push('Growth / degrowth is not available from the selected comparison columns.');
+  }
+  // If the source is a financial-results row and a previous-year value is present,
+  // provide the second comparison as well. This is factual arithmetic, not a guessed cause.
+  if(Array.isArray(selectedRows) && selectedRows.length && Number.isFinite(current)){
+    const r=selectedRows[0]||{};
+    const pyNames=['Previous-year Period','Previous Year','YoY Previous Period'];
+    const pyName=pyNames.find(n=>Object.prototype.hasOwnProperty.call(r,n) && Number.isFinite(getNumeric(r,n)));
+    if(pyName){
+      const py=getNumeric(r,pyName);
+      if(py!==0){
+        const yoy=(current-py)/Math.abs(py)*100;
+        reason.push(`Year-on-year ${yoy>=0?'growth':'degrowth'} of ${Math.abs(yoy).toFixed(1)}% versus ${pyName}.`);
+      }
+    }
   }
   if(Number.isFinite(target)&&target!==0){
     const ach=current/target*100, gap=current-target;
