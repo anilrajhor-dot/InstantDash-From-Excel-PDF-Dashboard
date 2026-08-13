@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<title>InstantDash — Excel to Dashboard v4.5.12</title>
+<title>InstantDash — Excel to Dashboard v4.5.13</title>
 <meta name="author" content="Developed by Anil Sharma, Former General Manager, Central Bank of India">
-<meta name="application-name" content="InstantDash v4.5.12">
-<meta name="description" content="InstantDash — Excel to Dashboard v4.5.12, developed by Anil Sharma">
+<meta name="application-name" content="InstantDash v4.5.13">
+<meta name="description" content="InstantDash — Excel to Dashboard v4.5.13, developed by Anil Sharma">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js';document.head.appendChild(s);"></script>
@@ -217,7 +217,7 @@ select, .input{
 .chart-body{position:relative; height:320px; min-height:320px; width:100%; overflow:hidden;}
 .chart-body canvas{display:block !important; width:100% !important; height:100% !important; min-height:300px;}
 .chart-controls-row{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; border-top:1px dashed var(--line); padding-top:8px;}
-/* ---------- v4.5.12 mobile-first dashboard polish ---------- */
+/* ---------- v4.5.13 mobile-first dashboard polish ---------- */
 .kpi-card{position:relative;overflow:hidden;min-height:196px;padding:18px 18px 16px;border-radius:18px;border:1px solid rgba(255,255,255,.06);background:linear-gradient(145deg,var(--card),rgba(255,255,255,.018));box-shadow:0 8px 24px rgba(0,0,0,.18);}
 .kpi-card:before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:var(--amber);}
 .kpi-card.kpi-derived:before{background:#304968;}
@@ -507,7 +507,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v403UiFix">
-/* v4.5.12: KPI directory is part of the loaded dashboard, never the landing page. */
+/* v4.5.13: KPI directory is part of the loaded dashboard, never the landing page. */
 #bankingKpiDirectory{display:block}
 #emptyState ~ #bankingKpiDirectory{display:block !important}
 </style>
@@ -539,7 +539,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v412InsightVisibility">
-/* v4.5.12 — high-contrast KPI Insight */
+/* v4.5.13 — high-contrast KPI Insight */
 .click-insight-backdrop{
   background:rgba(0,0,0,.62) !important;
 }
@@ -820,7 +820,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 @media(max-width:480px){.cc-grid{grid-template-columns:1fr}}
 </style>
 <style id="v441AreaDirectoryThemeFix">
-/* v4.5.12: the directory must follow the app theme. Earlier versions used
+/* v4.5.13: the directory must follow the app theme. Earlier versions used
    hard-coded white backgrounds, which made the dark-mode text almost invisible. */
 .banking-kpi-directory{
   margin:18px 0;
@@ -909,7 +909,7 @@ document.addEventListener('DOMContentLoaded', function(){
 </script>
 
 <style id="v444LandingDirectoryVisibility">
-/* v4.5.12 — Landing page is for file upload only.
+/* v4.5.13 — Landing page is for file upload only.
    Area/KPI directories appear after a dashboard is loaded. */
 #areaDirectoryBlock,
 #bankingKpiDirectory{
@@ -1269,11 +1269,27 @@ body.v4510-pdf-session .v4510-pdf-only{display:flex!important}
 @media(max-width:850px){.v4512-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:560px){.v4512-grid{grid-template-columns:1fr}}
 </style>
+
+<style id="v4513DataIntegrityStyle">
+.v4513-warning{margin:12px 0;padding:12px 14px;border-radius:12px;border:1px solid rgba(245,180,0,.65);background:rgba(245,180,0,.08);color:var(--ink);font-size:12px;line-height:1.5}
+.v4513-blocked{border-color:rgba(220,80,80,.6);background:rgba(220,80,80,.07)}
+.v4513-source{margin-top:10px;padding:10px 12px;border-radius:10px;background:rgba(80,130,220,.08);border-left:3px solid #668cff;color:var(--muted);font-size:11px;line-height:1.45}
+.v4513-modal{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;padding:18px}
+.v4513-modal>div{max-width:720px;width:100%;max-height:90vh;overflow:auto;background:var(--card);border:2px solid #f5b400;border-radius:20px;padding:18px;color:var(--ink)}
+.v4513-modal h3{margin:0 0 12px}
+.v4513-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:7px 0}
+.v4513-cell{padding:9px;border:1px solid var(--line);border-radius:9px}
+.v4513-cell small{display:block;color:var(--muted);font-size:10px}
+.v4513-cell b{display:block;margin-top:3px}
+.v4513-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.v4513-actions button{padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:var(--soft,var(--cream));color:var(--ink);font-weight:900}
+@media(max-width:560px){.v4513-row{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
 
 <div class="topbar">
-  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v4.5.12</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
+  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v4.5.13</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
   <div class="topbar-right">
     <div class="privacy-badge">🔒 <span class="txt">Processed locally — not uploaded to any server</span></div>
     <button class="btn secondary small share-dashboard-visible" id="shareTopBtn" title="Share dashboard" aria-label="Share dashboard" disabled>📤 Share dashboard</button>
@@ -1699,7 +1715,7 @@ body.v4510-pdf-session .v4510-pdf-only{display:flex!important}
   </div>
 </div>
 
-<footer class="app-footer">InstantDash <strong>v4.5.12</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
+<footer class="app-footer">InstantDash <strong>v4.5.13</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
 </div>
 
 <!-- Ask Your Data floating widget -->
@@ -2473,7 +2489,7 @@ function fail(msg){
 
 
 
-// v4.5.12: expose the real file handler for the independent mobile file-picker hook.
+// v4.5.13: expose the real file handler for the independent mobile file-picker hook.
 window.instantDashHandleFile = handleFile;
 
 function chooseBestDataSheet(names, wb){
@@ -3069,7 +3085,7 @@ function renderPerformanceScorecard(){
 }
 
 
-/* ===================== InstantDash v4.5.12 =====================
+/* ===================== InstantDash v4.5.13 =====================
    Consolidated management/KPI intelligence layer.
    It is additive: existing v3.5.9 chart engine remains intact.
 ================================================================ */
@@ -8320,6 +8336,114 @@ document.addEventListener('DOMContentLoaded',function(){
     if(e.target?.closest?.('#browseBtn,#newFileBtn')){
       document.getElementById('v4512ExecutiveAnalysis')?.remove();
       setTimeout(make,3000);
+    }
+  });
+})();
+</script>
+
+<script id="v4513DataIntegrity">
+(function(){
+  const norm=v=>String(v??'').replace(/\s+/g,' ').trim();
+  const canon=v=>norm(v).toLowerCase().replace(/[₹,\s]/g,'');
+  function number(v){
+    if(typeof v==='number'&&Number.isFinite(v))return v;
+    const n=Number(String(v??'').replace(/[₹,%\s,]/g,''));
+    return Number.isFinite(n)?n:NaN;
+  }
+  function keys(){return [...new Set((window.STATE?.data||[]).flatMap(r=>Object.keys(r||{})))]}
+  function find(rx){return keys().find(k=>rx.test(norm(k)))}
+  function sameUnit(a,b){return canon(a.unit)===canon(b.unit)}
+  function sameEntity(a,b){return !a.company||!b.company||canon(a.company)===canon(b.company)}
+  function sameKpi(a,b){return canon(a.kpi)===canon(b.kpi)}
+  function comparable(a,b){
+    return sameKpi(a,b)&&sameUnit(a,b)&&sameEntity(a,b)&&
+      !!a.period&&!!b.period&&canon(a.period)!==canon(b.period);
+  }
+  function rowMap(){
+    const kpi=find(/^(kpi|metric|indicator|particulars?|head|item|description|parameter)$/i);
+    const value=find(/^(actual|current|value|result|achievement|amount)$/i);
+    const unit=find(/^(unit|units)$/i);
+    const period=find(/^(period|reporting period|year|quarter|fy)$/i);
+    const company=find(/^(company|bank|entity|issuer)$/i);
+    if(!kpi||!value)return [];
+    return (window.STATE?.data||[]).map((r,i)=>({
+      i,kpi:norm(r[kpi]),value:number(r[value]),unit:unit?norm(r[unit]):'',
+      period:period?norm(r[period]):'',company:company?norm(r[company]):'',
+      sourcePage:norm(r.Page||r.page||r['Page No.']||r['Page Number'])
+    })).filter(x=>x.kpi&&Number.isFinite(x.value));
+  }
+
+  window.InstantDashCompareSafe=function(current,previous){
+    if(!current||!previous)return {ok:false,reason:'Both current and previous values are required.'};
+    if(!comparable(current,previous)){
+      const reasons=[];
+      if(!sameKpi(current,previous))reasons.push('different KPI');
+      if(!sameUnit(current,previous))reasons.push('different unit');
+      if(!sameEntity(current,previous))reasons.push('different company/bank');
+      if(!current.period||!previous.period||canon(current.period)===canon(previous.period))reasons.push('non-comparable period');
+      return {ok:false,reason:'Comparison suppressed: '+reasons.join(', ')+'.'};
+    }
+    if(previous.value===0)return {ok:false,reason:'Comparison suppressed: previous-period value is zero.'};
+    return {ok:true,growth:(current.value-previous.value)/Math.abs(previous.value)*100};
+  };
+
+  function showIntegrityModal(a,b,result){
+    const modal=document.createElement('div');modal.className='v4513-modal';
+    modal.innerHTML=`<div>
+      <h3>🔎 KPI Comparison Verification</h3>
+      <div class="v4513-warning ${result.ok?'':'v4513-blocked'}">
+        ${result.ok?'Comparison is valid because KPI, company/bank, unit and periods match.':
+          '⚠️ '+result.reason+' No growth percentage has been calculated.'}
+      </div>
+      <div class="v4513-row">
+        <div class="v4513-cell"><small>KPI</small><b>${a.kpi||'—'}</b></div>
+        <div class="v4513-cell"><small>Company / Bank</small><b>${a.company||'—'}</b></div>
+      </div>
+      <div class="v4513-row">
+        <div class="v4513-cell"><small>Current</small><b>${a.value}${a.unit?' '+a.unit:''}</b><small>${a.period||'—'}</small></div>
+        <div class="v4513-cell"><small>Previous</small><b>${b.value}${b.unit?' '+b.unit:''}</b><small>${b.period||'—'}</small></div>
+      </div>
+      <div class="v4513-source"><b>Management interpretation:</b> Numerical movement alone does not establish its cause. The dashboard will only present a reason when supporting source data actually demonstrates it.</div>
+      <div class="v4513-actions"><button id="v4513Close">Close</button>${result.ok?'<button id="v4513Drill">Drill into this KPI</button>':''}</div>
+    </div>`;
+    document.body.appendChild(modal);
+    modal.querySelector('#v4513Close').onclick=()=>modal.remove();
+    modal.querySelector('#v4513Drill')?.addEventListener('click',()=>{
+      modal.remove();
+      const dest=document.querySelector('[id*="kpi"],[class*="kpi"]');
+      if(dest)dest.scrollIntoView({behavior:'smooth',block:'start'});
+    });
+  }
+
+  // Replace the existing generic insight handler when a clicked KPI can be mapped
+  // to source rows. If no source row can be matched, leave the existing UI intact.
+  document.addEventListener('click',function(e){
+    const trigger=e.target.closest?.('.kpi-card,.kpi-tile,[data-kpi],[data-kpi-name]');
+    if(!trigger)return;
+    const name=norm(trigger.getAttribute('data-kpi')||trigger.getAttribute('data-kpi-name')||trigger.querySelector?.('.kpi-name')?.textContent);
+    if(!name)return;
+    const rows=rowMap().filter(r=>canon(r.kpi)===canon(name));
+    if(rows.length<2)return;
+    const byEntity={};
+    rows.forEach(r=>{const k=canon(r.company)+'|'+canon(r.unit);(byEntity[k]??=[]).push(r)});
+    let pair=null;
+    for(const arr of Object.values(byEntity)){
+      if(arr.length<2)continue;
+      const sorted=arr.filter(x=>x.period).slice().sort((a,b)=>canon(a.period).localeCompare(canon(b.period)));
+      if(sorted.length>=2){pair=[sorted[sorted.length-1],sorted[sorted.length-2]];break}
+    }
+    if(pair){
+      e.preventDefault();e.stopImmediatePropagation();
+      showIntegrityModal(pair[0],pair[1],InstantDashCompareSafe(pair[0],pair[1]));
+    }
+  },true);
+
+  // Remove stale "Drilled KPI" state when a fresh upload begins.
+  document.addEventListener('click',e=>{
+    if(e.target.closest?.('#newFileBtn,#browseBtn')){
+      document.querySelectorAll('.kpi-drill-selected,.kpi-drill-destination').forEach(x=>{
+        x.classList.remove('kpi-drill-selected','kpi-drill-destination')
+      });
     }
   });
 })();
