@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<title>InstantDash — Excel to Dashboard v4.3.2</title>
+<title>InstantDash — Excel to Dashboard v4.3.3</title>
 <meta name="author" content="Developed by Anil Sharma, Former General Manager, Central Bank of India">
-<meta name="application-name" content="InstantDash v4.3.2">
-<meta name="description" content="InstantDash — Excel to Dashboard v4.3.2, developed by Anil Sharma">
+<meta name="application-name" content="InstantDash v4.3.3">
+<meta name="description" content="InstantDash — Excel to Dashboard v4.3.3, developed by Anil Sharma">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js';document.head.appendChild(s);"></script>
@@ -217,7 +217,7 @@ select, .input{
 .chart-body{position:relative; height:320px; min-height:320px; width:100%; overflow:hidden;}
 .chart-body canvas{display:block !important; width:100% !important; height:100% !important; min-height:300px;}
 .chart-controls-row{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; border-top:1px dashed var(--line); padding-top:8px;}
-/* ---------- v4.3.2 mobile-first dashboard polish ---------- */
+/* ---------- v4.3.3 mobile-first dashboard polish ---------- */
 .kpi-card{position:relative;overflow:hidden;min-height:196px;padding:18px 18px 16px;border-radius:18px;border:1px solid rgba(255,255,255,.06);background:linear-gradient(145deg,var(--card),rgba(255,255,255,.018));box-shadow:0 8px 24px rgba(0,0,0,.18);}
 .kpi-card:before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:var(--amber);}
 .kpi-card.kpi-derived:before{background:#304968;}
@@ -507,7 +507,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v403UiFix">
-/* v4.3.2: KPI directory is part of the loaded dashboard, never the landing page. */
+/* v4.3.3: KPI directory is part of the loaded dashboard, never the landing page. */
 #bankingKpiDirectory{display:block}
 #emptyState ~ #bankingKpiDirectory{display:none !important}
 </style>
@@ -539,7 +539,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v412InsightVisibility">
-/* v4.3.2 — high-contrast KPI Insight */
+/* v4.3.3 — high-contrast KPI Insight */
 .click-insight-backdrop{
   background:rgba(0,0,0,.62) !important;
 }
@@ -823,7 +823,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 <body>
 
 <div class="topbar">
-  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v4.3.2</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
+  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v4.3.3</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
   <div class="topbar-right">
     <div class="privacy-badge">🔒 <span class="txt">Processed locally — not uploaded to any server</span></div>
     <button class="icon-btn" id="shareTopBtn" title="Share dashboard" aria-label="Share dashboard as an image" style="display:none;">📤</button>
@@ -1236,7 +1236,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
   </div>
 </div>
 
-<footer class="app-footer">InstantDash <strong>v4.3.2</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
+<footer class="app-footer">InstantDash <strong>v4.3.3</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
 </div>
 
 <!-- Ask Your Data floating widget -->
@@ -1753,72 +1753,183 @@ async function extractPdfDashboard(file){
   }
 
   const allText=pages.flatMap(p=>p.lines).join('\n');
-  const exactCompanyLine=pages.flatMap(p=>p.lines).find(line=>/^[A-Z][A-Za-z0-9&().,'\- ]{2,90}(?:Limited|Ltd\.?|Corporation|Corp\.?|Industries|Holdings|PLC)$/.test(line.trim()));
-  const companyMatch=allText.match(/(?:The Board of Directors|Holding Company)\s+([A-Z][A-Za-z0-9&().,'\- ]{2,90}(?:Limited|Ltd\.?|Corporation|Corp\.?|Industries|Holdings|PLC))/i);
-  const company=(exactCompanyLine||companyMatch?.[1]||'Company Results').trim();
-  const isCompany=/financial results|statement of (?:standalone|consolidated).*financial results|quarterly.*results/i.test(allText);
-  if(!isCompany) throw new Error('This PDF does not appear to contain recognisable company financial results.');
+  const cleanText=allText.replace(/\s+/g,' ').trim();
+  const companyPatterns=[
+    /(?:reviewed|accompanying|results of|financial results of|results for)\s+([A-Z][A-Za-z0-9&().,'’\- ]{2,100}?(?:Limited|Ltd\.?|Bank|Corporation|Corp\.?|Industries|Holdings|PLC))/i,
+    /(?:The Board of Directors|Board of Directors)\s+(?:of\s+)?([A-Z][A-Za-z0-9&().,'’\- ]{2,100}?(?:Limited|Ltd\.?|Bank|Corporation|Corp\.?|Industries|Holdings|PLC))/i,
+    /(?:Company|Bank)\s*[:\-]\s*([A-Z][A-Za-z0-9&().,'’\- ]{2,100}?(?:Limited|Ltd\.?|Bank|Corporation|Corp\.?|Industries|Holdings|PLC))/i
+  ];
+  const exactCompanyLine=pages.flatMap(p=>p.lines).find(line=>/^[A-Z][A-Za-z0-9&().,'’\- ]{2,100}(?:Limited|Ltd\.?|Bank|Corporation|Corp\.?|Industries|Holdings|PLC)$/.test(line.trim()));
+  let company=exactCompanyLine||'';
+  for(const re of companyPatterns){if(!company){const m=cleanText.match(re);if(m)company=m[1].trim();}}
+  if(!company){
+    const known=cleanText.match(/\b(?:Central Bank of India|State Bank of India|Bank of Baroda|Punjab National Bank|Canara Bank|Union Bank of India|Indian Bank|Bank of India|ICICI Bank|HDFC Bank)\b/i);
+    if(known) company=known[0];
+  }
+  company=(company||'Company Results').replace(/\s+/g,' ').trim();
+
+  const isBank=/\b(?:bank|banking|gross advances|net advances|deposits|casa|gnpa|nnpa|nim|capital adequacy|cet1|slippage|provision coverage)\b/i.test(cleanText);
+  const isCompany=/financial results|quarterly.*results|quarterly financials|statement of (?:standalone|consolidated).*financial results|results for the quarter/i.test(cleanText);
+  if(!isCompany && !isBank) throw new Error('The PDF was read, but it does not appear to contain recognisable company or banking financial-results data.');
+
+  const numberRe=/(?:₹|Rs\.?|INR|\$|€|£)?\s*\(?-?\d[\d,]*(?:\.\d+)?\)?\s*%?/g;
+  const parseNums=str=>{
+    const out=[]; let m;
+    while((m=numberRe.exec(str||''))!==null){
+      const raw=String(m[0]).trim();
+      if(!raw || /^[-–—]$/.test(raw)) continue;
+      const n=parseCleanNumber(raw.replace(/%$/,''));
+      if(!isNaN(n))out.push({value:n,isPct:/%$/.test(raw)});
+    }
+    return out;
+  };
+  const firstNumberCount=str=>(str.match(/(?:₹|Rs\.?|INR|\$|€|£)?\s*\(?-?\d[\d,]*(?:\.\d+)?\)?\s*%?/g)||[]).length;
+  const periodTokens=text=>{
+    const out=[];
+    const rx=/\b(?:Q[1-4]\s*FY\s*\d{2,4}|FY\s*\d{2,4}|Q[1-4]\s*\d{4}|\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})\b/gi;
+    let m; while((m=rx.exec(text||''))!==null){const t=m[0].replace(/\s+/g,' ').trim();if(!out.includes(t))out.push(t);}
+    return out;
+  };
+  const unitFromText=(line,pageText)=>{
+    const t=((line||'')+' '+(pageText||'')).toLowerCase();
+    if(/₹\s*\(?\s*(?:crore|cr)\)?|rs\.?\s*(?:crore|cr)|inr\s*(?:crore|cr)|amount in.*crore/.test(t)) return '₹ crore';
+    if(/₹\s*\(?\s*(?:mn|million)\)?|rs\.?\s*(?:mn|million)|amount in.*\bmn\b/.test(t)) return '₹ Mn';
+    if(/₹\s*\(?\s*(?:billion|bn)\)?|rs\.?\s*(?:billion|bn)/.test(t)) return '₹ billion';
+    if(/\bpercent|%\b/.test(t)) return '%';
+    return '';
+  };
+  const directionFor=(name)=>{
+    const n=String(name||'').toLowerCase();
+    if(/npa|slippage|credit cost|cost.?to.?income|expense|complaint|backlog|tat|debt|leverage|provision coverage gap|loss/.test(n)) return 'Lower is Better';
+    if(/margin|profit|income|revenue|deposit|advance|business|recovery|casa|capital|car|cet1|roa|roe|nim|eps|book value|order book|coverage/.test(n)) return 'Higher is Better';
+    return 'Context Dependent';
+  };
+  const bankDefs=[
+    [/^total business\b/i,'Total Business','Banking Performance','₹ crore'],
+    [/^(?:total )?deposits\b/i,'Total Deposits','Banking Performance','₹ crore'],
+    [/^(?:gross )?advances\b/i,'Gross Advances','Banking Performance','₹ crore'],
+    [/^net advances\b/i,'Net Advances','Banking Performance','₹ crore'],
+    [/^casa(?: deposits)?\b/i,'CASA Deposits','Banking Performance','₹ crore'],
+    [/^casa ratio\b/i,'CASA Ratio %','Banking Performance','%'],
+    [/^gross npa(?: %)?\b|^gnpa(?: %)?\b/i,'GNPA %','Asset Quality','%'],
+    [/^net npa(?: %)?\b|^nnpa(?: %)?\b/i,'NNPA %','Asset Quality','%'],
+    [/^gross npa\b|^gnpa\b/i,'GNPA','Asset Quality','₹ crore'],
+    [/^net npa\b|^nnpa\b/i,'NNPA','Asset Quality','₹ crore'],
+    [/^provision coverage ratio\b|^pcr\b/i,'Provision Coverage Ratio %','Asset Quality','%'],
+    [/^slippage ratio\b/i,'Slippage Ratio %','Asset Quality','%'],
+    [/^credit cost\b/i,'Credit Cost %','Asset Quality','%'],
+    [/^net interest income\b|^nii\b/i,'Net Interest Income','Profitability','₹ crore'],
+    [/^net interest margin\b|^nim\b/i,'NIM %','Profitability','%'],
+    [/^operating profit\b|^popp\b|^pre[- ]?provision operating profit\b/i,'Operating Profit','Profitability','₹ crore'],
+    [/^profit before tax\b|^pbt\b/i,'PBT','Profitability','₹ crore'],
+    [/^net profit\b|^profit after tax\b|^pat\b/i,'PAT','Profitability','₹ crore'],
+    [/^return on assets\b|^roa\b/i,'RoA %','Profitability','%'],
+    [/^return on equity\b|^roe\b/i,'RoE %','Profitability','%'],
+    [/^cost to income\b/i,'Cost-to-Income Ratio %','Efficiency','%'],
+    [/^capital adequacy ratio\b|^car\b/i,'CAR %','Capital Adequacy','%'],
+    [/^cet1\b/i,'CET1 %','Capital Adequacy','%'],
+    [/^tier 1\b/i,'Tier 1 Capital %','Capital Adequacy','%'],
+    [/^net worth\b/i,'Net Worth','Capital Adequacy','₹ crore'],
+    [/^branches\b/i,'Branches','Network','Count'],
+    [/^atms?\b/i,'ATMs','Network','Count']
+  ];
+  const companyDefs=[
+    [/^revenue from operations\b/i,'Revenue from Operations','Revenue & Growth','currency'],
+    [/^other income\b/i,'Other Income','Revenue & Growth','currency'],
+    [/^total income\b/i,'Total Income','Revenue & Growth','currency'],
+    [/^employee benefits expense\b/i,'Employee Benefits Expense','Expenses','currency'],
+    [/^finance costs?\b/i,'Finance Costs','Expenses','currency'],
+    [/^total expenses\b/i,'Total Expenses','Expenses','currency'],
+    [/^profit before exceptional items.*tax/i,'Profit Before Exceptional Items and Tax','Profitability','currency'],
+    [/^exceptional items?/i,'Exceptional Items','Profitability','currency'],
+    [/^profit before tax\b/i,'Profit Before Tax','Profitability','currency'],
+    [/^net profit for the period/i,'Net Profit','Profitability','currency'],
+    [/^total other comprehensive income/i,'Other Comprehensive Income','Other Comprehensive Income','currency'],
+    [/^total comprehensive income/i,'Total Comprehensive Income','Other Comprehensive Income','currency'],
+    [/^basic\s*-\s*net profit/i,'Basic EPS','Per Share & Market','₹/share'],
+    [/^diluted\s*-\s*net profit/i,'Diluted EPS','Per Share & Market','₹/share'],
+    [/^total assets\b/i,'Total Assets','Balance Sheet','currency'],
+    [/^net worth\b|^other equity\b/i,'Net Worth','Balance Sheet','currency'],
+    [/^cash and cash equivalents\b/i,'Cash & Cash Equivalents','Balance Sheet','currency'],
+    [/^operating cash flow\b/i,'Operating Cash Flow','Cash Flow','currency'],
+    [/^free cash flow\b/i,'Free Cash Flow','Cash Flow','currency'],
+    [/^roe\b|^return on equity\b/i,'ROE %','Returns & Efficiency','%'],
+    [/^roce\b|^return on capital employed\b/i,'ROCE %','Returns & Efficiency','%']
+  ];
 
   const rows=[];
-  let basis='';
-  const basisForPage=(pageNo,text)=>{
-    if(/consolidated/i.test(text) || pageNo>=5 && /consolidated/i.test(text)) return 'Consolidated';
-    if(/standalone/i.test(text)) return 'Standalone';
-    return basis;
+  let currentBasis='';
+  const dateHeaderFromPage=lines=>{
+    const toks=periodTokens(lines.slice(0,25).join(' '));
+    const dates=(lines.slice(0,25).join(' ').match(/\b\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}\b/g)||[]);
+    return [...toks,...dates.filter(x=>!toks.includes(x))];
   };
-  const kpiPatterns=[
-    [/^Revenue from operations\b/i,'Revenue from operations','Revenue & Growth','₹ Mn','Higher is Better'],
-    [/^Other income\b/i,'Other income','Revenue & Growth','₹ Mn','Higher is Better'],
-    [/^Total Income\b/i,'Total Income','Revenue & Growth','₹ Mn','Higher is Better'],
-    [/^Total expenses\b/i,'Total expenses','Profitability','₹ Mn','Lower is Better'],
-    [/^Profit before exceptional items.*tax/i,'Profit before exceptional items and tax','Profitability','₹ Mn','Higher is Better'],
-    [/^Profit before tax.*$/i,'Profit before tax','Profitability','₹ Mn','Higher is Better'],
-    [/^Net Profit for the period/i,'Net Profit','Profitability','₹ Mn','Higher is Better'],
-    [/^Profit attributable to\s*-?Equity holders of Parent/i,'Profit attributable to equity holders of Parent','Profitability','₹ Mn','Higher is Better'],
-    [/^Total other comprehensive income/i,'Other Comprehensive Income','Profitability','₹ Mn','Context Dependent'],
-    [/^Total comprehensive income/i,'Total Comprehensive Income','Profitability','₹ Mn','Context Dependent'],
-    [/^Basic\s+-\s+Net profit.*after exceptional/i,'Basic EPS','Per Share & Market','₹/share','Higher is Better'],
-    [/^Diluted\s+-\s+Net profit.*after exceptional/i,'Diluted EPS','Per Share & Market','₹/share','Higher is Better'],
-    [/^Basic\s+-\s+Profit attributable to equity.*after exceptional/i,'Basic EPS','Per Share & Market','₹/share','Higher is Better'],
-    [/^Diluted\s+-\s+Profit attributable to equity.*after exceptional/i,'Diluted EPS','Per Share & Market','₹/share','Higher is Better']
-  ];
-  const numberRe=/(?:₹|Rs\.?|\$|€|£)?\s*\(?-?\d[\d,]*(?:\.\d+)?\)?/g;
-  const parseNums=str=>{const out=[];let m;while((m=numberRe.exec(str||''))!==null){const n=parseCleanNumber(m[0]);if(!isNaN(n))out.push(n);}return out;};
-  const dateHeader=(lines)=>{
-    const joined=lines.slice(0,15).join(' ');
-    const dates=joined.match(/\b\d{2}\/\d{2}\/\d{4}\b/g)||[];
-    return dates.slice(0,4);
-  };
-  let latestDates=[];
+  let periods=[];
   pages.forEach(p=>{
     const pageText=p.lines.join(' ');
-    const detected=basisForPage(p.pageNo,pageText); if(detected) basis=detected;
-    const dates=dateHeader(p.lines); if(dates.length>=4) latestDates=dates;
+    const lower=pageText.toLowerCase();
+    if(/consolidated/.test(lower)) currentBasis='Consolidated';
+    else if(/standalone/.test(lower)) currentBasis='Standalone';
+    const pt=dateHeaderFromPage(p.lines); if(pt.length>=2 && periods.length<4) periods=pt.slice(0,4);
+
+    // Skip obvious narrative/chart pages. Prefer pages containing a financial-results table heading.
+    const tablePage=/particulars|quarterly financials|key performance indicators|financial highlights|financial results|business highlights|performance highlights|snapshot/i.test(lower);
+    if(!tablePage && isBank) return;
+
     p.lines.forEach(line=>{
-      if(/3 months period|Particulars|Unaudited|Audited|Amount in/i.test(line))return;
-      const hit=kpiPatterns.find(([re])=>re.test(line));
-      if(!hit)return;
-      const nums=parseNums(line);
-      if(nums.length<3)return;
-      const [re,label,area,unit,direction]=hit;
-      const values=nums.slice(-Math.min(4,nums.length));
-      if(values.length<3)return;
-      // Company-results tables have a fixed four-column order: current quarter, preceding quarter, corresponding quarter, FY.
-      while(values.length<4) values.unshift(null);
-      rows.push({KPI:label,Area:area,Nature:direction,Basis:basis||'Not detected','Current Quarter':values[0],'Preceding Quarter':values[1],'Previous-year Quarter':values[2],'Financial Year':values[3],Unit:unit,Page:p.pageNo,'Source Text':line});
+      const trimmed=line.replace(/\s+/g,' ').trim();
+      if(!trimmed || /^(particulars|unaudited|audited|amount in|note|notes|source:|www\.|page \d+)/i.test(trimmed)) return;
+      if(firstNumberCount(trimmed)<2) return;
+      const canonical=trimmed.replace(/^(?:[A-Z]\s*[-.)]|\d+[.)])\s*/,'');
+      let def=null;
+      if(isBank){
+        const hit=bankDefs.find(([re])=>re.test(canonical));
+        if(hit) def={label:hit[1],area:hit[2],unit:hit[3]};
+      }
+      if(!def){
+        const hit=companyDefs.find(([re])=>re.test(canonical));
+        if(hit) def={label:hit[1],area:hit[2],unit:hit[3]};
+      }
+      if(!def) return;
+      const nums=parseNums(trimmed).map(x=>x.value);
+      if(nums.length<2) return;
+      const unit=(def.unit==='currency' || (def.unit!=='%' && def.unit!=='Count')) ? (unitFromText(trimmed,pageText)||def.unit||'₹') : def.unit;
+      // Do not blindly assume a four-column order for bank snapshots. For company result statements,
+      // four values normally map current quarter / preceding quarter / previous-year quarter / FY.
+      const vals=nums.slice(-4);
+      while(vals.length<4) vals.unshift(null);
+      rows.push({
+        KPI:def.label,Area:'Company Results','KPI Nature':def.area,
+        Nature:directionFor(def.label),Basis:currentBasis||'Not detected',
+        'Current Period':vals[0],'Previous Period':vals[1],'Previous-year Period':vals[2],'Financial Year':vals[3],
+        Unit:unit,Page:p.pageNo,'Source Text':trimmed
+      });
     });
   });
-  // Deduplicate repeated labels on the same basis, keeping the first occurrence from the statement body.
-  const seen=new Set();
-  const clean=rows.filter(r=>{const key=[r.Basis,r.KPI,r.Page].join('|');if(seen.has(key))return false;seen.add(key);return true;});
-  if(!clean.length) throw new Error('The PDF was read, but no reliable company-results KPI table rows were identified. No figures have been guessed.');
 
-  const basisList=[...new Set(clean.map(r=>r.Basis))];
-  const dates=latestDates.length>=4?latestDates:['30/06/2026','31/03/2026','30/06/2025','31/03/2026'];
-  const basisText=basisList.join(' / ');
-  const meta={isCompanyResults:true,company,nature:'Quarterly financial results',basis:basisText,period:dates[0],comparison:`${dates[1]} and ${dates[2]}`,unit:'₹ Mn unless otherwise stated',source:file.name,description:`${basisText} quarterly financial results for ${company}, with current quarter compared with the preceding quarter and corresponding quarter of the previous year. Figures are taken only from identified statement rows; standalone and consolidated data are kept separate.`};
+  // Remove duplicate KPI/basis/page rows while preserving distinct standalone/consolidated statements.
+  const seen=new Set();
+  const clean=rows.filter(r=>{
+    const key=[r.Basis,r.KPI,r.Page].join('|');
+    if(seen.has(key))return false; seen.add(key); return true;
+  });
+  if(!clean.length) throw new Error('The PDF was read, but no reliable company/banking KPI table rows were identified. No figures have been guessed.');
+
+  const basisList=[...new Set(clean.map(r=>r.Basis).filter(Boolean))];
+  const dateList=periods.length?periods:['Current Period','Previous Period','Previous Year','Financial Year'];
+  const unitList=[...new Set(clean.map(r=>r.Unit).filter(Boolean))];
+  const nature=isBank?'Bank quarterly financial results and business-performance KPIs':'Quarterly/annual company financial results';
+  const meta={
+    isCompanyResults:true,company,
+    nature,
+    basis:basisList.join(' / ')||'Not detected',
+    period:dateList[0],
+    comparison:dateList.slice(1,3).join(' and ')||'Comparison periods detected from source',
+    unit:unitList.join(' / ')||'Source units',source:file.name,
+    description:`${company} — ${nature}. ${basisList.length?`Reporting basis: ${basisList.join(' / ')}. `:''}The dashboard uses only recognised table rows and keeps different reporting bases separate. Source periods and units are shown from the document; figures are not inferred from decorative charts.`
+  };
   STATE.documentMeta=meta;
-  const headers=['KPI','Area','Nature','Basis','Current Quarter','Preceding Quarter','Previous-year Quarter','Financial Year','Unit','Page','Source Text'];
+  const headers=['KPI','Area','KPI Nature','Nature','Basis','Current Period','Previous Period','Previous-year Period','Financial Year','Unit','Page','Source Text'];
   return {aoa:[headers,...clean.map(r=>headers.map(h=>r[h]??null))],pages:pdf.numPages,found:clean.length,meta};
 }
 async function handleFile(file){
@@ -1932,7 +2043,7 @@ function fail(msg){
 
 
 
-// v4.3.2: expose the real file handler for the independent mobile file-picker hook.
+// v4.3.3: expose the real file handler for the independent mobile file-picker hook.
 window.instantDashHandleFile = handleFile;
 
 function chooseBestDataSheet(names, wb){
@@ -2524,7 +2635,7 @@ function renderPerformanceScorecard(){
 }
 
 
-/* ===================== InstantDash v4.3.2 =====================
+/* ===================== InstantDash v4.3.3 =====================
    Consolidated management/KPI intelligence layer.
    It is additive: existing v3.5.9 chart engine remains intact.
 ================================================================ */
