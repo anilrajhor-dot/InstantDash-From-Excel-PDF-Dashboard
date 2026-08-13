@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<title>InstantDash — Excel to Dashboard v4.4.7</title>
+<title>InstantDash — Excel to Dashboard v4.4.8</title>
 <meta name="author" content="Developed by Anil Sharma, Former General Manager, Central Bank of India">
-<meta name="application-name" content="InstantDash v4.4.7">
-<meta name="description" content="InstantDash — Excel to Dashboard v4.4.7, developed by Anil Sharma">
+<meta name="application-name" content="InstantDash v4.4.8">
+<meta name="description" content="InstantDash — Excel to Dashboard v4.4.8, developed by Anil Sharma">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js';document.head.appendChild(s);"></script>
@@ -217,7 +217,7 @@ select, .input{
 .chart-body{position:relative; height:320px; min-height:320px; width:100%; overflow:hidden;}
 .chart-body canvas{display:block !important; width:100% !important; height:100% !important; min-height:300px;}
 .chart-controls-row{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; border-top:1px dashed var(--line); padding-top:8px;}
-/* ---------- v4.4.7 mobile-first dashboard polish ---------- */
+/* ---------- v4.4.8 mobile-first dashboard polish ---------- */
 .kpi-card{position:relative;overflow:hidden;min-height:196px;padding:18px 18px 16px;border-radius:18px;border:1px solid rgba(255,255,255,.06);background:linear-gradient(145deg,var(--card),rgba(255,255,255,.018));box-shadow:0 8px 24px rgba(0,0,0,.18);}
 .kpi-card:before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:var(--amber);}
 .kpi-card.kpi-derived:before{background:#304968;}
@@ -507,7 +507,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v403UiFix">
-/* v4.4.7: KPI directory is part of the loaded dashboard, never the landing page. */
+/* v4.4.8: KPI directory is part of the loaded dashboard, never the landing page. */
 #bankingKpiDirectory{display:block}
 #emptyState ~ #bankingKpiDirectory{display:block !important}
 </style>
@@ -539,7 +539,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v412InsightVisibility">
-/* v4.4.7 — high-contrast KPI Insight */
+/* v4.4.8 — high-contrast KPI Insight */
 .click-insight-backdrop{
   background:rgba(0,0,0,.62) !important;
 }
@@ -820,7 +820,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 @media(max-width:480px){.cc-grid{grid-template-columns:1fr}}
 </style>
 <style id="v441AreaDirectoryThemeFix">
-/* v4.4.7: the directory must follow the app theme. Earlier versions used
+/* v4.4.8: the directory must follow the app theme. Earlier versions used
    hard-coded white backgrounds, which made the dark-mode text almost invisible. */
 .banking-kpi-directory{
   margin:18px 0;
@@ -909,7 +909,7 @@ document.addEventListener('DOMContentLoaded', function(){
 </script>
 
 <style id="v444LandingDirectoryVisibility">
-/* v4.4.7 — Landing page is for file upload only.
+/* v4.4.8 — Landing page is for file upload only.
    Area/KPI directories appear after a dashboard is loaded. */
 #areaDirectoryBlock,
 #bankingKpiDirectory{
@@ -928,24 +928,63 @@ body.dashboard-ready #bankingKpiDirectory{
 .kpi-drill-highlight{outline:3px solid var(--gold,#f5b400)!important;outline-offset:5px;border-radius:14px;scroll-margin-top:24px}
 .kpi-drill-selected{border:3px solid var(--gold,#f5b400)!important;background:rgba(245,180,0,.14)!important;box-shadow:0 0 0 3px rgba(245,180,0,.16)!important}
 </style>
-<script id="v447AreaDropdownSort">
-function v447SortSelectOptions(sel){
-  if(!sel)return;
-  const opts=[...sel.options];
-  const auto=opts.find(o=>/^\s*Auto Detect\s*$/i.test(o.textContent||''));
-  const rest=opts.filter(o=>o!==auto).sort((a,b)=>
-    (a.textContent||'').trim().localeCompare((b.textContent||'').trim(),undefined,{sensitivity:'base',numeric:true})
-  );
-  sel.innerHTML='';
-  if(auto)sel.appendChild(auto);
-  rest.forEach(o=>sel.appendChild(o));
-}
+<script id="v448AreaDropdownSafe">
+(function(){
+  const AREAS=[
+    'Audit','Bank','Bank & NBFC Earnings / Investor Analysis','Banking',
+    'Banking Branch & Bank Performance','BC Performance','Company Results',
+    'Customer Service','Expenses','Finance','HR','Management','Marketing',
+    'Operations / Manufacturing','Procurement','Project Management','Recovery',
+    'Sales / Business','Supply Chain'
+  ];
+  window.v448EnsureAreas=function(){
+    const sel=document.getElementById('kpiDepartmentSelect');
+    if(!sel)return;
+    const current=sel.value;
+    const seen=new Set([...sel.options].map(o=>(o.textContent||'').trim()));
+    AREAS.forEach(name=>{
+      if(!seen.has(name)){
+        const o=document.createElement('option');
+        o.value=name;o.textContent=name;sel.appendChild(o);
+      }
+    });
+    const opts=[...sel.options];
+    const auto=opts.find(o=>/^\s*Auto Detect\s*$/i.test(o.textContent||''));
+    const rest=opts.filter(o=>o!==auto).sort((a,b)=>
+      (a.textContent||'').trim().localeCompare((b.textContent||'').trim(),undefined,{sensitivity:'base',numeric:true})
+    );
+    sel.innerHTML='';
+    if(auto)sel.appendChild(auto);
+    rest.forEach(o=>sel.appendChild(o));
+    if([...sel.options].some(o=>o.value===current)) sel.value=current;
+  };
+  document.addEventListener('DOMContentLoaded',function(){
+    window.v448EnsureAreas();
+    // Observe only the select itself and guard our own writes; this avoids
+    // recursive mutations that can block the Browse click on iOS.
+    const watch=function(){
+      const sel=document.getElementById('kpiDepartmentSelect');
+      if(!sel || sel._v448Observed)return;
+      let busy=false;
+      const ob=new MutationObserver(function(){
+        if(busy)return;
+        busy=true;
+        try{ window.v448EnsureAreas(); } finally { setTimeout(()=>busy=false,0); }
+      });
+      ob.observe(sel,{childList:true});
+      sel._v448Observed=true;
+    };
+    watch();
+    setTimeout(watch,500);
+    setTimeout(watch,1500);
+  });
+})();
 </script>
 </head>
 <body>
 
 <div class="topbar">
-  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v4.4.7</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
+  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v4.4.8</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
   <div class="topbar-right">
     <div class="privacy-badge">🔒 <span class="txt">Processed locally — not uploaded to any server</span></div>
     <button class="icon-btn" id="shareTopBtn" title="Share dashboard" aria-label="Share dashboard as an image" style="display:none;">📤</button>
@@ -1364,7 +1403,7 @@ function v447SortSelectOptions(sel){
   </div>
 </div>
 
-<footer class="app-footer">InstantDash <strong>v4.4.7</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
+<footer class="app-footer">InstantDash <strong>v4.4.8</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
 </div>
 
 <!-- Ask Your Data floating widget -->
@@ -2258,7 +2297,7 @@ function fail(msg){
 
 
 
-// v4.4.7: expose the real file handler for the independent mobile file-picker hook.
+// v4.4.8: expose the real file handler for the independent mobile file-picker hook.
 window.instantDashHandleFile = handleFile;
 
 function chooseBestDataSheet(names, wb){
@@ -2854,7 +2893,7 @@ function renderPerformanceScorecard(){
 }
 
 
-/* ===================== InstantDash v4.4.7 =====================
+/* ===================== InstantDash v4.4.8 =====================
    Consolidated management/KPI intelligence layer.
    It is additive: existing v3.5.9 chart engine remains intact.
 ================================================================ */
@@ -7362,54 +7401,29 @@ document.addEventListener('DOMContentLoaded',function(){
 });
 </script>
 
-<script id="v447GuaranteedAreas">
-document.addEventListener('DOMContentLoaded',function(){
-  const standard=['Audit','Bank','Bank & NBFC Earnings / Investor Analysis','Banking',
-    'Banking Branch & Bank Performance','BC Performance','Company Results','Customer Service',
-    'Expenses','Finance','HR','Management','Marketing','Operations / Manufacturing',
-    'Procurement','Project Management','Recovery','Sales / Business','Supply Chain'];
-  function ensure(){
-    const sel=document.getElementById('kpiDepartmentSelect');
-    if(!sel)return;
-    const names=new Set([...sel.options].map(o=>(o.textContent||'').trim()));
-    standard.forEach(name=>{
-      if(!names.has(name)){
-        const o=document.createElement('option');
-        o.value=name;o.textContent=name;sel.appendChild(o);
-      }
-    });
-    v447SortSelectOptions(sel);
-  }
-  ensure();
-  new MutationObserver(ensure).observe(document.documentElement,{subtree:true,childList:true});
-});
-</script>
-
-<script id="v447KpiNavigation">
+<script id="v448KpiDrillNavigation">
 document.addEventListener('DOMContentLoaded',function(){
   document.addEventListener('click',function(e){
     const btn=e.target?.closest?.('#clickInsightDrill');
     if(!btn)return;
     setTimeout(function(){
-      const ctx=window._clickInsightContext;
-      const measure=String(ctx?.hit?.measure||ctx?.spec?.measure||ctx?.spec?.y||ctx?.ds?.datasets?.[0]?.label||'').trim();
-      const target=document.getElementById('kpiIntelPanel') ||
-        document.getElementById('kpiMappingPanel');
-      if(target){
-        target.classList.add('kpi-drill-destination');
-        target.scrollIntoView({behavior:'smooth',block:'start'});
-        setTimeout(function(){
-          const cards=[...target.querySelectorAll('.kpi-intel-card,[data-kpi],.kpi-card')];
-          const hit=measure && cards.find(x=>(x.textContent||'').toLowerCase().includes(measure.toLowerCase()));
-          (hit||target).classList.add('kpi-drill-selected');
-          (hit||target).scrollIntoView({behavior:'smooth',block:'center'});
-        },300);
-      }
-    },350);
+      const ctx=window._clickInsightContext||{};
+      const measure=String(ctx.hit?.measure||ctx.spec?.measure||ctx.spec?.y||ctx.ds?.datasets?.[0]?.label||'').trim();
+      const target=document.getElementById('kpiIntelPanel')||document.getElementById('kpiMappingPanel');
+      if(!target)return;
+      target.classList.add('kpi-drill-destination');
+      target.scrollIntoView({behavior:'smooth',block:'start'});
+      setTimeout(function(){
+        const cards=[...target.querySelectorAll('.kpi-intel-card,[data-kpi],.kpi-card')];
+        const hit=measure && cards.find(x=>(x.textContent||'').toLowerCase().includes(measure.toLowerCase()));
+        (hit||target).classList.add('kpi-drill-selected');
+        (hit||target).scrollIntoView({behavior:'smooth',block:'center'});
+      },250);
+    },250);
   },false);
 });
 </script>
-<style id="v447KpiDestinationStyle">
+<style id="v448KpiDrillStyle">
 .kpi-drill-destination{outline:3px solid var(--gold,#f5b400)!important;outline-offset:6px;border-radius:14px;scroll-margin-top:18px}
 .kpi-drill-selected{border:3px solid var(--gold,#f5b400)!important;background:rgba(245,180,0,.16)!important;box-shadow:0 0 0 4px rgba(245,180,0,.18)!important}
 </style>
