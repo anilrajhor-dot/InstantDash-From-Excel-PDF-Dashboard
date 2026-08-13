@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<title>InstantDash — Excel to Dashboard v4.5.1</title>
+<title>InstantDash — Excel to Dashboard v4.5.2</title>
 <meta name="author" content="Developed by Anil Sharma, Former General Manager, Central Bank of India">
-<meta name="application-name" content="InstantDash v4.5.1">
-<meta name="description" content="InstantDash — Excel to Dashboard v4.5.1, developed by Anil Sharma">
+<meta name="application-name" content="InstantDash v4.5.2">
+<meta name="description" content="InstantDash — Excel to Dashboard v4.5.2, developed by Anil Sharma">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js';document.head.appendChild(s);"></script>
@@ -217,7 +217,7 @@ select, .input{
 .chart-body{position:relative; height:320px; min-height:320px; width:100%; overflow:hidden;}
 .chart-body canvas{display:block !important; width:100% !important; height:100% !important; min-height:300px;}
 .chart-controls-row{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; border-top:1px dashed var(--line); padding-top:8px;}
-/* ---------- v4.5.1 mobile-first dashboard polish ---------- */
+/* ---------- v4.5.2 mobile-first dashboard polish ---------- */
 .kpi-card{position:relative;overflow:hidden;min-height:196px;padding:18px 18px 16px;border-radius:18px;border:1px solid rgba(255,255,255,.06);background:linear-gradient(145deg,var(--card),rgba(255,255,255,.018));box-shadow:0 8px 24px rgba(0,0,0,.18);}
 .kpi-card:before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:var(--amber);}
 .kpi-card.kpi-derived:before{background:#304968;}
@@ -507,7 +507,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v403UiFix">
-/* v4.5.1: KPI directory is part of the loaded dashboard, never the landing page. */
+/* v4.5.2: KPI directory is part of the loaded dashboard, never the landing page. */
 #bankingKpiDirectory{display:block}
 #emptyState ~ #bankingKpiDirectory{display:block !important}
 </style>
@@ -539,7 +539,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v412InsightVisibility">
-/* v4.5.1 — high-contrast KPI Insight */
+/* v4.5.2 — high-contrast KPI Insight */
 .click-insight-backdrop{
   background:rgba(0,0,0,.62) !important;
 }
@@ -820,7 +820,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 @media(max-width:480px){.cc-grid{grid-template-columns:1fr}}
 </style>
 <style id="v441AreaDirectoryThemeFix">
-/* v4.5.1: the directory must follow the app theme. Earlier versions used
+/* v4.5.2: the directory must follow the app theme. Earlier versions used
    hard-coded white backgrounds, which made the dark-mode text almost invisible. */
 .banking-kpi-directory{
   margin:18px 0;
@@ -909,7 +909,7 @@ document.addEventListener('DOMContentLoaded', function(){
 </script>
 
 <style id="v444LandingDirectoryVisibility">
-/* v4.5.1 — Landing page is for file upload only.
+/* v4.5.2 — Landing page is for file upload only.
    Area/KPI directories appear after a dashboard is loaded. */
 #areaDirectoryBlock,
 #bankingKpiDirectory{
@@ -1086,11 +1086,34 @@ button,#clickInsightDrill,.kpi-drill-selected{
   .v451-drill-return{right:14px;bottom:86px;padding:9px 12px;font-size:12px}
 }
 </style>
+
+<style id="v452ExecutiveSummaryStyle">
+.v452-summary-card{
+  margin:16px 0;padding:16px;border:1px solid var(--line);
+  border-radius:16px;background:var(--card);color:var(--ink);
+  box-shadow:var(--shadow);
+}
+.v452-summary-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.v452-summary-head h3{margin:0;color:var(--ink)}
+.v452-summary-sub{color:var(--muted);font-size:12px;margin-top:4px}
+.v452-summary-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}
+.v452-summary-item{padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--soft,var(--cream))}
+.v452-summary-label{font-size:11px;color:var(--muted);font-weight:800;text-transform:uppercase}
+.v452-summary-value{font-size:20px;font-weight:900;margin-top:5px;color:var(--ink)}
+.v452-summary-note{font-size:11px;color:var(--muted);margin-top:3px}
+.v452-positive{border-color:rgba(54,180,110,.55)!important}
+.v452-negative{border-color:rgba(220,80,80,.55)!important}
+.v452-neutral{border-color:rgba(245,180,0,.55)!important}
+.v452-summary-list{margin:12px 0 0;padding:0;list-style:none}
+.v452-summary-list li{padding:7px 0;border-bottom:1px solid var(--line);font-size:12px}
+.v452-summary-list li:last-child{border-bottom:0}
+@media(max-width:760px){.v452-summary-grid{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
 
 <div class="topbar">
-  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v4.5.1</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
+  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v4.5.2</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
   <div class="topbar-right">
     <div class="privacy-badge">🔒 <span class="txt">Processed locally — not uploaded to any server</span></div>
     <button class="icon-btn" id="shareTopBtn" title="Share dashboard" aria-label="Share dashboard as an image" style="display:none;">📤</button>
@@ -1509,7 +1532,7 @@ button,#clickInsightDrill,.kpi-drill-selected{
   </div>
 </div>
 
-<footer class="app-footer">InstantDash <strong>v4.5.1</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
+<footer class="app-footer">InstantDash <strong>v4.5.2</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
 </div>
 
 <!-- Ask Your Data floating widget -->
@@ -2403,7 +2426,7 @@ function fail(msg){
 
 
 
-// v4.5.1: expose the real file handler for the independent mobile file-picker hook.
+// v4.5.2: expose the real file handler for the independent mobile file-picker hook.
 window.instantDashHandleFile = handleFile;
 
 function chooseBestDataSheet(names, wb){
@@ -2999,7 +3022,7 @@ function renderPerformanceScorecard(){
 }
 
 
-/* ===================== InstantDash v4.5.1 =====================
+/* ===================== InstantDash v4.5.2 =====================
    Consolidated management/KPI intelligence layer.
    It is additive: existing v3.5.9 chart engine remains intact.
 ================================================================ */
@@ -7559,6 +7582,90 @@ document.addEventListener('DOMContentLoaded',function(){
     },{threshold:.12});
     io.observe(chart);
   }
+});
+</script>
+
+<script id="v452ExecutiveSummary">
+document.addEventListener('DOMContentLoaded',function(){
+  function n(v){
+    if(typeof v==='number' && Number.isFinite(v)) return v;
+    const x=Number(String(v??'').replace(/[₹,%\s,]/g,''));
+    return Number.isFinite(x)?x:NaN;
+  }
+  function esc(v){
+    const d=document.createElement('div'); d.textContent=String(v??''); return d.innerHTML;
+  }
+  function render(){
+    if(document.getElementById('v452ExecutiveSummaryCard')) return;
+    const data=window.STATE?.data;
+    if(!Array.isArray(data)||!data.length) return;
+    const keys=[...new Set(data.flatMap(r=>Object.keys(r||{})))];
+    const kpiKey=keys.find(k=>/^(kpi|metric|indicator|particulars)$/i.test(String(k).trim()));
+    const actualKey=keys.find(k=>/^(actual|current|value|result|achievement)$/i.test(String(k).trim()));
+    const targetKey=keys.find(k=>/^(target|budget|plan)$/i.test(String(k).trim()));
+    const varianceKey=keys.find(k=>/^(variance|var|difference|gap)$/i.test(String(k).trim()));
+    if(!kpiKey || (!actualKey && !varianceKey)) return;
+
+    const rows=data.map(r=>({
+      name:String(r[kpiKey]??'').trim(),
+      actual:n(actualKey?r[actualKey]:undefined),
+      target:n(targetKey?r[targetKey]:undefined),
+      variance:n(varianceKey?r[varianceKey]:undefined)
+    })).filter(x=>x.name);
+
+    const scored=rows.map(x=>{
+      let change=Number.isFinite(x.variance)?x.variance:
+        (Number.isFinite(x.actual)&&Number.isFinite(x.target)&&x.target!==0 ? x.actual-x.target:NaN);
+      return {...x,change};
+    }).filter(x=>Number.isFinite(x.change));
+
+    if(!scored.length)return;
+    const pos=[...scored].sort((a,b)=>b.change-a.change).slice(0,3);
+    const neg=[...scored].sort((a,b)=>a.change-b.change).slice(0,3);
+    const total=scored.length;
+    const favourable=scored.filter(x=>x.change>=0).length;
+    const status=favourable/total>=.6?'positive':favourable/total<=.4?'negative':'neutral';
+
+    const card=document.createElement('section');
+    card.id='v452ExecutiveSummaryCard';
+    card.className='v452-summary-card';
+    card.innerHTML=`
+      <div class="v452-summary-head">
+        <div><h3>Executive KPI Summary</h3>
+        <div class="v452-summary-sub">Automatically summarised from the uploaded data. No figures are invented.</div></div>
+      </div>
+      <div class="v452-summary-grid">
+        <div class="v452-summary-item v452-${status}">
+          <div class="v452-summary-label">KPIs assessed</div>
+          <div class="v452-summary-value">${total}</div>
+          <div class="v452-summary-note">${favourable} currently favourable vs available target/variance data</div>
+        </div>
+        <div class="v452-summary-item v452-positive">
+          <div class="v452-summary-label">Top positive movements</div>
+          <ul class="v452-summary-list">${pos.map(x=>`<li><b>${esc(x.name)}</b> — ${x.change>=0?'+':''}${x.change.toLocaleString('en-IN',{maximumFractionDigits:2})}</li>`).join('')}</ul>
+        </div>
+        <div class="v452-summary-item v452-negative">
+          <div class="v452-summary-label">Top negative movements</div>
+          <ul class="v452-summary-list">${neg.map(x=>`<li><b>${esc(x.name)}</b> — ${x.change.toLocaleString('en-IN',{maximumFractionDigits:2})}</li>`).join('')}</ul>
+        </div>
+      </div>`;
+    const first=hostForSummary();
+    if(first) first.prepend(card);
+
+    function hostForSummary(){
+      return document.getElementById('appContent')||document.querySelector('main');
+    }
+  }
+
+  // Render after a file is loaded and allow the existing app to finish its
+  // parsing/render cycle.
+  setTimeout(render,900);
+  document.addEventListener('click',function(e){
+    if(e.target?.closest?.('#browseBtn,#newFileBtn')) setTimeout(()=>{
+      document.getElementById('v452ExecutiveSummaryCard')?.remove();
+      setTimeout(render,1200);
+    },1500);
+  },false);
 });
 </script>
 </body>
