@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<title>InstantDash — Excel to Dashboard v4.4.5</title>
+<title>InstantDash — Excel to Dashboard v4.4.6</title>
 <meta name="author" content="Developed by Anil Sharma, Former General Manager, Central Bank of India">
-<meta name="application-name" content="InstantDash v4.4.5">
-<meta name="description" content="InstantDash — Excel to Dashboard v4.4.5, developed by Anil Sharma">
+<meta name="application-name" content="InstantDash v4.4.6">
+<meta name="description" content="InstantDash — Excel to Dashboard v4.4.6, developed by Anil Sharma">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js';document.head.appendChild(s);"></script>
@@ -217,7 +217,7 @@ select, .input{
 .chart-body{position:relative; height:320px; min-height:320px; width:100%; overflow:hidden;}
 .chart-body canvas{display:block !important; width:100% !important; height:100% !important; min-height:300px;}
 .chart-controls-row{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; border-top:1px dashed var(--line); padding-top:8px;}
-/* ---------- v4.4.5 mobile-first dashboard polish ---------- */
+/* ---------- v4.4.6 mobile-first dashboard polish ---------- */
 .kpi-card{position:relative;overflow:hidden;min-height:196px;padding:18px 18px 16px;border-radius:18px;border:1px solid rgba(255,255,255,.06);background:linear-gradient(145deg,var(--card),rgba(255,255,255,.018));box-shadow:0 8px 24px rgba(0,0,0,.18);}
 .kpi-card:before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:var(--amber);}
 .kpi-card.kpi-derived:before{background:#304968;}
@@ -507,7 +507,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v403UiFix">
-/* v4.4.5: KPI directory is part of the loaded dashboard, never the landing page. */
+/* v4.4.6: KPI directory is part of the loaded dashboard, never the landing page. */
 #bankingKpiDirectory{display:block}
 #emptyState ~ #bankingKpiDirectory{display:block !important}
 </style>
@@ -539,7 +539,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v412InsightVisibility">
-/* v4.4.5 — high-contrast KPI Insight */
+/* v4.4.6 — high-contrast KPI Insight */
 .click-insight-backdrop{
   background:rgba(0,0,0,.62) !important;
 }
@@ -820,7 +820,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 @media(max-width:480px){.cc-grid{grid-template-columns:1fr}}
 </style>
 <style id="v441AreaDirectoryThemeFix">
-/* v4.4.5: the directory must follow the app theme. Earlier versions used
+/* v4.4.6: the directory must follow the app theme. Earlier versions used
    hard-coded white backgrounds, which made the dark-mode text almost invisible. */
 .banking-kpi-directory{
   margin:18px 0;
@@ -909,7 +909,7 @@ document.addEventListener('DOMContentLoaded', function(){
 </script>
 
 <style id="v444LandingDirectoryVisibility">
-/* v4.4.5 — Landing page is for file upload only.
+/* v4.4.6 — Landing page is for file upload only.
    Area/KPI directories appear after a dashboard is loaded. */
 #areaDirectoryBlock,
 #bankingKpiDirectory{
@@ -924,28 +924,14 @@ body.dashboard-ready #bankingKpiDirectory{
   display:block !important;
 }
 </style>
-
-<style id="v445KpiDrillHighlight">
-#kpiIntelPanel.kpi-drill-highlight{
-  outline:3px solid var(--gold,#f5b400);
-  outline-offset:5px;
-  border-radius:14px;
-  scroll-margin-top:24px;
-}
-#kpiIntelPanel .kpi-drill-selected{
-  border:3px solid var(--gold,#f5b400) !important;
-  background:rgba(245,180,0,.14) !important;
-  box-shadow:0 0 0 3px rgba(245,180,0,.18);
-}
-#kpiIntelPanel .kpi-drill-selected .kpi-intel-name{
-  color:var(--gold,#f5b400) !important;
-  font-weight:900;
-}
-</head>
+<style id="v446KpiDrillHighlight">
+.kpi-drill-highlight{outline:3px solid var(--gold,#f5b400)!important;outline-offset:5px;border-radius:14px;scroll-margin-top:24px}
+.kpi-drill-selected{border:3px solid var(--gold,#f5b400)!important;background:rgba(245,180,0,.14)!important;box-shadow:0 0 0 3px rgba(245,180,0,.16)!important}
+</style></head>
 <body>
 
 <div class="topbar">
-  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v4.4.5</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
+  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v4.4.6</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
   <div class="topbar-right">
     <div class="privacy-badge">🔒 <span class="txt">Processed locally — not uploaded to any server</span></div>
     <button class="icon-btn" id="shareTopBtn" title="Share dashboard" aria-label="Share dashboard as an image" style="display:none;">📤</button>
@@ -1364,7 +1350,7 @@ body.dashboard-ready #bankingKpiDirectory{
   </div>
 </div>
 
-<footer class="app-footer">InstantDash <strong>v4.4.5</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
+<footer class="app-footer">InstantDash <strong>v4.4.6</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
 </div>
 
 <!-- Ask Your Data floating widget -->
@@ -2258,7 +2244,7 @@ function fail(msg){
 
 
 
-// v4.4.5: expose the real file handler for the independent mobile file-picker hook.
+// v4.4.6: expose the real file handler for the independent mobile file-picker hook.
 window.instantDashHandleFile = handleFile;
 
 function chooseBestDataSheet(names, wb){
@@ -2854,7 +2840,7 @@ function renderPerformanceScorecard(){
 }
 
 
-/* ===================== InstantDash v4.4.5 =====================
+/* ===================== InstantDash v4.4.6 =====================
    Consolidated management/KPI intelligence layer.
    It is additive: existing v3.5.9 chart engine remains intact.
 ================================================================ */
@@ -3004,7 +2990,7 @@ function v4BuildKpiIntelligence(focusMeasure){
     ? [...new Set(BANKING_BRANCH_KPI_LIBRARY.map(x=>x.area).filter(Boolean))] : [];
   const workbookAreas=typeof collectWorkbookAreas==='function'?collectWorkbookAreas():[];
   const standardAreas=(typeof KPI_LIBRARY_AREAS!=='undefined'&&Array.isArray(KPI_LIBRARY_AREAS))?KPI_LIBRARY_AREAS:[];
-  const areas=[...new Set([...standardAreas,...datasetAreas,...libraryAreas,...workbookAreas,'Bank','Banking Branch & Bank Performance','Company Results'])]
+  const areas=[...new Set([...standardAreas,...datasetAreas,...libraryAreas,...workbookAreas,'Banking Branch & Bank Performance','Company Results'])]
     .filter(Boolean)
     .sort((a,b)=>String(a).localeCompare(String(b),undefined,{sensitivity:'base',numeric:true}));
   const sel=document.getElementById('kpiIntelArea');
@@ -4051,21 +4037,19 @@ function sourceMatchForKpi(def){
   return best;
 }
 function detectDepartment(){
-  // Explicit Area/Department/Category is authoritative only when the data
-  // consistently contains one meaningful value. If several areas exist,
-  // do NOT guess — leave the selector at Auto Detect and let the user choose.
-  const areaCol=STATE.columns.find(c=>/^(area|department|category|kpi area|business area|segment)$/i.test(String(c.name||'').trim()));
+  const cols=Array.isArray(STATE.columns)?STATE.columns:[];
+  const rows=STATE.filteredData?.length?STATE.filteredData:(STATE.data||[]);
+
+  // 1) Explicit Area/Department/Category field.
+  const areaCol=cols.find(c=>/^(area|department|category|kpi area|business area|segment)$/i.test(String(c.name||'').trim()));
   if(areaCol){
-    const vals=STATE.filteredData?.length?STATE.filteredData:STATE.data;
     const counts={};
-    (vals||[]).forEach(r=>{
-      const v=String(r[areaCol.name]??'').trim();
-      if(v && !/^(n\/a|na|null|undefined|-)$/i.test(v)) counts[v]=(counts[v]||0)+1;
+    rows.forEach(r=>{
+      const v=String(r?.[areaCol.name]??'').trim();
+      if(v && !/^(na|n\/a|null|undefined|-)$/i.test(v)) counts[v]=(counts[v]||0)+1;
     });
     const ranked=Object.entries(counts).sort((a,b)=>b[1]-a[1]);
     if(ranked.length===1) return ranked[0][0];
-    // A dominant value is accepted only when it represents at least 80% of
-    // non-blank rows and there is no close second; otherwise ask the user.
     if(ranked.length>1){
       const total=ranked.reduce((n,x)=>n+x[1],0);
       const share=ranked[0][1]/Math.max(1,total);
@@ -4075,35 +4059,36 @@ function detectDepartment(){
     }
   }
 
+  // 2) Strong filename/sheet signal.
   const fileText=String(STATE.documentMeta?.name||STATE.fileName||STATE.sheetName||'').toLowerCase();
-  if(/bank|branch|casa|npa|advances|deposit|banking/.test(fileText))
+  if(/banking|bank branch|bank performance|branch performance/.test(fileText))
     return 'Banking Branch & Bank Performance';
-  if(/company|financial result|quarterly result|earnings|investor|annual report/.test(fileText))
+  if(/\bbank\b|nbfc|casa|npa|advances|deposits/.test(fileText))
+    return 'Bank & NBFC Earnings / Investor Analysis';
+  if(/company results|financial results|quarterly results|earnings|investor|annual report/.test(fileText))
     return 'Company Results';
 
-  const names=STATE.columns.map(c=>c.name.toLowerCase()).join(' | ');
-  const scores={HR:0,Finance:0,'Sales / Business':0,Marketing:0,'Operations / Manufacturing':0,Procurement:0,'Supply Chain':0,'Customer Service':0,'Project Management':0,Banking:0,'BC Performance':0,'Bank & NBFC Earnings / Investor Analysis':0,Management:0};
-  const rules={
-    HR:/employee|staff|headcount|salary|attendance|attrition|joining|joiner|leave|training|performance rating|recruit/i,
-    Finance:/revenue|sales|profit|gross profit|net profit|ebitda|debtors|creditors|balance sheet|cash flow|working capital|cogs/i,
-    'Sales / Business':/sales|customer|client|order|deal|pipeline|revenue|conversion|salesperson/i,
-    Marketing:/campaign|lead|mql|sql|impression|click|ctr|marketing|social|email open|roas/i,
-    'Operations / Manufacturing':/production|output|machine|downtime|defect|rejection|scrap|capacity|wip|manufactur/i,
-    Procurement:/supplier|vendor|purchase order|procurement|ppv|contract compliance/i,
-    'Supply Chain':/inventory|warehouse|logistics|freight|delivery|stockout|supply chain/i,
-    'Customer Service':/ticket|complaint|csat|nps|sla|resolution|support|service/i,
-    'Project Management':/project|milestone|task|schedule variance|resource utilisation|resource utilization/i,
-    Banking:/deposit|casa|advance|npa|loan application|sanction|disbursement|branch|cd ratio|banking/i,
-    'BC Performance':/business correspondent|\bbc\b|bc code|bc id|bc name|commission earned|bc commission|aeps|micro atm|business correspondent performance|customer onboarding/i,
-    'Bank & NBFC Earnings / Investor Analysis':/net interest income|nii|net interest margin|\bnim\b|gross npa|gnpa|net npa|nnpa|provision coverage|pcr|capital adequacy|car|cet 1|cet1|return on assets|\broa\b|return on equity|\broe\b|cost to income|total business|gross advances|net advances|profit before tax|pre-provision|ppop|book value per share|earning per share|dividend payout|quarterly financials/i,
-    Management:/target|budget|actual|variance|kpi|achievement/i
-  };
-  Object.entries(rules).forEach(([d,re])=>{if(re.test(names)) scores[d]++;});
-  const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
-  if(!sorted.length || sorted[0][1]===0) return 'Auto Detect';
-  const top=sorted[0], second=sorted[1];
-  if(second && top[1]===second[1]) return 'Auto Detect';
-  return top[1]>=2 ? top[0] : 'Auto Detect';
+  // 3) Column-name evidence. If evidence is ambiguous, ask the user.
+  const names=cols.map(c=>String(c.name||'').toLowerCase()).join(' | ');
+  const rules=[
+    ['HR',/employee|staff|headcount|salary|attendance|attrition|joining|leave|training|recruit/],
+    ['Finance',/revenue|profit|ebitda|debtors|creditors|balance sheet|cash flow|working capital|cogs/],
+    ['Sales / Business',/sales|customer|client|order|deal|pipeline|conversion/],
+    ['Marketing',/campaign|lead|mql|sql|impression|click|ctr|marketing|roas/],
+    ['Operations / Manufacturing',/production|output|machine|downtime|defect|rejection|scrap|capacity|wip|manufactur/],
+    ['Procurement',/supplier|vendor|purchase order|procurement|ppv|contract compliance/],
+    ['Supply Chain',/inventory|warehouse|logistics|freight|delivery|stockout|supply chain/],
+    ['Customer Service',/ticket|complaint|csat|nps|sla|resolution|support|service/],
+    ['Project Management',/project|milestone|task|schedule variance|resource utilisation|resource utilization/],
+    ['Banking',/deposit|casa|advance|npa|loan application|sanction|disbursement|branch|cd ratio|banking/],
+    ['BC Performance',/business correspondent|\bbc\b|bc code|bc id|commission earned|aeps|micro atm/],
+    ['Bank & NBFC Earnings / Investor Analysis',/net interest income|\bnii\b|net interest margin|\bnim\b|gross npa|\bgnpa\b|net npa|\bnnpa\b|provision coverage|\bpcr\b|capital adequacy|\bcar\b|cet.?1|roa|roe|cost to income|ppop/],
+    ['Management',/target|budget|actual|variance|achievement/]
+  ];
+  const scores=rules.map(([d,re])=>[d,(names.match(re)||[]).length]).sort((a,b)=>b[1]-a[1]);
+  if(!scores.length || scores[0][1]===0) return 'Auto Detect';
+  if(scores.length>1 && scores[0][1]===scores[1][1]) return 'Auto Detect';
+  return scores[0][1]>=2 ? scores[0][0] : 'Auto Detect';
 }
 
 function kpiNumberForColumn(col){
@@ -4170,16 +4155,11 @@ function renderKpiMapping(kpis){
   const hint=document.getElementById('kpiDepartmentHint');
   if(hint)hint.textContent='Detected area: '+dept+' · '+kpis.length+' KPI(s) available';
   const ds=document.getElementById('kpiDepartmentSelect');
-  if(ds){
-    if(STATE.kpiDepartment && STATE.kpiDepartment!=='Auto Detect'){
-      ds.value=STATE.kpiDepartment;
-    }else if(dept && dept!=='Auto Detect'){
-      const opt=[...ds.options].find(o=>o.textContent===dept);
-      ds.value=opt ? opt.value : 'Auto Detect';
-    }else{
-      ds.value='Auto Detect';
-    }
+  if(ds && (!STATE.kpiDepartment || STATE.kpiDepartment==='Auto Detect')){
+    const opt=[...ds.options].find(o=>o.textContent===dept);
+    if(opt) ds.value=opt.value;
   }
+  if(ds)ds.value=STATE.kpiDepartment||'Auto Detect';
   if(!kpis.length){box.innerHTML='<div class="kpi-empty">No reliable KPI mappings were found. Review the Data Profile or add a custom mapping.</div>';return;}
   const opts=STATE.columns.map(c=>`<option value="${escapeHtml(c.name)}">${escapeHtml(c.name)}</option>`).join('');
   box.innerHTML=`<table class="kpi-mapping-table"><thead><tr><th>KPI</th><th>Department</th><th>Category</th><th>Source column</th><th>Confidence</th><th>Value</th><th>Formula / method</th></tr></thead><tbody>${kpis.map(k=>`<tr><td><strong>${escapeHtml(k.name)}</strong></td><td>${escapeHtml(k.dept)}</td><td>${escapeHtml(k.cat)}</td><td>${k.source?`<select class="kpi-map-select" data-kpi="${escapeHtml(k.id)}"><option value="" ${!(STATE.kpiManualMap&&STATE.kpiManualMap[k.id])?'selected':''}>Auto: ${escapeHtml(k.source)}</option>${STATE.columns.map(c=>`<option value="${escapeHtml(c.name)}" ${(STATE.kpiManualMap&&STATE.kpiManualMap[k.id]===c.name)?'selected':''}>${escapeHtml(c.name)}</option>`).join('')}</select>`:'Calculated'}</td><td><span class="kpi-badge ${k.confidence}">${k.confidence}</span></td><td><strong>${escapeHtml(fmtKpiValue(k))}</strong></td><td>${escapeHtml(k.formula)}</td></tr>`).join('')}</tbody></table>`;
@@ -7228,8 +7208,8 @@ document.getElementById('themeToggle').addEventListener('click',()=>{
       ...libraryAreas,
       ...dataAreas,
       ...workbookAreas,
-      'Bank',
       'Banking Branch & Bank Performance',
+      'Bank',
       'Company Results'
     ])].filter(Boolean).sort(alpha);
 
@@ -7284,63 +7264,89 @@ document.addEventListener('DOMContentLoaded',()=>{
 </div>
 
 <script id="clickInsightDrillHook">
-(function(){
-  function openDrill(){
-    const b=document.getElementById('clickInsightBackdrop');
-    const c=window._clickInsightContext;
-    if(!b||!c)return;
-    const measure=String(c.hit?.measure||b.dataset.drillMeasure||c.spec?.y||c.spec?.measure||c.ds?.datasets?.[0]?.label||'').trim();
-    if(!measure){
-      showMessage('The selected chart point does not have a KPI/measure name available for drill-down.','warn');
-      return;
-    }
-    try{ closeClickInsight(); }catch(_){}
-    const search=document.getElementById('kpiIntelSearch');
-    if(search) search.value=measure;
-    const panel=document.getElementById('kpiIntelPanel');
-    if(panel){
-      panel.classList.remove('kpi-drill-highlight');
-      void panel.offsetWidth;
-    }
-    try{
-      v4BuildKpiIntelligence(measure);
-      if(panel){
-        panel.classList.add('kpi-drill-highlight');
-        panel.scrollIntoView({behavior:'smooth',block:'start'});
-        setTimeout(()=>{
-          const hit=[...panel.querySelectorAll('.kpi-intel-card')].find(el=>
-            (el.querySelector('.kpi-intel-name')?.textContent||'').trim().toLowerCase()===measure.toLowerCase()
-          );
-          (hit||panel).classList.add('kpi-drill-selected');
-          (hit||panel).scrollIntoView({behavior:'smooth',block:'center'});
-        },250);
-      }
-      showMessage(`Drilled into KPI "${measure}".`,'info');
-    }catch(err){
-      console.error('KPI drill failed',err);
-      showMessage('KPI drill could not be completed for "'+measure+'".','error');
-    }
+document.addEventListener('DOMContentLoaded',()=>{
+  const btn=document.getElementById('clickInsightDrill');
+  if(btn)btn.type='button';
+});
+document.addEventListener('click',(e)=>{
+  const btn=e.target?.closest?.('#clickInsightDrill');
+  if(!btn)return;
+  e.preventDefault();
+  e.stopImmediatePropagation();
+
+  const b=document.getElementById('clickInsightBackdrop');
+  const c=window._clickInsightContext;
+  if(!b||!c)return;
+
+  const measure=String(
+    c.hit?.measure ||
+    b.dataset.drillMeasure ||
+    c.spec?.y ||
+    c.spec?.measure ||
+    c.ds?.datasets?.[0]?.label ||
+    ''
+  ).trim();
+  if(!measure){
+    showMessage('The selected chart point does not have a KPI/measure name available for drill-down.','warn');
+    return;
   }
-  document.addEventListener('DOMContentLoaded',()=>{
-    const btn=document.getElementById('clickInsightDrill');
-    if(btn){
-      btn.type='button';
-      btn.onclick=(e)=>{e.preventDefault();e.stopPropagation();openDrill();};
-    }
-  });
-  // Delegated fallback for dynamically replaced buttons.
-  document.addEventListener('click',(e)=>{
-    const btn=e.target?.closest?.('#clickInsightDrill');
-    if(btn){
-      e.preventDefault();
-      e.stopImmediatePropagation();
-      openDrill();
-    }
-  },true);
-})();
+
+  // "Drill into this KPI" is intentionally different from chart category filtering:
+  // it always opens KPI Intelligence for the selected measure.
+  closeClickInsight();
+
+  const search=document.getElementById('kpiIntelSearch');
+  if(search) search.value=measure;
+
+  try{
+    v4BuildKpiIntelligence(measure);
+  }catch(err){
+    console.error('KPI drill failed',err);
+    showMessage('KPI drill could not be completed for "'+measure+'".','error');
+    return;
+  }
+
+  const panel=document.getElementById('kpiIntelPanel');
+  if(panel){
+    panel.scrollIntoView({behavior:'smooth',block:'start'});
+    setTimeout(()=>panel.focus?.(),350);
+  }
+  showMessage(`Drilled into KPI "${measure}".`,'info');
+},true);
 </script>
 
 
+
+<script id="v446DrillAssist">
+document.addEventListener('DOMContentLoaded',function(){
+  function highlightKpi(){
+    const ctx=window._clickInsightContext;
+    if(!ctx)return;
+    const measure=String(ctx.hit?.measure||ctx.spec?.measure||ctx.spec?.y||ctx.ds?.datasets?.[0]?.label||'').trim();
+    if(!measure)return;
+    const panel=document.getElementById('kpiIntelPanel');
+    const search=document.getElementById('kpiIntelSearch');
+    if(search) search.value=measure;
+    try{
+      if(typeof v4BuildKpiIntelligence==='function') v4BuildKpiIntelligence(measure);
+    }catch(e){ console.warn('KPI intelligence refresh:',e); }
+    setTimeout(function(){
+      const p=document.getElementById('kpiIntelPanel');
+      if(!p)return;
+      p.classList.add('kpi-drill-highlight');
+      const cards=[...p.querySelectorAll('.kpi-intel-card')];
+      const hit=cards.find(x=>(x.textContent||'').toLowerCase().includes(measure.toLowerCase()));
+      (hit||p).classList.add('kpi-drill-selected');
+      (hit||p).scrollIntoView({behavior:'smooth',block:'center'});
+    },300);
+  }
+  document.addEventListener('click',function(e){
+    const btn=e.target?.closest?.('#clickInsightDrill');
+    if(!btn)return;
+    setTimeout(highlightKpi,150);
+  },false);
+});
+</script>
 </body>
 </html>
 
