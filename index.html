@@ -3,15 +3,44 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>InstantDash 3.0.0 — Smart Data Dashboard</title>
+<title>InstantDash 3.0.1 — Smart Data Dashboard</title>
 
 <!-- ============================================================
      LIBRARIES (loaded from CDN, no build step required)
      SheetJS  : reads .xlsx / .xls / .csv entirely in the browser
      Chart.js : draws every chart on this page
      ============================================================ -->
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+/* ============================================================
+   RESILIENT LIBRARY LOADING
+   SheetJS is required for Excel files. Use two independent CDNs
+   so an iPhone/network/CDN issue does not silently break upload.
+   ============================================================ */
+(function(){
+  window.__sheetJSReady = new Promise(function(resolve, reject){
+    if (window.XLSX) return resolve(window.XLSX);
+    var urls = [
+      'https://cdn.sheetjs.com/xlsx-0.18.5/package/dist/xlsx.full.min.js',
+      'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js',
+      'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'
+    ];
+    var i = 0;
+    function tryNext(){
+      if (window.XLSX) return resolve(window.XLSX);
+      if (i >= urls.length) return reject(new Error('Excel reader library could not be loaded. Check internet access and reload.'));
+      var sc = document.createElement('script');
+      sc.src = urls[i++];
+      sc.async = true;
+      sc.onload = function(){ window.XLSX ? resolve(window.XLSX) : tryNext(); };
+      sc.onerror = tryNext;
+      document.head.appendChild(sc);
+    }
+    tryNext();
+  });
+})();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"
+        onerror="this.onerror=null;this.src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js';"></script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -270,7 +299,7 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"/><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"/><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"/></svg>
     </div>
     <div><h1 id="appName">InstantDash</h1><div class="dev-credit">Developed by Anil Sharma · Former General Manager, Central Bank of India</div></div>
-    <span class="sub">Smart Data Dashboard · v3.0.0</span>
+    <span class="sub">Smart Data Dashboard · v3.0.1</span>
   </div>
   <div class="spacer"></div>
   <span class="privacy">🔒 Your data never leaves your computer.</span>
@@ -298,8 +327,8 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
       <h2>Drop a spreadsheet to build a smart dashboard</h2>
       <p>InstantDash reads the structure first, then chooses the right analysis. Financial statements are handled differently from invoices and general data.</p>
       <button class="btn primary" id="browseBtn">Choose a file</button>
-      <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" hidden />
-      <div class="formats">v3.0.0 &nbsp;·&nbsp; .xlsx · .xls · .csv &nbsp;·&nbsp; up to ~100,000 rows &nbsp;·&nbsp; nothing is uploaded anywhere</div>
+      <input type="file" id="fileInput" accept=".xlsx,.xls,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv" hidden />
+      <div class="formats">v3.0.1 &nbsp;·&nbsp; .xlsx · .xls · .csv &nbsp;·&nbsp; up to ~100,000 rows &nbsp;·&nbsp; nothing is uploaded anywhere</div>
     </div>
   </section>
 
@@ -445,7 +474,7 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
    --------------------------------------------------------------------- */
 const CONFIG = {
   APP_NAME: 'InstantDash',
-  VERSION: '3.0.0',
+  VERSION: '3.0.1',
   DEVELOPER: 'Anil Sharma · Former General Manager, Central Bank of India',
 
   // How many charts to auto-generate
@@ -669,13 +698,24 @@ function wireIngest(){
 
 async function handleFile(file){
   const name = file.name || 'workbook';
-  if (!/\.(xlsx|xlsm|xls|csv|txt)$/i.test(name)){
-    return showFatal('That file type isn’t supported. Choose an .xlsx, .xls or .csv file.');
+  const type = (file.type || '').toLowerCase();
+  const isSpreadsheet = /\.(xlsx|xlsm|xls|csv|txt)$/i.test(name) ||
+    /spreadsheet|excel|csv|text\/csv/i.test(type);
+  if (!isSpreadsheet){
+    return showFatal('That file type isn’t supported. Choose an Excel (.xlsx/.xls) or CSV file.');
   }
-  showLoader('Reading ' + name, 'Nothing is being uploaded — this is happening on your machine.');
+  showLoader('Reading ' + name, 'Reading the file locally — nothing is uploaded anywhere.');
   await nextFrame();
 
   try {
+    /* Ensure the Excel reader is available before touching the workbook. */
+    try {
+      await window.__sheetJSReady;
+    } catch (libErr) {
+      hideLoader();
+      return showFatal('Excel reader could not be loaded. Please connect to the internet once, reload InstantDash, and try the file again. Your Excel file is not the problem.');
+    }
+
     const buf = await file.arrayBuffer();
     let wb;
     try {
@@ -2444,9 +2484,15 @@ function wireRest(){
 }
 
 (function start(){
-  if (typeof XLSX === 'undefined' || typeof Chart === 'undefined'){
+  if (typeof Chart === 'undefined'){
     document.getElementById('dropZone').insertAdjacentHTML('afterbegin',
-      '<div class="alert">The chart and spreadsheet libraries didn’t load. Connect to the internet once so they can be cached, then reload this page.</div>');
+      '<div class="alert">The chart library could not be loaded. Connect to the internet and reload InstantDash.</div>');
+  }
+  if (window.__sheetJSReady) {
+    window.__sheetJSReady.catch(function(){
+      document.getElementById('dropZone').insertAdjacentHTML('afterbegin',
+        '<div class="alert">Excel reader is waiting for a network connection. CSV can also be used. Connect to the internet and reload before opening .xlsx/.xls files.</div>');
+    });
   }
   if (window.Chart){
     Chart.defaults.font.family = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
