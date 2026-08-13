@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<title>InstantDash — Excel to Dashboard v4.5.14</title>
+<title>InstantDash — Excel to Dashboard v4.5.15</title>
 <meta name="author" content="Developed by Anil Sharma, Former General Manager, Central Bank of India">
-<meta name="application-name" content="InstantDash v4.5.14">
-<meta name="description" content="InstantDash — Excel to Dashboard v4.5.14, developed by Anil Sharma">
+<meta name="application-name" content="InstantDash v4.5.15">
+<meta name="description" content="InstantDash — Excel to Dashboard v4.5.15, developed by Anil Sharma">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js';document.head.appendChild(s);"></script>
@@ -217,7 +217,7 @@ select, .input{
 .chart-body{position:relative; height:320px; min-height:320px; width:100%; overflow:hidden;}
 .chart-body canvas{display:block !important; width:100% !important; height:100% !important; min-height:300px;}
 .chart-controls-row{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; border-top:1px dashed var(--line); padding-top:8px;}
-/* ---------- v4.5.14 mobile-first dashboard polish ---------- */
+/* ---------- v4.5.15 mobile-first dashboard polish ---------- */
 .kpi-card{position:relative;overflow:hidden;min-height:196px;padding:18px 18px 16px;border-radius:18px;border:1px solid rgba(255,255,255,.06);background:linear-gradient(145deg,var(--card),rgba(255,255,255,.018));box-shadow:0 8px 24px rgba(0,0,0,.18);}
 .kpi-card:before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:var(--amber);}
 .kpi-card.kpi-derived:before{background:#304968;}
@@ -507,7 +507,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v403UiFix">
-/* v4.5.14: KPI directory is part of the loaded dashboard, never the landing page. */
+/* v4.5.15: KPI directory is part of the loaded dashboard, never the landing page. */
 #bankingKpiDirectory{display:block}
 #emptyState ~ #bankingKpiDirectory{display:block !important}
 </style>
@@ -539,7 +539,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v412InsightVisibility">
-/* v4.5.14 — high-contrast KPI Insight */
+/* v4.5.15 — high-contrast KPI Insight */
 .click-insight-backdrop{
   background:rgba(0,0,0,.62) !important;
 }
@@ -820,7 +820,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 @media(max-width:480px){.cc-grid{grid-template-columns:1fr}}
 </style>
 <style id="v441AreaDirectoryThemeFix">
-/* v4.5.14: the directory must follow the app theme. Earlier versions used
+/* v4.5.15: the directory must follow the app theme. Earlier versions used
    hard-coded white backgrounds, which made the dark-mode text almost invisible. */
 .banking-kpi-directory{
   margin:18px 0;
@@ -909,7 +909,7 @@ document.addEventListener('DOMContentLoaded', function(){
 </script>
 
 <style id="v444LandingDirectoryVisibility">
-/* v4.5.14 — Landing page is for file upload only.
+/* v4.5.15 — Landing page is for file upload only.
    Area/KPI directories appear after a dashboard is loaded. */
 #areaDirectoryBlock,
 #bankingKpiDirectory{
@@ -1290,11 +1290,24 @@ body.v4510-pdf-session .v4510-pdf-only{display:flex!important}
 .v4514-safe-banner{margin:12px 0;padding:11px 13px;border-radius:12px;border:1px solid rgba(54,180,110,.5);background:rgba(54,180,110,.07);color:var(--ink);font-size:11px;line-height:1.45}
 .v4514-safe-banner b{color:#57d68d}
 </style>
+
+<style id="v4515ReliabilityGuardrails">
+.v4515-reliability{
+  margin:14px 0;padding:14px 16px;border:1px solid rgba(54,180,110,.55);
+  border-radius:14px;background:rgba(54,180,110,.07);color:var(--ink)
+}
+.v4515-reliability b{color:#57d68d}
+.v4515-checks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:9px}
+.v4515-check{padding:9px 10px;border:1px solid var(--line);border-radius:9px;font-size:11px;color:var(--muted)}
+.v4515-check strong{color:var(--ink)}
+.v4515-suppressed{color:#d8a72c}
+@media(max-width:600px){.v4515-checks{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
 
 <div class="topbar">
-  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v4.5.14</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
+  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v4.5.15</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
   <div class="topbar-right">
     <div class="privacy-badge">🔒 <span class="txt">Processed locally — not uploaded to any server</span></div>
     <button class="btn secondary small share-dashboard-visible" id="shareTopBtn" title="Share dashboard" aria-label="Share dashboard" disabled>📤 Share dashboard</button>
@@ -1720,7 +1733,7 @@ body.v4510-pdf-session .v4510-pdf-only{display:flex!important}
   </div>
 </div>
 
-<footer class="app-footer">InstantDash <strong>v4.5.14</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
+<footer class="app-footer">InstantDash <strong>v4.5.15</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
 </div>
 
 <!-- Ask Your Data floating widget -->
@@ -2494,7 +2507,7 @@ function fail(msg){
 
 
 
-// v4.5.14: expose the real file handler for the independent mobile file-picker hook.
+// v4.5.15: expose the real file handler for the independent mobile file-picker hook.
 window.instantDashHandleFile = handleFile;
 
 function chooseBestDataSheet(names, wb){
@@ -3090,7 +3103,7 @@ function renderPerformanceScorecard(){
 }
 
 
-/* ===================== InstantDash v4.5.14 =====================
+/* ===================== InstantDash v4.5.15 =====================
    Consolidated management/KPI intelligence layer.
    It is additive: existing v3.5.9 chart engine remains intact.
 ================================================================ */
@@ -8476,6 +8489,105 @@ document.addEventListener('DOMContentLoaded',function(){
     host.prepend(b);
   },3200);
 });
+</script>
+
+<script id="v4515ReliabilityGuardrails">
+(function(){
+  const clean=v=>String(v??'').replace(/\s+/g,' ').trim();
+  const canon=v=>clean(v).toLowerCase().replace(/[₹,\s]/g,'');
+  const num=v=>{
+    if(typeof v==='number'&&Number.isFinite(v))return v;
+    const x=Number(String(v??'').replace(/[₹,%\s,]/g,''));
+    return Number.isFinite(x)?x:NaN;
+  };
+  function keys(data){return [...new Set(data.flatMap(r=>Object.keys(r||{})))];}
+  function find(data,rx){return keys(data).find(k=>rx.test(clean(k)));}
+  function unitFactor(u){
+    const x=canon(u);
+    if(!x)return null;
+    if(/^(%|percent|percentage)$/.test(x))return 'PCT';
+    if(/crore|cr/.test(x))return 'CR';
+    if(/million|mn/.test(x))return 'MN';
+    if(/billion|bn/.test(x))return 'BN';
+    if(/thousand|k/.test(x))return 'K';
+    if(/share|per-share/.test(x))return 'SHARE';
+    if(/count|number|nos?|branches?|accounts?/.test(x))return 'COUNT';
+    return x;
+  }
+  function fieldMap(data){
+    return {
+      kpi:find(data,/^(kpi|metric|indicator|particulars?|head|item|description|parameter)$/i),
+      value:find(data,/^(actual|current|value|result|achievement|amount)$/i),
+      target:find(data,/^(target|budget|plan)$/i),
+      previous:find(data,/^(previous|prior|last period|comparative|previous period)$/i),
+      unit:find(data,/^(unit|units)$/i),
+      company:find(data,/^(company|bank|entity|issuer)$/i),
+      period:find(data,/^(period|reporting period|year|quarter|fy)$/i),
+      basis:find(data,/^(basis|reporting basis|standalone|consolidated)$/i),
+      page:find(data,/^(page|page no\.|page number)$/i)
+    };
+  }
+
+  // Public, reusable guardrail for every KPI calculation.
+  window.InstantDashReliability={
+    version:'4.5.15',
+    comparable(a,b){
+      const reasons=[];
+      if(!a||!b){reasons.push('missing comparison record');return {ok:false,reasons};}
+      if(canon(a.kpi)!==canon(b.kpi))reasons.push('different KPI');
+      if(a.company&&b.company&&canon(a.company)!==canon(b.company))reasons.push('different company/bank');
+      if(a.basis&&b.basis&&canon(a.basis)!==canon(b.basis))reasons.push('different reporting basis');
+      if(unitFactor(a.unit)!==unitFactor(b.unit))reasons.push('different unit');
+      if(!a.period||!b.period||canon(a.period)===canon(b.period))reasons.push('non-comparable period');
+      if(!Number.isFinite(a.value)||!Number.isFinite(b.value))reasons.push('non-numeric value');
+      if(Number.isFinite(b.value)&&b.value===0)reasons.push('previous value is zero');
+      return {ok:reasons.length===0,reasons};
+    },
+    growth(a,b){
+      const c=this.comparable(a,b);
+      if(!c.ok)return {ok:false,reasons:c.reasons};
+      return {ok:true,value:(a.value-b.value)/Math.abs(b.value)*100};
+    },
+    achievement(actual,target){
+      if(!Number.isFinite(actual)||!Number.isFinite(target)||target===0)
+        return {ok:false,reasons:['missing/zero target or actual']};
+      return {ok:true,value:actual/target*100};
+    },
+    margin(numerator,denominator){
+      if(!Number.isFinite(numerator)||!Number.isFinite(denominator)||denominator===0)
+        return {ok:false,reasons:['missing/zero denominator']};
+      return {ok:true,value:numerator/denominator*100};
+    }
+  };
+
+  function renderBanner(){
+    if(document.getElementById('v4515Reliability'))return;
+    const host=document.getElementById('appContent')||document.querySelector('main');
+    if(!host)return;
+    const el=document.createElement('section');
+    el.id='v4515Reliability';el.className='v4515-reliability';
+    el.innerHTML=`<b>✓ Calculation reliability guardrails active</b>
+      <div class="v4515-checks">
+        <div class="v4515-check">✓ Same <strong>KPI</strong> before comparison</div>
+        <div class="v4515-check">✓ Same <strong>Company/Bank</strong></div>
+        <div class="v4515-check">✓ Same <strong>unit & scale</strong></div>
+        <div class="v4515-check">✓ Same <strong>reporting basis</strong></div>
+        <div class="v4515-check">✓ Valid <strong>period comparison</strong></div>
+        <div class="v4515-check">✓ Zero/missing denominators <strong>suppressed</strong></div>
+        <div class="v4515-check">✓ No unsupported <strong>management explanation</strong></div>
+        <div class="v4515-check">✓ Missing data shown as <strong>—</strong></div>
+      </div>`;
+    host.prepend(el);
+  }
+
+  document.addEventListener('DOMContentLoaded',()=>setTimeout(renderBanner,2200));
+  document.addEventListener('click',e=>{
+    if(e.target?.closest?.('#browseBtn,#newFileBtn')){
+      document.getElementById('v4515Reliability')?.remove();
+      setTimeout(renderBanner,2600);
+    }
+  });
+})();
 </script>
 </body>
 </html>
