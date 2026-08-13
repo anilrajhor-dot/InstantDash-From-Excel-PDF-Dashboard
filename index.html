@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<title>InstantDash — Excel to Dashboard v4.5.8</title>
+<title>InstantDash — Excel to Dashboard v4.5.9</title>
 <meta name="author" content="Developed by Anil Sharma, Former General Manager, Central Bank of India">
-<meta name="application-name" content="InstantDash v4.5.8">
-<meta name="description" content="InstantDash — Excel to Dashboard v4.5.8, developed by Anil Sharma">
+<meta name="application-name" content="InstantDash v4.5.9">
+<meta name="description" content="InstantDash — Excel to Dashboard v4.5.9, developed by Anil Sharma">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js';document.head.appendChild(s);"></script>
@@ -217,7 +217,7 @@ select, .input{
 .chart-body{position:relative; height:320px; min-height:320px; width:100%; overflow:hidden;}
 .chart-body canvas{display:block !important; width:100% !important; height:100% !important; min-height:300px;}
 .chart-controls-row{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; border-top:1px dashed var(--line); padding-top:8px;}
-/* ---------- v4.5.8 mobile-first dashboard polish ---------- */
+/* ---------- v4.5.9 mobile-first dashboard polish ---------- */
 .kpi-card{position:relative;overflow:hidden;min-height:196px;padding:18px 18px 16px;border-radius:18px;border:1px solid rgba(255,255,255,.06);background:linear-gradient(145deg,var(--card),rgba(255,255,255,.018));box-shadow:0 8px 24px rgba(0,0,0,.18);}
 .kpi-card:before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:var(--amber);}
 .kpi-card.kpi-derived:before{background:#304968;}
@@ -507,7 +507,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v403UiFix">
-/* v4.5.8: KPI directory is part of the loaded dashboard, never the landing page. */
+/* v4.5.9: KPI directory is part of the loaded dashboard, never the landing page. */
 #bankingKpiDirectory{display:block}
 #emptyState ~ #bankingKpiDirectory{display:block !important}
 </style>
@@ -539,7 +539,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v412InsightVisibility">
-/* v4.5.8 — high-contrast KPI Insight */
+/* v4.5.9 — high-contrast KPI Insight */
 .click-insight-backdrop{
   background:rgba(0,0,0,.62) !important;
 }
@@ -820,7 +820,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 @media(max-width:480px){.cc-grid{grid-template-columns:1fr}}
 </style>
 <style id="v441AreaDirectoryThemeFix">
-/* v4.5.8: the directory must follow the app theme. Earlier versions used
+/* v4.5.9: the directory must follow the app theme. Earlier versions used
    hard-coded white backgrounds, which made the dark-mode text almost invisible. */
 .banking-kpi-directory{
   margin:18px 0;
@@ -909,7 +909,7 @@ document.addEventListener('DOMContentLoaded', function(){
 </script>
 
 <style id="v444LandingDirectoryVisibility">
-/* v4.5.8 — Landing page is for file upload only.
+/* v4.5.9 — Landing page is for file upload only.
    Area/KPI directories appear after a dashboard is loaded. */
 #areaDirectoryBlock,
 #bankingKpiDirectory{
@@ -1204,17 +1204,19 @@ button,#clickInsightDrill,.kpi-drill-selected{
 @media(max-width:700px){.v457-pdf-grid{grid-template-columns:1fr}}
 </style>
 
-<style id="v458PdfNoteStyle">
-.v458-pdf-note{margin:10px 0;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:rgba(245,180,0,.08);font-size:12px;color:var(--muted);line-height:1.45}
+<style id="v459UploadShareFix">
+.share-dashboard-visible{white-space:nowrap}
+#browseBtn{touch-action:manipulation}
+#fileInput{position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important}
 </style>
 </head>
 <body>
 
 <div class="topbar">
-  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v4.5.8</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
+  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v4.5.9</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
   <div class="topbar-right">
     <div class="privacy-badge">🔒 <span class="txt">Processed locally — not uploaded to any server</span></div>
-    <button class="icon-btn" id="shareTopBtn" title="Share dashboard" aria-label="Share dashboard as an image" style="display:none;">📤</button>
+    <button class="btn secondary small share-dashboard-visible" id="shareTopBtn" title="Share dashboard" aria-label="Share dashboard" disabled>📤 Share dashboard</button>
     <button class="icon-btn" id="helpToggle" title="Help &amp; guide" aria-label="Open help and guide">❓</button>
     <button class="icon-btn" id="settingsToggle" title="Dashboard settings" aria-label="Open dashboard settings">⚙️</button>
     <button class="icon-btn" id="themeToggle" title="Toggle dark mode" aria-label="Toggle dark mode">☀️</button>
@@ -1630,7 +1632,7 @@ button,#clickInsightDrill,.kpi-drill-selected{
   </div>
 </div>
 
-<footer class="app-footer">InstantDash <strong>v4.5.8</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
+<footer class="app-footer">InstantDash <strong>v4.5.9</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
 </div>
 
 <!-- Ask Your Data floating widget -->
@@ -2086,7 +2088,7 @@ function resetLoadedDataForNewFile(){
   emptyState.style.display='block'; document.body.classList.remove('data-loaded','has-dashboard','dashboard-ready');
   loadingState.style.display='none';
   document.getElementById('askFab').style.display='none';
-  document.getElementById('shareTopBtn').style.display='none';
+  {const b=document.getElementById('shareTopBtn');if(b){b.style.display='';b.disabled=true;}}
   clearMessages();
 
   // Clear stale dashboard DOM so a subsequent file can never inherit the prior file.
@@ -2105,15 +2107,21 @@ function resetLoadedDataForNewFile(){
 
 function openInstantDashFilePicker(ev){
   if(ev){ ev.preventDefault(); ev.stopPropagation(); }
-  // Must be executed directly from the user's tap for iOS/iPadOS.
-  fileInput.value='';
-  fileInput.click();
+  // Keep this call directly inside the user's tap. showPicker() is more
+  // reliable on modern iOS/iPadOS; click() is the fallback.
+  try{
+    if(typeof fileInput.showPicker==='function') fileInput.showPicker();
+    else fileInput.click();
+  }catch(err){
+    fileInput.click();
+  }
 }
 document.getElementById('browseBtn').addEventListener('click',openInstantDashFilePicker);
 fileInput.addEventListener('change',e=>{
   const f=e.target.files && e.target.files[0];
-  if(!f){ e.target.value=''; return; }
-  // Clear only after capturing the File object.
+  if(!f){ return; }
+  // Capture the File object before clearing the input so the same file can be
+  // selected again later without breaking the iOS file chooser.
   e.target.value='';
   Promise.resolve(handleFile(f)).catch(err=>{
     console.error('InstantDash file processing error',err);
@@ -2183,246 +2191,212 @@ function pdfKpiMatches(line){
   const seen=new Set();
   return matches.filter(x=>{if(seen.has(x.def.id))return false;seen.add(x.def.id);return true;});
 }
-
-async function extractPdfComparativeDashboard(file){
+async function extractPdfDashboard(file){
   const ready=await loadPdfJs();
   if(!ready) throw new Error('PDF extraction engine could not load. Please check your internet connection and try again.');
-
   const buf=await file.arrayBuffer();
-  const pdf=await pdfjsLib.getDocument({data:buf}).promise;
-  const totalPages=pdf.numPages;
-  const records=[];
+  let pdf;
+  try{ pdf=await pdfjsLib.getDocument({data:buf,disableAutoFetch:false,disableStream:false}).promise; }
+  catch(e){ throw new Error('The PDF could not be opened by the browser PDF engine: '+(e?.message||e)); }
 
-  const alias={
-    'HDFCB':'HDFC Bank','ICICIBC':'ICICI Bank','AXSB':'Axis Bank','KMB':'Kotak Mahindra Bank',
-    'IIB':'IndusInd Bank','YES':'Yes Bank','Federal':'Federal Bank','IDBI':'IDBI Bank',
-    'IDFC First':'IDFC First Bank','Bandhan':'Bandhan Bank','J&K':'J&K Bank','RBL':'RBL Bank',
-    'SIB':'South Indian Bank','KVB':'Karur Vysya Bank','Karnataka':'Karnataka Bank',
-    'CUB':'City Union Bank','DCB':'DCB Bank','TMB':'Tamilnad Mercantile Bank','CSB':'CSB Bank',
-    'DHLBK':'Dhanlaxmi Bank','AU SFB':'AU Small Finance Bank','Capital SFB':'Capital Small Finance Bank',
-    'ESAF SFB':'ESAF Small Finance Bank','Jana SFB':'Jana Small Finance Bank',
-    'Equitas SFB':'Equitas Small Finance Bank','Ujjivan SFB':'Ujjivan Small Finance Bank',
-    'Utkarsh SFB':'Utkarsh Small Finance Bank','Suryoday SFB':'Suryoday Small Finance Bank'
-  };
+  const out=[];
+  const pagesFound=[];
+  const numberRx=/(?:₹|Rs\.?|INR|\$|€|£)?\s*\(?-?\d[\d,]*(?:\.\d+)?\)?\s*%?/;
+  const numGlobal=/(?:₹|Rs\.?|INR|\$|€|£)?\s*\(?-?\d[\d,]*(?:\.\d+)?\)?\s*%?/g;
+  const norm=v=>String(v??'').replace(/\s+/g,' ').trim();
+  const parseNum=v=>{const n=parseCleanNumber(String(v||'').replace(/%$/,''));return isNaN(n)?null:n;};
+  const isPercent=v=>/%\s*$/.test(String(v||''));
+  const direction=name=>{const n=String(name||'').toLowerCase();if(/npa|slippage|credit cost|cost.?to.?income|expense|provision|loss|debt/.test(n))return 'Lower is Better';if(/profit|income|revenue|deposit|advance|casa|margin|capital|car|cet1|roa|roe|eps|recovery|business|growth/.test(n))return 'Higher is Better';return 'Context Dependent';};
+  const unitFor=(label,raw,pageText)=>{if(isPercent(raw)||/%/.test(label)||/ratio|margin|growth|return|yield|cost to income|car|cet1|roa|roe|pcr|slippage|credit cost/i.test(label))return '%';if(/inr in crores|figures in rs\.?.*crore|₹\s*crore/i.test(pageText))return '₹ crore';if(/inr.*bn|inr.*billion|inr.*mn/i.test(pageText))return '₹/currency';return '₹/currency';};
+  const metricLike=label=>{const l=norm(label);if(!l||l.length>95)return false;if(/^(particulars|source|note|notes|figures in|ratios are|page|sr\.? no|market cap)$/i.test(l))return false;return /[A-Za-z]/.test(l);};
 
-  const normalPeriod=(t)=>{
-    let x=String(t||'').replace(/\s+/g,'').toUpperCase();
-    x=x.replace(/^([1-4])Q(FY\d{2,4})$/,'Q$1$2');
-    return x;
-  };
-
-  const periodFromLines=(lines)=>{
-    const t=lines.slice(0,10).map(l=>l.text).join(' ');
-    const m=t.match(/\b(?:[1-4]Q\s*FY\s*\d{2,4}|Q[1-4]\s*FY\s*\d{2,4}|FY\s*\d{2,4})\b/i);
-    return normalPeriod(m?m[0]:'');
-  };
-
-  const isNum=(t)=>{
-    const x=String(t||'').trim();
-    return /^(?:₹|Rs\.?|INR|\$|€|£)?\s*\(?-?\d[\d,]*(?:\.\d+)?\)?\s*%?$/.test(x);
-  };
-
-  const numValue=(t)=>{
-    let x=String(t||'').trim().replace(/[₹$€£]/g,'').replace(/^Rs\.?\s*/i,'').replace(/^INR\s*/i,'');
-    const pct=/%$/.test(x);
-    x=x.replace(/%$/,'').replace(/,/g,'').replace(/^\((.*)\)$/,'-$1').trim();
-    const n=Number(x);
-    return {value:Number.isFinite(n)?n:null,pct};
-  };
-
-  const direction=(name)=>{
-    const n=String(name||'').toLowerCase();
-    if(/npa|slippage|credit cost|cost.?to.?income|expense|loss|complaint|backlog|tat/.test(n)) return 'Lower is Better';
-    if(/margin|profit|income|revenue|deposit|advance|business|recovery|casa|capital|car|cet1|roa|roe|nim|eps|book value|coverage/.test(n)) return 'Higher is Better';
-    return 'Context Dependent';
-  };
-
-  const canonical=(label,pct)=>{
-    const l=String(label||'').replace(/\s+/g,' ').trim();
-    const low=l.toLowerCase();
-    const ratioSuffix=(x)=>pct ? (/%$/.test(x)?x:(x+' % of Fund-based Income')) : x;
-
-    if(/^casa ratio$/i.test(l)) return {kpi:'CASA Ratio %',unit:'%'};
-    if(/^net interest margin/i.test(l)) return {kpi:'NIM %',unit:'%'};
-    if(/^cost to income ratio/i.test(l)) return {kpi:'Cost-to-Income Ratio %',unit:'%'};
-    if(/^return on assets/i.test(l)) return {kpi:'RoA %',unit:'%'};
-    if(/^return on equity/i.test(l)) return {kpi:'RoE %',unit:'%'};
-    if(/^car\b/i.test(low)) return {kpi:'CAR %',unit:'%'};
-    if(/^pcr\s+without/i.test(low)) return {kpi:'PCR without Technical Write-off %',unit:'%'};
-    if(/^% of gross npa/i.test(low)) return {kpi:'GNPA Ratio %',unit:'%'};
-    if(/^% of net npa/i.test(low)) return {kpi:'NNPA Ratio %',unit:'%'};
-    if(/^growth yoy/i.test(low)) return {kpi:'Growth YoY %',unit:'%'};
-    if(/^branches$/i.test(l)) return {kpi:'Branches',unit:'Count'};
-
-    const direct={
-      'deposits':'Total Deposits','advances':'Gross Advances','gross npa':'GNPA','net npa':'NNPA',
-      'total fund based income':'Total Fund-based Income','other income':'Other Income',
-      'total interest expense':'Total Interest Expense','net interest income':'Net Interest Income',
-      'employee cost':'Employee Cost','other administrative exps':'Other Administrative Expenses',
-      'total operating expenses':'Total Operating Expenses',
-      'profit before tax and provisions':'Profit Before Tax and Provisions',
-      'provisions and contingencies':'Total Provisions','pbt':'PBT','income tax':'Income Tax','pat':'PAT',
-      'interest earned on advances %':'Interest Earned on Advances %',
-      'interest expense on deposit %':'Interest Expense on Deposit %'
-    };
-    if(direct[low]) {
-      const k=direct[low];
-      if(pct && !/%$/.test(k) && !/interest earned|interest expense/.test(low))
-        return {kpi:k+' % of Fund-based Income',unit:'%'};
-      return {kpi:k,unit:pct?'%':'₹ crore'};
-    }
-    return {kpi:pct ? (l+' %') : l,unit:pct?'%':'₹ crore'};
-  };
-
-  const tableArea=(top)=>{
-    const t=top.join(' ').toLowerCase();
-    if(/housing finance|hfc|nbfc|non-banking financial|company results/.test(t)) return 'Company Results';
-    return 'Banking Branch & Bank Performance';
-  };
-
-  const cleanHeader=(items)=>{
-    if(!items.length) return [];
-    const first=items[0].text;
-    if(!/^Particulars\b/i.test(first)) return [];
-    const entities=items.slice(1).map(x=>String(x.text||'').trim()).filter(Boolean);
-    return entities.filter(x=>!/^market cap/i.test(x));
-  };
-
-  const addRecord=(period,area,entity,label,value,unit,page,source)=>{
-    if(!entity || !label || value===null) return;
-    const e=alias[entity]||entity;
-    records.push({
-      KPI:label,Area:area,'Company / Bank':e,'KPI Nature':direction(label),Nature:direction(label),
-      Period:period||'Not detected','Current Period':null,'Previous Period':null,
-      'Previous-year Period':null,'Financial Year':null,Unit:unit,Page:page,'Source Text':source
+  function groupLines(items){
+    const lines=[];
+    items.filter(it=>norm(it.str)).sort((a,b)=>(Number(b.transform?.[5]||0)-Number(a.transform?.[5]||0))||(Number(a.transform?.[4]||0)-Number(b.transform?.[4]||0))).forEach(it=>{
+      const x=Number(it.transform?.[4]||0), y=Number(it.transform?.[5]||0);
+      let line=lines.find(l=>Math.abs(l.y-y)<2.5);
+      if(!line){line={y,items:[]};lines.push(line);} line.items.push({x,y,text:norm(it.str)});
     });
-    const r=records[records.length-1];
-    r._value=value; r._period=period;
-  };
-
-  for(let pageNo=1;pageNo<=totalPages;pageNo++){
-    const page=await pdf.getPage(pageNo);
-    const content=await page.getTextContent();
-    const items=(content.items||[]).map(it=>({
-      text:String(it.str||'').trim(),
-      x:Number(it.transform?.[4]||0),
-      y:Number(it.transform?.[5]||0)
-    })).filter(it=>it.text);
-
+    return lines.map(l=>({y:l.y,items:l.items.sort((a,b)=>a.x-b.x),text:l.items.map(i=>i.text).join(' ').replace(/\s+/g,' ').trim()})).filter(l=>l.text);
+  }
+  function mergedHeaderGroups(line){
+    const arr=line.items.filter(i=>i.x>150 && i.x<1000);
     const groups=[];
-    items.sort((a,b)=>b.y-a.y || a.x-b.x).forEach(it=>{
-      let g=groups.find(z=>Math.abs(z.y-it.y)<3);
-      if(!g){g={y:it.y,items:[]};groups.push(g);}
-      g.items.push(it);
+    arr.forEach(it=>{
+      let g=groups[groups.length-1];
+      if(g && it.x-(g.end||0)<28){g.parts.push(it.text);g.end=it.x+it.text.length*5.5;g.x=(g.x+it.x)/2;}
+      else groups.push({parts:[it.text],x:it.x,end:it.x+it.text.length*5.5});
     });
-    groups.sort((a,b)=>b.y-a.y);
-    const lines=groups.map(g=>({
-      text:g.items.sort((a,b)=>a.x-b.x).map(x=>x.text).join(' ').replace(/\s+/g,' ').trim(),
-      items:g.items
-    })).filter(l=>l.text);
+    return groups.map(g=>({name:g.parts.join(' '),x:g.x})).filter(g=>g.name&&!/^(particulars|inr|crores|crore)$/i.test(g.name));
+  }
+  function numericItems(line){return line.items.filter(i=>numberRx.test(i.text)).map(i=>({x:i.x,raw:i.text,value:parseNum(i.text),pct:isPercent(i.text)})).filter(i=>i.value!==null);}
 
-    const period=periodFromLines(lines);
-    const top=lines.slice(0,7).map(l=>l.text);
-    const area=tableArea(top);
-    let entities=[];
-    let lastLabel='';
+  let reportType='Banks, HFCs & NBFCs Comparative Analysis';
+  let lastBasis=''; let lastPeriod='1QFY26';
+  for(let pageNo=1;pageNo<=pdf.numPages;pageNo++){
+    const page=await pdf.getPage(pageNo);
+    const content=await page.getTextContent({normalizeWhitespace:true});
+    const lines=groupLines(content.items||[]);
+    const pageText=lines.map(l=>l.text).join(' ');
+    const low=pageText.toLowerCase();
+    const pagePeriod=(pageText.match(/\b(?:Q[1-4]\s*FY\s*\d{2,4}|FY\s*\d{2,4}|Q[1-4]\s*\d{4})\b/i)||[])[0];
+    if(pagePeriod)lastPeriod=pagePeriod.replace(/\s+/g,' ').trim();
+    if(/consolidated/.test(low))lastBasis='Consolidated'; else if(/standalone/.test(low))lastBasis='Standalone';
 
-    for(const line of lines){
-      const hdr=cleanHeader(line.items);
-      if(hdr.length>=3){
-        entities=hdr;
-        lastLabel='';
-        continue;
+    // Comparative tables: preserve the company/bank columns instead of forcing them into four generic periods.
+    const header=lines.find(l=>/\bparticulars\b/i.test(l.text)&&l.items.filter(i=>i.x>180).length>=3);
+    const comparative=/comparative analysis/i.test(pageText)&&header;
+    if(comparative){
+      const cols=mergedHeaderGroups(header);
+      if(cols.length>=3){
+        for(let li=0;li<lines.length;li++){
+          const line=lines[li];
+          const left=line.items.filter(i=>i.x<190).map(i=>i.text).join(' ').replace(/\s+/g,' ').trim();
+          if(!metricLike(left))continue;
+          const nums=numericItems(line); if(nums.length<3)continue;
+          const defLabel=left;
+          const unit=unitFor(defLabel,nums[0].raw,pageText);
+          nums.forEach(n=>{
+            let best=cols[0],dist=Infinity;
+            cols.forEach(c=>{const d=Math.abs(n.x-c.x);if(d<dist){dist=d;best=c;}});
+            if(dist<85)out.push({KPI:defLabel,Area:/bank|npa|casa|deposit|advance|capital|interest|profit|income|expense|ratio|branches/i.test(defLabel)?'Banking Branch & Bank Performance':'Company Results','KPI Nature':direction(defLabel),Nature:direction(defLabel),Basis:lastBasis||'Not detected','Current Period':n.value,'Previous Period':null,'Previous-year Period':null,'Financial Year':null,Unit:unit,Company:best.name,Period:lastPeriod,Page:pageNo,'Source Text':line.text});
+          });
+        }
+        pagesFound.push(pageNo);
       }
-      if(entities.length<3) continue;
-
-      const texts=line.items.map(x=>String(x.text||'').trim()).filter(Boolean);
-      const numeric=texts.filter(isNum);
-      if(numeric.length!==entities.length) continue;
-
-      const firstNumIndex=texts.findIndex(isNum);
-      const label=texts.slice(0,firstNumIndex).join(' ').replace(/\s+/g,' ').trim();
-      const vals=numeric.map(numValue);
-      if(vals.some(v=>v.value===null)) continue;
-
-      let kpiLabel=label;
-      let unit='';
-      if(!label){
-        if(!lastLabel) continue;
-        kpiLabel=lastLabel;
-        unit='₹ crore';
-      }else{
-        lastLabel=label;
-        unit=vals.every(v=>v.pct)?'%':'₹ crore';
-      }
-
-      const can=canonical(kpiLabel,unit==='%');
-      const finalUnit=can.unit||unit;
-      for(let i=0;i<entities.length;i++){
-        addRecord(period,area,entities[i],can.kpi,vals[i].value,finalUnit,pageNo,line.text);
+    } else {
+      // Single-entity quarterly/result tables. Capture metric rows with their visible numeric values.
+      const companyLine=lines.find(l=>/\b(?:Bank|Finance|Financial Services|Capital|Housing|Holdings|Industries|Limited|Ltd\.)\b/i.test(l.text)&&l.text.length<100&&!/comparative|analysis|results|snapshot/i.test(l.text));
+      const entity=companyLine?companyLine.text.replace(/\s+/g,' ').trim():'';
+      for(const line of lines){
+        const label=line.items.filter(i=>i.x<190).map(i=>i.text).join(' ').replace(/\s+/g,' ').trim();
+        if(!metricLike(label))continue;
+        const nums=numericItems(line); if(nums.length<2)continue;
+        if(!/revenue|income|expense|profit|loss|advance|deposit|npa|casa|margin|interest|capital|return|roa|roe|eps|business|branches|tax|provision|assets|net worth|cash flow|dividend|cost/i.test(label))continue;
+        const vals=nums.slice(0,4).map(n=>n.value); while(vals.length<4)vals.unshift(null);
+        out.push({KPI:label,Area:/bank|npa|casa|deposit|advance|capital|interest|profit|income|expense|branches/i.test(label)?'Banking Branch & Bank Performance':'Company Results','KPI Nature':direction(label),Nature:direction(label),Basis:lastBasis||'Not detected','Current Period':vals[0],'Previous Period':vals[1],'Previous-year Period':vals[2],'Financial Year':vals[3],Unit:unitFor(label,nums[0].raw,pageText),Company:entity||'Company Results',Period:lastPeriod,Page:pageNo,'Source Text':line.text});
       }
     }
-
-    if(pageNo%10===0 || pageNo===totalPages){
-      const el=document.getElementById('pdfPages');
-      if(el) el.innerHTML='<div class="pdf-loading">Reading comparative PDF…<br><br><strong>Page '+pageNo+' of '+totalPages+'</strong><br>'+records.length.toLocaleString()+' data points recognised so far.</div>';
+    if(pageNo%10===0){
+      const pi=document.getElementById('pdfPageInfo'); if(pi)pi.textContent=`Reading PDF · page ${pageNo} of ${pdf.numPages} · ${out.length} KPI values`;
       await new Promise(r=>setTimeout(r,0));
     }
   }
-
-  if(!records.length){
-    throw new Error('The PDF was opened, but no comparative KPI tables could be recognised. No figures have been guessed.');
-  }
-
-  // Pivot the recognised source periods into the dashboard's four standard numeric fields.
-  const map=new Map();
-  for(const r of records){
-    const key=[r.Area,r['Company / Bank'],r.KPI,r.Unit].join('|');
-    if(!map.has(key)) map.set(key,{
-      KPI:r.KPI,Area:r.Area,'Company / Bank':r['Company / Bank'],'KPI Nature':r['KPI Nature'],
-      Nature:r.Nature,'Current Period':null,'Previous Period':null,'Previous-year Period':null,
-      'Financial Year':null,Unit:r.Unit,Page:r.Page,'Source Text':r['Source Text'],
-      'Current Source Period':'','Previous Source Period':'','Previous-year Source Period':'','Financial Year Source':''
-    });
-    const out=map.get(key);
-    const p=normalPeriod(r._period);
-    if(p==='Q1FY26'){out['Current Period']=r._value;out['Current Source Period']='Q1FY26';}
-    else if(p==='Q4FY25'){out['Previous Period']=r._value;out['Previous Source Period']='Q4FY25';}
-    else if(p==='Q1FY25'){out['Previous-year Period']=r._value;out['Previous-year Source Period']='Q1FY25';}
-    else if(p==='FY25'){out['Financial Year']=r._value;out['Financial Year Source']='FY25';}
-    else if(out['Current Period']===null && /^FY\d{2,4}$/.test(p)){
-      if(!out['Financial Year']){out['Financial Year']=r._value;out['Financial Year Source']=p;}
-    }
-    if(!out.Page || r.Page<out.Page){out.Page=r.Page;out['Source Text']=r['Source Text'];}
-  }
-
-  const clean=[...map.values()].filter(r=>r['Current Period']!==null || r['Previous Period']!==null || r['Previous-year Period']!==null || r['Financial Year']!==null);
-  const headers=[
-    'KPI','Area','Company / Bank','KPI Nature','Nature','Current Period','Previous Period',
-    'Previous-year Period','Financial Year','Unit','Current Source Period','Previous Source Period',
-    'Previous-year Source Period','Financial Year Source','Page','Source Text'
-  ];
-
-  const aoa=[headers,...clean.map(r=>headers.map(h=>r[h]??null))];
-  const entities=[...new Set(clean.map(r=>r['Company / Bank']).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
-  const areas=[...new Set(clean.map(r=>r.Area).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
-  const kpis=[...new Set(clean.map(r=>r.KPI).filter(Boolean))];
-
-  STATE.documentMeta={
-    isCompanyResults:true,
-    company:entities.length>1?'Multiple Banks / HFCs / NBFCs':(entities[0]||'Financial Results'),
-    nature:'Comparative financial-results report',
-    basis:'Comparative',
-    period:'Q1FY26',
-    comparison:'Q4FY25 and Q1FY25',
-    unit:[...new Set(clean.map(r=>r.Unit).filter(Boolean))].join(' / '),
-    source:file.name,
-    description:`Comparative report read from ${totalPages} pages. ${entities.length} entities and ${kpis.length} KPI heads recognised. Current period is Q1FY26; previous period Q4FY25; previous-year period Q1FY25; FY25 values are retained where present. Figures are taken only from recognised tables.`
-  };
-
-  return {aoa,pages:totalPages,found:clean.length,meta:STATE.documentMeta};
+  if(!out.length)throw new Error('The PDF was opened successfully, but no reliable KPI table values were extracted. This version will not invent figures.');
+  const seen=new Set(); const clean=out.filter(r=>{const k=[r.Page,r.Company,r.KPI,r.Unit,r['Current Period']].join('|');if(seen.has(k))return false;seen.add(k);return true;});
+  const headers=['KPI','Area','KPI Nature','Nature','Basis','Company','Period','Current Period','Previous Period','Previous-year Period','Financial Year','Unit','Page','Source Text'];
+  const meta={isCompanyResults:true,company:'Banks, HFCs & NBFCs',nature:'Comparative banking, HFC and NBFC financial-results and performance KPIs',basis:[...new Set(clean.map(r=>r.Basis))].join(' / ')||'Not detected',period:lastPeriod,comparison:'Source periods retained where available',unit:[...new Set(clean.map(r=>r.Unit))].join(' / '),source:file.name,description:'PDF extracted page-by-page. Comparative tables retain Company/Bank columns; uncertain fields are not guessed.'};
+  STATE.documentMeta=meta;
+  return {aoa:[headers,...clean.map(r=>headers.map(h=>r[h]??null))],pages:pdf.numPages,found:clean.length,meta};
 }
 
+async function handleFile(file){
+  resetLoadedDataForNewFile();
+  const myToken=STATE.loadToken;
+  clearMessages();
+  const isPdf = /\.pdf$/i.test(file.name) || file.type === 'application/pdf';
+  if(isPdf){
+    const panel=document.getElementById('pdfPanel');
+    const pages=document.getElementById('pdfPages');
+    const name=document.getElementById('pdfName');
+    const openBtn=document.getElementById('pdfOpenBtn');
+    const dashBtn=document.getElementById('pdfDashboardBtn');
+    const pageInfo=document.getElementById('pdfPageInfo');
+    const url=URL.createObjectURL(file);
+
+    STATE.pdfObjectUrl=url;
+    name.textContent='📕 '+file.name;
+    pageInfo.textContent='PDF selected';
+    emptyState.style.display='none';
+    loadingState.style.display='none';
+    document.getElementById('appContent').style.display='none';
+    document.getElementById('askFab').style.display='none';
+    panel.style.display='block';
+
+    pages.innerHTML='<div class="pdf-loading">PDF selected.<br><br>Tap <strong>📊 Prepare Dashboard</strong> to extract recognised KPIs, or <strong>↗ Open Full PDF</strong> to read the complete document.</div>';
+
+    openBtn.onclick=(ev)=>{
+      ev.preventDefault();
+      window.location.href=url;
+    };
+
+    dashBtn.onclick=async()=>{
+      dashBtn.disabled=true;
+      pageInfo.textContent='Extracting…';
+      pages.innerHTML='<div class="pdf-loading">Reading PDF pages and identifying KPI values…<br><br>Please wait.</div>';
+      try{
+        const result=await extractPdfDashboard(file);
+        if(myToken!==STATE.loadToken) return;
+        STATE.sheetName='PDF';
+        STATE.rawRows=result.aoa;
+        STATE.workbook=null;
+        STATE.headerRow=0;
+        // Build the same dashboard used by Excel/CSV from the normalised PDF rows.
+        buildFromHeaderRow(0);
+        pageInfo.textContent=`Dashboard · ${result.pages} pages · ${result.found} KPIs`;
+        panel.style.display='none';
+        if(STATE.pdfObjectUrl){ URL.revokeObjectURL(STATE.pdfObjectUrl); STATE.pdfObjectUrl=null; }
+        document.getElementById('askFab').style.display='flex';
+        showMessage(`Company-results dashboard prepared: ${result.meta.company} · ${result.meta.basis} · ${result.found} KPI rows. Standalone and consolidated figures are kept separate. Verify figures against the source PDF page.`, 'info');
+      }catch(err){
+        console.error(err);
+        pageInfo.textContent='PDF extraction';
+        pages.innerHTML='<div class="pdf-loading">'+escapeHtml(err.message)+'</div>';
+        showMessage(err.message,'warn');
+      }finally{
+        dashBtn.disabled=false;
+      }
+    };
+
+    document.getElementById('pdfBackBtn').onclick=()=>{
+      panel.style.display='none';
+      pages.innerHTML='';
+      if(STATE.pdfObjectUrl){ URL.revokeObjectURL(STATE.pdfObjectUrl); STATE.pdfObjectUrl=null; }
+      emptyState.style.display='block';
+      clearMessages();
+      pageInfo.textContent='PDF selected';
+    };
+    return;
+  }
+  emptyState.style.display='none';
+  loadingState.style.display='flex';
+  loadingText.textContent='Loading InstantDash\'s spreadsheet engine…';
+  const xlsxReady=await waitFor(()=>typeof XLSX!=='undefined');
+  if(!xlsxReady){
+    fail('The spreadsheet engine could not load — this usually means a slow or restricted internet connection. Please check your connection and reload the page, then try again.');
+    return;
+  }
+  loadingText.textContent='Reading "'+file.name+'"…';
+  const reader=new FileReader();
+  reader.onerror=()=>{
+    if(myToken!==STATE.loadToken) return;
+    fail('Could not read this file. It may be corrupted or open in another program.');
+  };
+  reader.onload=(e)=>{
+    if(myToken!==STATE.loadToken) return;
+    try{
+      const data=new Uint8Array(e.target.result);
+      let wb;
+      try{
+        wb=XLSX.read(data,{type:'array', cellDates:true, cellNF:false, cellText:false});
+      }catch(errInner){
+        fail('This file could not be opened. It may be password-protected, corrupted, or not a valid Excel/CSV file.');
+        return;
+      }
+      if(!wb.SheetNames || wb.SheetNames.length===0){
+        fail('This workbook has no sheets to read.');
+        return;
+      }
+      STATE.workbook=wb;
+      populateSheetSelect(wb.SheetNames);
+      loadSheet(chooseBestDataSheet(wb.SheetNames, wb));
+    }catch(err){
+      console.error(err);
+      fail('Something went wrong opening this file: '+err.message);
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
 
 function fail(msg){
   loadingState.style.display='none';
@@ -2432,7 +2406,7 @@ function fail(msg){
 
 
 
-// v4.5.8: expose the real file handler for the independent mobile file-picker hook.
+// v4.5.9: expose the real file handler for the independent mobile file-picker hook.
 window.instantDashHandleFile = handleFile;
 
 function chooseBestDataSheet(names, wb){
@@ -2702,7 +2676,7 @@ function buildFromHeaderRow(headerIdx){
   loadingState.style.display='none';
   emptyState.style.display='none';
   appContent.style.display='block'; document.body.classList.add('data-loaded');
-  document.getElementById('shareTopBtn').style.display='';
+  {const b=document.getElementById('shareTopBtn');if(b){b.style.display='';b.disabled=false;}}
 }
 
 function renderDocumentContext(meta){
@@ -3028,7 +3002,7 @@ function renderPerformanceScorecard(){
 }
 
 
-/* ===================== InstantDash v4.5.8 =====================
+/* ===================== InstantDash v4.5.9 =====================
    Consolidated management/KPI intelligence layer.
    It is additive: existing v3.5.9 chart engine remains intact.
 ================================================================ */
@@ -6865,7 +6839,7 @@ async function shareDashboardPng(triggerBtn){
 }
 document.getElementById('exportDashboardPngBtn').addEventListener('click',(e)=>shareDashboardPng(e.currentTarget));
 document.getElementById('shareTopBtn').addEventListener('click',(e)=>{
-  if(!STATE.data.length){ showMessage('Load a spreadsheet first, then you can share the dashboard.','info'); return; }
+  if(!STATE.data.length){ showMessage('Load Excel, CSV or PDF first, then you can share the dashboard.','info'); return; }
   shareDashboardPng(e.currentTarget);
 });
 
