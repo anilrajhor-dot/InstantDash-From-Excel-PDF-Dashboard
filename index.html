@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<title>InstantDash — Excel to Dashboard v4.5.24</title>
+<title>InstantDash — Excel to Dashboard v4.5.25</title>
 <meta name="author" content="Developed by Anil Sharma, Former General Manager, Central Bank of India">
-<meta name="application-name" content="InstantDash v4.5.24">
-<meta name="description" content="InstantDash — Excel to Dashboard v4.5.24, developed by Anil Sharma">
+<meta name="application-name" content="InstantDash v4.5.25">
+<meta name="description" content="InstantDash — Excel to Dashboard v4.5.25, developed by Anil Sharma">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js';document.head.appendChild(s);"></script>
@@ -217,7 +217,7 @@ select, .input{
 .chart-body{position:relative; height:320px; min-height:320px; width:100%; overflow:hidden;}
 .chart-body canvas{display:block !important; width:100% !important; height:100% !important; min-height:300px;}
 .chart-controls-row{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; border-top:1px dashed var(--line); padding-top:8px;}
-/* ---------- v4.5.24 mobile-first dashboard polish ---------- */
+/* ---------- v4.5.25 mobile-first dashboard polish ---------- */
 .kpi-card{position:relative;overflow:hidden;min-height:196px;padding:18px 18px 16px;border-radius:18px;border:1px solid rgba(255,255,255,.06);background:linear-gradient(145deg,var(--card),rgba(255,255,255,.018));box-shadow:0 8px 24px rgba(0,0,0,.18);}
 .kpi-card:before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:var(--amber);}
 .kpi-card.kpi-derived:before{background:#304968;}
@@ -507,7 +507,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v403UiFix">
-/* v4.5.24: KPI directory is part of the loaded dashboard, never the landing page. */
+/* v4.5.25: KPI directory is part of the loaded dashboard, never the landing page. */
 #bankingKpiDirectory{display:block}
 #emptyState ~ #bankingKpiDirectory{display:block !important}
 </style>
@@ -539,7 +539,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v412InsightVisibility">
-/* v4.5.24 — high-contrast KPI Insight */
+/* v4.5.25 — high-contrast KPI Insight */
 .click-insight-backdrop{
   background:rgba(0,0,0,.62) !important;
 }
@@ -820,7 +820,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 @media(max-width:480px){.cc-grid{grid-template-columns:1fr}}
 </style>
 <style id="v441AreaDirectoryThemeFix">
-/* v4.5.24: the directory must follow the app theme. Earlier versions used
+/* v4.5.25: the directory must follow the app theme. Earlier versions used
    hard-coded white backgrounds, which made the dark-mode text almost invisible. */
 .banking-kpi-directory{
   margin:18px 0;
@@ -909,7 +909,7 @@ document.addEventListener('DOMContentLoaded', function(){
 </script>
 
 <style id="v444LandingDirectoryVisibility">
-/* v4.5.24 — Landing page is for file upload only.
+/* v4.5.25 — Landing page is for file upload only.
    Area/KPI directories appear after a dashboard is loaded. */
 #areaDirectoryBlock,
 #bankingKpiDirectory{
@@ -1313,7 +1313,7 @@ body.v4510-pdf-session .v4510-pdf-only{display:flex!important}
 @media(max-width:600px){.v4516-audit-grid{grid-template-columns:1fr}}
 </style>
 <script id="v4521NullRowGuard">
-// v4.5.24: keep null/placeholder PDF rows from breaking Safari/iOS rendering.
+// v4.5.25: keep null/placeholder PDF rows from breaking Safari/iOS rendering.
 // Missing values are deliberately preserved as null/NaN and are never coerced to zero.
 window.InstantDashNullRowGuard={version:'4.5.21'};
 </script>
@@ -1321,7 +1321,7 @@ window.InstantDashNullRowGuard={version:'4.5.21'};
 <body>
 
 <div class="topbar">
-  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v4.5.24</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
+  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v4.5.25</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
   <div class="topbar-right">
     <div class="privacy-badge">🔒 <span class="txt">Processed locally — not uploaded to any server</span></div>
     <button class="btn secondary small share-dashboard-visible" id="shareTopBtn" title="Share dashboard" aria-label="Share dashboard" disabled>📤 Share dashboard</button>
@@ -1747,7 +1747,7 @@ window.InstantDashNullRowGuard={version:'4.5.21'};
   </div>
 </div>
 
-<footer class="app-footer">InstantDash <strong>v4.5.24</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
+<footer class="app-footer">InstantDash <strong>v4.5.25</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
 </div>
 
 <!-- Ask Your Data floating widget -->
@@ -2087,7 +2087,7 @@ const STATE = {
   loadToken:0
 };
 
-// v4.5.24 RELIABILITY FIX: expose the application state to the window.
+// v4.5.25 RELIABILITY FIX: expose the application state to the window.
 // Several independent dashboard enhancement layers use window.STATE. A
 // top-level const is not automatically a window property in browsers, so
 // those layers could fail while parsing an uploaded sheet even though the
@@ -2408,7 +2408,7 @@ async function extractPdfDashboard(file){
   const areas=[...new Set(clean.map(r=>norm(r.Area)).filter(Boolean))];
   const companies=[...new Set(clean.map(r=>norm(r.Company)).filter(Boolean))];
   const companyTitle = areas.length===1 ? areas[0] : (companies.length===1 ? companies[0] : 'Financial Results');
-  const meta={isCompanyResults:true,company:companyTitle,nature:'Comparative financial-results and performance KPIs extracted from the uploaded PDF; entity/area labels are retained from the source',basis:[...new Set(clean.map(r=>r.Basis))].join(' / ')||'Not detected',period:lastPeriod,comparison:'FY2026 vs FY2025 vs FY2024 retained from source tables; target retained separately',unit:[...new Set(clean.map(r=>r.Unit))].join(' / '),source:file.name,description:'PDF extracted page-by-page. Each KPI keeps its FY2026, FY2025, FY2024 and target values from the same source page; no columns are shifted or guessed. Banking and company areas remain identifiable from the source.'};
+  const meta={isCompanyResults:true,company:companyTitle,nature:'Comparative financial-results and performance KPIs extracted from the uploaded PDF; entity/area labels are retained from the source',basis:[...new Set(clean.map(r=>r.Basis))].join(' / ')||'Not detected',period:lastPeriod,comparison:'FY2026 vs FY2025 vs FY2024 retained from source tables; target retained separately',unit:[...new Set(clean.map(r=>r.Unit))].join(' / '),source:file.name,description:'PDF extracted page-by-page. Each KPI keeps its FY2026, FY2025, FY2024 and target values from the same source page; no columns are shifted or guessed. Company Results is the default KPI scope; banking/NBFC areas remain separately identifiable and are not mixed into Company Results totals.'};
   STATE.documentMeta=meta;
   return {aoa:[headers,...clean.map(r=>headers.map(h=>r[h]??null))],pages:pdf.numPages,found:clean.length,meta};
 }
@@ -2530,7 +2530,7 @@ function fail(msg){
 
 
 
-// v4.5.24: expose the real file handler for the independent mobile file-picker hook.
+// v4.5.25: expose the real file handler for the independent mobile file-picker hook.
 window.instantDashHandleFile = handleFile;
 
 function chooseBestDataSheet(names, wb){
@@ -2989,7 +2989,7 @@ function overrideColumnType(colName, newType){
 
 // ---------- helpers to get typed value for a row/col ----------
 function getNumeric(row,col){
-  // v4.5.24: PDF/extraction rows can legitimately contain null placeholders.
+  // v4.5.25: PDF/extraction rows can legitimately contain null placeholders.
   // Never dereference a null row; missing values must remain missing, not zero.
   if(!row || !col) return NaN;
   return parseCleanNumber(row[col]);
@@ -3167,7 +3167,7 @@ function renderPerformanceScorecard(){
 }
 
 
-/* ===================== InstantDash v4.5.24 =====================
+/* ===================== InstantDash v4.5.25 =====================
    Consolidated management/KPI intelligence layer.
    It is additive: existing v3.5.9 chart engine remains intact.
 ================================================================ */
@@ -4349,7 +4349,7 @@ function enforceAutomaticChartDefault(spec){
   const desired=defaultChartKind(spec.y, STATE.filteredData);
   return {...spec, kind:desired, horizontal:false};
 }
-// ---------- v4.5.24 RELIABILITY: long-form KPI rows ----------
+// ---------- v4.5.25 RELIABILITY: long-form KPI rows ----------
 // Many banking/company spreadsheets are normalised tables with one row per
 // Entity + Period + KPI and separate Actual / Previous Actual / Target fields.
 // In that structure the KPI identity lives in the KPI column, NOT in a numeric
@@ -4447,16 +4447,48 @@ function reliabilityRowsForKpi(def, rows){
   if(!isReliabilityLongForm()) return null;
   const c=reliabilityKpiColumns();
   if(!c.kpi || !c.actual) return null;
-  const matched=rows.filter(r=>reliabilityAliasScore(r?.[c.kpi],def.aliases)>=.72);
+  let matched=rows.filter(r=>reliabilityAliasScore(r?.[c.kpi],def.aliases)>=.72);
   if(!matched.length)return null;
-  // Prefer the latest reporting period when a period field exists. This keeps
-  // KPI cards current while preserving all historical rows for drill-down.
+  // v4.5.25: Company Results PDFs can contain company and banking/NBFC
+  // areas in the same extracted table. Never mix those areas into a
+  // Company Results KPI total. Prefer an explicit Company Results area.
+  if(c.area && STATE.documentMeta?.isCompanyResults){
+    const areaValues=[...new Set(matched.map(r=>String(r?.[c.area]??'').trim()).filter(Boolean))];
+    const selectedArea=(STATE.kpiDepartment && STATE.kpiDepartment!=='Auto Detect' && STATE.kpiDepartment!=='All') ? String(STATE.kpiDepartment).trim() : '';
+    const exactCompany=areaValues.find(v=>/^company results$/i.test(v));
+    const companyLike=areaValues.find(v=>/company results|corporate results/i.test(v));
+    const preferred=selectedArea && areaValues.some(v=>v.toLowerCase()===selectedArea.toLowerCase()) ? selectedArea : (exactCompany||companyLike||'');
+    if(preferred){
+      const scoped=matched.filter(r=>String(r?.[c.area]??'').trim().toLowerCase()===preferred.toLowerCase());
+      if(scoped.length) matched=scoped;
+    }
+  }
+  // Prefer the latest reporting period when a period field exists.
   if(c.period){
     const latest=reliabilityLatestPeriod(matched,c.period);
     const current=matched.filter(r=>String(r?.[c.period]??'').trim()===String(latest??'').trim());
     if(current.length)return current;
   }
   return matched;
+}
+function reliabilityChartScope(rows,spec){
+  if(!isReliabilityLongForm() || !spec) return rows;
+  const c=reliabilityKpiColumns();
+  if(!c.kpi || !c.actual || String(spec.x||'')!==String(c.kpi) || String(spec.y||'')!==String(c.actual)) return rows;
+  let scoped=Array.isArray(rows)?rows.slice():[];
+  if(c.area && STATE.documentMeta?.isCompanyResults){
+    const vals=[...new Set(scoped.map(r=>String(r?.[c.area]??'').trim()).filter(Boolean))];
+    const selected=(STATE.kpiDepartment && !['Auto Detect','All'].includes(STATE.kpiDepartment)) ? String(STATE.kpiDepartment).trim() : '';
+    const exact=vals.find(v=>/^company results$/i.test(v));
+    const like=vals.find(v=>/company results|corporate results/i.test(v));
+    const preferred=selected && vals.some(v=>v.toLowerCase()===selected.toLowerCase()) ? selected : (exact||like||'');
+    if(preferred){ const x=scoped.filter(r=>String(r?.[c.area]??'').trim().toLowerCase()===preferred.toLowerCase()); if(x.length)scoped=x; }
+  }
+  if(c.period){
+    const latest=reliabilityLatestPeriod(scoped,c.period);
+    if(latest!=null){ const x=scoped.filter(r=>String(r?.[c.period]??'').trim()===String(latest).trim()); if(x.length)scoped=x; }
+  }
+  return scoped;
 }
 function reliabilityAggregateRows(rows,col,agg,isPercent=false){
   const nums=(rows||[]).map(r=>reliabilityNormalisePercent(r?.[col],isPercent)).filter(Number.isFinite);
@@ -4559,12 +4591,14 @@ function kpiNumberForColumn(col){
 }
 function kpiAggregate(col,agg){
   const base=STATE.filteredData||[];
-  const scoped=(typeof window.InstantDashReliability17==='object' && typeof window.InstantDashReliability17.currentRows==='function')
-    ? window.InstantDashReliability17.currentRows() : base;
-  const nums=scoped.map(r=>getNumeric(r,col)).filter(v=>!isNaN(v));
+  const scoped=(typeof window.InstantDashReliability17==='object' && typeof window.InstantDashReliability17.currentRows==='function') ? window.InstantDashReliability17.currentRows() : base;
+  const prof=STATE.profile?.[col]||{};
+  let nums=scoped.map(r=>getNumeric(r,col)).filter(v=>!isNaN(v));
+  // v4.5.25: percentage source columns may arrive from PDF extraction as
+  // 9.8 instead of 0.098. Keep percentage calculations fraction-based.
+  if(prof.isPercentage) nums=nums.map(v=>Math.abs(v)>1?v/100:v);
   if(agg==='countRows') return scoped.length;
   if(!nums.length) return null;
-  const prof=STATE.profile?.[col]||{};
   if(prof.isPercentage && (agg==='sum'||!agg)) agg='avg';
   if(agg==='avg') return nums.reduce((a,b)=>a+b,0)/nums.length;
   if(agg==='min') return Math.min(...nums);
