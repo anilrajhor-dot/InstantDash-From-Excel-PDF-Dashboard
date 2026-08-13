@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<title>InstantDash — Excel to Dashboard v4.3.7</title>
+<title>InstantDash — Excel to Dashboard v4.3.8</title>
 <meta name="author" content="Developed by Anil Sharma, Former General Manager, Central Bank of India">
-<meta name="application-name" content="InstantDash v4.3.7">
-<meta name="description" content="InstantDash — Excel to Dashboard v4.3.7, developed by Anil Sharma">
+<meta name="application-name" content="InstantDash v4.3.8">
+<meta name="description" content="InstantDash — Excel to Dashboard v4.3.8, developed by Anil Sharma">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js';document.head.appendChild(s);"></script>
@@ -217,7 +217,7 @@ select, .input{
 .chart-body{position:relative; height:320px; min-height:320px; width:100%; overflow:hidden;}
 .chart-body canvas{display:block !important; width:100% !important; height:100% !important; min-height:300px;}
 .chart-controls-row{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; border-top:1px dashed var(--line); padding-top:8px;}
-/* ---------- v4.3.7 mobile-first dashboard polish ---------- */
+/* ---------- v4.3.8 mobile-first dashboard polish ---------- */
 .kpi-card{position:relative;overflow:hidden;min-height:196px;padding:18px 18px 16px;border-radius:18px;border:1px solid rgba(255,255,255,.06);background:linear-gradient(145deg,var(--card),rgba(255,255,255,.018));box-shadow:0 8px 24px rgba(0,0,0,.18);}
 .kpi-card:before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:var(--amber);}
 .kpi-card.kpi-derived:before{background:#304968;}
@@ -507,7 +507,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v403UiFix">
-/* v4.3.7: KPI directory is part of the loaded dashboard, never the landing page. */
+/* v4.3.8: KPI directory is part of the loaded dashboard, never the landing page. */
 #bankingKpiDirectory{display:block}
 #emptyState ~ #bankingKpiDirectory{display:block !important}
 </style>
@@ -539,7 +539,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v412InsightVisibility">
-/* v4.3.7 — high-contrast KPI Insight */
+/* v4.3.8 — high-contrast KPI Insight */
 .click-insight-backdrop{
   background:rgba(0,0,0,.62) !important;
 }
@@ -829,7 +829,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 <body>
 
 <div class="topbar">
-  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v4.3.7</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
+  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v4.3.8</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
   <div class="topbar-right">
     <div class="privacy-badge">🔒 <span class="txt">Processed locally — not uploaded to any server</span></div>
     <button class="icon-btn" id="shareTopBtn" title="Share dashboard" aria-label="Share dashboard as an image" style="display:none;">📤</button>
@@ -1236,7 +1236,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
   <div id="areaDirectoryCards" class="area-directory-cards"></div>
 </div>
 <div id="bankingKpiDirectory" class="banking-kpi-directory">
-  <h3>📚 KPI Area &amp; Directory — Banking &amp; Company Results</h3>
+  <h3>📚 KPI Area &amp; Directory — All Areas (Alphabetical)</h3>
   <div class="banking-kpi-summary"><strong id="bankingKpiCount">0</strong> KPIs · Areas are strictly alphabetical · ₹/currency KPIs default to <strong>Bar</strong> · all other generic KPIs default to <strong>Donut</strong></div>
   <input id="bankingKpiSearch" class="banking-kpi-search" type="search" placeholder="Search area or KPI, e.g. Company Results, NPA, recovery, CASA, complaints, PAT…">
   <div id="areaDirectorySummary" class="area-directory-summary" aria-label="Areas"></div>
@@ -1248,7 +1248,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
   </div>
 </div>
 
-<footer class="app-footer">InstantDash <strong>v4.3.7</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
+<footer class="app-footer">InstantDash <strong>v4.3.8</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
 </div>
 
 <!-- Ask Your Data floating widget -->
@@ -2134,7 +2134,7 @@ function fail(msg){
 
 
 
-// v4.3.7: expose the real file handler for the independent mobile file-picker hook.
+// v4.3.8: expose the real file handler for the independent mobile file-picker hook.
 window.instantDashHandleFile = handleFile;
 
 function chooseBestDataSheet(names, wb){
@@ -2726,7 +2726,7 @@ function renderPerformanceScorecard(){
 }
 
 
-/* ===================== InstantDash v4.3.7 =====================
+/* ===================== InstantDash v4.3.8 =====================
    Consolidated management/KPI intelligence layer.
    It is additive: existing v3.5.9 chart engine remains intact.
 ================================================================ */
@@ -2826,9 +2826,9 @@ function v4BuildBankingCards(){
     </div>`).join('');
 }
 
-function v4BuildKpiIntelligence(){
+function v4BuildKpiIntelligence(focusMeasure){
   const panel=document.getElementById('kpiIntelPanel'); if(!panel)return;
-  const search=(document.getElementById('kpiIntelSearch')?.value||'').toLowerCase();
+  const search=(focusMeasure||document.getElementById('kpiIntelSearch')?.value||'').toLowerCase();
   const area=(document.getElementById('kpiIntelArea')?.value||'').toLowerCase();
   const rows=v4Rows(), cols=v4Cols();
   const kpiCol=v4Find(/^kpi$|^metric$|^indicator$|^particulars$/i);
@@ -2836,7 +2836,28 @@ function v4BuildKpiIntelligence(){
   const areaCol=v4Find(/^area$|^department$|^category$/i);
   const dbChart=v4Find(/^default chart$|^chart type$/i);
   if(!kpiCol){
-    panel.innerHTML='<div class="kpi-intel-card">No KPI column detected in this dataset.</div>'; return;
+    // Wide-format Excel: each numeric column is itself a KPI.
+    const numericCols=cols.filter(c=>{
+      const p=STATE.profile?.[c];
+      return p && (p.type==='Number' || p.type==='Currency' || p.isNumeric || p.isCurrency || p.isPercentage);
+    });
+    const list=numericCols
+      .map(name=>({
+        name,
+        area:'Company Results',
+        unit:STATE.profile?.[name]?.isPercentage?'%':(STATE.profile?.[name]?.isCurrency?'₹':'Value'),
+        chart:defaultChartKind(name,rows),
+        direction:directionFor(name)
+      }))
+      .filter(x=>(!search||`${x.name} ${x.area} ${x.unit}`.toLowerCase().includes(search))&&
+               (!area||x.area.toLowerCase()===area))
+      .slice(0,60);
+    panel.innerHTML=list.map(x=>`<div class="kpi-intel-card">
+      <div class="kpi-intel-name">${escapeHtml(x.name)}</div>
+      <div class="kpi-intel-meta">${escapeHtml(x.area)} • ${escapeHtml(x.unit)} • ${escapeHtml(x.direction)}</div>
+      <span class="kpi-chart-pill">${escapeHtml(x.chart)} default</span>
+    </div>`).join('') || '<div class="kpi-intel-card">No matching numeric KPIs.</div>';
+    return;
   }
   const map=new Map();
   rows.forEach(r=>{
@@ -4796,6 +4817,9 @@ function chartIsCurrency(spec){
   const candidates=[spec?.y,spec?.x].filter(Boolean);
   if(spec?.unitFilter==='currency') return true;
   return candidates.some(n=>isCurrencyKpi(n));
+}
+function formatINR(n){
+  return fmtCurrency(n);
 }
 function fmtCurrency(n){
   if(n===null||n===undefined||isNaN(n)) return '—';
@@ -6978,11 +7002,23 @@ document.getElementById('themeToggle').addEventListener('click',()=>{
 
   function renderAreaCards(){
     const host=document.getElementById('areaDirectoryCards'); if(!host)return;
-    const areas=[...new Set(getBankingBranchKpiLibrary().map(x=>String(x.area||'').trim()).filter(Boolean))]
-      .sort(alpha);
+    const lib=getBankingBranchKpiLibrary();
+    const libraryAreas=lib.map(x=>String(x.area||'').trim()).filter(Boolean);
+    const dataAreas=(STATE?.data||[]).map(r=>String(r.Area??r.area??'').trim()).filter(Boolean);
+    const areas=[...new Set([
+      ...libraryAreas,
+      ...dataAreas,
+      'Banking Branch & Bank Performance',
+      'Company Results'
+    ])].filter(Boolean).sort(alpha);
     host.innerHTML=areas.map(a=>{
-      const n=getBankingBranchKpiLibrary().filter(x=>String(x.area||'').trim()===a).length;
-      return `<div class="area-directory-card" data-area="${escapeHtml(a)}">${escapeHtml(a)}<small>${n} KPI definitions</small></div>`;
+      const n=lib.filter(x=>String(x.area||'').trim()===a).length;
+      const dataN=(STATE?.data||[]).filter(r=>String(r.Area??r.area??'').trim()===a).length;
+      const count=n||dataN;
+      return `<div class="area-directory-card" data-area="${escapeHtml(a)}">
+        <b>${escapeHtml(a)}</b>
+        <small>${count ? count+' KPI definitions / '+dataN.toLocaleString('en-IN')+' data rows' : 'KPI directory area'}</small>
+      </div>`;
     }).join('');
     host.querySelectorAll('.area-directory-card').forEach(card=>card.addEventListener('click',()=>{
       const q=document.getElementById('bankingKpiSearch');
@@ -7013,8 +7049,8 @@ document.addEventListener('DOMContentLoaded',()=>{
     <div class="click-insight-head"><h3 id="clickInsightTitle">KPI Insight</h3><button id="clickInsightClose" class="click-insight-close">✕</button></div>
     <div id="clickInsightBody"></div>
     <div class="click-insight-actions">
-      <button id="clickInsightDrill">Drill into this KPI</button>
-      <button id="clickInsightClose2">Close</button>
+      <button type="button" id="clickInsightDrill">Drill into this KPI</button>
+      <button type="button" id="clickInsightClose2">Close</button>
     </div>
   </div>
 </div>
@@ -7044,7 +7080,15 @@ document.addEventListener('click',(e)=>{
   }else{
     closeClickInsight();
     const search=document.getElementById('kpiIntelSearch');
-    if(search){search.value=measure; search.dispatchEvent(new Event('input',{bubbles:true}));}
+    if(search){
+      search.value=measure;
+      search.dispatchEvent(new Event('input',{bubbles:true}));
+    }else{
+      v4BuildKpiIntelligence(measure);
+    }
+    // Wide-format Excel files have no KPI column, so the intelligence panel
+    // is populated directly from the selected numeric measure.
+    try{ v4BuildKpiIntelligence(measure); }catch(err){ console.warn('KPI drill intelligence',err); }
     document.getElementById('kpiIntelPanel')?.scrollIntoView({behavior:'smooth',block:'start'});
     showMessage(`Showing KPI intelligence for "${measure}".`,'info');
   }
