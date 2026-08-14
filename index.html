@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>InstantDash v4.6.3</title>
+<title>InstantDash v4.6.4</title>
 <style>
 :root{
   --bg:#111217;--panel:#1b1c22;--panel2:#202128;--line:#343640;--text:#f5f5f7;
@@ -68,7 +68,7 @@ footer{color:#777;font-size:11px;text-align:center;padding:12px}
 <div class="app">
 <header>
   <div>
-    <div class="brand">🟡 InstantDash <span class="version">v4.6.3</span></div>
+    <div class="brand">🟡 InstantDash <span class="version">v4.6.4</span></div>
     <div class="by">Developed by Anil Sharma • Former General Manager, Central Bank of India</div>
   </div>
   <div class="top-actions">
@@ -94,10 +94,13 @@ footer{color:#777;font-size:11px;text-align:center;padding:12px}
     <select id="deptSelect" onchange="selectDept(this.value)"></select>
   </div>
   <div id="deptInfo" class="notice" style="margin-top:12px"></div>
+  <div class="notice" style="margin-top:12px">
+    <b>Pre-loaded master library:</b> Banking, Finance, Internal Audit, Human Resources, Credit, Manufacturing, Sales & Marketing, Operations, Customer Service, Risk & Compliance, IT & Technology and Administration — with their standard KPIs, units, performance nature and formula rules. <b>Other / Custom</b> is available for your own department.
+  </div>
   <div class="actions">
     <button class="btn primary" onclick="continueDepartment()">Continue → KPI Mapping</button>
     <button class="btn" onclick="openDeptModal()">＋ Add Department</button>
-    <button class="btn" onclick="editSelectedDept()">✏️ Edit Department</button>
+    <button class="btn" onclick="editSelectedDept()">✏️ Edit Department</button><button class="btn" onclick="restoreMasterLibrary()">↺ Restore Pre-loaded Library</button>
   </div>
 </section>
 
@@ -173,7 +176,7 @@ footer{color:#777;font-size:11px;text-align:center;padding:12px}
   </div>
   <div id="dashboardBars" style="margin-top:16px"></div>
 </section>
-<footer>InstantDash v4.6.3 • Department-first KPI architecture • Department → KPI Mapping → Analysis → Report → Dashboard.</footer>
+<footer>InstantDash v4.6.4 • Department-first KPI architecture • Department → KPI Mapping → Analysis → Report → Dashboard.</footer>
 </div>
 
 <div id="modalBack" class="modal-back" onclick="closeModal(event)">
@@ -288,10 +291,12 @@ const DEFAULT = {
  ],
  selected:"banking"
 };
-let state = JSON.parse(localStorage.getItem("instantdash46")||"null") || DEFAULT;
+const STORAGE_KEY = "instantdash46_4_master";
+let state = JSON.parse(localStorage.getItem(STORAGE_KEY)||"null") || DEFAULT;
+function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}
+
 let rows=[], headers=[], fileName="", deptField=null;
 
-function save(){localStorage.setItem("instantdash46",JSON.stringify(state))}
 function dept(){return state.departments.find(d=>d.id===state.selected)||state.departments[0]}
 function esc(x){return String(x??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
 function showSection(id){
@@ -344,6 +349,14 @@ function saveDeptNew(){
 function saveDeptEdit(){
  const d=dept();d.name=document.getElementById("mName").value.trim()||d.name;d.icon=document.getElementById("mIcon").value||"🏢";d.desc=document.getElementById("mDesc").value.trim();save();closeModal();renderDepartments()
 }
+function restoreMasterLibrary(){
+ if(!confirm("Restore the original pre-loaded departments and KPI library? Your current custom department/KPI edits will be replaced.")) return;
+ localStorage.removeItem(STORAGE_KEY);
+ state=JSON.parse(JSON.stringify(DEFAULT));
+ save();
+ renderDepartments();
+ showSection("dept");
+}
 function deleteSelectedDept(){
  if(state.departments.length<=1)return alert("At least one department must remain.");
  if(confirm("Delete selected department and its KPI map?")){state.departments=state.departments.filter(d=>d.id!==state.selected);state.selected=state.departments[0].id;save();renderDepartments()}
@@ -363,7 +376,7 @@ function renderMapping(){
  const body=document.getElementById("kpiBody");
  if(!d.kpis.length){body.innerHTML=`<tr><td colspan="7"><div class="empty">No KPIs configured. Choose “Yes — Add / Edit KPI”.</div></td></tr>`;return}
  body.innerHTML=d.kpis.map((k,i)=>`<tr>
- <td><b>${esc(k[0])}</b></td><td>${esc(k[1])||"—"}</td><td>${esc(k[6]||KPI_FORMULAS[k[0]]||k[2])}</td><td>${esc(k[3])}</td><td>${esc(k[4])}</td><td>${esc(k[5])||"—"}</td>
+ <td><b>${esc(k[0])}</b></td><td>${esc(k[1])||"<span class=\"badge\">User mapping required</span>"}</td><td>${esc(k[6]||KPI_FORMULAS[k[0]]||k[2])}</td><td>${esc(k[3])}</td><td>${esc(k[4])}</td><td>${esc(k[5])||"—"}</td>
  <td class="editOnly" style="display:none"><button class="btn small" onclick="openKpiModal(${i})">✏️</button></td>
  </tr>`).join("");
 }
