@@ -8,10 +8,12 @@
 <!-- ============================================================
      LIBRARIES (loaded from CDN, no build step required)
      SheetJS  : reads .xlsx / .xls / .csv entirely in the browser
+     PDF.js   : extracts text from text-based PDF tables in the browser
      Chart.js : draws every chart on this page
      ============================================================ -->
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs" type="module"></script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -167,20 +169,6 @@ body.dark .landing-hero{box-shadow:0 18px 70px rgba(0,0,0,.42)}
 .hero-features{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px;padding-top:22px;border-top:1px solid var(--border);position:relative;z-index:2}.hero-features>div{display:grid;grid-template-columns:auto 1fr;column-gap:9px;align-items:center}.hero-features b{grid-row:1/3;font:700 11px Poppins,sans-serif;color:var(--accent)}.hero-features strong{font-size:12px}.hero-features span{font-size:10.5px;color:var(--muted)}
 @media(max-width:900px){.landing-hero{grid-template-columns:1fr;padding:38px 25px 25px;border-radius:24px;gap:24px}.hero-copy h2{font-size:clamp(32px,9vw,45px)}.hero-lead{font-size:14px}.hero-preview{order:2}.hero-features{order:3}.preview-window{transform:none}.hero-features{grid-template-columns:1fr}.hero-features>div{padding:8px 0}.trust-row{gap:10px 14px}}
 @media(max-width:560px){#emptyState{padding:8px 0 34px}.landing-hero{padding:30px 18px 20px}.hero-eyebrow{font-size:9px}.hero-actions{align-items:stretch;flex-direction:column;gap:10px}.hero-btn{width:100%}.drop-prompt{text-align:center}.trust-row{font-size:10.5px}.preview-window{padding:11px}.hero-copy h2{margin-top:15px}.hero-features{padding-top:15px}}
-
-
-/* ---------- v1.4.9 landing refinement ---------- */
-.hero-copy h2{font-weight:700;text-wrap:balance}
-.hero-lead strong{color:var(--text)}
-.hero-btn{min-height:52px;padding:14px 22px;font-size:15px;font-weight:700;letter-spacing:-.01em}
-.hero-btn .btn-icon{font-weight:800}
-.landing-proof{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
-.landing-proof span{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border:1px solid var(--border);border-radius:999px;background:color-mix(in srgb,var(--card-2) 86%,transparent);color:var(--muted);font-size:10.5px;font-weight:600}
-.landing-proof b{color:var(--text)}
-.preview-window{box-shadow:0 28px 70px rgba(14,14,16,.20),0 0 0 1px color-mix(in srgb,var(--accent) 8%,transparent)}
-.hero-features>div{transition:transform .18s ease,background .18s ease;border-radius:12px;padding:9px}
-.hero-features>div:hover{transform:translateY(-2px);background:color-mix(in srgb,var(--accent) 5%,transparent)}
-@media(max-width:560px){.landing-proof{gap:6px}.landing-proof span{font-size:10px;padding:6px 8px}.hero-btn{min-height:50px}}
 
 /* ---------- toolbar ---------- */
 .toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 14px}
@@ -389,19 +377,14 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
       <div class="hero-copy">
         <div class="hero-eyebrow"><span class="pulse-dot"></span> PRIVATE · FAST · INSIGHT-LED</div>
         <h2>Turn your Excel data into a <span>management dashboard</span> in seconds.</h2>
-        <p class="hero-lead">Upload a spreadsheet and InstantDash automatically discovers your data, builds visual dashboards and highlights the variations that deserve management attention.</p>
+        <p class="hero-lead">Upload Excel, CSV or a text-based PDF and InstantDash automatically discovers your data, builds visual dashboards and highlights the variations that deserve management attention.</p>
         <div class="hero-actions">
-          <button class="btn primary hero-btn" id="browseBtn"><span class="btn-icon">↥</span> Choose Excel / CSV</button>
+          <button class="btn primary hero-btn" id="browseBtn"><span class="btn-icon">↥</span> Choose Excel / CSV / PDF / PDF / PDF</button>
           <div class="drop-prompt"><span>or</span> drag & drop your file here</div>
         </div>
-        <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" hidden />
+        <input type="file" id="fileInput" accept=".xlsx,.xls,.csv,.pdf" hidden />
         <div class="trust-row">
-          <span>🔒 Your data stays on your device</span><span>✓ No account required</span><span>✓ Excel · CSV</span>
-        </div>
-        <div class="landing-proof" aria-label="Key benefits">
-          <span>⚡ <b>Fast</b> browser-based processing</span>
-          <span>📊 <b>Dashboard</b> generated automatically</span>
-          <span>🎯 <b>Management</b> focus built in</span>
+          <span>🔒 Your data stays on your device</span><span>✓ No account required</span><span>✓ Excel · CSV · PDF</span>
         </div>
       </div>
       <div class="hero-preview" aria-hidden="true">
@@ -414,7 +397,7 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
         </div>
       </div>
       <div class="hero-features">
-        <div><b>01</b><strong>Upload</strong><span>Any supported spreadsheet</span></div>
+        <div><b>01</b><strong>Upload</strong><span>Excel, CSV or PDF</span></div>
         <div><b>02</b><strong>Discover</strong><span>Columns, trends & KPIs</span></div>
         <div><b>03</b><strong>Understand</strong><span>Insights & variations</span></div>
       </div>
@@ -566,7 +549,7 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
    --------------------------------------------------------------------- */
 const CONFIG = {
   APP_NAME: 'InstantDash',
-  VERSION: 'v1.4.9',
+  VERSION: 'v1.4.8',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -783,27 +766,96 @@ function wireIngest(){
   $('newFileBtn').onclick = () => input.click();
 }
 
+async function parsePdfToWorkbook(file){
+  // PDF ingestion is deliberately client-side. It is intended for text-based
+  // PDFs containing tables; scanned/image-only PDFs are reported clearly.
+  const pdfjs = await import('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs');
+  pdfjs.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs';
+  const data = new Uint8Array(await file.arrayBuffer());
+  const pdf = await pdfjs.getDocument({data}).promise;
+  const rows = [];
+  let extractedChars = 0;
+
+  for (let pageNo = 1; pageNo <= pdf.numPages; pageNo++){
+    const page = await pdf.getPage(pageNo);
+    const content = await page.getTextContent();
+    const items = content.items.filter(x => x.str && x.str.trim());
+    extractedChars += items.reduce((n,x)=>n + x.str.length, 0);
+    if (!items.length) continue;
+
+    const lines = [];
+    for (const item of items){
+      const x = item.transform[4], y = item.transform[5];
+      let line = lines.find(l => Math.abs(l.y - y) <= 3);
+      if (!line){ line = {y, items:[]}; lines.push(line); }
+      line.items.push({x, str:item.str.trim()});
+    }
+    lines.sort((a,b)=>b.y-a.y);
+    for (const line of lines){
+      line.items.sort((a,b)=>a.x-b.x);
+      const cells = [];
+      let current = '';
+      let lastX = null;
+      for (const it of line.items){
+        const gap = lastX == null ? 0 : it.x-lastX;
+        // Large horizontal gaps are likely column boundaries in a table.
+        if (current && gap > 22){ cells.push(current.trim()); current=''; }
+        current += (current ? ' ' : '') + it.str;
+        lastX = it.x + Math.max(4, it.str.length*3.2);
+      }
+      if (current) cells.push(current.trim());
+      if (cells.length) rows.push(cells);
+    }
+    rows.push([]); // page separator
+  }
+
+  if (extractedChars < 20 || rows.filter(r=>r.length).length < 2){
+    throw new Error('This PDF appears to be scanned or image-only. A text-based PDF is required for table extraction.');
+  }
+
+  // Remove obvious report title/subtitle rows and keep the detected table rows.
+  const cleaned = rows.filter(r=>r.length && r.some(v=>String(v).trim()));
+  const maxCols = Math.max(...cleaned.map(r=>r.length));
+  const normalised = cleaned.map(r=>{
+    const out = r.slice(); while(out.length<maxCols) out.push(''); return out;
+  });
+  // If a recognisable header is present, keep it; otherwise the existing
+  // dashboard discovery layer can still inspect the extracted rows.
+  const ws = XLSX.utils.aoa_to_sheet(normalised);
+  return {SheetNames:['PDF_Data'], Sheets:{PDF_Data:ws}};
+}
+
 async function handleFile(file){
   const name = file.name || 'workbook';
-  if (!/\.(xlsx|xlsm|xls|csv|txt)$/i.test(name)){
-    return showFatal('That file type isn’t supported. Choose an .xlsx, .xls or .csv file.');
+  if (!/\.(xlsx|xlsm|xls|csv|txt|pdf)$/i.test(name)){
+    return showFatal('That file type isn’t supported. Choose an .xlsx, .xls, .csv or text-based .pdf file.');
   }
   showLoader('Reading ' + name, 'Nothing is being uploaded — this is happening on your machine.');
   await nextFrame();
 
   try {
-    const buf = await file.arrayBuffer();
     let wb;
-    try {
-      // cellDates:true is the important bit — it turns Excel date serials
-      // into real Date objects instead of numbers like 45321.
-      wb = XLSX.read(new Uint8Array(buf), {type:'array', cellDates:true, cellNF:false, cellText:false});
-    } catch (err) {
-      hideLoader();
-      const msg = /password|encrypt/i.test(err && err.message || '')
-        ? 'That workbook is password-protected. Remove the password in Excel and try again.'
-        : 'That file couldn’t be read — it may be corrupt or saved in an unusual format. Try re-saving it as .xlsx or .csv.';
-      return showFatal(msg);
+    if (/\.pdf$/i.test(name)) {
+      try {
+        showLoader('Reading PDF ' + name, 'Extracting table text locally on your device.');
+        wb = await parsePdfToWorkbook(file);
+      } catch (err) {
+        hideLoader();
+        return showFatal(err && err.message ? err.message : 'That PDF could not be read. Try a text-based PDF with selectable table text.');
+      }
+    } else {
+      const buf = await file.arrayBuffer();
+      try {
+        // cellDates:true is the important bit — it turns Excel date serials
+        // into real Date objects instead of numbers like 45321.
+        wb = XLSX.read(new Uint8Array(buf), {type:'array', cellDates:true, cellNF:false, cellText:false});
+      } catch (err) {
+        hideLoader();
+        const msg = /password|encrypt/i.test(err && err.message || '')
+          ? 'That workbook is password-protected. Remove the password in Excel and try again.'
+          : 'That file couldn’t be read — it may be corrupt or saved in an unusual format. Try re-saving it as .xlsx or .csv.';
+        return showFatal(msg);
+      }
     }
 
     if (!wb || !wb.SheetNames || !wb.SheetNames.length){
