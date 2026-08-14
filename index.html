@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>InstantDash v4.6.6</title>
+<title>InstantDash v4.6.7</title>
 <style>
 :root{
   --bg:#111217;--panel:#1b1c22;--panel2:#202128;--line:#343640;--text:#f5f5f7;
@@ -68,7 +68,7 @@ footer{color:#777;font-size:11px;text-align:center;padding:12px}
 <div class="app">
 <header>
   <div>
-    <div class="brand">🟡 InstantDash <span class="version">v4.6.6</span></div>
+    <div class="brand">🟡 InstantDash <span class="version">v4.6.7</span></div>
     <div class="by">Developed by Anil Sharma • Former General Manager, Central Bank of India</div>
   </div>
   <div class="top-actions">
@@ -98,7 +98,7 @@ footer{color:#777;font-size:11px;text-align:center;padding:12px}
   <div class="notice" style="margin-top:12px">
     <b>Pre-loaded master library (ready at first launch):</b> Banking, Finance, Internal Audit, Human Resources, Credit, Manufacturing, Sales & Marketing, Operations, Customer Service, Risk & Compliance, IT & Technology and Administration — with their standard KPIs, units, performance nature and formula rules. <b>Other / Custom</b> is available for your own department.
   </div>
-  <div class="notice" style="margin-top:12px"><b>v4.6.6 library:</b> Department selection is the first step. Standard KPIs and calculation rules are pre-loaded; users only add what is organisation-specific.</div><div class="actions">
+  <div class="notice" style="margin-top:12px"><b>v4.6.7 library:</b> Department selection is the first step. Standard KPIs and calculation rules are pre-loaded; users only add what is organisation-specific.</div><div class="actions">
     <button class="btn primary" onclick="continueDepartment()">Continue → KPI Mapping</button>
     <button class="btn" onclick="openDeptModal()">＋ Add Department</button>
     <button class="btn" onclick="editSelectedDept()">✏️ Edit Department</button><button class="btn" onclick="restoreMasterLibrary()">↺ Restore Pre-loaded Library</button>
@@ -177,7 +177,7 @@ footer{color:#777;font-size:11px;text-align:center;padding:12px}
   </div>
   <div id="dashboardBars" style="margin-top:16px"></div>
 </section>
-<footer>InstantDash v4.6.6 • Department-first KPI architecture • Department → KPI Mapping → Analysis → Report → Dashboard.</footer>
+<footer>InstantDash v4.6.7 • Department-first KPI architecture • Department → KPI Mapping → Analysis → Report → Dashboard.</footer>
 </div>
 
 <div id="modalBack" class="modal-back" onclick="closeModal(event)">
@@ -254,9 +254,16 @@ function editFirstKpi(){ const sel=document.getElementById("kpiSelect"); if(sel 
 function deleteSelectedKpi(){ const sel=document.getElementById("kpiSelect"); if(sel && sel.value!=="") deleteKpi(Number(sel.value)); }
 function finishAnalysis(){
  if(!rows.length) return alert("Please upload the data file first.");
- runAnalysis();
- showSection("report");
- renderReport();
+ try{
+   runAnalysis();
+   showSection("report");
+   renderReport();
+   const reportTab=document.getElementById("step4");
+   if(reportTab) reportTab.classList.add("active");
+ }catch(err){
+   console.error(err);
+   alert("Analysis could not be completed. Please check the KPI mapping and source columns.\n\nTechnical detail: "+(err?.message||err));
+ }
 }
 function openDeptModal(edit=false){
  const d=dept();
@@ -442,6 +449,10 @@ function loadFile(ev){
    deptField=headers.find(h=>["department","department name","area","nature of area","function","unit"].includes(normal(h)))||null;
    document.getElementById("fileStatus").innerHTML=`<b>${esc(fileName)}</b> • ${rows.length} data row(s) • ${headers.length} column(s)`;
    renderMappingCheck();
+   const fb=document.getElementById("finishBtn");
+   if(fb) fb.disabled=false;
+   const summary=document.getElementById("analysisSummary");
+   if(summary) summary.innerHTML=`<b>${esc(dept().icon)} ${esc(dept().name)}</b><br>Data loaded: ${rows.length} row(s), ${headers.length} column(s). Review the mapping below, then click <b>Finish Analysis & Generate Report</b>.`;
   }catch(err){alert("Could not read the file: "+err.message)}
  };
  if(f.name.toLowerCase().endsWith(".csv"))reader.readAsText(f);else reader.readAsArrayBuffer(f);
