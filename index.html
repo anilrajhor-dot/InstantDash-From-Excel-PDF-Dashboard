@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>InstantDash v4.8.2</title>
+<title>InstantDash v4.8.3</title>
 <style>
 :root{
   --bg:#111217;--panel:#1b1c22;--panel2:#202128;--line:#343640;--text:#f5f5f7;
@@ -63,27 +63,39 @@ footer{color:#777;font-size:11px;text-align:center;padding:12px}
  .section{padding:14px}
 }
 .kpi-selection{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.kpi-check{display:flex;gap:10px;align-items:flex-start;padding:11px;border:1px solid var(--line);border-radius:12px;background:#18191e;cursor:pointer}.kpi-check input{width:20px;height:20px;accent-color:#fbbb00}.kpi-check span{display:flex;flex-direction:column;gap:3px}.kpi-check small{color:var(--muted);font-size:12px;line-height:1.3}@media(max-width:700px){.kpi-selection{grid-template-columns:1fr}}</style>
-<style>.bar-block{margin:10px 0;padding:10px 0;border-top:1px solid #292b31}.bar-block:first-child{border-top:0}.clickable-bar{cursor:pointer;border-radius:10px;padding:10px}.clickable-bar:hover{background:#202128}.clickable-bar:focus{outline:2px solid #fbbb00;outline-offset:2px}.bar-title{display:flex;justify-content:space-between;gap:10px;color:#b9bbc4;font-size:11px;margin-bottom:7px}.bar-row{display:grid;grid-template-columns:58px 1fr auto;gap:8px;align-items:center;font-size:11px;color:#aeb0b9;margin:5px 0}.target-row{opacity:.85}.dash-fill.target{background:#fbbb00}.bar-context{font-size:10px;color:#777b87;margin:6px 0 0 66px}.dash-source-map{margin-top:5px;font-size:10px;color:#777b87}.insight-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.insight-item{background:#22232a;border:1px solid #363842;border-radius:12px;padding:11px}.insight-item span{display:block;color:#9da0aa;font-size:11px;margin-bottom:4px}.insight-item b{display:block;font-size:15px;color:#f4f4f6;line-height:1.35}.insight-reason{margin-top:12px;border:1px solid #f0b74a;background:#2b2418;border-radius:12px;padding:13px}.insight-reason h4{margin:0 0 6px;color:#ffcf63}.insight-reason p{margin:0;color:#e7e2d8;line-height:1.5;font-size:13px}.kpi-insight-modal{max-height:88vh;overflow:auto}@media(max-width:520px){.insight-grid{grid-template-columns:1fr}}</style></head>
+<style>.bar-block{margin:10px 0;padding:10px 0;border-top:1px solid #292b31}.bar-block:first-child{border-top:0}.clickable-bar{cursor:pointer;border-radius:10px;padding:10px}.clickable-bar:hover{background:#202128}.clickable-bar:focus{outline:2px solid #fbbb00;outline-offset:2px}.bar-title{display:flex;justify-content:space-between;gap:10px;color:#b9bbc4;font-size:11px;margin-bottom:7px}.bar-row{display:grid;grid-template-columns:58px 1fr auto;gap:8px;align-items:center;font-size:11px;color:#aeb0b9;margin:5px 0}.target-row{opacity:.85}.dash-fill.target{background:#fbbb00}.bar-context{font-size:10px;color:#777b87;margin:6px 0 0 66px}.dash-source-map{margin-top:5px;font-size:10px;color:#777b87}.insight-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.insight-item{background:#22232a;border:1px solid #363842;border-radius:12px;padding:11px}.insight-item span{display:block;color:#9da0aa;font-size:11px;margin-bottom:4px}.insight-item b{display:block;font-size:15px;color:#f4f4f6;line-height:1.35}.insight-reason{margin-top:12px;border:1px solid #f0b74a;background:#2b2418;border-radius:12px;padding:13px}.insight-reason h4{margin:0 0 6px;color:#ffcf63}.insight-reason p{margin:0;color:#e7e2d8;line-height:1.5;font-size:13px}.kpi-insight-modal{max-height:88vh;overflow:auto}@media(max-width:520px){.insight-grid{grid-template-columns:1fr}}</style>
+<style>
+/* v4.8.3 responsive management dashboard */
+html{scroll-behavior:smooth}body{overflow-x:hidden}.app{width:100%;max-width:1240px}
+.steps .step{cursor:pointer;user-select:none}.steps .step:hover{border-color:#6d6f79}
+.dashboard-overview{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin:14px 0}.dash-overview-card{background:#18191e;border:1px solid #343640;border-radius:16px;padding:15px;min-width:0}.dash-overview-card .ov-label{font-size:11px;color:#999ca7;text-transform:uppercase;font-weight:800;letter-spacing:.5px}.dash-overview-card .ov-value{font-size:27px;font-weight:900;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.dash-overview-card .ov-note{font-size:11px;color:#777b87;margin-top:5px}
+.chart-panel{background:#18191e;border:1px solid #343640;border-radius:18px;padding:16px;margin:14px 0}.chart-panel h3{margin-bottom:5px}.chart-sub{font-size:11px;color:#858995;margin-bottom:14px}.chart-bars{display:flex;flex-direction:column;gap:10px}.chart-line{display:grid;grid-template-columns:minmax(135px,220px) 1fr 72px;gap:9px;align-items:center}.chart-label{font-size:11px;color:#c2c4cb;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.chart-track{height:18px;background:#292b33;border-radius:999px;overflow:hidden;position:relative}.chart-fill{height:100%;border-radius:999px;background:#fbbb00}.chart-fill.good{background:#45dc8b}.chart-fill.bad{background:#ff5b5b}.chart-fill.blue{background:#3c91ff}.chart-value{text-align:right;font-size:11px;font-weight:800;color:#f1f2f4}.chart-legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:10px;color:#898c97;font-size:11px}.legend-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;background:#fbbb00}.legend-dot.green{background:#45dc8b}.legend-dot.red{background:#ff5b5b}.legend-dot.blue{background:#3c91ff}
+.dash-kpi-card{min-width:0}.dash-track{min-width:0}.dash-kpi-card .bar-block{overflow:hidden}.dash-big-value{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mobile-note{display:none}
+@media(max-width:1000px){.dashboard-overview{grid-template-columns:repeat(3,1fr)}.chart-line{grid-template-columns:150px 1fr 70px}}
+@media(max-width:700px){.app{padding:9px}.dashboard-overview{grid-template-columns:repeat(2,1fr)}.chart-line{grid-template-columns:110px 1fr 62px}.chart-label{font-size:10px}.chart-value{font-size:10px}.mobile-note{display:block}.steps{position:sticky;top:0;z-index:10;background:#111217;padding:6px 0}.top-actions{width:100%}.top-actions .btn{flex:1;min-width:0}.table-wrap{max-width:100%;-webkit-overflow-scrolling:touch}.section{padding:13px}.btn{padding:10px 12px}.dash-kpi-card{padding:13px}}
+@media(max-width:480px){.dashboard-overview{grid-template-columns:1fr 1fr;gap:8px}.dash-overview-card{padding:12px}.dash-overview-card .ov-value{font-size:22px}.chart-panel{padding:12px}.chart-line{grid-template-columns:92px 1fr 56px;gap:6px}.kpi-selection{grid-template-columns:1fr}.steps .step{font-size:12px;padding:10px}.by{font-size:11px}.brand{font-size:21px}}
+</style>
+</head>
 <body>
 <div class="app">
 <header>
   <div>
-    <div class="brand">🟡 InstantDash <span class="version">v4.8.2</span></div>
+    <div class="brand">🟡 InstantDash <span class="version">v4.8.3</span></div>
     <div class="by">Developed by Anil Sharma • Former General Manager, Central Bank of India</div>
   </div>
   <div class="top-actions">
     <button class="btn" onclick="showSection('dept')">🏢 Departments</button>
-    <button class="btn" onclick="showSection('mapping')">🧠 KPI Mapping</button>
+    <button class="btn" onclick="showSection('mapping')">🧠 KPI Mapping</button><button class="btn" onclick="openReportDashboardStep()">📊 Dashboard</button>
     <button class="btn primary" onclick="resetSession()">↻ New Session</button>
   </div>
 </header>
 
 
 <div class="steps">
-  <div id="s1" class="step active">① Select Department</div>
-  <div id="s2" class="step">② KPI Selection & Mapping</div>
-  <div id="s3" class="step">③ Finish Analysis</div>
-  <div id="s4" class="step">④ Report & Dashboard</div>
+  <div id="s1" class="step active" onclick="showSection('dept')">① Select Department</div>
+  <div id="s2" class="step" onclick="showSection('mapping')">② KPI Selection & Mapping</div>
+  <div id="s3" class="step" onclick="openAnalysisStep()">③ Finish Analysis</div>
+  <div id="s4" class="step" onclick="openReportDashboardStep()">④ Report & Dashboard</div>
 </div>
 
 <section id="dept" class="section">
@@ -120,7 +132,7 @@ footer{color:#777;font-size:11px;text-align:center;padding:12px}
     Do you want to add more KPIs to this department?
     <div class="actions">
       <button class="btn primary" onclick="enableKpiEditing()">Yes — Add / Edit KPI</button>
-      <button class="btn" onclick="lockKpiEditing()">No — Continue</button>
+      <button class="btn" onclick="lockKpiEditing()">No — Finish KPI Selection & Show Results</button>
     </div>
   </div>
   <div id="kpiEditControls" class="actions hidden">
@@ -181,7 +193,7 @@ footer{color:#777;font-size:11px;text-align:center;padding:12px}
   </div>
   <div id="dashboardBars" style="margin-top:16px"></div>
 </section>
-<footer>InstantDash v4.8.2 • Department-first KPI architecture • Auto KPI calculation • Smart Power BI-style dashboard • Department → KPI Mapping → Analysis → Report → Dashboard.</footer>
+<footer>InstantDash v4.8.3 • Department-first KPI architecture • Auto KPI calculation • Smart Power BI-style dashboard • Select Department → Auto KPI Mapping → Finish/Results → Management Dashboard with numerical + graphic insights.</footer>
 </div>
 
 <div id="modalBack" class="modal-back" onclick="closeModal(event)">
@@ -255,10 +267,32 @@ function renderDepartments(){
  if(info) info.innerHTML=`<b>${esc(d.icon)} ${esc(d.name)}</b><br>${esc(d.desc)}<br><span class="badge">${d.kpis.length} pre-loaded KPI(s) • formulas ready</span>`;
 }
 
-function selectDept(id){state.selected=id;save();renderDepartments()}
+function selectDept(id){
+ state.selected=id; save(); renderDepartments();
+ if(id){
+   setTimeout(()=>{ showSection("mapping"); renderMapping(); },80);
+ }
+}
 function continueDepartment(){ if(!state.selected)return alert("Please select a department / nature of area first."); showSection("mapping"); renderMapping(); }
+function openAnalysisStep(){
+ if(!state.selected){showSection("dept");return;}
+ if(rows.length){
+   try{ runAnalysis(); showSection("report"); renderReport(); }catch(e){ showSection("analyse"); goAnalyse(); }
+ }else{ goAnalyse(); }
+}
+function openReportDashboardStep(){
+ if(!analysisResults.length){ alert("Please complete the analysis first."); openAnalysisStep(); return; }
+ showSection("dashboard");
+}
 function enableKpiEditing(){ document.getElementById("kpiEditControls").classList.remove("hidden"); document.querySelectorAll(".editOnly").forEach(e=>e.style.display="table-cell"); }
-function lockKpiEditing(){ document.getElementById("kpiEditControls").classList.add("hidden"); document.querySelectorAll(".editOnly").forEach(e=>e.style.display="none"); }
+function lockKpiEditing(){
+ document.getElementById("kpiEditControls").classList.add("hidden");
+ document.querySelectorAll(".editOnly").forEach(e=>e.style.display="none");
+ // “No” means the KPI library is final. If data is already loaded, calculate immediately; otherwise open the data step.
+ if(rows.length){
+   try{ runAnalysis(); showSection("report"); renderReport(); }catch(e){ goAnalyse(); }
+ }else{ goAnalyse(); }
+}
 function selectedKpiIndex(){ const el=document.querySelector('input[name="kpiCheck"]:checked'); return el?Number(el.value):-1; }
 function editFirstKpi(){ const i=selectedKpiIndex(); if(i>=0) openKpiModal(i); else alert("Select at least one KPI first."); }
 function deleteSelectedKpi(){ const i=selectedKpiIndex(); if(i>=0) deleteKpi(i); else alert("Select at least one KPI first."); }
@@ -564,6 +598,21 @@ function buildExecutiveIntelligence(){
  if(!lines.length) lines.push('Upload the department data and finish the analysis to generate management intelligence.');
  return {lines,attention,below};
 }
+
+function buildKpiChartPanel(results){
+ const vals=results.filter(r=>validNum(r.value));
+ if(!vals.length) return `<div class="chart-panel"><h3>📊 KPI Graphic View</h3><div class="empty">No calculated KPI values are available.</div></div>`;
+ const max=Math.max(...vals.map(r=>Math.abs(r.value)||0),1);
+ const top=vals.slice().sort((a,b)=>Math.abs(b.value)-Math.abs(a.value)).slice(0,12);
+ const lines=top.map(r=>{
+   const w=Math.max(3,Math.min(100,Math.abs(r.value)/max*100));
+   const nature=String(r.nature||'higher').toLowerCase();
+   const cls=validNum(r.growth)?(r.growth<0&&nature==='higher'?'bad':r.growth>0&&nature==='higher'?'good':'blue'):'blue';
+   return `<div class="chart-line clickable-bar" role="button" tabindex="0" onclick="openKpiInsight(${results.indexOf(r)})" onkeydown="if(event.key==='Enter'||event.key===' ')openKpiInsight(${results.indexOf(r)})"><div class="chart-label" title="${esc(r.name)}">${esc(r.name)}</div><div class="chart-track"><div class="chart-fill ${cls}" style="width:${w}%"></div></div><div class="chart-value">${esc(dashboardFormat(r,r.value))}</div></div>`;
+ }).join('');
+ return `<div class="chart-panel"><h3>📊 Management KPI Graphic — All Parameters</h3><div class="chart-sub">Top KPI values. Tap any bar to open the detailed KPI insight, movement and reason.</div><div class="chart-bars">${lines}</div><div class="chart-legend"><span><i class="legend-dot"></i>KPI value</span><span><i class="legend-dot green"></i>Improving</span><span><i class="legend-dot red"></i>Declining</span><span><i class="legend-dot blue"></i>Neutral / no comparison</span></div><div class="mobile-note chart-sub" style="margin-top:10px">On mobile, swipe/scroll vertically through the KPI cards below for the complete dashboard.</div></div>`;
+}
+
 function renderDashboard(){
  const d=dept();
  document.getElementById("dashboardSubtitle").textContent=`${d.icon} ${d.name} • ${fileName}`;
@@ -588,7 +637,16 @@ function renderDashboard(){
   <div class="smart-stat ${unavailable?'warn':''}"><b>${unavailable}</b><span>KPIs without source data</span></div>
   <div class="smart-stat"><b>${targetCount?achieved+' / '+targetCount:'—'}</b><span>Targets achieved</span></div>
  </div>
- <div class="row between"><h3 style="margin:0">📊 All KPI Parameters</h3><span class="badge green">Automatic chart selection</span></div>
+ <div class="dashboard-overview">
+  <div class="dash-overview-card"><div class="ov-label">Total KPIs</div><div class="ov-value">${total}</div><div class="ov-note">All configured parameters</div></div>
+  <div class="dash-overview-card"><div class="ov-label">Calculated</div><div class="ov-value">${available.length}</div><div class="ov-note">Usable source data</div></div>
+  <div class="dash-overview-card"><div class="ov-label">No Data</div><div class="ov-value">${unavailable}</div><div class="ov-note">No figure invented</div></div>
+  <div class="dash-overview-card"><div class="ov-label">Targets Achieved</div><div class="ov-value">${targetCount?achieved+' / '+targetCount:'—'}</div><div class="ov-note">Based on KPI nature</div></div>
+  <div class="dash-overview-card"><div class="ov-label">Movement</div><div class="ov-value">${growthVals.length?improving+' ↑':'—'}</div><div class="ov-note">KPIs increasing</div></div>
+ </div>
+ ${buildKpiChartPanel(analysisResults)}
+
+ <div class="row between"><h3 style="margin:0">📊 All KPI Parameters</h3><span class="badge green">Tap any bar for insight</span></div>
  <div class="dash-grid" style="margin-top:12px">${analysisResults.map((r,i)=>dashboardCard(r,i,analysisResults)).join('')}</div>`;
  if(growthVals.length) html+=`<div class="notice" style="margin-top:16px"><b>Trend intelligence:</b> ${improving} of ${growthVals.length} KPI(s) with period comparison are improving or increasing. For KPIs where lower is better, management should also consider whether the change is favourable rather than looking at growth alone.</div>`;
  document.getElementById("dashboardBars").innerHTML=html;
