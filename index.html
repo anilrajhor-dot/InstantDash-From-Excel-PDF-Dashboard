@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<title>InstantDash — Excel to Dashboard v5.1.0</title>
+<title>InstantDash — Excel to Dashboard v5.1.1</title>
 <meta name="author" content="Developed by Anil Sharma, Former General Manager, Central Bank of India">
 <meta name="application-name" content="InstantDash v5.0.0">
 <meta name="description" content="InstantDash — Excel to Dashboard v5.0.0, developed by Anil Sharma">
@@ -1974,7 +1974,8 @@ function pdfNumberTokens(text){
 function pdfKpiMatches(line){
   const txt=String(line||'');
   const matches=[];
-  KPI_DEFS.filter(d=>d.direct && Array.isArray(d.aliases)).forEach(def=>{
+  const defs=(typeof KPI_DEFS !== 'undefined' && Array.isArray(KPI_DEFS)) ? KPI_DEFS : [];
+  defs.filter(d=>d.direct && Array.isArray(d.aliases)).forEach(def=>{
     (def.aliases||[]).slice().sort((a,b)=>String(b).length-String(a).length).some(alias=>{
       const a=String(alias||'').trim();
       if(!a)return false;
@@ -3181,7 +3182,7 @@ function bankingKpiDirection(kpi){
 function getBankingBranchKpiLibrary(){
   return BANKING_BRANCH_KPI_LIBRARY.map(x=>({...x,unit:(x.unit==='Value'&&isCurrencyKpi(x.name))?'₹':x.unit,defaultChart:defaultChartKind(x.name)}));
 }
-const KPI_DEFS = [
+var KPI_DEFS = [
   // Management / Finance
   {id:'revenue',name:'Revenue / Sales',dept:'Finance, Management, Sales, Business',cat:'Growth',aliases:['sales','net sales','revenue','revenue from operations','turnover','gross sales'],direct:true,agg:'sum',higher:true},
   {id:'purchases',name:'Purchases',dept:'Finance, Procurement, Business',cat:'Cost',aliases:['purchases','purchase value','purchase amount','procurement value'],direct:true,agg:'sum'},
@@ -7658,7 +7659,7 @@ function applyDisplaySettings(){
 }
 applyDisplaySettings();
 
-/* InstantDash v5.1.0 — Business Improvement Advisor */
+/* InstantDash v5.1.1 — Business Improvement Advisor */
 function openAdvisor(){
  const m=document.getElementById("advisorBack"); if(!m)return;
  renderAdvisor();
