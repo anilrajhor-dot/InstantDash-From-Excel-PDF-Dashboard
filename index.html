@@ -98,7 +98,7 @@ footer{color:#777;font-size:11px;text-align:center;padding:12px}
   <div class="notice" style="margin-top:12px">
     <b>Pre-loaded master library (ready at first launch):</b> Banking, Finance, Internal Audit, Human Resources, Credit, Manufacturing, Sales & Marketing, Operations, Customer Service, Risk & Compliance, IT & Technology, Administration, Procurement, Project Management, Legal & Secretarial, Treasury, Recovery & Collections, Quality Assurance, Supply Chain & Stores, Corporate Strategy & Planning, MIS & Data Analytics, Training & Learning, Digital Banking & Digital Services and BC Performance — with their standard KPIs, units, performance nature and formula rules. <b>Other / Custom</b> is available for your own department.
   </div>
-  <div class="notice" style="margin-top:12px"><b>v4.8.0 Smart Power BI-style dashboard:</b> Department selection is the first step. Standard KPIs and calculation rules are pre-loaded; users only add what is organisation-specific.</div><div class="actions">
+  <div class="notice" style="margin-top:12px"><b>v4.8.1 Smart Power BI-style auto KPI dashboard:</b> Department selection is the first step. Standard KPIs and calculation rules are pre-loaded; users only add what is organisation-specific.</div><div class="actions">
     <button class="btn primary" onclick="continueDepartment()">Continue → KPI Mapping</button>
     <button class="btn" onclick="openDeptModal()">＋ Add Department</button>
     <button class="btn" onclick="editSelectedDept()">✏️ Edit Department</button><button class="btn" onclick="restoreMasterLibrary()">↺ Restore Pre-loaded Library</button><button class="btn danger" onclick="resetAppLibrary()">♻️ Reset App Library</button>
@@ -181,7 +181,7 @@ footer{color:#777;font-size:11px;text-align:center;padding:12px}
   </div>
   <div id="dashboardBars" style="margin-top:16px"></div>
 </section>
-<footer>InstantDash v4.8.0 • Department-first KPI architecture • Auto KPI calculation • Smart Power BI-style dashboard • Department → KPI Mapping → Analysis → Report → Dashboard.</footer>
+<footer>InstantDash v4.8.1 • Department-first KPI architecture • Auto KPI calculation • Smart Power BI-style dashboard • Department → KPI Mapping → Analysis → Report → Dashboard.</footer>
 </div>
 
 <div id="modalBack" class="modal-back" onclick="closeModal(event)">
@@ -367,13 +367,48 @@ function num(x){
  if(s.startsWith("(")&&s.endsWith(")"))s="-"+s.slice(1,-1);
  const v=parseFloat(s); return Number.isFinite(v)?v:NaN;
 }
+const AUTO_HEADER_ALIASES={
+  "Agent ID":["agent id","bc id","bc code","csp id","bank mitra id","business correspondent id"],
+  "Agent Name":["agent name","bc name","csp name","bank mitra name","business correspondent name"],
+  "Active BCs":["active bcs","active bc","active agents","active agent count","number of active bcs","no of active bcs"],
+  "Txn Count":["txn count","transaction count","transactions","total transactions","transaction volume count","number of transactions"],
+  "Total Volume":["total volume","transaction volume","total transaction volume","txn volume","transaction amount","total transaction amount"],
+  "Total Txn Amount (INR)":["total txn amount (inr)","total transaction amount (inr)","total txn amount","total transaction amount","txn amount"],
+  "TXN Comm @.40% \n(Rs. 50 per account per day)":["txn comm @.40% (rs. 50 per account per day)","txn commission","transaction commission","txn comm"],
+  "Final Comm.":["final comm.","final commission","commission earned","total commission","commission income"],
+  "BC Comm @80%":["bc comm @80%","bc commission","commission payable to bc","bc share commission"],
+  "CBC Comm @20%":["cbc comm @20%","cbc commission","cbc share commission"],
+  "BC TDS ":["bc tds","tds on bc commission","tds"],
+  "Net Payable to BCs":["net payable to bcs","net payable to bc","bc net payable","net payment to bcs"],
+  "SSA":["ssa","ssa enrolment","social security accounts","ssa accounts"],
+  "Total Enrolments":["total enrolments","enrolments","enrollments","customer enrolments","total enrollments"],
+  "Login Days":["login days","days logged in","active login days","working login days"]
+};
+function headerAliasCandidates(name){
+ const base=String(name||'').trim();
+ const arr=[base,...(AUTO_HEADER_ALIASES[base]||[])];
+ return [...new Set(arr)];
+}
 function findHeader(name){
  if(!name)return null;
- const want=normal(name);
- let h=headers.find(x=>normal(x)===want);
- if(h)return h;
- h=headers.find(x=>normal(x).replace(/[^a-z0-9]/g,"")===want.replace(/[^a-z0-9]/g,""));
- return h||null;
+ const candidates=headerAliasCandidates(name);
+ for(const c of candidates){
+   const want=normal(c);
+   let h=headers.find(x=>normal(x)===want);
+   if(h)return h;
+ }
+ for(const c of candidates){
+   const want=normal(c).replace(/[^a-z0-9]/g,"");
+   let h=headers.find(x=>normal(x).replace(/[^a-z0-9]/g,"")===want);
+   if(h)return h;
+ }
+ // Conservative fuzzy match: only use a unique header containing the requested phrase.
+ const want=normal(name).replace(/[^a-z0-9]/g,"");
+ if(want.length>=5){
+   const hits=headers.filter(x=>{const h=normal(x).replace(/[^a-z0-9]/g,"");return h.includes(want)||want.includes(h)});
+   if(hits.length===1)return hits[0];
+ }
+ return null;
 }
 function filteredRows(){return rows.slice();}
 function renderMappingCheck(){
@@ -524,14 +559,35 @@ function dashboardCard(r, idx, all){
    status='Actual value'; statusClass='info';
  }
  const growth=validNum(r.growth)?`<span class="dash-meta">Period change: <b>${r.growth>=0?'+':''}${r.growth.toFixed(1)}%</b></span>`:'';
+ const autoMap=findHeader(r.source);
  return `<div class="dash-kpi-card">
    <div class="dash-kpi-head"><div><span class="dash-index">${idx+1}</span><h3>${esc(r.name)}</h3></div><span class="dash-status ${statusClass}">${esc(status)}</span></div>
+   <div style="margin-top:5px;font-size:10px;color:#777b87">${autoMap?`Auto-mapped source: <b>${esc(autoMap)}</b>`:'Calculated / derived KPI'}</div>
    <div class="dash-big-value">${esc(dashboardFormat(r,r.value))}</div>
    ${visual}
    <div class="dash-meta-grid"><span class="dash-meta">Nature: <b>${esc(nature==='higher'?'Higher is better':nature==='lower'?'Lower is better':nature==='target'?'Target based':'Neutral')}</b></span>${growth}</div>
    <div class="dash-formula"><b>Formula:</b> ${dashboardEscFormula(r.formula)}</div>
    <div class="dash-source">Source: ${esc(r.source||'Calculated')}</div>
  </div>`;
+}
+function buildExecutiveIntelligence(){
+ const available=analysisResults.filter(r=>validNum(r.value));
+ const missing=analysisResults.filter(r=>!validNum(r.value));
+ const targetRows=available.filter(r=>validNum(r.target)&&r.target!==0);
+ const below=targetRows.filter(r=>{const n=String(r.nature||'higher').toLowerCase();return n==='lower'?r.value>r.target:r.value<r.target;});
+ const improving=available.filter(r=>validNum(r.growth)&&r.growth>0);
+ const declining=available.filter(r=>validNum(r.growth)&&r.growth<0);
+ const higherBetterDecline=available.filter(r=>String(r.nature).toLowerCase()==='higher'&&validNum(r.growth)&&r.growth<0);
+ const lowerBetterIncrease=available.filter(r=>String(r.nature).toLowerCase()==='lower'&&validNum(r.growth)&&r.growth>0);
+ const attention=[...new Set([...below,...higherBetterDecline,...lowerBetterIncrease])];
+ let lines=[];
+ if(available.length) lines.push(`The application calculated <b>${available.length}</b> of <b>${analysisResults.length}</b> configured KPIs automatically from the uploaded data.`);
+ if(targetRows.length) lines.push(`<b>${targetRows.length}</b> KPI(s) have target/budget data; <b>${targetRows.length-below.length}</b> are at or above the target on the configured KPI nature.`);
+ if(attention.length) lines.push(`<b>${attention.length}</b> KPI(s) require management attention: ${attention.slice(0,5).map(r=>esc(r.name)).join(', ')}${attention.length>5?' and others':''}.`);
+ if(improving.length||declining.length) lines.push(`Period movement is available for ${improving.length+declining.length} KPI(s): <b>${improving.length}</b> increased and <b>${declining.length}</b> decreased.`);
+ if(missing.length) lines.push(`<b>${missing.length}</b> configured KPI(s) have no usable source value in this workbook. They remain visible, but no figure has been invented.`);
+ if(!lines.length) lines.push('Upload the department data and finish the analysis to generate management intelligence.');
+ return {lines,attention,below};
 }
 function renderDashboard(){
  const d=dept();
@@ -549,7 +605,8 @@ function renderDashboard(){
  .dash-kpi-card{background:#18191e;border:1px solid #30323a;border-radius:18px;padding:17px;box-shadow:0 4px 18px rgba(0,0,0,.15)}
  .dash-kpi-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.dash-kpi-head h3{margin:0 0 0 30px;font-size:18px;line-height:1.25}.dash-index{float:left;display:inline-flex;width:24px;height:24px;align-items:center;justify-content:center;border-radius:50%;background:#fbbb00;color:#111;font-weight:800;font-size:12px}.dash-status{padding:5px 8px;border-radius:999px;font-size:11px;white-space:nowrap;border:1px solid #3a3c45}.dash-status.good{color:#45dc8b}.dash-status.bad{color:#ff6b6b}.dash-status.warn{color:#fbbb00}.dash-status.info{color:#aaaeb8}.dash-big-value{font-size:28px;font-weight:850;margin:15px 0 12px}.dash-bars{margin:4px 0 12px}.dash-bar-row{display:grid;grid-template-columns:55px 1fr auto;gap:8px;align-items:center;font-size:12px;color:#aaaeb8}.dash-track{height:12px;background:#2a2c33;border-radius:999px;overflow:hidden}.dash-fill{height:100%;border-radius:999px}.dash-fill.good{background:#45dc8b}.dash-fill.bad{background:#ff5c5c}.dash-fill.neutral{background:#8f94a3}.dash-target{display:flex;justify-content:space-between;color:#777b87;font-size:11px;margin-top:6px;padding-left:63px}.dash-value-visual{margin:6px 0 12px}.dash-value-line{display:flex;justify-content:space-between;color:#a8a9b2;font-size:12px;margin-bottom:7px}.dash-value-line strong{color:#f1f2f4}.dash-meta-grid{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px}.dash-meta{font-size:11px;color:#858995}.dash-formula{margin-top:12px;padding-top:10px;border-top:1px solid #292b31;color:#b4b6bf;font-size:11px;line-height:1.45}.dash-source{margin-top:6px;color:#6f727d;font-size:10px}.dash-empty{padding:16px;border:1px dashed #454750;border-radius:12px;color:#8c8f99;font-size:12px}
  </style>
- <div class="notice"><b>⚡ Smart Power BI-style Dashboard</b><br>The app automatically uses the selected KPI definitions, mapped Excel columns and formula rules. Each KPI gets its own visual. Target KPIs show Actual vs Target; percentages/rates show a level bar; growth KPIs show growth/de-growth; other KPIs show their actual value. No manual chart selection is required.</div>
+ <div class="notice"><b>⚡ Smart Power BI-style Dashboard</b><br>The app automatically picks the KPI, maps the available Excel source columns, applies the pre-loaded calculation rule and selects the most suitable visual. No manual chart selection is required.</div>
+ <div class="panel" style="margin-top:14px;border-color:#fbbb00"><h3>🧠 Management Interpretation</h3><div class="muted" style="line-height:1.65">${buildExecutiveIntelligence().lines.map(x=>`<div style="margin:5px 0">• ${x}</div>`).join('')}</div></div>
  <div class="smart-summary">
   <div class="smart-stat"><b>${total}</b><span>Total KPIs analysed</span></div>
   <div class="smart-stat good"><b>${available.length}</b><span>KPIs with calculated value</span></div>
