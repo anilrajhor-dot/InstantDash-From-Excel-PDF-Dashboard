@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>InstantDash v4.6.2</title>
+<title>InstantDash v4.6.3</title>
 <style>
 :root{
   --bg:#111217;--panel:#1b1c22;--panel2:#202128;--line:#343640;--text:#f5f5f7;
@@ -68,7 +68,7 @@ footer{color:#777;font-size:11px;text-align:center;padding:12px}
 <div class="app">
 <header>
   <div>
-    <div class="brand">🟡 InstantDash <span class="version">v4.6.2</span></div>
+    <div class="brand">🟡 InstantDash <span class="version">v4.6.3</span></div>
     <div class="by">Developed by Anil Sharma • Former General Manager, Central Bank of India</div>
   </div>
   <div class="top-actions">
@@ -109,6 +109,9 @@ footer{color:#777;font-size:11px;text-align:center;padding:12px}
     </div>
     <span id="mappingCount" class="badge"></span>
   </div>
+  <div class="notice" style="margin:14px 0">
+    <b>Pre-loaded KPI formulas are included.</b> Each department already contains KPI definitions, source mapping, units, performance nature and calculation rules. The user only needs to add/edit a KPI when the required KPI is not available or the organisation uses a different definition.
+  </div>
   <div id="addMoreQuestion" class="notice" style="margin:14px 0">
     Do you want to add more KPIs to this department?
     <div class="actions">
@@ -126,7 +129,7 @@ footer{color:#777;font-size:11px;text-align:center;padding:12px}
     <select id="kpiSelect" onchange="highlightKpi(this.value)"></select>
   </div>
   <div class="table-wrap"><table>
-    <thead><tr><th>KPI</th><th>Source Column</th><th>Calculation</th><th>Nature</th><th>Unit</th><th>Target</th><th class="editOnly">Edit</th></tr></thead>
+    <thead><tr><th>KPI</th><th>Source Column</th><th>Formula / Calculation</th><th>Nature</th><th>Unit</th><th>Target</th><th class="editOnly">Edit</th></tr></thead>
     <tbody id="kpiBody"></tbody>
   </table></div>
   <div id="mappingNext" class="actions">
@@ -170,7 +173,7 @@ footer{color:#777;font-size:11px;text-align:center;padding:12px}
   </div>
   <div id="dashboardBars" style="margin-top:16px"></div>
 </section>
-<footer>InstantDash v4.6.2 • Department-first KPI architecture • Department → KPI Mapping → Analysis → Report → Dashboard.</footer>
+<footer>InstantDash v4.6.3 • Department-first KPI architecture • Department → KPI Mapping → Analysis → Report → Dashboard.</footer>
 </div>
 
 <div id="modalBack" class="modal-back" onclick="closeModal(event)">
@@ -182,6 +185,8 @@ footer{color:#777;font-size:11px;text-align:center;padding:12px}
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script>
+const KPI_FORMULAS = {"Credit Deposit Ratio": "Advances ÷ Deposits × 100", "Audit Completion %": "Audits Completed ÷ Audits Planned × 100", "Resolution %": "Findings Resolved ÷ Audit Findings × 100", "Repeat Finding %": "Repeat Findings ÷ Audit Findings × 100", "Debt Equity Ratio": "Total Debt ÷ Equity", "Current Ratio": "Current Assets ÷ Current Liabilities", "Interest Coverage Ratio": "EBIT ÷ Interest Expense", "EBITDA Margin": "EBITDA ÷ Revenue × 100", "Net Profit Margin": "Net Profit ÷ Revenue × 100", "Capacity Utilisation": "Production ÷ Capacity × 100", "Rejection Rate": "Rejection Quantity ÷ Production × 100", "Unit Cost": "Production Cost ÷ Production", "Conversion Rate": "Converted Customers ÷ Leads × 100", "Resolution Rate": "Requests Completed ÷ Requests Received × 100", "Cost per Transaction": "Operating Cost ÷ Transactions", "First Time Right": "Correct First-Time ÷ Total Transactions × 100", "Cost per Employee": "Employee Cost ÷ Employee Strength", "Training Completion %": "Employees Trained ÷ Employees Planned × 100", "Average Ticket Size": "Loans Disbursed ÷ Number of Loans", "Recovery Rate": "Amount Recovered ÷ Amount Due × 100", "Collection Efficiency": "Amount Collected ÷ Amount Due × 100", "Average Closure Days": "Total Closure Days ÷ Findings Resolved", "Average Resolution Time": "Total Resolution Time ÷ Complaints Resolved", "First Contact Resolution": "First Contact Resolved ÷ Complaints Resolved × 100", "Project On Time %": "Projects Delivered On Time ÷ Projects Delivered × 100", "Sales Growth": "(Current Sales − Previous Sales) ÷ Previous Sales × 100", "Gross Margin": "Gross Profit ÷ Sales Revenue × 100", "Sales per Employee": "Sales Revenue ÷ Employee Strength", "Profit per Employee": "Net Profit ÷ Employee Strength", "Business per Employee": "(Deposits + Advances) ÷ Employee Strength", "NIM": "Net Interest Income ÷ Average Earning Assets × 100", "Cost to Income Ratio": "Operating Expenses ÷ Operating Income × 100", "Provision Coverage Ratio": "Eligible Provisions ÷ Gross NPA × 100", "ROA": "Net Profit ÷ Average Total Assets × 100", "ROE": "Net Profit ÷ Average Equity × 100", "Working Capital": "Current Assets − Current Liabilities", "Employee Productivity": "Output ÷ Employee Strength", "Attrition Rate": "Employees Leaving ÷ Average Employee Strength × 100", "Absenteeism Rate": "Absent Days ÷ Available Working Days × 100", "Internal Promotion Rate": "Internal Promotions ÷ Total Employees × 100", "Vacancy Rate": "Vacant Positions ÷ Approved Positions × 100", "Market Share": "Company Sales ÷ Total Market Sales × 100", "Repeat Customer Rate": "Repeat Customers ÷ Total Customers × 100", "Service Availability": "Available Time ÷ Total Scheduled Time × 100", "SLA Compliance": "Cases Within SLA ÷ Total Cases × 100", "Error Rate": "Errors ÷ Total Transactions × 100", "Customer Satisfaction": "Satisfied Customers ÷ Survey Responses × 100", "Backup Success Rate": "Successful Backups ÷ Backup Attempts × 100", "Security Patch Compliance": "Patched Assets ÷ Total Assets × 100", "Compliance Rate": "Compliant Items ÷ Total Applicable Items × 100", "Risk Coverage": "Risks Covered ÷ Identified Risks × 100", "Loss Events": "Direct source value", "Gross NPA": "Gross NPA Amount ÷ Advances × 100", "Net NPA": "Net NPA Amount ÷ Advances × 100", "GNPA %": "Gross NPA Amount ÷ Advances × 100", "NNPA %": "Net NPA Amount ÷ Advances × 100", "Credit Growth": "(Current Advances − Previous Advances) ÷ Previous Advances × 100", "EBITDA": "Direct source value", "EBIT": "Direct source value", "PBT": "Direct source value", "Net Profit": "Direct source value", "Revenue": "Direct source value", "Sales Revenue": "Direct source value", "Advances": "Direct source value", "Deposits": "Direct source value", "Audits Planned": "Direct source value", "Audits Completed": "Direct source value", "Audit Findings": "Direct source value", "High Risk Findings": "Direct source value", "Open Findings": "Direct source value", "Findings Resolved": "Direct source value", "Repeat Findings": "Direct source value", "Audit Cost": "Direct source value"};
+
 const DEFAULT = {
  departments: [
   {id:"banking",name:"Banking",icon:"🏦",desc:"Banking business, profitability, asset quality and productivity",kpis:[
@@ -358,7 +363,7 @@ function renderMapping(){
  const body=document.getElementById("kpiBody");
  if(!d.kpis.length){body.innerHTML=`<tr><td colspan="7"><div class="empty">No KPIs configured. Choose “Yes — Add / Edit KPI”.</div></td></tr>`;return}
  body.innerHTML=d.kpis.map((k,i)=>`<tr>
- <td><b>${esc(k[0])}</b></td><td>${esc(k[1])||"—"}</td><td>${esc(k[2])}</td><td>${esc(k[3])}</td><td>${esc(k[4])}</td><td>${esc(k[5])||"—"}</td>
+ <td><b>${esc(k[0])}</b></td><td>${esc(k[1])||"—"}</td><td>${esc(k[6]||KPI_FORMULAS[k[0]]||k[2])}</td><td>${esc(k[3])}</td><td>${esc(k[4])}</td><td>${esc(k[5])||"—"}</td>
  <td class="editOnly" style="display:none"><button class="btn small" onclick="openKpiModal(${i})">✏️</button></td>
  </tr>`).join("");
 }
@@ -368,7 +373,8 @@ function openKpiModal(index=-1){
  document.getElementById("modalContent").innerHTML=`
  <div class="field"><label>KPI Name</label><input id="kName" value="${esc(k[0])}" placeholder="e.g. Customer Complaints"></div>
  <div class="field"><label>Excel Source Column</label><input id="kSource" value="${esc(k[1])}" placeholder="Exact Excel header, or map later"></div>
- <div class="field"><label>Calculation</label><select id="kCalc"><option value="direct">Direct source value</option><option value="sum">Sum</option><option value="average">Average</option><option value="ratio">Ratio / percentage</option></select></div>
+ <div class="field"><label>Calculation</label><select id="kCalc"><option value="direct">Direct source value</option><option value="sum">Sum</option><option value="average">Average</option><option value="ratio">Ratio / percentage</option><option value="growth">Growth / Degrowth</option><option value="achievement">Target Achievement</option></select></div>
+ <div class="field"><label>Formula / Calculation Rule</label><input id="kFormula" value="${esc(KPI_FORMULAS[k[0]]||"Direct source value")}" placeholder="e.g. Net Profit ÷ Revenue × 100"></div>
  <div class="field"><label>KPI Nature</label><select id="kNature"><option value="higher">Higher is Better</option><option value="lower">Lower is Better</option><option value="target">Target Based</option><option value="neutral">Neutral</option></select></div>
  <div class="field"><label>Unit</label><input id="kUnit" value="${esc(k[4])}" placeholder="Number, %, ₹, ₹ Lakh, Days"></div>
  <div class="field"><label>Target / Budget Column (optional)</label><input id="kTarget" value="${esc(k[5])}" placeholder="e.g. Target"></div>
@@ -378,7 +384,8 @@ function openKpiModal(index=-1){
 }
 function saveKpi(index){
  const name=document.getElementById("kName").value.trim();if(!name)return alert("Enter KPI name.");
- const k=[name,document.getElementById("kSource").value.trim(),document.getElementById("kCalc").value,document.getElementById("kNature").value,document.getElementById("kUnit").value.trim()||"Number",document.getElementById("kTarget").value.trim()];
+ const formula=document.getElementById("kFormula").value.trim()||KPI_FORMULAS[name]||"Direct source value";
+ const k=[name,document.getElementById("kSource").value.trim(),document.getElementById("kCalc").value,document.getElementById("kNature").value,document.getElementById("kUnit").value.trim()||"Number",document.getElementById("kTarget").value.trim(),formula];
  if(index>=0)dept().kpis[index]=k;else dept().kpis.push(k);save();closeModal();renderMapping()
 }
 function deleteKpi(i){if(confirm("Delete this KPI from the selected department?")){dept().kpis.splice(i,1);save();renderMapping()}}
@@ -402,7 +409,7 @@ function runAnalysis(){
   let growth=null;if(isFinite(v)&&isFinite(pv)&&pv!==0)growth=(v-pv)/Math.abs(pv)*100;
   let target=NaN;if(k[5]){const th=findHeader(k[5]);if(th)target=num(current[th])}
   let achievement=isFinite(target)&&target!==0?v/target*100:null;
-  analysisResults.push({name:k[0],source:h,calc:k[2],nature:k[3],unit:k[4],value:v,previous:pv,growth,target,achievement,currentPeriod,previousPeriod});
+  analysisResults.push({name:k[0],source:h,calc:k[2],formula:k[6]||KPI_FORMULAS[k[0]]||"Direct source value",nature:k[3],unit:k[4],value:v,previous:pv,growth,target,achievement,currentPeriod,previousPeriod});
  });
  document.getElementById("finishBtn").disabled=false;
  document.getElementById("analysisSummary").innerHTML=`<b>${esc(d.icon)} ${esc(d.name)}</b><br>${analysisResults.length} KPI(s) ready for analysis • Current period: <b>${esc(currentPeriod)}</b> • Previous period: <b>${esc(previousPeriod)}</b>`;
@@ -414,7 +421,7 @@ function renderReport(){
  <div class="table-wrap" style="margin-top:14px"><table><thead><tr><th>KPI</th><th>Current</th><th>Previous</th><th>Growth</th><th>Target</th><th>Achievement</th></tr></thead><tbody>`;
  analysisResults.forEach(r=>{
   const fmt=(v)=>isFinite(v)?(r.unit==="₹"?"₹"+v.toLocaleString("en-IN",{maximumFractionDigits:2}):v.toLocaleString("en-IN",{maximumFractionDigits:2})+(r.unit==="%"?"%":r.unit==="Number"?"":" "+r.unit)):"—";
-  html+=`<tr><td><b>${esc(r.name)}</b><br><small>${esc(r.source)} • ${esc(r.calc)}</small></td><td>${fmt(r.value)}</td><td>${fmt(r.previous)}</td><td>${r.growth===null?"—":(r.growth>=0?"+":"")+r.growth.toFixed(1)+"%"}</td><td>${fmt(r.target)}</td><td>${r.achievement===null?"—":r.achievement.toFixed(1)+"%"}</td></tr>`;
+  html+=`<tr><td><b>${esc(r.name)}</b><br><small>${esc(r.source)} • ${esc(r.calc)} • ${esc(r.formula||"Direct source value")}</small></td><td>${fmt(r.value)}</td><td>${fmt(r.previous)}</td><td>${r.growth===null?"—":(r.growth>=0?"+":"")+r.growth.toFixed(1)+"%"}</td><td>${fmt(r.target)}</td><td>${r.achievement===null?"—":r.achievement.toFixed(1)+"%"}</td></tr>`;
  });
  html+=`</tbody></table></div>`;
  document.getElementById("reportBody").innerHTML=html;
