@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>InstantDash — Excel to Dashboard · v1.2.0</title>
+<title>InstantDash — Excel to Dashboard · v1.3.0</title>
 
 <!-- ============================================================
      LIBRARIES (loaded from CDN, no build step required)
@@ -294,7 +294,7 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"/><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"/><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"/></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel to Dashboard · v1.2.0</span>
+    <span class="sub">Excel to Dashboard · v1.3.0</span>
   </div>
   <div class="spacer"></div>
   <span class="privacy">🔒 Your data never leaves your computer.</span>
@@ -471,7 +471,7 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
    --------------------------------------------------------------------- */
 const CONFIG = {
   APP_NAME: 'InstantDash',
-  VERSION: 'v1.2.0',
+  VERSION: 'v1.3.0',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -2244,35 +2244,115 @@ function miSemanticRelationships(rows, dateCol, items){
 function buildManagementInsights(){
   const grid=$('managementInsightsGrid'); if(!grid)return;
   const rows=APP.filtered||[]; if(!rows.length){grid.innerHTML=miCard('Management view',[],'neutral');return;}
-  const items={performance:[],attention:[],drivers:[],actions:[]};
+  const items={performance:[],attention:[],drivers:[],relationships:[],actions:[]};
   const dateCol=timeCols()[0];
   const lr=miLatestPeriodRows(rows,dateCol);
   const numeric=APP.columns.filter(c=>c.type==='number');
 
-  /* Relationship analysis comes first because management meaning is often in
-     the interaction of KPIs, not in an isolated percentage movement. */
-  miSemanticRelationships(rows,dateCol,items);
+  /* Relationship analysis is deliberately evaluated before isolated KPI
+     movements. It gives management context rather than treating every
+     increase/decrease as independently good or bad. */
+  if(lr){
+    const prev=lr.previous, cur=lr.current;
+    const findCol=re=>APP.columns.find(c=>re.test(c.name));
+    const sum=(rs,c)=>miSum(rs,c.name);
+
+    // Audit plan versus completion: use only the latest period for the
+    // execution-gap conclusion. Do not imply that prior completed audits
+    // belonged to the prior plan unless the source explicitly establishes it.
+    const planned=findCol(/audit.*planned|planned.*audit/i);
+    const completed=findCol(/audit.*completed|completed.*audit/i);
+    if(planned&&completed){
+      const p=sum(prev,planned), c=sum(prev,completed), pc=sum(cur,planned), cc=sum(cur,completed);
+      if(pc!==0){
+        const latestRate=cc/pc, shortfall=pc-cc;
+        if(shortfall>0){
+          items.attention.push(`<b>Execution gap:</b> ${miEsc(completed)} were ${fmtFull(cc)} against ${fmtFull(pc)} ${miEsc(planned)} in the latest period. The completion-to-plan ratio was ${miPct(latestRate)}, leaving ${fmtFull(shortfall)} planned audits uncompleted.`);
+        }else if(shortfall<0){
+          items.performance.push(`<b>Plan execution:</b> ${miEsc(completed)} exceeded ${miEsc(planned)} in the latest period (${fmtFull(cc)} vs ${fmtFull(pc)}). This indicates completion above the current plan; confirm whether the excess relates to carry-forward or additional audits.`);
+        }
+        if(p!==0 && c!==0){
+          const prevRate=c/p;
+          items.relationships.push(`<b>Planning versus completion:</b> the prior period recorded ${fmtFull(c)} completed against ${fmtFull(p)} planned, while the latest period recorded ${fmtFull(cc)} against ${fmtFull(pc)}. Because planned and completed counts may relate to different audit cohorts, the prior-period ratio is shown descriptively rather than treated as a directly comparable execution rate.`);
+        }
+      }
+    }
+
+    // Findings versus completed audits: derive findings per completed audit
+    // only when completed audits are available and non-zero.
+    const findings=findCol(/^(audit\s*)?findings$|audit.*finding/i);
+    if(findings&&completed){
+      const fp=sum(prev,findings), cp=sum(prev,completed), fc=sum(cur,findings), cc=sum(cur,completed);
+      if(cp>0&&cc>0){
+        const prevRate=fp/cp, curRate=fc/cc;
+        const ch=miChange(prevRate,curRate);
+        items.relationships.push(`<b>Findings intensity:</b> findings per completed audit moved from ${fmtFull(prevRate)} to ${fmtFull(curRate)} (${ch.pct==null?'—':miPct(ch.pct)}). This derived ratio should be read with audit coverage and audit scope before drawing conclusions about control quality.`);
+      }
+    }
+
+    // High-risk findings as a share of total findings.
+    const highRisk=findCol(/high.*risk.*finding/i);
+    if(findings&&highRisk){
+      const fp=sum(prev,findings), hp=sum(prev,highRisk), fc=sum(cur,findings), hc=sum(cur,highRisk);
+      if(fp>0&&fc>0){
+        const prevMix=hp/fp, curMix=hc/fc;
+        if(curMix<prevMix) items.performance.push(`<b>Severity mix became more favourable:</b> ${miEsc(highRisk)} as a share of ${miEsc(findings)} fell from ${miPct(prevMix)} to ${miPct(curMix)}. This is a data-supported mix change, not proof of the underlying cause.`);
+        else if(curMix>prevMix) items.attention.push(`<b>Severity mix became less favourable:</b> ${miEsc(highRisk)} as a share of ${miEsc(findings)} increased from ${miPct(prevMix)} to ${miPct(curMix)}. Review the underlying cases before concluding causation.`);
+        items.relationships.push(`<b>High-risk share:</b> ${miEsc(highRisk)} represented ${miPct(curMix)} of ${miEsc(findings)} in the latest period, compared with ${miPct(prevMix)} previously.`);
+      }
+    }
+
+    // Open findings versus findings resolved: avoid implying that an increase
+    // in resolved findings is a problem. Compare both levels and the closure
+    // intensity where total findings are available.
+    const resolved=findCol(/findings.*resolved|resolved.*finding|findings.*closed|closed.*finding/i);
+    const open=findCol(/open.*finding|pending.*finding/i);
+    if(resolved){
+      const rp=sum(prev,resolved), rc=sum(cur,resolved);
+      if(rc>rp) items.performance.push(`<b>Resolution activity improved:</b> ${miEsc(resolved)} increased from ${fmtFull(rp)} to ${fmtFull(rc)} (${miPct((rc-rp)/(rp||1))}). This indicates higher closure activity; assess it alongside new findings and the outstanding backlog.`);
+      else if(rc<rp) items.attention.push(`<b>Resolution activity declined:</b> ${miEsc(resolved)} decreased from ${fmtFull(rp)} to ${fmtFull(rc)} (${miPct((rc-rp)/(rp||1))}). Management should assess the reason for the lower closure volume and its effect on the backlog.`);
+      if(findings){
+        const fp=sum(prev,findings), fc=sum(cur,findings);
+        if(fp>0&&fc>0){
+          const prevCov=rp/fp, curCov=rc/fc;
+          if(curCov>prevCov) items.relationships.push(`<b>Resolution coverage:</b> resolved findings relative to total findings improved from ${miPct(prevCov)} to ${miPct(curCov)}. This is an activity/coverage indicator, not proof that the underlying issues have been fully remediated.`);
+          else if(curCov<prevCov) items.attention.push(`<b>Resolution coverage weakened:</b> resolved findings relative to total findings fell from ${miPct(prevCov)} to ${miPct(curCov)}.`);
+        }
+      }
+    }
+    if(open&&resolved){
+      const op=sum(prev,open), oc=sum(cur,open), rp=sum(prev,resolved), rc=sum(cur,resolved);
+      items.relationships.push(`<b>Backlog versus closure:</b> open findings moved from ${fmtFull(op)} to ${fmtFull(oc)}, while resolved findings moved from ${fmtFull(rp)} to ${fmtFull(rc)}. The combined movement should be reviewed to distinguish new inflow from effective remediation.`);
+    }
+  }
 
   /* Latest-vs-previous movement: classify only where the KPI's business
-     direction is reasonably knowable. Increases/decreases without a known
-     direction are described as movements requiring interpretation. */
+     direction is reasonably knowable. Planned volumes are contextual, not
+     automatically favourable. Findings are contextual unless severity or
+     backlog relationships establish meaning. */
   if(lr){
     numeric.forEach(c=>{
       const prev=miSum(lr.previous,c.name), cur=miSum(lr.current,c.name);
       if(prev===0)return;
       const ch=miChange(prev,cur); if(Math.abs(ch.pct||0)<0.10)return;
-      const dir=miDirection(c.name), favourable=/lower/i.test(dir)?ch.abs<0:ch.abs>0;
-      const sentence=`<b>${miEsc(c.name)}</b> ${ch.abs>=0?'increased':'decreased'} from ${fmtFull(prev)} to ${fmtFull(cur)} (${miPct(ch.pct)}).`;
-      if(/(findings|finding)/i.test(c.name) && !/(high.*risk|open|repeat|pending)/i.test(c.name)){
-        items.drivers.push(sentence+' An increase in findings is not by itself proof of weaker controls; assess audit coverage and completion volume before concluding causation.');
-      }else if(/planned|planning/i.test(c.name)){
-        items.drivers.push(sentence+' Higher planning volume is not automatically favourable; assess the plan against available capacity and actual completion.');
-      }else if(favourable) items.performance.push(sentence+' This movement is favourable based on the KPI direction available in the data.');
-      else items.attention.push(sentence+' This movement is adverse based on the KPI direction available in the data.');
+      const name=c.name;
+      const sentence=`<b>${miEsc(name)}</b> ${ch.abs>=0?'increased':'decreased'} from ${fmtFull(prev)} to ${fmtFull(cur)} (${miPct(ch.pct)}).`;
+      if(/planned|planning/i.test(name)){
+        items.drivers.push(sentence+' This is a volume change, not a performance conclusion; assess it against capacity and actual completion.');
+      }else if(/findings/i.test(name) && !/high.*risk|open|repeat|resolved|closed|pending/i.test(name)){
+        items.drivers.push(sentence+' An increase in findings is not by itself proof of weaker controls; assess audit coverage, completion volume and findings intensity before concluding causation.');
+      }else if(/resolved|closed/i.test(name)){
+        // Correct interpretation is handled by the relationship block above.
+        // Do not emit a generic adverse/favourable statement here.
+      }else{
+        const dir=miDirection(name), favourable=/lower/i.test(dir)?ch.abs<0:ch.abs>0;
+        if(favourable) items.performance.push(sentence+' This movement is favourable based on the KPI direction available in the data.');
+        else items.attention.push(sentence+' This movement is adverse based on the KPI direction available in the data.');
+      }
     });
   }
 
-  /* Target vs actual, including direction-aware classification and gaps. */
+  /* Target versus actual, if a comparable target structure exists. */
   const target=miFindCol(/^(target|targets)$/i)||miFindCol(/target/i);
   const actual=miFindCol(/^(actual|actuals)$/i)||miFindCol(/actual/i);
   const kpi=miFindCol(/^(kpi|metric|indicator)$/i);
@@ -2290,8 +2370,8 @@ function buildManagementInsights(){
     });
   }
 
-  /* Driver / concentration analysis: identify the largest contributors, but
-     explicitly avoid calling contribution a causal reason. */
+  /* Driver/concentration analysis: contribution is explicitly labelled as a
+     concentration signal, never as proof of causation. */
   const main=numeric.filter(c=>c.name!==target?.name&&c.name!==actual?.name)[0];
   const dims=groupables().filter(c=>c.name!==kpi?.name).slice(0,3);
   if(main&&dims.length){
@@ -2307,13 +2387,15 @@ function buildManagementInsights(){
   if(APP.dupeRows)items.attention.push(`<b>${APP.dupeRows.toLocaleString()}</b> duplicate rows were detected; validate the source before relying on aggregate movements.`);
 
   if(items.attention.length)items.actions.push('Review the largest adverse movements first and confirm the operational reason with the responsible business owner.');
+  if(items.relationships.length)items.actions.push('Review the derived ratios and KPI relationships before assessing individual movements; they provide context but do not establish causation.');
   if(items.drivers.length)items.actions.push('Use data-supported relationships and concentrations as the starting point for management review; contribution or correlation must not be treated as proof of causation.');
-  if(items.performance.length && !items.attention.length)items.actions.push('Continue monitoring the favourable indicators and verify that improvements are sustained in the next comparable period.');
-  if(!items.performance.length&&!items.attention.length&&!items.drivers.length)items.actions.push('No material management variation can be established from the current data. Add a prior-period, target or comparable-period basis for stronger analysis.');
+  if(items.performance.length&&!items.attention.length)items.actions.push('Continue monitoring the favourable indicators and verify that improvements are sustained in the next comparable period.');
+  if(!items.performance.length&&!items.attention.length&&!items.drivers.length&&!items.relationships.length)items.actions.push('No material management variation can be established from the current data. Add a prior-period, target or comparable-period basis for stronger analysis.');
 
   grid.innerHTML=miCard('What is going well',items.performance,'good')+
     miCard('Variations requiring attention',items.attention,'warn')+
     miCard('Management interpretation / data-supported drivers',items.drivers,'neutral')+
+    miCard('Key relationships & derived ratios',items.relationships,'neutral')+
     miCard('Management action',items.actions,'neutral');
 }
 
