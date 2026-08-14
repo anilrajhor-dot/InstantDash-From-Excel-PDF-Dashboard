@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>InstantDash — Excel to Dashboard · v1.4.9</title>
+<title>InstantDash — Excel to Dashboard · v1.5.0</title>
 
 <!-- ============================================================
      LIBRARIES (loaded from CDN, no build step required)
@@ -361,7 +361,7 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"/><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"/><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"/></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel to Dashboard · v1.4.9</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.5.0</span>
   </div>
   <div class="spacer"></div>
   <span class="privacy">🔒 Your data never leaves your computer.</span>
@@ -377,9 +377,9 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
       <div class="hero-copy">
         <div class="hero-eyebrow"><span class="pulse-dot"></span> PRIVATE · FAST · INSIGHT-LED</div>
         <h2>Turn your Excel data into a <span>management dashboard</span> in seconds.</h2>
-        <p class="hero-lead">Upload Excel, CSV or a text-based PDF and InstantDash automatically discovers your data, builds visual dashboards and highlights the variations that deserve management attention.</p>
+        <p class="hero-lead">Upload Excel, CSV or PDF and InstantDash automatically discovers your data, builds visual dashboards and highlights the variations that deserve management attention.</p>
         <div class="hero-actions">
-          <button class="btn primary hero-btn" id="browseBtn"><span class="btn-icon">↥</span> Choose Excel / CSV / PDF / PDF / PDF</button>
+          <button class="btn primary hero-btn" id="browseBtn"><span class="btn-icon">↥</span> Choose Excel / CSV / PDF</button>
           <div class="drop-prompt"><span>or</span> drag & drop your file here</div>
         </div>
         <input type="file" id="fileInput" accept=".xlsx,.xls,.csv,.pdf" hidden />
@@ -549,7 +549,7 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
    --------------------------------------------------------------------- */
 const CONFIG = {
   APP_NAME: 'InstantDash',
-  VERSION: 'v1.4.8',
+  VERSION: 'v1.5.0',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -767,62 +767,195 @@ function wireIngest(){
 }
 
 async function parsePdfToWorkbook(file){
-  // PDF ingestion is deliberately client-side. It is intended for text-based
-  // PDFs containing tables; scanned/image-only PDFs are reported clearly.
+  // Financial-PDF table extractor.  It uses PDF.js text coordinates rather than
+  // treating every visual line as a spreadsheet row.  The important rule is:
+  // a paragraph/footnote is not a data row; a line with a description followed
+  // by aligned numeric values is.
   const pdfjs = await import('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs');
   pdfjs.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs';
   const data = new Uint8Array(await file.arrayBuffer());
   const pdf = await pdfjs.getDocument({data}).promise;
-  const rows = [];
+
+  const pages = [];
   let extractedChars = 0;
+  let numericLines = 0;
+
+  const numRe = /^\(?[₹$€£]?[-+]?\d[\d,]*(?:\.\d+)?%?\)?$/;
+  const dateRe = /(?:\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2,4}|\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2}|\d{2}\/\d{2}\/\d{4})/;
+  const periodRe = /(?:\d{1,2}\s+months?|month|quarter|year|FY|year ended|ended|previous year|preceding|corresponding)/i;
+
+  function cleanToken(s){
+    return String(s || '').replace(/[\u00a0\u200b]/g,' ').replace(/\s+/g,' ').trim();
+  }
+  function isNumberToken(s){
+    const t = cleanToken(s).replace(/[₹$€£]/g,'');
+    return numRe.test(t) || /^\(?-?\d[\d,]*(?:\.\d+)?\)?$/.test(t);
+  }
+  function numberValue(s){
+    let t = cleanToken(s).replace(/[₹$€£,]/g,'');
+    const pct = /%$/.test(t);
+    t = t.replace(/%$/,'');
+    const neg = /^\(.*\)$/.test(t);
+    t = t.replace(/^\(|\)$/g,'');
+    const n = Number(t);
+    return Number.isFinite(n) ? (neg ? -n : n) : null;
+  }
 
   for (let pageNo = 1; pageNo <= pdf.numPages; pageNo++){
     const page = await pdf.getPage(pageNo);
     const content = await page.getTextContent();
-    const items = content.items.filter(x => x.str && x.str.trim());
+    const items = content.items
+      .filter(x => x.str && cleanToken(x.str))
+      .map(x => ({x:x.transform[4], y:x.transform[5], str:cleanToken(x.str), w:Math.max(3, x.width || 0)}));
     extractedChars += items.reduce((n,x)=>n + x.str.length, 0);
     if (!items.length) continue;
 
-    const lines = [];
+    const lineMap = [];
     for (const item of items){
-      const x = item.transform[4], y = item.transform[5];
-      let line = lines.find(l => Math.abs(l.y - y) <= 3);
-      if (!line){ line = {y, items:[]}; lines.push(line); }
-      line.items.push({x, str:item.str.trim()});
+      let line = lineMap.find(l => Math.abs(l.y - item.y) <= 2.5);
+      if (!line){ line={y:item.y,items:[]}; lineMap.push(line); }
+      line.items.push(item);
     }
-    lines.sort((a,b)=>b.y-a.y);
-    for (const line of lines){
-      line.items.sort((a,b)=>a.x-b.x);
-      const cells = [];
-      let current = '';
-      let lastX = null;
-      for (const it of line.items){
-        const gap = lastX == null ? 0 : it.x-lastX;
-        // Large horizontal gaps are likely column boundaries in a table.
-        if (current && gap > 22){ cells.push(current.trim()); current=''; }
-        current += (current ? ' ' : '') + it.str;
-        lastX = it.x + Math.max(4, it.str.length*3.2);
-      }
-      if (current) cells.push(current.trim());
-      if (cells.length) rows.push(cells);
-    }
-    rows.push([]); // page separator
+    lineMap.sort((a,b)=>b.y-a.y);
+
+    const lines = lineMap.map(l => {
+      l.items.sort((a,b)=>a.x-b.x);
+      const text = l.items.map(i=>i.str).join(' ').replace(/\s+/g,' ').trim();
+      const nums = l.items.filter(i=>isNumberToken(i.str));
+      return {y:l.y, items:l.items, text, nums};
+    });
+
+    pages.push({pageNo, lines});
   }
 
-  if (extractedChars < 20 || rows.filter(r=>r.length).length < 2){
+  if (extractedChars < 20 || !pages.some(p=>p.lines.length)){
     throw new Error('This PDF appears to be scanned or image-only. A text-based PDF is required for table extraction.');
   }
 
-  // Remove obvious report title/subtitle rows and keep the detected table rows.
-  const cleaned = rows.filter(r=>r.length && r.some(v=>String(v).trim()));
-  const maxCols = Math.max(...cleaned.map(r=>r.length));
-  const normalised = cleaned.map(r=>{
-    const out = r.slice(); while(out.length<maxCols) out.push(''); return out;
-  });
-  // If a recognisable header is present, keep it; otherwise the existing
-  // dashboard discovery layer can still inspect the extracted rows.
-  const ws = XLSX.utils.aoa_to_sheet(normalised);
-  return {SheetNames:['PDF_Data'], Sheets:{PDF_Data:ws}};
+  // Determine whether a page contains a genuine tabular numeric region.
+  // Financial statements normally have at least 2 numeric cells per row.
+  const allDataLines = [];
+  for (const page of pages){
+    for (let i=0;i<page.lines.length;i++){
+      const line = page.lines[i];
+      if (line.nums.length >= 2){
+        numericLines++;
+        allDataLines.push({...line, pageNo:page.pageNo});
+      }
+    }
+  }
+
+  if (numericLines < 2){
+    throw new Error('No reliable tabular numeric data could be detected in this PDF. If it is scanned, OCR is required before dashboard analysis.');
+  }
+
+  // Build a stable numeric-column model from the X positions of numeric cells.
+  // First prefer a real financial-table header: its date/period labels sit on
+  // the same X anchors as the values below. Otherwise fall back to coordinate
+  // clustering, with the strongest columns chosen by frequency.
+  const xs = allDataLines.flatMap(l=>l.nums.map(n=>n.x)).sort((a,b)=>a-b);
+  const clusters=[];
+  for (const x of xs){
+    let c = clusters.find(c=>Math.abs(c.center-x) <= 12);
+    if (!c){ c={center:x,count:1}; clusters.push(c); }
+    else { c.center=(c.center*c.count+x)/(c.count+1); c.count++; }
+  }
+  clusters.sort((a,b)=>a.center-b.center);
+
+  let valueClusters = [];
+  const headerCandidates = pages.flatMap(p=>p.lines).filter(l=>/particulars|period|year ended|preceding|corresponding/i.test(l.text));
+  for (const h of headerCandidates){
+    const hs = h.items.filter(it=>/^(?:\d{1,2}[\/\-.])?\d{1,2}[\/\-.]\d{2,4}$/.test(it.str));
+    if (hs.length >= 2){
+      valueClusters = hs.slice(-8).map((it,i)=>({center:it.x,count:100-i}));
+      break;
+    }
+  }
+
+  if (valueClusters.length < 2){
+    valueClusters = clusters.filter(c=>c.count>=2)
+      .sort((a,b)=>b.count-a.count)
+      .slice(0,8)
+      .sort((a,b)=>a.center-b.center);
+    if (valueClusters.length < 2){
+      valueClusters = clusters.slice().sort((a,b)=>b.count-a.count).slice(0,8).sort((a,b)=>a.center-b.center);
+    }
+  }
+
+  const rows=[];
+  const headers=[];
+  const seen = new Set();
+
+  function nearestCluster(x){
+    let best=null, d=Infinity;
+    for (const c of valueClusters){ const dd=Math.abs(c.center-x); if(dd<d){d=dd;best=c;} }
+    return d<=24 ? best : null;
+  }
+
+  // Extract only rows that have a meaningful text description plus >=2 numeric
+  // values. Continuation lines without numbers are appended to the prior label.
+  for (const page of pages){
+    for (let i=0;i<page.lines.length;i++){
+      const line=page.lines[i];
+      if (line.nums.length < 2) continue;
+
+      const assigned = valueClusters.map(()=>null);
+      let firstNumX = Infinity;
+      for (const n of line.nums){
+        const c=nearestCluster(n.x);
+        if(!c) continue;
+        const idx=valueClusters.indexOf(c);
+        if(idx>=0 && assigned[idx] == null){ assigned[idx]=numberValue(n.str); firstNumX=Math.min(firstNumX,n.x); }
+      }
+      const validCount=assigned.filter(v=>v!==null).length;
+      if(validCount<2) continue;
+
+      const label=line.items.filter(it=>it.x < firstNumX-3).map(it=>it.str).join(' ').replace(/\s+/g,' ').trim();
+      if(!label || /^\(?\d/.test(label)) continue;
+
+      // Avoid obvious page numbers / list numbering / auditor prose.
+      if (/^(page|note|annexure|independent auditor|auditor's report)\b/i.test(label)) continue;
+      if (/^\d+[\.)]?$/.test(label)) continue;
+
+      const row={Description:label};
+      assigned.forEach((v,idx)=>{ if(v!==null) row['Value '+(idx+1)]=v; });
+      rows.push(row);
+    }
+  }
+
+  if (rows.length < 2){
+    throw new Error('The PDF contains text, but no sufficiently reliable financial table rows were detected. The dashboard has not analysed the PDF to avoid misleading results.');
+  }
+
+  // Try to recover useful period labels from nearby header text. If unavailable,
+  // use neutral Value 1..N labels rather than pretending to know the periods.
+  const maxVals = Math.max(...rows.map(r=>Object.keys(r).filter(k=>k.startsWith('Value ')).length));
+  let valueNames = Array.from({length:maxVals},(_,i)=>'Value '+(i+1));
+
+  const headerText = pages.flatMap(p=>p.lines.slice(0,80).map(l=>l.text)).join(' | ');
+  const dateMatches = headerText.match(/\b\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2,4}\b/g) || [];
+  if (dateMatches.length >= 2 && dateMatches.length <= 8){
+    valueNames = dateMatches.slice(0,maxVals).map((d,i)=>d || ('Value '+(i+1)));
+  }
+
+  // Convert to rectangular worksheet and add an explicit extraction-quality field.
+  const header=['Description',...valueNames];
+  const aoa=[header];
+  for(const r of rows){
+    aoa.push([r.Description,...valueNames.map(n=>r[n] == null ? '' : r[n])]);
+  }
+
+  const ws=XLSX.utils.aoa_to_sheet(aoa);
+  ws['!autofilter']={ref:`A1:${XLSX.utils.encode_col(header.length-1)}${aoa.length}`};
+  ws['!instantdash_pdf_meta']={
+    pages:pdf.numPages,
+    extractedRows:rows.length,
+    numericLines,
+    valueColumns:valueNames.length,
+    extraction:'coordinate-based-financial-table-v2'
+  };
+
+  return {SheetNames:['PDF_Data'], Sheets:{PDF_Data:ws}, __pdfMeta:ws['!instantdash_pdf_meta']};
 }
 
 async function handleFile(file){
