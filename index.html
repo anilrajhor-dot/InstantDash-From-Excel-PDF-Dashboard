@@ -539,7 +539,7 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
    --------------------------------------------------------------------- */
 const CONFIG = {
   APP_NAME: 'InstantDash',
-  VERSION: 'v1.4.1',
+  VERSION: 'v1.4.3',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -2253,11 +2253,43 @@ function miChange(a,b){ return {abs:b-a,pct:a!==0?(b-a)/Math.abs(a):null}; }
 function miIsContextual(kpi){
   return /(employees?|staff|headcount|branches?|outlets?|targets?|target|planned|planning|budget|capacity|sanctioned\s*target|business\s*target|cost\s*budget)/i.test(String(kpi||''));
 }
+/* Semantic KPI classification: direction alone is not enough. Some KPIs
+   describe risk/exposure or protective activity, where a numerical increase
+   has to be interpreted from the KPI's meaning and, where possible, related
+   KPIs. The semantic layer is intentionally conservative. */
+function miSemantic(kpi){
+  const n=String(kpi||'').toLowerCase();
+  if(/threats?\s*(detected|identified)|attacks?\s*(detected|identified)|vulnerabilit(y|ies)|exposure|security\s*incidents?|critical\s*incidents?|data\s*breach|breaches|malware\s*detected|phishing\s*(attempts?|incidents?)/i.test(n)) return 'risk';
+  if(/threats?\s*blocked|attacks?\s*blocked|incidents?\s*resolved|vulnerabilit(y|ies)\s*resolved|patch(es|ing)?\s*(completed|applied)|controls?\s*implemented|security\s*compliance/i.test(n)) return 'protective';
+  if(/audit.*finding|finding(s)?$|repeat\s*finding|open\s*finding|pending\s*finding/i.test(n)) return 'contextual';
+  if(miIsContextual(kpi)) return 'contextual';
+  return 'output';
+}
 function miDirection(kpi){
+  const sem=miSemantic(kpi);
+  if(sem==='risk') return 'Lower is Better';
+  if(sem==='protective') return 'Higher is Better';
+  if(sem==='contextual') return 'Contextual';
   const d=miDirectoryDirection(kpi);
   if(d)return d;
   if(/(npa|slippage|default|complaint|pending|open|repeat|expense|cost|foir|ltv|utili[sz]ation|risk|finding)/i.test(kpi)) return 'Lower is Better';
   return 'Higher is Better';
+}
+function miMovementText(name,ch,prev,cur){
+  const direction=miDirection(name);
+  const sem=miSemantic(name);
+  const sentence=`<b>${miEsc(name)}</b> ${ch.abs>=0?'increased':'decreased'} from ${fmtFull(prev)} to ${fmtFull(cur)} (${miPct(ch.pct)}).`;
+  if(sem==='contextual') return {bucket:'drivers',text:sentence+' This is a contextual movement; assess it against the relevant target, capacity, business plan or operating outcome.'};
+  if(sem==='risk'){
+    if(ch.abs>0) return {bucket:'attention',text:sentence+' Higher exposure or incident volume warrants investigation; assess whether the movement reflects increased risk, improved detection, or both.'};
+    if(ch.abs<0) return {bucket:'performance',text:sentence+' Lower risk/exposure is a positive signal, subject to confirming that detection and reporting practices remained consistent.'};
+  }
+  if(sem==='protective'){
+    if(ch.abs>0) return {bucket:'performance',text:sentence+' Higher protective activity is a positive signal, but assess it alongside the volume and severity of threats or incidents.'};
+    if(ch.abs<0) return {bucket:'attention',text:sentence+' Lower protective activity warrants review alongside threat volume and operational requirements.'};
+  }
+  const favourable=/lower/i.test(direction)?ch.abs<0:ch.abs>0;
+  return {bucket:favourable?'performance':'attention',text:sentence+(favourable?' This movement is favourable based on the KPI direction available in the data.':' This movement is adverse based on the KPI direction available in the data.')};
 }
 function miStatus(items){
   const a=(items.attention||[]).length, p=(items.performance||[]).length;
@@ -2467,14 +2499,28 @@ function buildManagementInsights(){
       }else if(/resolved|closed/i.test(name)){
         // Correct interpretation is handled by the relationship block above.
         // Do not emit a generic adverse/favourable statement here.
-      }else if(miIsContextual(name)){
-        items.drivers.push(sentence+' This is a contextual change rather than a direct performance conclusion; assess it against business plans, capacity, productivity and outcomes.');
       }else{
-        const dir=miDirection(name), favourable=/lower/i.test(dir)?ch.abs<0:ch.abs>0;
-        if(favourable) items.performance.push(sentence+' This movement is favourable based on the KPI direction available in the data.');
-        else items.attention.push(sentence+' This movement is adverse based on the KPI direction available in the data.');
+        const mv=miMovementText(name,ch,prev,cur);
+        items[mv.bucket].push(mv.text);
       }
     });
+  }
+
+  /* Cyber/security relationship: compare threat detection with blocking.
+     This is deliberately framed as protection coverage, not causation. */
+  if(lr){
+    const detected=miFindCol(/threats?\s*(detected|identified)|attacks?\s*(detected|identified)|malware\s*detected/i);
+    const blocked=miFindCol(/threats?\s*blocked|attacks?\s*blocked/i);
+    if(detected&&blocked){
+      const dp=miSum(lr.previous,detected), dc=miSum(lr.current,detected);
+      const bp=miSum(lr.previous,blocked), bc=miSum(lr.current,blocked);
+      if(dp>0&&dc>=0){
+        const prevRate=bp/dp, curRate=bc/dc;
+        items.relationships.push(`<b>Threat blocking coverage:</b> blocked threats represented ${miPct(prevRate)} of detected threats previously and ${miPct(curRate)} in the latest period. The change should be assessed alongside threat severity and detection coverage; it does not by itself establish protection effectiveness.`);
+        if(curRate<prevRate) items.attention.push(`<b>Blocking coverage weakened:</b> the blocked-to-detected threat ratio fell from ${miPct(prevRate)} to ${miPct(curRate)}. Review threat severity, detection and blocking controls.`);
+        else if(curRate>prevRate) items.performance.push(`<b>Blocking coverage strengthened:</b> the blocked-to-detected threat ratio rose from ${miPct(prevRate)} to ${miPct(curRate)}. Confirm that the change is sustained and covers material threats.`);
+      }
+    }
   }
 
   /* Target versus actual, if a comparable target structure exists. */
