@@ -68,7 +68,7 @@ footer{color:#777;font-size:11px;text-align:center;padding:12px}
 <div class="app">
 <header>
   <div>
-    <div class="brand">🟡 InstantDash <span class="version">v4.7.2</span></div>
+    <div class="brand">🟡 InstantDash <span class="version">v4.8.0</span></div>
     <div class="by">Developed by Anil Sharma • Former General Manager, Central Bank of India</div>
   </div>
   <div class="top-actions">
@@ -98,7 +98,7 @@ footer{color:#777;font-size:11px;text-align:center;padding:12px}
   <div class="notice" style="margin-top:12px">
     <b>Pre-loaded master library (ready at first launch):</b> Banking, Finance, Internal Audit, Human Resources, Credit, Manufacturing, Sales & Marketing, Operations, Customer Service, Risk & Compliance, IT & Technology, Administration, Procurement, Project Management, Legal & Secretarial, Treasury, Recovery & Collections, Quality Assurance, Supply Chain & Stores, Corporate Strategy & Planning, MIS & Data Analytics, Training & Learning, Digital Banking & Digital Services and BC Performance — with their standard KPIs, units, performance nature and formula rules. <b>Other / Custom</b> is available for your own department.
   </div>
-  <div class="notice" style="margin-top:12px"><b>v4.7.2 library:</b> Department selection is the first step. Standard KPIs and calculation rules are pre-loaded; users only add what is organisation-specific.</div><div class="actions">
+  <div class="notice" style="margin-top:12px"><b>v4.8.0 Smart Power BI-style dashboard:</b> Department selection is the first step. Standard KPIs and calculation rules are pre-loaded; users only add what is organisation-specific.</div><div class="actions">
     <button class="btn primary" onclick="continueDepartment()">Continue → KPI Mapping</button>
     <button class="btn" onclick="openDeptModal()">＋ Add Department</button>
     <button class="btn" onclick="editSelectedDept()">✏️ Edit Department</button><button class="btn" onclick="restoreMasterLibrary()">↺ Restore Pre-loaded Library</button><button class="btn danger" onclick="resetAppLibrary()">♻️ Reset App Library</button>
@@ -181,7 +181,7 @@ footer{color:#777;font-size:11px;text-align:center;padding:12px}
   </div>
   <div id="dashboardBars" style="margin-top:16px"></div>
 </section>
-<footer>InstantDash v4.7.2 • Department-first KPI architecture • all-department KPI library • Department → KPI Mapping → Analysis → Report → Dashboard.</footer>
+<footer>InstantDash v4.8.0 • Department-first KPI architecture • Auto KPI calculation • Smart Power BI-style dashboard • Department → KPI Mapping → Analysis → Report → Dashboard.</footer>
 </div>
 
 <div id="modalBack" class="modal-back" onclick="closeModal(event)">
@@ -481,37 +481,84 @@ function renderReport(){
  html+=`</tbody></table></div>`;
  document.getElementById("reportBody").innerHTML=html;
 }
+function dashboardFormat(r,v){
+ if(!validNum(v)) return '—';
+ const u=String(r.unit||'');
+ if(u==='₹' || /₹/.test(u)) return '₹'+fmtIN(v);
+ if(u==='%') return fmtIN(v)+'%';
+ if(u==='Number') return fmtIN(v);
+ return fmtIN(v)+(u?' '+u:'');
+}
+function dashboardEscFormula(x){ return esc(x||'Direct source value'); }
+function dashboardCard(r, idx, all){
+ const hasTarget=validNum(r.target);
+ const hasValue=validNum(r.value);
+ const nature=String(r.nature||'higher').toLowerCase();
+ const unit=String(r.unit||'');
+ let visual='';
+ let status='No target supplied';
+ let statusClass='info';
+ if(!hasValue){
+   visual=`<div class="dash-empty">Data not available in uploaded source columns</div>`;
+   status='Not available'; statusClass='warn';
+ }else if(hasTarget && r.target!==0){
+   const achievement=(validNum(r.achievement)?r.achievement:(r.value/r.target*100));
+   const width=Math.max(2,Math.min(100,Math.abs(achievement)));
+   let good=nature==='lower'?r.value<=r.target:r.value>=r.target;
+   if(nature==='target') good=Math.abs(r.value-r.target)<=Math.abs(r.target)*0.05;
+   status=(achievement>=100?'Target achieved':'Below target')+' • '+achievement.toFixed(1)+'%';
+   statusClass=good?'good':'bad';
+   visual=`<div class="dash-bars"><div class="dash-bar-row"><span>Actual</span><div class="dash-track"><div class="dash-fill ${good?'good':'bad'}" style="width:${width}%"></div></div><b>${esc(dashboardFormat(r,r.value))}</b></div><div class="dash-target"><span>Target</span><b>${esc(dashboardFormat(r,r.target))}</b></div></div>`;
+ }else if(unit==='%'){
+   const pct=Math.max(0,Math.min(100,Math.abs(r.value)));
+   visual=`<div class="dash-bars"><div class="dash-bar-row"><span>Level</span><div class="dash-track"><div class="dash-fill neutral" style="width:${pct}%"></div></div><b>${esc(dashboardFormat(r,r.value))}</b></div></div>`;
+   status='Percentage / rate'; statusClass='info';
+ }else if(validNum(r.growth)){
+   const g=Math.max(-100,Math.min(100,r.growth));
+   const width=Math.max(2,Math.min(100,Math.abs(g)));
+   const positive=g>=0;
+   visual=`<div class="dash-bars"><div class="dash-bar-row"><span>${positive?'Growth':'Degrowth'}</span><div class="dash-track"><div class="dash-fill ${positive?'good':'bad'}" style="width:${width}%"></div></div><b>${g>=0?'+':''}${g.toFixed(1)}%</b></div></div>`;
+   status=positive?'Growing':'Declining'; statusClass=positive?'good':'bad';
+ }else{
+   visual=`<div class="dash-value-visual"><div class="dash-value-line"><span>Actual value</span><strong>${esc(dashboardFormat(r,r.value))}</strong></div><div class="dash-track"><div class="dash-fill neutral" style="width:100%"></div></div></div>`;
+   status='Actual value'; statusClass='info';
+ }
+ const growth=validNum(r.growth)?`<span class="dash-meta">Period change: <b>${r.growth>=0?'+':''}${r.growth.toFixed(1)}%</b></span>`:'';
+ return `<div class="dash-kpi-card">
+   <div class="dash-kpi-head"><div><span class="dash-index">${idx+1}</span><h3>${esc(r.name)}</h3></div><span class="dash-status ${statusClass}">${esc(status)}</span></div>
+   <div class="dash-big-value">${esc(dashboardFormat(r,r.value))}</div>
+   ${visual}
+   <div class="dash-meta-grid"><span class="dash-meta">Nature: <b>${esc(nature==='higher'?'Higher is better':nature==='lower'?'Lower is better':nature==='target'?'Target based':'Neutral')}</b></span>${growth}</div>
+   <div class="dash-formula"><b>Formula:</b> ${dashboardEscFormula(r.formula)}</div>
+   <div class="dash-source">Source: ${esc(r.source||'Calculated')}</div>
+ </div>`;
+}
 function renderDashboard(){
  const d=dept();
  document.getElementById("dashboardSubtitle").textContent=`${d.icon} ${d.name} • ${fileName}`;
- const usable=analysisResults.filter(r=>validNum(r.value));
- const primary=usable.filter(r=>!String(r.unit).includes("/"));
- const ratios=usable.filter(r=>String(r.unit).includes("/")||r.unit==="%"||r.unit==="Ratio"||r.unit==="Times");
- const maxPrimary=Math.max(...primary.map(r=>Math.abs(r.value)),1);
- let html=`<div class="notice"><b>Dashboard ready:</b> ${usable.length} KPI(s) calculated for <b>${esc(d.name)}</b>. Every displayed KPI comes from the selected KPI map and its formula.</div>`;
- html+=`<h3 style="margin-top:18px">📊 Key Performance Measures</h3><div class="grid">`;
- primary.forEach(r=>{
-   const pct=Math.max(4,Math.min(100,Math.abs(r.value)/maxPrimary*100));
-   const bad=(r.nature==="lower"&&r.growth>0)||(r.nature==="higher"&&r.growth<0);
-   const fill=bad?"#ff5555":"#45dc8b";
-   const label=r.unit==="%"?fmtIN(r.value)+"%":fmtIN(r.value)+(r.unit?" "+r.unit:"");
-   html+=`<div class="card"><div class="row between"><b>${esc(r.name)}</b><strong>${esc(label)}</strong></div><div style="height:14px;background:#2a2b32;border-radius:20px;overflow:hidden;margin-top:10px"><div style="width:${pct}%;height:100%;background:${fill}"></div></div><div class="muted" style="margin-top:8px">Formula: ${esc(r.formula)}</div>${r.growth!==null?`<div class="muted">Growth / Degrowth: ${validNum(r.growth)&&r.growth>=0?"+":""}${r.growth.toFixed(2)}%</div>`:""}</div>`;
- });
- html+=`</div>`;
- if(ratios.length){
-   html+=`<h3 style="margin-top:20px">📐 Ratios, Rates & Efficiency Indicators</h3><div class="grid">`;
-   ratios.forEach(r=>{
-     const label=r.unit==="%"?fmtIN(r.value)+"%":fmtIN(r.value)+(r.unit?" "+r.unit:"");
-     html+=`<div class="card"><div class="row between"><b>${esc(r.name)}</b><strong>${esc(label)}</strong></div><div class="muted" style="margin-top:8px">Formula: ${esc(r.formula)}</div>${r.growth!==null?`<div class="muted">Growth / Degrowth: ${validNum(r.growth)&&r.growth>=0?"+":""}${r.growth.toFixed(2)}%</div>`:""}</div>`;
-   });
-   html+=`</div>`;
- }
- if(d.id==="bc-performance"){
-   const payout=["Gross Commission Before Capping","Gross Commission After Capping","Final Commission","BC Commission (80%)","CBC Commission (20%)","BC TDS","Net Payable to BCs"];
-   html+=`<div class="panel" style="margin-top:18px"><h3>💰 BC Commission & Payout</h3><p class="muted">All values are aggregated from the uploaded BC records. The formula for each calculated KPI is shown.</p><div class="grid">`;
-   payout.forEach(n=>{const r=usable.find(x=>x.name===n);if(!r)return;html+=`<div class="card"><div class="muted">${esc(r.name)}</div><div style="font-size:26px;font-weight:800;margin-top:6px">₹${fmtIN(r.value)}</div><div class="muted">${esc(r.formula)}</div></div>`});
-   html+=`</div></div>`;
- }
+ const total=analysisResults.length;
+ const available=analysisResults.filter(r=>validNum(r.value));
+ const unavailable=total-available.length;
+ const targetCount=available.filter(r=>validNum(r.target)).length;
+ const achieved=available.filter(r=>validNum(r.target)&&r.target!==0 && ((String(r.nature).toLowerCase()==='lower')?r.value<=r.target:r.value>=r.target)).length;
+ const growthVals=available.filter(r=>validNum(r.growth));
+ const improving=growthVals.filter(r=>r.growth>=0).length;
+ let html=`<style>
+ .smart-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:14px 0 18px}.smart-stat{background:#18191e;border:1px solid #30323a;border-radius:16px;padding:16px}.smart-stat b{display:block;font-size:28px}.smart-stat span{color:#a8a9b2;font-size:13px}.smart-stat.good b{color:#45dc8b}.smart-stat.warn b{color:#fbbb00}@media(max-width:760px){.smart-summary{grid-template-columns:repeat(2,1fr)}}
+ .dash-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}@media(max-width:760px){.dash-grid{grid-template-columns:1fr}}
+ .dash-kpi-card{background:#18191e;border:1px solid #30323a;border-radius:18px;padding:17px;box-shadow:0 4px 18px rgba(0,0,0,.15)}
+ .dash-kpi-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.dash-kpi-head h3{margin:0 0 0 30px;font-size:18px;line-height:1.25}.dash-index{float:left;display:inline-flex;width:24px;height:24px;align-items:center;justify-content:center;border-radius:50%;background:#fbbb00;color:#111;font-weight:800;font-size:12px}.dash-status{padding:5px 8px;border-radius:999px;font-size:11px;white-space:nowrap;border:1px solid #3a3c45}.dash-status.good{color:#45dc8b}.dash-status.bad{color:#ff6b6b}.dash-status.warn{color:#fbbb00}.dash-status.info{color:#aaaeb8}.dash-big-value{font-size:28px;font-weight:850;margin:15px 0 12px}.dash-bars{margin:4px 0 12px}.dash-bar-row{display:grid;grid-template-columns:55px 1fr auto;gap:8px;align-items:center;font-size:12px;color:#aaaeb8}.dash-track{height:12px;background:#2a2c33;border-radius:999px;overflow:hidden}.dash-fill{height:100%;border-radius:999px}.dash-fill.good{background:#45dc8b}.dash-fill.bad{background:#ff5c5c}.dash-fill.neutral{background:#8f94a3}.dash-target{display:flex;justify-content:space-between;color:#777b87;font-size:11px;margin-top:6px;padding-left:63px}.dash-value-visual{margin:6px 0 12px}.dash-value-line{display:flex;justify-content:space-between;color:#a8a9b2;font-size:12px;margin-bottom:7px}.dash-value-line strong{color:#f1f2f4}.dash-meta-grid{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px}.dash-meta{font-size:11px;color:#858995}.dash-formula{margin-top:12px;padding-top:10px;border-top:1px solid #292b31;color:#b4b6bf;font-size:11px;line-height:1.45}.dash-source{margin-top:6px;color:#6f727d;font-size:10px}.dash-empty{padding:16px;border:1px dashed #454750;border-radius:12px;color:#8c8f99;font-size:12px}
+ </style>
+ <div class="notice"><b>⚡ Smart Power BI-style Dashboard</b><br>The app automatically uses the selected KPI definitions, mapped Excel columns and formula rules. Each KPI gets its own visual. Target KPIs show Actual vs Target; percentages/rates show a level bar; growth KPIs show growth/de-growth; other KPIs show their actual value. No manual chart selection is required.</div>
+ <div class="smart-summary">
+  <div class="smart-stat"><b>${total}</b><span>Total KPIs analysed</span></div>
+  <div class="smart-stat good"><b>${available.length}</b><span>KPIs with calculated value</span></div>
+  <div class="smart-stat ${unavailable?'warn':''}"><b>${unavailable}</b><span>KPIs without source data</span></div>
+  <div class="smart-stat"><b>${targetCount?achieved+' / '+targetCount:'—'}</b><span>Targets achieved</span></div>
+ </div>
+ <div class="row between"><h3 style="margin:0">📊 All KPI Parameters</h3><span class="badge green">Automatic chart selection</span></div>
+ <div class="dash-grid" style="margin-top:12px">${analysisResults.map((r,i)=>dashboardCard(r,i,analysisResults)).join('')}</div>`;
+ if(growthVals.length) html+=`<div class="notice" style="margin-top:16px"><b>Trend intelligence:</b> ${improving} of ${growthVals.length} KPI(s) with period comparison are improving or increasing. For KPIs where lower is better, management should also consider whether the change is favourable rather than looking at growth alone.</div>`;
  document.getElementById("dashboardBars").innerHTML=html;
 }
 
