@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>InstantDash — Excel / CSV / PDF → Dashboard · v1.6.3</title>
+<title>InstantDash — Excel / CSV / PDF → Dashboard · v1.6.4</title>
 
 <!-- ============================================================
      LIBRARIES (loaded from CDN, no build step required)
@@ -51,7 +51,7 @@ body.dark{
   --shadow-h:0 2px 6px rgba(0,0,0,.5), 0 16px 40px rgba(0,0,0,.45);
 }
 
-/* v1.6.3 — reliable manual Light/Night theme switching */
+/* v1.6.4 — reliable manual Light/Night theme switching */
 html.theme-dark{color-scheme:dark}
 html.theme-light{color-scheme:light}
 body.dark select,body.dark input,body.dark textarea{background:var(--card);color:var(--text);border-color:var(--border)}
@@ -141,6 +141,11 @@ main{max-width:1360px;margin:0 auto;padding:24px}
 
 
 /* ---------- premium landing experience v1.4.8 ---------- */
+
+/* v1.6.4 — live executive preview clarity */
+.live-pill{display:inline-flex;align-items:center;margin-left:8px;padding:4px 9px;border-radius:999px;font-size:.58em;letter-spacing:.08em;font-weight:800;background:rgba(34,197,94,.14);color:#31b66b;vertical-align:middle}
+.exec-live-note{margin-top:10px;font-size:11px;color:var(--muted);line-height:1.45}
+@media(max-width:700px){.live-pill{font-size:.55em}.exec-live-note{font-size:10.5px}}
 </style>
 <style>
 .mi-remark{display:inline}
@@ -329,7 +334,7 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
 @media (prefers-reduced-motion: reduce){ *{animation-duration:.01ms !important;transition-duration:.01ms !important} }
 
 
-/* ---------- desktop / laptop workspace refinement v1.6.3 ---------- */
+/* ---------- desktop / laptop workspace refinement v1.6.4 ---------- */
 html{overflow-x:hidden}
 body{overflow-x:hidden}
 .tbl-wrap{width:100%;max-width:100%;overflow-x:auto;overflow-y:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
@@ -444,7 +449,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v155-sticky-nav">
-/* InstantDash v1.6.3 — desktop/mobile persistent navigation */
+/* InstantDash v1.6.4 — desktop/mobile persistent navigation */
 .id-sticky-nav{
   position:fixed;
   left:50%;
@@ -491,7 +496,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v156-ui-fixes">
-/* v1.6.3 — persistent Share access + wider Pivot Rows selector */
+/* v1.6.4 — persistent Share access + wider Pivot Rows selector */
 #id-floating-share{
   position:fixed;
   right:16px;
@@ -535,7 +540,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v160-executive-css">
-/* InstantDash v1.6.3 — Executive Management Cockpit */
+/* InstantDash v1.6.4 — Executive Management Cockpit */
 .executive-cockpit{margin-top:22px}
 .exec-head{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:12px}
 .exec-head h2{font-size:18px}
@@ -573,7 +578,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v161-theme-hardening">
-/* InstantDash v1.6.3 — theme hardening */
+/* InstantDash v1.6.4 — theme hardening */
 html.theme-dark body{background:var(--bg);color:var(--text)}
 html.theme-light body{background:var(--bg);color:var(--text)}
 body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var(--text)}
@@ -601,7 +606,7 @@ body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"/><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"/><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"/></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.6.3</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.6.4</span>
   </div>
   <span id="share"></span><button type="button" class="v154-share-tab" id="v154ShareTab" title="Share dashboard">📤 Share</button>
   <div class="spacer"></div>
@@ -630,9 +635,9 @@ body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var
       </div>
       <div class="hero-preview" aria-hidden="true">
         <div class="preview-window">
-          <div class="preview-top"><span class="mini-dot"></span><span class="mini-dot"></span><span class="mini-dot"></span><b>Management preview</b><span class="preview-chip">READY</span></div>
-          <div class="preview-score"><div><small>Dashboard status</small><strong>Ready</strong></div><div class="score-ring preview-empty-ring"><span>—</span></div></div>
-          <div class="preview-metrics"><div><small>Data quality</small><b>—</b><i>Calculated after upload</i></div><div><small>Key movement</small><b>—</b><i>Calculated from your data</i></div></div>
+          <div class="preview-top"><span class="mini-dot"></span><span class="mini-dot"></span><span class="mini-dot"></span><b>Management preview</b><span class="preview-chip">AWAITING FILE</span></div>
+          <div class="preview-score"><div><small>Dashboard status</small><strong>Upload a file</strong></div><div class="score-ring preview-empty-ring"><span>—</span></div></div>
+          <div class="preview-metrics"><div><small>Data quality</small><b>—</b><i>Calculated from your file</i></div><div><small>Key movement</small><b>—</b><i>Calculated from your file</i></div></div>
           <div class="preview-chart preview-empty-chart"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><div class="preview-line"></div></div>
           <div class="preview-insight"><span>◆</span><p><b>Management insight</b> · Upload your Excel, CSV or PDF to calculate the dashboard from your own data.</p></div>
         </div>
@@ -671,8 +676,8 @@ body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var
 
     <div class="section executive-cockpit" id="executiveCockpit">
       <div class="exec-head">
-        <h2>Executive Dashboard</h2>
-        <span class="hint">A quick management view of the loaded data — no assumptions about column names.</span>
+        <h2>Executive Dashboard <span class="live-pill">LIVE</span></h2>
+        <span class="hint">Calculated from the currently loaded and filtered data — no fixed sample figures.</span>
       </div>
       <div class="exec-grid">
         <div class="exec-card primary">
@@ -680,6 +685,7 @@ body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var
           <div class="exec-value" id="execStatusValue">Ready</div>
           <div class="exec-sub" id="execStatusSub">Dashboard is ready for management review.</div>
           <span class="exec-status good" id="execStatusBadge">● Good to review</span>
+          <div class="exec-live-note">Live values update when you upload a file or change filters.</div>
         </div>
         <div class="exec-card">
           <div class="exec-label">Records</div>
@@ -841,7 +847,7 @@ body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var
    --------------------------------------------------------------------- */
 const CONFIG = {
   APP_NAME: 'InstantDash',
-  VERSION: 'v1.6.3',
+  VERSION: 'v1.6.4',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -3306,7 +3312,7 @@ function wireChartBuilder(){
    ===================================================================== */
 
 /* =====================================================================
-   InstantDash v1.6.3 — Executive Management Cockpit
+   InstantDash v1.6.4 — Executive Management Cockpit
    Generic: uses only detected runtime column roles and statistics.
    ===================================================================== */
 function buildExecutiveCockpit(){
@@ -3523,7 +3529,7 @@ function wireRest(){
 
   function dashboardFile(){
     const html='<!doctype html>\n'+document.documentElement.outerHTML;
-    return new File([html],'InstantDash_Dashboard_v1.6.3.html',{type:'text/html'});
+    return new File([html],'InstantDash_Dashboard_v1.6.4.html',{type:'text/html'});
   }
   function open(){panel.style.display='flex';note.textContent='';}
   function hide(){panel.style.display='none';}
@@ -3546,14 +3552,14 @@ function wireRest(){
     try{
       if(navigator.share && (!navigator.canShare || navigator.canShare({files:[f]}))){
         await navigator.share({
-          title:'InstantDash Dashboard v1.6.3',
+          title:'InstantDash Dashboard v1.6.4',
           text:'Interactive InstantDash dashboard',
           files:[f]
         });
         note.textContent='Share completed.';
       }else if(navigator.share){
         await navigator.share({
-          title:'InstantDash Dashboard v1.6.3',
+          title:'InstantDash Dashboard v1.6.4',
           text:'Interactive InstantDash dashboard'
         });
       }else{
@@ -3566,7 +3572,7 @@ function wireRest(){
   });
 
   copyBtn && copyBtn.addEventListener('click',async()=>{
-    const text='InstantDash Dashboard v1.6.3 — interactive management dashboard.';
+    const text='InstantDash Dashboard v1.6.4 — interactive management dashboard.';
     try{
       await navigator.clipboard.writeText(text);
       note.textContent='Share text copied to clipboard.';
