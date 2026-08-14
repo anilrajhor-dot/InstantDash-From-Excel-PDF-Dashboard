@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<title>InstantDash — Excel to Dashboard v5.1.13</title>
+<title>InstantDash — Excel to Dashboard v5.2.0</title>
 <meta name="author" content="Developed by Anil Sharma, Former General Manager, Central Bank of India">
-<meta name="application-name" content="InstantDash v5.1.13">
-<meta name="description" content="InstantDash — Excel to Dashboard v5.1.13, developed by Anil Sharma">
+<meta name="application-name" content="InstantDash v5.2.0">
+<meta name="description" content="InstantDash — Excel to Dashboard v5.2.0, developed by Anil Sharma">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js';document.head.appendChild(s);"></script>
@@ -217,7 +217,7 @@ select, .input{
 .chart-body{position:relative; height:320px; min-height:320px; width:100%; overflow:hidden;}
 .chart-body canvas{display:block !important; width:100% !important; height:100% !important; min-height:300px;}
 .chart-controls-row{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; border-top:1px dashed var(--line); padding-top:8px;}
-/* ---------- v5.1.13 mobile-first dashboard polish ---------- */
+/* ---------- v5.2.0 mobile-first dashboard polish ---------- */
 .kpi-card{position:relative;overflow:hidden;min-height:196px;padding:18px 18px 16px;border-radius:18px;border:1px solid rgba(255,255,255,.06);background:linear-gradient(145deg,var(--card),rgba(255,255,255,.018));box-shadow:0 8px 24px rgba(0,0,0,.18);}
 .kpi-card:before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:var(--amber);}
 .kpi-card.kpi-derived:before{background:#304968;}
@@ -507,7 +507,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v403UiFix">
-/* v5.1.13: KPI directory is part of the loaded dashboard, never the landing page. */
+/* v5.2.0: KPI directory is part of the loaded dashboard, never the landing page. */
 #bankingKpiDirectory{display:block}
 #emptyState ~ #bankingKpiDirectory{display:block !important}
 </style>
@@ -539,7 +539,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v412InsightVisibility">
-/* v5.1.13 — high-contrast KPI Insight */
+/* v5.2.0 — high-contrast KPI Insight */
 .click-insight-backdrop{
   background:rgba(0,0,0,.62) !important;
 }
@@ -820,7 +820,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 @media(max-width:480px){.cc-grid{grid-template-columns:1fr}}
 </style>
 <style id="v441AreaDirectoryThemeFix">
-/* v5.1.13: the directory must follow the app theme. Earlier versions used
+/* v5.2.0: the directory must follow the app theme. Earlier versions used
    hard-coded white backgrounds, which made the dark-mode text almost invisible. */
 .banking-kpi-directory{
   margin:18px 0;
@@ -909,7 +909,7 @@ document.addEventListener('DOMContentLoaded', function(){
 </script>
 
 <style id="v444LandingDirectoryVisibility">
-/* v5.1.13 — Landing page is for file upload only.
+/* v5.2.0 — Landing page is for file upload only.
    Area/KPI directories appear after a dashboard is loaded. */
 #areaDirectoryBlock,
 #bankingKpiDirectory{
@@ -1016,11 +1016,11 @@ if(typeof directionFor!=='function'){
 #advisorBack .card{border:1px solid rgba(255,255,255,.12)}
 #advisorBack .badge{white-space:nowrap}
 @media(max-width:700px){#advisorBack .modal{width:96vw;max-height:92vh;overflow:auto}}
-</style><meta name="instantdash-build" content="v5.1.13"><meta name="instantdash-file" content="standalone-html"></head>
+</style><meta name="instantdash-build" content="v5.2.0"><meta name="instantdash-file" content="standalone-html"></head>
 <body>
 
 <div class="topbar">
-  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v5.1.13</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
+  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v5.2.0</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
   <div class="topbar-right">
     <div class="privacy-badge">🔒 <span class="txt">Processed locally — not uploaded to any server</span></div>
     <button class="icon-btn" id="shareTopBtn" title="Share dashboard" aria-label="Share dashboard" type="button">📤</button>
@@ -1434,7 +1434,7 @@ if(typeof directionFor!=='function'){
   </div>
 </div>
 
-<footer class="app-footer">InstantDash <strong>v5.1.13</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
+<footer class="app-footer">InstantDash <strong>v5.2.0</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
 </div>
 
 <!-- Ask Your Data floating widget -->
@@ -2828,7 +2828,7 @@ function fail(msg){
 
 
 
-// v5.1.13: expose the real file handler for the independent mobile file-picker hook.
+// v5.2.0: expose the real file handler for the independent mobile file-picker hook.
 window.instantDashHandleFile = handleFile;
 
 function chooseBestDataSheet(names, wb){
@@ -3424,7 +3424,7 @@ function renderPerformanceScorecard(){
 }
 
 
-/* ===================== InstantDash v5.1.13 =====================
+/* ===================== InstantDash v5.2.0 =====================
    Consolidated management/KPI intelligence layer.
    It is additive: existing v3.5.9 chart engine remains intact.
 ================================================================ */
@@ -7430,7 +7430,7 @@ document.addEventListener('click',(e)=>{
 </style>
 
 <style id="v490ManagementWorkflow">
-/* v5.1.13 — single workflow + management KPI bar dashboard */
+/* v5.2.0 — single workflow + management KPI bar dashboard */
 .workflow-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0 16px;position:sticky;top:57px;z-index:45;background:var(--cream);padding:8px 0}
 .workflow-tab{min-height:48px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:14px;font-weight:800;font-size:13px;padding:10px 12px;box-shadow:var(--shadow);cursor:pointer}
 .workflow-tab.active{background:var(--amber);border-color:var(--amber);color:#17130a}
@@ -7589,7 +7589,7 @@ document.addEventListener('click',(e)=>{
   setTimeout(()=>{setupWorkflow();if(STATE?.data?.length)buildBars();},500);
 })();
 
-/* InstantDash v5.1.13 display settings */
+/* InstantDash v5.2.0 display settings */
 const DISPLAY_SETTINGS_KEY = "instantdash_display_v500";
 const DEFAULT_DISPLAY_SETTINGS = {
   currency:"₹", scale:"thousand", chart:"auto", density:"standard",
@@ -7674,7 +7674,7 @@ function applyDisplaySettings(){
 }
 applyDisplaySettings();
 
-/* InstantDash v5.1.13 — Business Improvement Advisor */
+/* InstantDash v5.2.0 — Business Improvement Advisor */
 function openAdvisor(){
  const m=document.getElementById("advisorBack"); if(!m)return;
  renderAdvisor();
@@ -7886,7 +7886,7 @@ function formatAdvisorValue(r){
  </div>
 </div>
 
-<!-- v5.1.13: robust top-bar controls -->
+<!-- v5.2.0: robust top-bar controls -->
 <script id="v519TopBarControls">
 (function(){
   function ready(){
@@ -8319,6 +8319,193 @@ function formatAdvisorValue(r){
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);else bind();
  setTimeout(bind,500);setTimeout(bind,1500);
  window.v513OpenSettings=open;
+})();
+</script>
+
+<!-- InstantDash v5.2.0 — Single Department Code Master Engine -->
+<style id="v520DepartmentMasterStyle">
+#v520MasterOverlay{position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:100000;display:none;align-items:center;justify-content:center;padding:14px}
+#v520MasterOverlay.open{display:flex}
+#v520MasterBox{width:min(1050px,97vw);max-height:94vh;overflow:auto;background:var(--card,#fff);color:var(--ink,#111);border-radius:16px;padding:20px;box-shadow:0 20px 70px rgba(0,0,0,.4)}
+.v520-master-grid{display:grid;grid-template-columns:1fr 1.6fr;gap:16px}
+.v520-dept-list{display:flex;flex-direction:column;gap:8px;max-height:55vh;overflow:auto}
+.v520-dept{padding:11px;border:1px solid var(--line,#ddd);border-radius:10px;background:var(--cream,#f7f3eb);cursor:pointer}
+.v520-dept.active{outline:2px solid var(--accent,#0b63ce)}
+.v520-dept small{display:block;opacity:.7;margin-top:3px}
+.v520-kpis{max-height:55vh;overflow:auto}
+.v520-kpi{padding:10px;border-bottom:1px solid var(--line,#ddd)}
+.v520-kpi strong{display:block}
+.v520-pill{display:inline-block;padding:3px 7px;border-radius:999px;font-size:11px;background:var(--cream,#f7f3eb);margin:3px 3px 0 0}
+@media(max-width:750px){.v520-master-grid{grid-template-columns:1fr}.v520-dept-list,.v520-kpis{max-height:35vh}}
+</style>
+
+<div id="v520MasterOverlay" aria-hidden="true">
+ <div id="v520MasterBox" role="dialog" aria-modal="true">
+  <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start">
+   <div><h2 style="margin:0 0 5px">🧩 Department & KPI Master</h2>
+   <div style="font-size:13px;opacity:.75">One code identifies the department, its KPI family and its formula family.</div></div>
+   <button id="v520MasterClose" class="btn" type="button">✕</button>
+  </div>
+  <div class="v520-master-grid" style="margin-top:16px">
+   <section>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+      <input id="v520DeptSearch" placeholder="Search department..." style="flex:1;min-width:150px;padding:9px;border:1px solid var(--line,#ddd);border-radius:9px;background:var(--cream,#f7f3eb);color:var(--ink,#111)">
+      <button class="btn" id="v520AddDept" type="button">＋ Department</button>
+    </div>
+    <div id="v520DeptList" class="v520-dept-list"></div>
+   </section>
+   <section>
+    <div id="v520DeptHeader" class="notice">Select a department.</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0">
+      <button class="btn" id="v520AddKpi" type="button">＋ KPI</button>
+      <button class="btn" id="v520ExportMaster" type="button">⬇ Export Master</button>
+      <button class="btn" id="v520ResetMaster" type="button">↺ Restore Master</button>
+    </div>
+    <div id="v520KpiList" class="v520-kpis"></div>
+   </section>
+  </div>
+  <div style="margin-top:14px;padding:11px;border-radius:10px;background:var(--cream,#f7f3eb);font-size:12.5px">
+   <b>Architecture:</b> Department Code = KPI family = Formula family. Example: <b>HR</b> identifies Human Resources, all HR KPIs and all HR formulas.
+  </div>
+ </div>
+</div>
+
+<script id="v520DepartmentMasterEngine">
+(function(){
+  const KEY='instantdash_department_master_v520';
+  const MASTER=[
+   ["BNK","Banking",["Deposits","Advances","CASA Ratio","Credit Growth","Business Growth","NPA Ratio","Profitability","Digital Transactions"]],
+   ["BR","Branch Banking",["Total Business","Deposits","Advances","CASA","Transactions","Branch Profit","Cost to Income","Productivity"]],
+   ["BC","BC Performance",["Active BCs","Login Days","Transaction Count","Transaction Volume","Transactions per BC","Average Volume per BC","Account Opening","Gross Commission","Commission per BC","Loan Leads","Loan Disbursement","Recovery"]],
+   ["CRD","Credit / Lending",["Applications","Sanctions","Disbursements","Sanction Rate","Disbursement Conversion","Average Ticket Size","Turnaround Time","Yield"]],
+   ["REC","Recovery & Collections",["Amount Due","Amount Recovered","Recovery Rate","Overdue Accounts","Collection Efficiency","Ageing","Roll Forward"]],
+   ["NPA","Asset Quality / NPA",["Gross NPA","Net NPA","NPA Ratio","Provision Coverage","Slippage Ratio","Recovery from NPA","Write-offs"]],
+   ["FIN","Finance & Accounts",["Revenue","Gross Profit","Gross Margin","EBITDA","EBITDA Margin","Net Profit","Net Profit Margin","Operating Expenses","Current Ratio","Quick Ratio","DSO","DPO","Inventory Days","Cash Conversion Cycle","ROE","ROCE"]],
+   ["SAL","Sales & Business Development",["Leads","Opportunities","Conversions","Conversion Rate","Sales Value","Average Order Value","Sales Growth","Sales per Employee","Pipeline Value","Win Rate"]],
+   ["MKT","Marketing",["Leads Generated","Cost per Lead","Marketing Spend","Conversion Rate","Customer Acquisition Cost","ROI","Campaign Reach","Engagement Rate","Website Traffic"]],
+   ["CUS","Customer Service / Experience",["Complaints","Resolution Rate","First Contact Resolution","Average Resolution Time","Customer Satisfaction","NPS","Repeat Complaints","Service TAT"]],
+   ["HR","Human Resources",["Employee Strength","Headcount Growth","Attrition Rate","Absenteeism Rate","Vacancy Rate","Revenue per Employee","Cost per Employee","Training Hours","Training Cost","Productivity","Overtime Cost"]],
+   ["OPS","Operations",["Volume Processed","Productivity","Turnaround Time","Error Rate","Rework Rate","Capacity Utilisation","Cost per Transaction","SLA Compliance"]],
+   ["IT","IT & Technology",["System Uptime","Incidents","Mean Time to Resolve","First Response Time","Change Success Rate","Patch Compliance","Cyber Incidents","IT Cost per User"]],
+   ["PRO","Procurement",["Purchase Value","Purchase Savings","Supplier Count","Purchase TAT","Contract Compliance","Supplier Quality","On-time Delivery","Spend under Contract"]],
+   ["SCM","Supply Chain",["Order Fulfilment","Inventory Turnover","Stockout Rate","Lead Time","On-time Delivery","Fill Rate","Supply Chain Cost"]],
+   ["LOG","Logistics & Distribution",["Shipments","On-time Delivery","Delivery TAT","Freight Cost","Cost per Shipment","Damage Rate","Return Rate"]],
+   ["INV","Inventory / Stores",["Inventory Value","Inventory Days","Stock Turnover","Slow Moving Stock","Obsolete Stock","Stockout Rate","Carrying Cost"]],
+   ["PRJ","Project Management",["Projects Active","Projects Completed","Completion Rate","Schedule Variance","Cost Variance","Budget Utilisation","Milestone Achievement"]],
+   ["QLT","Quality Management",["Defect Rate","First Pass Yield","Rejection Rate","Rework Rate","Quality Complaints","Cost of Poor Quality","Audit Findings"]],
+   ["RISK","Risk Management",["Risk Events","High Risk Items","Risk Closure Rate","Loss Events","Exposure","Residual Risk"]],
+   ["CMP","Compliance",["Compliance Exceptions","Closure Rate","Overdue Compliance","Regulatory Breaches","Training Completion"]],
+   ["AUD","Internal Audit",["Audits Completed","High Risk Findings","Findings Closed","Closure Rate","Repeat Findings","Audit TAT"]],
+   ["LEG","Legal",["Open Cases","Cases Closed","Case Ageing","Legal Cost","Contract TAT","Favourable Outcome Rate"]],
+   ["ADM","Administration",["Administrative Cost","Service Requests","TAT","Asset Utilisation","Vendor Cost","Facility Cost"]],
+   ["ESG","ESG / Sustainability",["Energy Consumption","Carbon Emissions","Water Consumption","Waste Recycling","Safety Incidents","ESG Compliance"]],
+   ["MFG","Manufacturing / Production",["Production Quantity","Production Growth","Capacity Utilisation","Production per Employee","Downtime","Rejection Rate","Rework Rate","First Pass Yield","OEE","Production Cost"]],
+   ["RET","Retail / Stores",["Store Sales","Same Store Growth","Footfall","Conversion Rate","Sales per Sq Ft","Average Basket","Gross Margin","Stock Turnover"]],
+   ["ECM","E-commerce",["Orders","GMV","Conversion Rate","Average Order Value","Cart Abandonment","Customer Acquisition Cost","Repeat Purchase Rate","Return Rate"]],
+   ["CON","Construction / Real Estate",["Projects","Units Sold","Bookings","Collection Rate","Construction Progress","Cost Variance","Inventory / Unsold Units","Sales Conversion"]],
+   ["HLT","Healthcare",["Patients","Occupancy Rate","Average Length of Stay","Revenue per Patient","Readmission Rate","Waiting Time","Patient Satisfaction","Claim Settlement TAT"]],
+   ["EDU","Education",["Enrolment","Attendance","Retention","Completion Rate","Student Satisfaction","Faculty Utilisation","Fee Collection Rate","Placement Rate"]],
+   ["HOS","Hospitality",["Occupancy","ADR","RevPAR","Room Revenue","Food Revenue","Guest Satisfaction","Cancellation Rate","Average Length of Stay"]],
+   ["AGR","Agriculture / Agri-business",["Production","Yield","Area Cultivated","Input Cost","Revenue per Acre","Farmer Coverage","Recovery Rate","Post Harvest Loss"]],
+   ["NGO","NGO / Social Sector",["Beneficiaries","Programme Reach","Cost per Beneficiary","Fund Utilisation","Donor Retention","Outcome Achievement","Administrative Cost Ratio"]],
+   ["MGMT","Executive / Management",["Revenue Growth","Profit Growth","Cash Position","Working Capital","Productivity","Customer Growth","Employee Cost","Target Achievement","Risk Exceptions","Project Completion"]]
+  ];
+  let user=loadUser();
+  let selected=localStorage.getItem(KEY+'_selected')||'FIN';
+
+  function loadUser(){
+    try{return JSON.parse(localStorage.getItem(KEY)||'{}')||{};}catch(e){return {};}
+  }
+  function save(){localStorage.setItem(KEY,JSON.stringify(user));}
+  function codeNorm(x){return String(x||'').trim().toUpperCase().replace(/[^A-Z0-9]/g,'');}
+  function getDept(code){
+    const c=codeNorm(code);
+    const custom=user[c];
+    if(custom) return custom;
+    const m=MASTER.find(d=>d[0]===c);
+    return m?{code:m[0],name:m[1],kpis:m[2].map((n,i)=>({name:n,code:m[0],formulaFamily:m[0],id:m[0]+'_'+(i+1)})),master:true}:null;
+  }
+  function allDepts(){
+    const map={};
+    MASTER.forEach(d=>map[d[0]]=getDept(d[0]));
+    Object.keys(user).forEach(k=>map[k]=getDept(k));
+    return Object.values(map);
+  }
+  function esc(x){return String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+  function renderDepts(){
+    const q=String(document.getElementById('v520DeptSearch').value||'').toLowerCase();
+    const list=document.getElementById('v520DeptList');
+    list.innerHTML='';
+    allDepts().filter(d=>(d.name+' '+d.code).toLowerCase().includes(q)).forEach(d=>{
+      const el=document.createElement('div'); el.className='v520-dept'+(d.code===selected?' active':'');
+      el.innerHTML=`<b>${esc(d.code)} — ${esc(d.name)}</b><small>${d.kpis.length} KPIs</small>`;
+      el.onclick=()=>{selected=d.code;localStorage.setItem(KEY+'_selected',selected);renderDepts();renderKpis();};
+      list.appendChild(el);
+    });
+  }
+  function renderKpis(){
+    const d=getDept(selected);
+    document.getElementById('v520DeptHeader').innerHTML=d?`<b>${esc(d.code)} — ${esc(d.name)}</b><br><span style="font-size:12px;opacity:.75">All KPIs use Department Code <b>${esc(d.code)}</b> for KPI and formula family.</span>`:'Select a department.';
+    const box=document.getElementById('v520KpiList'); box.innerHTML='';
+    if(!d)return;
+    d.kpis.forEach((k,i)=>{
+      const el=document.createElement('div'); el.className='v520-kpi';
+      el.innerHTML=`<strong>${esc(k.name)}</strong><span class="v520-pill">Code: ${esc(d.code)}</span><span class="v520-pill">Formula: ${esc(d.code)}</span>${k.formula?`<div style="margin-top:5px;font-size:12px">${esc(k.formula)}</div>`:''}`;
+      box.appendChild(el);
+    });
+  }
+  function open(){renderDepts();renderKpis();const m=document.getElementById('v520MasterOverlay');m.classList.add('open');m.style.display='flex';}
+  function close(){const m=document.getElementById('v520MasterOverlay');m.classList.remove('open');m.style.display='none';}
+  function addDept(){
+    const name=prompt('Department name:'); if(!name)return;
+    const code=prompt('Department code (e.g. HR, FIN, MFG):'); if(!code)return;
+    const c=codeNorm(code);
+    if(getDept(c)){alert('This department code already exists. Please use a unique code.');return;}
+    user[c]={code:c,name:name.trim(),kpis:[]};save();selected=c;renderDepts();renderKpis();
+  }
+  function addKpi(){
+    const d=getDept(selected); if(!d)return;
+    const name=prompt(`Add KPI to ${d.name}:`); if(!name)return;
+    const formula=prompt(`Formula for ${name} (use ${d.code} as the formula family code):`,`${d.code}`);
+    const custom=user[d.code];
+    if(custom){
+      custom.kpis.push({name:name.trim(),code:d.code,formulaFamily:d.code,formula:formula||d.code,id:d.code+'_'+Date.now()});
+      save();
+    }else{
+      user[d.code]={code:d.code,name:d.name,kpis:d.kpis.concat([{name:name.trim(),code:d.code,formulaFamily:d.code,formula:formula||d.code,id:d.code+'_'+Date.now()}])};
+      save();
+    }
+    renderDepts();renderKpis();
+  }
+  function exportMaster(){
+    const payload={version:'5.2.0',architecture:'single-department-code',departments:allDepts().map(d=>({code:d.code,name:d.name,kpis:d.kpis}))};
+    const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='InstantDash_Department_KPI_Master_v5.2.0.json';a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  }
+  function reset(){if(confirm('Restore the preloaded Department/KPI master? Custom departments and KPIs will be removed.')){user={};save();selected='FIN';renderDepts();renderKpis();}}
+  function bind(){
+    const b=document.getElementById('departmentMasterBtn');
+    if(b)b.onclick=open;
+    document.getElementById('v520MasterClose').onclick=close;
+    document.getElementById('v520MasterOverlay').onclick=e=>{if(e.target.id==='v520MasterOverlay')close();};
+    document.getElementById('v520DeptSearch').oninput=renderDepts;
+    document.getElementById('v520AddDept').onclick=addDept;
+    document.getElementById('v520AddKpi').onclick=addKpi;
+    document.getElementById('v520ExportMaster').onclick=exportMaster;
+    document.getElementById('v520ResetMaster').onclick=reset;
+  }
+  function addButton(){
+    if(document.getElementById('departmentMasterBtn'))return;
+    const settings=document.getElementById('settingsToggle');
+    if(!settings)return;
+    const b=document.createElement('button');b.id='departmentMasterBtn';b.className='icon-btn';b.type='button';b.title='Department & KPI Master';b.textContent='🧩';
+    settings.parentNode.insertBefore(b,settings);
+    bind();
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',addButton);else addButton();
+  setTimeout(addButton,600);setTimeout(addButton,1500);
+  window.InstantDashDepartmentMaster={getDept,allDepts,codeNorm,open,close};
 })();
 </script>
 </body>
