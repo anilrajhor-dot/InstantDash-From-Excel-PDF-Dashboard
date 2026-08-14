@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>InstantDash — Excel / CSV / PDF → Dashboard · v1.5.7</title>
+<title>InstantDash — Excel / CSV / PDF → Dashboard · v1.6.1</title>
 
 <!-- ============================================================
      LIBRARIES (loaded from CDN, no build step required)
@@ -51,7 +51,7 @@ body.dark{
   --shadow-h:0 2px 6px rgba(0,0,0,.5), 0 16px 40px rgba(0,0,0,.45);
 }
 
-/* v1.5.7 — reliable manual Light/Night theme switching */
+/* v1.6.1 — reliable manual Light/Night theme switching */
 html.theme-dark{color-scheme:dark}
 html.theme-light{color-scheme:light}
 body.dark select,body.dark input,body.dark textarea{background:var(--card);color:var(--text);border-color:var(--border)}
@@ -329,7 +329,7 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
 @media (prefers-reduced-motion: reduce){ *{animation-duration:.01ms !important;transition-duration:.01ms !important} }
 
 
-/* ---------- desktop / laptop workspace refinement v1.5.7 ---------- */
+/* ---------- desktop / laptop workspace refinement v1.6.1 ---------- */
 html{overflow-x:hidden}
 body{overflow-x:hidden}
 .tbl-wrap{width:100%;max-width:100%;overflow-x:auto;overflow-y:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
@@ -444,7 +444,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v155-sticky-nav">
-/* InstantDash v1.5.7 — desktop/mobile persistent navigation */
+/* InstantDash v1.6.1 — desktop/mobile persistent navigation */
 .id-sticky-nav{
   position:fixed;
   left:50%;
@@ -491,7 +491,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v156-ui-fixes">
-/* v1.5.7 — persistent Share access + wider Pivot Rows selector */
+/* v1.6.1 — persistent Share access + wider Pivot Rows selector */
 #id-floating-share{
   position:fixed;
   right:16px;
@@ -533,6 +533,53 @@ body{overflow-x:hidden}
 }
 </style>
 
+
+<style id="instantdash-v160-executive-css">
+/* InstantDash v1.6.1 — Executive Management Cockpit */
+.executive-cockpit{margin-top:22px}
+.exec-head{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.exec-head h2{font-size:18px}
+.exec-head .hint{color:var(--muted);font-size:12px}
+.exec-grid{display:grid;grid-template-columns:1.15fr repeat(3,minmax(160px,1fr));gap:12px}
+.exec-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);min-width:0}
+.exec-card.primary{background:linear-gradient(135deg,var(--card),color-mix(in srgb,var(--accent) 8%,var(--card)));border-top:3px solid var(--accent)}
+.exec-label{font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700}
+.exec-value{font:700 25px/1.15 Poppins,-apple-system,sans-serif;margin-top:6px;letter-spacing:-.02em;word-break:break-word}
+.exec-sub{font-size:11.5px;color:var(--muted);margin-top:6px;line-height:1.45}
+.exec-status{display:inline-flex;align-items:center;gap:7px;padding:5px 9px;border-radius:999px;background:var(--card-2);border:1px solid var(--border);font-size:11px;font-weight:700;margin-top:8px}
+.exec-status.good{color:var(--ok)}
+.exec-status.warn{color:var(--warn)}
+.exec-measures{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
+.exec-measure{padding:12px;background:var(--card-2);border:1px solid var(--border);border-radius:11px}
+.exec-measure b{display:block;font:600 14px Poppins,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.exec-measure strong{display:block;font:700 18px Poppins,sans-serif;margin-top:3px}
+.exec-measure span{display:block;color:var(--muted);font-size:10.5px;margin-top:2px}
+.exec-bottom{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.exec-list{margin:0;padding:0;list-style:none;display:grid;gap:7px}
+.exec-list li{padding:9px 10px;border-radius:9px;background:var(--card-2);font-size:11.5px;line-height:1.45}
+.exec-list li::before{content:"•";color:var(--accent);font-weight:800;margin-right:7px}
+.exec-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.exec-actions .btn{font-size:11px;padding:6px 9px}
+@media(max-width:1050px){.exec-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.exec-card.primary{grid-column:1/-1}}
+@media(max-width:700px){.exec-grid{grid-template-columns:1fr 1fr}.exec-card.primary{grid-column:1/-1}.exec-measures{grid-template-columns:1fr}.exec-bottom{grid-template-columns:1fr}}
+@media(max-width:480px){.exec-grid{grid-template-columns:1fr}.exec-card.primary{grid-column:auto}}
+@media print{
+  .executive-cockpit{break-inside:auto}
+  .exec-grid{grid-template-columns:repeat(4,1fr)}
+  .exec-card{box-shadow:none;break-inside:avoid}
+  .exec-actions{display:none}
+}
+</style>
+
+
+<style id="instantdash-v161-theme-hardening">
+/* InstantDash v1.6.1 — theme hardening */
+html.theme-dark body{background:var(--bg);color:var(--text)}
+html.theme-light body{background:var(--bg);color:var(--text)}
+body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var(--text)}
+#themeToggle{user-select:none;-webkit-tap-highlight-color:transparent}
+</style>
+
 </head>
 <body>
 <div class="author-line">Developed by Anil Sharma &nbsp;•&nbsp; Former General Manager, Central Bank of India</div>
@@ -543,7 +590,7 @@ body{overflow-x:hidden}
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"/><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"/><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"/></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.5.7</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.6.1</span>
   </div>
   <span id="share"></span><button type="button" class="v154-share-tab" id="v154ShareTab" title="Share dashboard">📤 Share</button>
   <div class="spacer"></div>
@@ -608,6 +655,57 @@ body{overflow-x:hidden}
 
     <div class="section" id="kpiSection">
       <div class="kpi-grid" id="kpiRow"></div>
+    </div>
+
+
+    <div class="section executive-cockpit" id="executiveCockpit">
+      <div class="exec-head">
+        <h2>Executive Dashboard</h2>
+        <span class="hint">A quick management view of the loaded data — no assumptions about column names.</span>
+      </div>
+      <div class="exec-grid">
+        <div class="exec-card primary">
+          <div class="exec-label">Overall data status</div>
+          <div class="exec-value" id="execStatusValue">Ready</div>
+          <div class="exec-sub" id="execStatusSub">Dashboard is ready for management review.</div>
+          <span class="exec-status good" id="execStatusBadge">● Good to review</span>
+        </div>
+        <div class="exec-card">
+          <div class="exec-label">Records</div>
+          <div class="exec-value" id="execRows">—</div>
+          <div class="exec-sub" id="execRowsSub">Loaded records</div>
+        </div>
+        <div class="exec-card">
+          <div class="exec-label">Measures</div>
+          <div class="exec-value" id="execMeasures">—</div>
+          <div class="exec-sub">Numeric fields available for analysis</div>
+        </div>
+        <div class="exec-card">
+          <div class="exec-label">Data quality</div>
+          <div class="exec-value" id="execQuality">—</div>
+          <div class="exec-sub" id="execQualitySub">Missing-data assessment</div>
+        </div>
+      </div>
+      <div class="exec-card" style="margin-top:12px">
+        <div class="exec-label">Key measures</div>
+        <div class="exec-measures" id="execMeasuresList"></div>
+      </div>
+      <div class="exec-bottom">
+        <div class="exec-card">
+          <div class="exec-label">What needs attention</div>
+          <ul class="exec-list" id="execAttentionList"></ul>
+        </div>
+        <div class="exec-card">
+          <div class="exec-label">Coverage & quick actions</div>
+          <ul class="exec-list" id="execCoverageList"></ul>
+          <div class="exec-actions no-print">
+            <button class="btn sm" type="button" id="execFiltersBtn">Filters</button>
+            <button class="btn sm" type="button" id="execPivotBtn">Pivot</button>
+            <button class="btn sm" type="button" id="execRawBtn">Raw data</button>
+            <button class="btn sm primary" type="button" id="execShareBtn">📤 Share</button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="section no-print">
@@ -732,7 +830,7 @@ body{overflow-x:hidden}
    --------------------------------------------------------------------- */
 const CONFIG = {
   APP_NAME: 'InstantDash',
-  VERSION: 'v1.5.0',
+  VERSION: 'v1.6.1',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -3194,6 +3292,80 @@ function wireChartBuilder(){
 /* =====================================================================
    BUILD EVERYTHING — called after a load, a sheet switch, or a type override
    ===================================================================== */
+
+/* =====================================================================
+   InstantDash v1.6.1 — Executive Management Cockpit
+   Generic: uses only detected runtime column roles and statistics.
+   ===================================================================== */
+function buildExecutiveCockpit(){
+  const rows = APP.filtered || [];
+  const all = APP.rows || [];
+  const ms = rankMeasures().slice(0,3);
+
+  const setText = (id, value) => { const n=$(id); if(n) n.textContent=value; };
+  setText('execRows', rows.length.toLocaleString());
+  setText('execRowsSub', rows.length !== all.length ? `Filtered from ${all.length.toLocaleString()} records` : `${APP.columns.length} columns loaded`);
+  setText('execMeasures', measures().length.toLocaleString());
+
+  const missingTotal = APP.columns.reduce((s,c)=>s+(c.missing||0),0);
+  const cellTotal = Math.max(1, all.length * Math.max(1, APP.columns.length));
+  const missingPct = (missingTotal / cellTotal) * 100;
+  const warnCount = APP.columns.filter(c => (c.missingPct||0) >= CONFIG.MISSING_WARN_PCT).length;
+  const quality = Math.max(0, Math.min(100, 100 - Math.min(100, missingPct)));
+  setText('execQuality', `${quality.toFixed(0)}%`);
+  setText('execQualitySub', missingTotal ? `${missingTotal.toLocaleString()} missing cells` : 'No missing cells detected');
+
+  const status = $('execStatusValue'), sub=$('execStatusSub'), badge=$('execStatusBadge');
+  const needsAttention = warnCount > 0 || missingPct >= CONFIG.MISSING_WARN_PCT;
+  if(status && sub && badge){
+    status.textContent = needsAttention ? 'Needs attention' : 'Ready';
+    sub.textContent = needsAttention
+      ? `${warnCount || 1} field${warnCount===1?'':'s'} has material missing data. Review before relying on conclusions.`
+      : 'The loaded data is ready for management review.';
+    badge.textContent = needsAttention ? '● Review data quality' : '● Good to review';
+    badge.classList.toggle('warn', needsAttention);
+    badge.classList.toggle('good', !needsAttention);
+  }
+
+  const ml = $('execMeasuresList');
+  if(ml){
+    ml.innerHTML = ms.length ? ms.map(c=>{
+      let sum=0,n=0;
+      for(const r of rows){ const v=r[c.name]; if(typeof v==='number' && isFinite(v)){sum+=v;n++;} }
+      return `<div class="exec-measure"><b title="${esc(c.name)}">${esc(c.name)}</b><strong>${fmtNum(sum)}</strong><span>total · avg ${fmtFull(n?sum/n:0)}</span></div>`;
+    }).join('') : `<div class="exec-measure"><b>No numeric measures</b><span>Counts and distributions are still available.</span></div>`;
+  }
+
+  const attention=[];
+  APP.columns.filter(c=>c.missing>0).sort((a,b)=>b.missingPct-a.missingPct).slice(0,3).forEach(c=>{
+    attention.push(`<b>${esc(c.name)}</b>: ${c.missingPct.toFixed(1)}% missing`);
+  });
+  APP.columns.filter(c=>c.outliers>0).sort((a,b)=>(b.outliers||0)-(a.outliers||0)).slice(0,2).forEach(c=>{
+    attention.push(`<b>${esc(c.name)}</b>: ${c.outliers.toLocaleString()} potential outliers`);
+  });
+  if(!attention.length) attention.push('No immediate data-quality exception detected.');
+  const al=$('execAttentionList'); if(al) al.innerHTML=attention.map(x=>`<li>${x}</li>`).join('');
+
+  const coverage=[];
+  const t=timeCols()[0];
+  if(t && t.dateMin && t.dateMax) coverage.push(`<b>Period:</b> ${fmtDate(t.dateMin)} to ${fmtDate(t.dateMax)}`);
+  else coverage.push('<b>Period:</b> No date field detected');
+  const dims=rankDimensions()[0];
+  if(dims) coverage.push(`<b>Primary dimension:</b> ${esc(dims.name)} · ${dims.unique.toLocaleString()} distinct values`);
+  coverage.push(`<b>Analysis:</b> ${APP.charts.length} charts · filters · pivot · raw data`);
+  const cl=$('execCoverageList'); if(cl) cl.innerHTML=coverage.map(x=>`<li>${x}</li>`).join('');
+}
+
+function wireExecutiveCockpit(){
+  const jump = (id) => {
+    const n=$(id); if(n) n.scrollIntoView({behavior:'smooth',block:'start'});
+  };
+  $('execFiltersBtn')?.addEventListener('click',()=>jump('filterBar'));
+  $('execPivotBtn')?.addEventListener('click',()=>jump('pivotTable'));
+  $('execRawBtn')?.addEventListener('click',()=>jump('dataTable'));
+  $('execShareBtn')?.addEventListener('click',()=>document.querySelector('.v154-share-tab')?.click());
+}
+
 function buildEverything(){
   $('emptyState').hidden = true;
   $('app').hidden = false;
@@ -3214,6 +3386,7 @@ function buildEverything(){
   APP.charts = autoCharts();
 
   buildKPIs();
+  buildExecutiveCockpit();
   buildFilterBar();
   renderChartsGrid();
   buildProfilePanel();
@@ -3232,7 +3405,9 @@ function setTheme(dark){
   document.body.classList.toggle('dark', APP.dark);
   document.documentElement.classList.toggle('theme-dark', APP.dark);
   document.documentElement.classList.toggle('theme-light', !APP.dark);
+  document.documentElement.setAttribute('data-theme', APP.dark ? 'dark' : 'light');
   try { localStorage.setItem('instantdash-theme', APP.dark ? 'dark' : 'light'); } catch(e) {}
+  window.__instantDashSetTheme = setTheme;
   const toggle = $('themeToggle');
   if (toggle){
     toggle.textContent = APP.dark ? '☀️' : '🌙';
@@ -3295,7 +3470,16 @@ function wireRest(){
   setTheme(getInitialTheme());
   wireIngest();
   wireChartBuilder();
+  wireExecutiveCockpit();
   wireRest();
+  const themeBtn = $('themeToggle');
+  if(themeBtn && !themeBtn.dataset.v160Bound){
+    themeBtn.dataset.v160Bound = '1';
+    themeBtn.addEventListener('click', (e)=>{
+      e.preventDefault();
+      setTheme(!APP.dark);
+    }, {capture:true});
+  }
 })();
 
 </script>
@@ -3327,7 +3511,7 @@ function wireRest(){
 
   function dashboardFile(){
     const html='<!doctype html>\n'+document.documentElement.outerHTML;
-    return new File([html],'InstantDash_Dashboard_v1.5.7.html',{type:'text/html'});
+    return new File([html],'InstantDash_Dashboard_v1.6.1.html',{type:'text/html'});
   }
   function open(){panel.style.display='flex';note.textContent='';}
   function hide(){panel.style.display='none';}
@@ -3350,14 +3534,14 @@ function wireRest(){
     try{
       if(navigator.share && (!navigator.canShare || navigator.canShare({files:[f]}))){
         await navigator.share({
-          title:'InstantDash Dashboard v1.5.7',
+          title:'InstantDash Dashboard v1.6.1',
           text:'Interactive InstantDash dashboard',
           files:[f]
         });
         note.textContent='Share completed.';
       }else if(navigator.share){
         await navigator.share({
-          title:'InstantDash Dashboard v1.5.7',
+          title:'InstantDash Dashboard v1.6.1',
           text:'Interactive InstantDash dashboard'
         });
       }else{
@@ -3370,7 +3554,7 @@ function wireRest(){
   });
 
   copyBtn && copyBtn.addEventListener('click',async()=>{
-    const text='InstantDash Dashboard v1.5.7 — interactive management dashboard.';
+    const text='InstantDash Dashboard v1.6.1 — interactive management dashboard.';
     try{
       await navigator.clipboard.writeText(text);
       note.textContent='Share text copied to clipboard.';
