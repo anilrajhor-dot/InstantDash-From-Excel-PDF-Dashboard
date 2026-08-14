@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<title>InstantDash — Excel to Dashboard v5.1.12</title>
+<title>InstantDash — Excel to Dashboard v5.1.13</title>
 <meta name="author" content="Developed by Anil Sharma, Former General Manager, Central Bank of India">
-<meta name="application-name" content="InstantDash v5.1.12">
-<meta name="description" content="InstantDash — Excel to Dashboard v5.1.12, developed by Anil Sharma">
+<meta name="application-name" content="InstantDash v5.1.13">
+<meta name="description" content="InstantDash — Excel to Dashboard v5.1.13, developed by Anil Sharma">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js';document.head.appendChild(s);"></script>
@@ -217,7 +217,7 @@ select, .input{
 .chart-body{position:relative; height:320px; min-height:320px; width:100%; overflow:hidden;}
 .chart-body canvas{display:block !important; width:100% !important; height:100% !important; min-height:300px;}
 .chart-controls-row{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; border-top:1px dashed var(--line); padding-top:8px;}
-/* ---------- v5.1.12 mobile-first dashboard polish ---------- */
+/* ---------- v5.1.13 mobile-first dashboard polish ---------- */
 .kpi-card{position:relative;overflow:hidden;min-height:196px;padding:18px 18px 16px;border-radius:18px;border:1px solid rgba(255,255,255,.06);background:linear-gradient(145deg,var(--card),rgba(255,255,255,.018));box-shadow:0 8px 24px rgba(0,0,0,.18);}
 .kpi-card:before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:var(--amber);}
 .kpi-card.kpi-derived:before{background:#304968;}
@@ -507,7 +507,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v403UiFix">
-/* v5.1.12: KPI directory is part of the loaded dashboard, never the landing page. */
+/* v5.1.13: KPI directory is part of the loaded dashboard, never the landing page. */
 #bankingKpiDirectory{display:block}
 #emptyState ~ #bankingKpiDirectory{display:block !important}
 </style>
@@ -539,7 +539,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v412InsightVisibility">
-/* v5.1.12 — high-contrast KPI Insight */
+/* v5.1.13 — high-contrast KPI Insight */
 .click-insight-backdrop{
   background:rgba(0,0,0,.62) !important;
 }
@@ -820,7 +820,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 @media(max-width:480px){.cc-grid{grid-template-columns:1fr}}
 </style>
 <style id="v441AreaDirectoryThemeFix">
-/* v5.1.12: the directory must follow the app theme. Earlier versions used
+/* v5.1.13: the directory must follow the app theme. Earlier versions used
    hard-coded white backgrounds, which made the dark-mode text almost invisible. */
 .banking-kpi-directory{
   margin:18px 0;
@@ -909,7 +909,7 @@ document.addEventListener('DOMContentLoaded', function(){
 </script>
 
 <style id="v444LandingDirectoryVisibility">
-/* v5.1.12 — Landing page is for file upload only.
+/* v5.1.13 — Landing page is for file upload only.
    Area/KPI directories appear after a dashboard is loaded. */
 #areaDirectoryBlock,
 #bankingKpiDirectory{
@@ -1016,11 +1016,11 @@ if(typeof directionFor!=='function'){
 #advisorBack .card{border:1px solid rgba(255,255,255,.12)}
 #advisorBack .badge{white-space:nowrap}
 @media(max-width:700px){#advisorBack .modal{width:96vw;max-height:92vh;overflow:auto}}
-</style><meta name="instantdash-build" content="v5.1.12"><meta name="instantdash-file" content="standalone-html"></head>
+</style><meta name="instantdash-build" content="v5.1.13"><meta name="instantdash-file" content="standalone-html"></head>
 <body>
 
 <div class="topbar">
-  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v5.1.12</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
+  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v5.1.13</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
   <div class="topbar-right">
     <div class="privacy-badge">🔒 <span class="txt">Processed locally — not uploaded to any server</span></div>
     <button class="icon-btn" id="shareTopBtn" title="Share dashboard" aria-label="Share dashboard" type="button">📤</button>
@@ -1434,7 +1434,7 @@ if(typeof directionFor!=='function'){
   </div>
 </div>
 
-<footer class="app-footer">InstantDash <strong>v5.1.12</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
+<footer class="app-footer">InstantDash <strong>v5.1.13</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
 </div>
 
 <!-- Ask Your Data floating widget -->
@@ -2828,7 +2828,7 @@ function fail(msg){
 
 
 
-// v5.1.12: expose the real file handler for the independent mobile file-picker hook.
+// v5.1.13: expose the real file handler for the independent mobile file-picker hook.
 window.instantDashHandleFile = handleFile;
 
 function chooseBestDataSheet(names, wb){
@@ -3424,7 +3424,7 @@ function renderPerformanceScorecard(){
 }
 
 
-/* ===================== InstantDash v5.1.12 =====================
+/* ===================== InstantDash v5.1.13 =====================
    Consolidated management/KPI intelligence layer.
    It is additive: existing v3.5.9 chart engine remains intact.
 ================================================================ */
@@ -7430,7 +7430,7 @@ document.addEventListener('click',(e)=>{
 </style>
 
 <style id="v490ManagementWorkflow">
-/* v5.1.12 — single workflow + management KPI bar dashboard */
+/* v5.1.13 — single workflow + management KPI bar dashboard */
 .workflow-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0 16px;position:sticky;top:57px;z-index:45;background:var(--cream);padding:8px 0}
 .workflow-tab{min-height:48px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:14px;font-weight:800;font-size:13px;padding:10px 12px;box-shadow:var(--shadow);cursor:pointer}
 .workflow-tab.active{background:var(--amber);border-color:var(--amber);color:#17130a}
@@ -7589,7 +7589,7 @@ document.addEventListener('click',(e)=>{
   setTimeout(()=>{setupWorkflow();if(STATE?.data?.length)buildBars();},500);
 })();
 
-/* InstantDash v5.1.12 display settings */
+/* InstantDash v5.1.13 display settings */
 const DISPLAY_SETTINGS_KEY = "instantdash_display_v500";
 const DEFAULT_DISPLAY_SETTINGS = {
   currency:"₹", scale:"thousand", chart:"auto", density:"standard",
@@ -7674,7 +7674,7 @@ function applyDisplaySettings(){
 }
 applyDisplaySettings();
 
-/* InstantDash v5.1.12 — Business Improvement Advisor */
+/* InstantDash v5.1.13 — Business Improvement Advisor */
 function openAdvisor(){
  const m=document.getElementById("advisorBack"); if(!m)return;
  renderAdvisor();
@@ -7886,7 +7886,7 @@ function formatAdvisorValue(r){
  </div>
 </div>
 
-<!-- v5.1.12: robust top-bar controls -->
+<!-- v5.1.13: robust top-bar controls -->
 <script id="v519TopBarControls">
 (function(){
   function ready(){
@@ -8211,6 +8211,114 @@ function formatAdvisorValue(r){
   else bind();
   setTimeout(bind,500);
   setTimeout(bind,1500);
+})();
+</script>
+
+<style id="v513UnifiedSettingsStyle">
+#v513SettingsOverlay{position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:99999;display:none;align-items:center;justify-content:center;padding:16px}
+#v513SettingsOverlay.open{display:flex}
+#v513SettingsBox{width:min(720px,96vw);max-height:92vh;overflow:auto;background:var(--card,#fff);color:var(--ink,#111);border-radius:16px;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+#v513SettingsBox .v513grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+#v513SettingsBox label{display:block;font-size:13px;font-weight:700;margin-bottom:6px}
+#v513SettingsBox select,#v513SettingsBox input{width:100%;padding:10px;border:1px solid var(--line,#ddd);border-radius:9px;background:var(--cream,#f7f3eb);color:var(--ink,#111)}
+#v513SettingsBox .v513actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px;flex-wrap:wrap}
+@media(max-width:650px){#v513SettingsBox .v513grid{grid-template-columns:1fr}}
+</style>
+<div id="v513SettingsOverlay" aria-hidden="true">
+ <div id="v513SettingsBox" role="dialog" aria-modal="true" aria-labelledby="v513SettingsTitle">
+  <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start">
+   <div><h2 id="v513SettingsTitle" style="margin:0 0 5px">⚙️ Settings</h2>
+   <div style="font-size:13px;opacity:.75">Change dashboard presentation. Calculations and source data are not changed.</div></div>
+   <button id="v513SettingsClose" class="btn" type="button">✕</button>
+  </div>
+  <div class="v513grid" style="margin-top:18px">
+   <div><label>Currency</label><select id="v513Currency">
+    <option value="₹">₹ — Indian Rupee</option><option value="$">$ — US Dollar</option><option value="€">€ — Euro</option><option value="£">£ — Pound Sterling</option><option value="¥">¥ — Yen / Yuan</option><option value="custom">Other / Custom</option>
+   </select></div>
+   <div id="v513CustomWrap" style="display:none"><label>Custom Currency</label><input id="v513Custom" maxlength="8" placeholder="e.g. AED"></div>
+   <div><label>Amount Display</label><select id="v513Scale">
+    <option value="actual">Actual</option><option value="thousand">Thousand (₹ '000)</option><option value="lakh">Lakh (₹ lakh)</option><option value="million">Million</option><option value="crore">Crore (₹ crore)</option><option value="billion">Billion</option>
+   </select></div>
+   <div><label>Chart / Bar Type</label><select id="v513Chart">
+    <option value="auto">Auto — Recommended</option><option value="hbar">Horizontal Bar</option><option value="vbar">Vertical Column</option><option value="target">Actual vs Target</option><option value="growth">Growth / Degrowth</option><option value="progress">Progress Bar</option><option value="bullet">Bullet Chart</option><option value="line">Line / Trend</option><option value="area">Area</option><option value="donut">Donut</option><option value="card">KPI Card</option>
+   </select></div>
+   <div><label>Dashboard Density</label><select id="v513Density"><option value="compact">Compact</option><option value="standard">Standard</option><option value="detailed">Detailed</option></select></div>
+   <div><label>KPIs per Row</label><select id="v513Cols"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></div>
+   <div><label>Decimal Places</label><select id="v513Decimals"><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="auto">Auto</option></select></div>
+   <div><label>Percentage Format</label><select id="v513Pct"><option value="1">12.5%</option><option value="2">12.50%</option></select></div>
+  </div>
+  <div style="margin-top:15px;padding:11px;border-radius:10px;background:var(--cream,#f7f3eb);font-size:13px">
+   <b>Default:</b> ₹ • Amount in Thousand • Auto chart • Standard dashboard • 2 decimals
+  </div>
+  <div class="v513actions">
+   <button id="v513Reset" class="btn" type="button">↺ Restore Defaults</button>
+   <button id="v513Apply" class="btn primary" type="button">✓ Apply Settings</button>
+  </div>
+ </div>
+</div>
+<script id="v513UnifiedSettingsScript">
+(function(){
+ const KEY='instantdash_unified_settings_v513';
+ const DEF={currency:'₹',scale:'thousand',chart:'auto',density:'standard',cols:'2',decimals:'2',pct:'2',custom:''};
+ function load(){try{return Object.assign({},DEF,JSON.parse(localStorage.getItem(KEY)||'{}'));}catch(e){return Object.assign({},DEF);}}
+ let cfg=load();
+ const $=id=>document.getElementById(id);
+ function sync(){
+   $('v513Currency').value=cfg.currency;
+   $('v513Scale').value=cfg.scale;
+   $('v513Chart').value=cfg.chart;
+   $('v513Density').value=cfg.density;
+   $('v513Cols').value=cfg.cols;
+   $('v513Decimals').value=cfg.decimals;
+   $('v513Pct').value=cfg.pct;
+   $('v513Custom').value=cfg.custom||'';
+   $('v513CustomWrap').style.display=cfg.currency==='custom'?'block':'none';
+ }
+ function open(){
+   sync();
+   $('v513SettingsOverlay').classList.add('open');
+   $('v513SettingsOverlay').setAttribute('aria-hidden','false');
+ }
+ function close(){
+   $('v513SettingsOverlay').classList.remove('open');
+   $('v513SettingsOverlay').setAttribute('aria-hidden','true');
+ }
+ function apply(){
+   cfg={currency:$('v513Currency').value,scale:$('v513Scale').value,chart:$('v513Chart').value,
+        density:$('v513Density').value,cols:$('v513Cols').value,decimals:$('v513Decimals').value,
+        pct:$('v513Pct').value,custom:$('v513Custom').value.trim()};
+   localStorage.setItem(KEY,JSON.stringify(cfg));
+   document.documentElement.style.setProperty('--dash-cols',cfg.cols);
+   document.body.dataset.dashboardDensity=cfg.density;
+   // Keep the existing app's native settings in sync where possible.
+   try{
+     if(window.STATE && STATE.settings){
+       if('currency' in STATE.settings) STATE.settings.currency=cfg.currency==='custom'?(cfg.custom||'₹'):cfg.currency;
+       if('decimals' in STATE.settings) STATE.settings.decimals=cfg.decimals==='auto'?2:Number(cfg.decimals);
+     }
+   }catch(e){}
+   try{ if(typeof renderKPIs==='function') renderKPIs(); }catch(e){}
+   try{ if(typeof updateAllCharts==='function') updateAllCharts(); }catch(e){}
+   try{ if(typeof renderPerformanceScorecard==='function') renderPerformanceScorecard(); }catch(e){}
+   close();
+ }
+ function bind(){
+   const b=$('settingsToggle');
+   if(b){
+     b.onclick=function(e){e.preventDefault();e.stopImmediatePropagation();open();};
+     b.setAttribute('type','button');
+   }
+   $('v513SettingsClose').onclick=close;
+   $('v513Apply').onclick=apply;
+   $('v513Reset').onclick=function(){cfg=Object.assign({},DEF);sync();};
+   $('v513Currency').onchange=function(){$('v513CustomWrap').style.display=this.value==='custom'?'block':'none';};
+   $('v513SettingsOverlay').onclick=function(e){if(e.target===$('v513SettingsOverlay'))close();};
+   document.addEventListener('keydown',function(e){if(e.key==='Escape')close();},{passive:true});
+   document.documentElement.style.setProperty('--dash-cols',cfg.cols);
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);else bind();
+ setTimeout(bind,500);setTimeout(bind,1500);
+ window.v513OpenSettings=open;
 })();
 </script>
 </body>
