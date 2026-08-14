@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>InstantDash — Excel to Dashboard · v1.4.0</title>
+<title>InstantDash — Excel to Dashboard · v1.4.1</title>
 
 <!-- ============================================================
      LIBRARIES (loaded from CDN, no build step required)
@@ -232,6 +232,11 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
 .management-insights .mi-card .mi-body{padding:0 15px 14px}
 .management-insights .mi-card p{margin:0;font-size:12.5px;line-height:1.6}
 .management-insights .mi-card ul{margin:4px 0 0;padding-left:18px}
+.management-insights .mi-more{margin:8px 0 0;padding:0;border:0;background:none;color:var(--accent);font:600 11.5px Poppins,sans-serif;cursor:pointer}
+.management-insights .mi-more:hover{text-decoration:underline}
+.management-insights .mi-secondary{display:none}
+.management-insights .mi-card.show-all .mi-secondary{display:list-item}
+.management-insights .mi-signal{display:inline-flex;align-items:center;gap:5px;margin-left:6px;padding:2px 7px;border-radius:999px;font-size:9.5px;font-weight:650;border:1px solid var(--border);color:var(--muted);background:var(--card-2)}
 .management-insights .mi-card li{margin:5px 0;font-size:12.5px;line-height:1.5}
 .management-insights .mi-card.good{border-left:3px solid var(--ok)}
 .management-insights .mi-card.warn{border-left:3px solid var(--warn)}
@@ -241,6 +246,9 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
 .management-insights .mi-card.executive .mi-body{padding:0 16px 16px}
 .management-insights .mi-status{display:inline-flex;align-items:center;border:1px solid var(--border);border-radius:999px;padding:3px 9px;font-size:10.5px;font-weight:600;margin-left:auto;color:var(--muted);background:var(--card-2)}
 .management-insights .mi-executive-lead{font-size:13px;line-height:1.6;color:var(--text);margin:0 0 8px}
+.management-insights .mi-card.executive .mi-body li{font-size:13px;line-height:1.6;margin:7px 0}
+.management-insights .mi-card.good .mi-more{color:var(--ok)}
+.management-insights .mi-card.warn .mi-more{color:var(--warn)}
 @media (max-width:700px){
   .management-insights .mi-grid{grid-template-columns:1fr;padding:10px}
   .management-insights .mi-card.executive{grid-column:auto}
@@ -309,7 +317,7 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"/><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"/><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"/></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel to Dashboard · v1.4.0</span>
+    <span class="sub">Excel to Dashboard · v1.4.1</span>
   </div>
   <div class="spacer"></div>
   <span class="privacy">🔒 Your data never leaves your computer.</span>
@@ -486,7 +494,7 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
    --------------------------------------------------------------------- */
 const CONFIG = {
   APP_NAME: 'InstantDash',
-  VERSION: 'v1.4.0',
+  VERSION: 'v1.4.1',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -2197,6 +2205,9 @@ function miLatestPeriodRows(rows,dateCol){
 }
 function miSum(rows,col){ return rows.reduce((s,r)=>s+(miNum(r[col])??0),0); }
 function miChange(a,b){ return {abs:b-a,pct:a!==0?(b-a)/Math.abs(a):null}; }
+function miIsContextual(kpi){
+  return /(employees?|staff|headcount|branches?|outlets?|targets?|target|planned|planning|budget|capacity|sanctioned\s*target|business\s*target|cost\s*budget)/i.test(String(kpi||''));
+}
 function miDirection(kpi){
   const d=miDirectoryDirection(kpi);
   if(d)return d;
@@ -2211,11 +2222,23 @@ function miStatus(items){
   return 'Limited evidence';
 }
 function miStrip(v){return String(v||'').replace(/<[^>]*>/g,'').replace(/\s+/g,' ').trim();}
-function miCard(title,items,cls='neutral',open=false){
-  const list=items&&items.length?`<ul>${items.map(x=>`<li>${x}</li>`).join('')}</ul>`:'<p>No material observation can be established from the available data.</p>';
+function miCard(title,items,cls='neutral',open=false,maxItems=null){
+  const arr=Array.isArray(items)?items:[];
+  const limit=maxItems==null?(cls==='executive'?3:(cls==='good'||cls==='warn'?5:4)):maxItems;
+  let list='';
+  if(arr.length){
+    const shown=arr.slice(0,limit), rest=arr.slice(limit);
+    list=`<ul>${shown.map(x=>`<li>${x}</li>`).join('')}${rest.map(x=>`<li class="mi-secondary">${x}</li>`).join('')}</ul>`;
+    if(rest.length) list+=`<button type="button" class="mi-more" aria-expanded="false">View all ${arr.length}</button>`;
+  }else list='<p>No material observation can be established from the available data.</p>';
   const isExec=cls==='executive';
   const badge=isExec?`<span class="mi-status" id="miStatus">${miEsc(window.__miStatus||'')}</span>`:'';
   return `<details class="mi-card ${cls}"${open?' open':''}><summary>${title}${badge}</summary><div class="mi-body">${list}</div></details>`;
+}
+function miWireMore(){
+  document.querySelectorAll('#managementInsightsGrid .mi-more').forEach(btn=>{
+    btn.onclick=()=>{const card=btn.closest('.mi-card'); const on=card.classList.toggle('show-all'); btn.textContent=on?'Show less':btn.textContent.replace('Show less','View all'); btn.setAttribute('aria-expanded',String(on)); if(on) btn.textContent='Show less';};
+  });
 }
 function miSyncAccordions(){
   const cards=[...document.querySelectorAll('#managementInsightsGrid .mi-card')];
@@ -2308,6 +2331,31 @@ function buildManagementInsights(){
       }
     }
 
+    // Credit pipeline versus outstanding balances: distinguish flow growth
+    // from balance growth and avoid inventing a cause.
+    const applications=findCol(/loan.*application|application.*loan/i);
+    const sanctioned=findCol(/loan.*sanction|sanction.*loan/i);
+    const disbursed=findCol(/loan.*disburs|disburs.*loan/i);
+    const advances=findCol(/^advances$|total.*advances/i);
+    if((applications||sanctioned||disbursed)&&advances){
+      const parts=[];
+      [[applications,'applications'],[sanctioned,'sanctions'],[disbursed,'disbursements']].forEach(([col,label])=>{
+        if(!col)return; const pv=sum(prev,col),cv=sum(cur,col); if(pv!==0){const ch=miChange(pv,cv); parts.push(`${label} ${fmtFull(pv)}→${fmtFull(cv)} (${miPct(ch.pct)})`);}
+      });
+      const pa=sum(prev,advances),ca=sum(cur,advances); if(parts.length&&pa!==0){
+        const ach=miChange(pa,ca);
+        const up=parts.some(x=>!x.includes('(-') && !x.includes('—'));
+        if(ca<pa&&up) items.relationships.push(`<b>Credit pipeline versus outstanding balance:</b> ${parts.join(', ')} while ${miEsc(advances)} moved from ${fmtFull(pa)} to ${fmtFull(ca)} (${miPct(ach.pct)}). This indicates a divergence between recent credit flows and the reported outstanding balance; review repayments/run-off, timing and portfolio mix before concluding the reason.`);
+      }
+    }
+
+    // Deposits versus CASA: flag divergence without asserting causation.
+    const deposits=findCol(/^deposits$|total.*deposits/i), casa=findCol(/casa/i);
+    if(deposits&&casa){
+      const pd=sum(prev,deposits),cd=sum(cur,deposits),pc=sum(prev,casa),cc=sum(cur,casa);
+      if(pd!==0&&pc!==0){const dc=miChange(pd,cd),ccg=miChange(pc,cc); if(dc.abs>0&&ccg.abs<0) items.relationships.push(`<b>Deposit mix:</b> total ${miEsc(deposits)} moved ${miPct(dc.pct)} while ${miEsc(casa)} moved ${miPct(ccg.pct)}. The divergence warrants review of deposit composition and funding mix; the data alone does not establish the underlying cause.`);}
+    }
+
     // Findings versus completed audits: derive findings per completed audit
     // only when completed audits are available and non-zero.
     const findings=findCol(/^(audit\s*)?findings$|audit.*finding/i);
@@ -2374,6 +2422,8 @@ function buildManagementInsights(){
       }else if(/resolved|closed/i.test(name)){
         // Correct interpretation is handled by the relationship block above.
         // Do not emit a generic adverse/favourable statement here.
+      }else if(miIsContextual(name)){
+        items.drivers.push(sentence+' This is a contextual change rather than a direct performance conclusion; assess it against business plans, capacity, productivity and outcomes.');
       }else{
         const dir=miDirection(name), favourable=/lower/i.test(dir)?ch.abs<0:ch.abs>0;
         if(favourable) items.performance.push(sentence+' This movement is favourable based on the KPI direction available in the data.');
@@ -2428,13 +2478,13 @@ function buildManagementInsights(){
   if(items.performance.length) top.push(`<b>Positive development:</b> ${miStrip(items.performance[0])}`);
   if(items.relationships.length) top.push(`<b>Key context:</b> ${miStrip(items.relationships[0])}`);
   if(!top.length) top.push('The available data does not provide enough comparable evidence for a strong management conclusion.');
-  grid.innerHTML=miCard('Executive takeaway',top,'executive',true)+
-    miCard('What is going well',items.performance,'good')+
-    miCard('Variations requiring attention',items.attention,'warn')+
-    miCard('Management interpretation & possible drivers',items.drivers,'neutral')+
-    miCard('Key relationships & derived ratios',items.relationships,'neutral')+
-    miCard('Management action',items.actions,'neutral');
-  miSyncAccordions();
+  grid.innerHTML=miCard('Executive takeaway',top,'executive',true,3)+
+    miCard('What is going well',items.performance,'good',false,5)+
+    miCard('Variations requiring attention',items.attention,'warn',false,5)+
+    miCard('Management interpretation & possible drivers',items.drivers,'neutral',false,4)+
+    miCard('Key relationships & derived ratios',items.relationships,'neutral',false,4)+
+    miCard('Management action',items.actions,'neutral',false,3);
+  miSyncAccordions(); miWireMore();
 }
 
 /* =====================================================================
