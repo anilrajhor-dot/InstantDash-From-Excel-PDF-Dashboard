@@ -455,7 +455,17 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
   .empty-state .btn{width:min(100%,360px);justify-content:center;}
   .pdf-viewer{height:68vh;}
 }
-<style id="v436AreaDirectory">.area-directory-summary{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 12px}.area-directory-chip{padding:7px 10px;border:1px solid var(--line);border-radius:999px;background:var(--panel);font-size:11px;font-weight:800;color:var(--ink)}</style></style>
+<style id="v436AreaDirectory">.area-directory-summary{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 12px}.area-directory-chip{padding:7px 10px;border:1px solid var(--line);border-radius:999px;background:var(--panel);font-size:11px;font-weight:800;color:var(--ink)}
+.kpi-summary-bars{display:flex;flex-direction:column;gap:12px;padding:18px 18px 22px;min-height:260px;justify-content:center;}
+.kpi-summary-row{display:grid;grid-template-columns:minmax(130px,1.25fr) minmax(100px,2fr) minmax(70px,.8fr);gap:10px;align-items:center;background:transparent;border:0;color:var(--cream);text-align:left;padding:6px 2px;cursor:pointer;font:inherit;}
+.kpi-summary-label{font-weight:700;line-height:1.15;}
+.kpi-summary-track{height:22px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;border:1px solid var(--line);}
+.kpi-summary-fill{display:block;height:100%;border-radius:999px;background:var(--amber);transition:width .35s ease;}
+.kpi-summary-value{text-align:right;font-weight:800;white-space:nowrap;}
+.kpi-summary-row:hover .kpi-summary-fill,.kpi-summary-row:focus .kpi-summary-fill{filter:brightness(1.15);}
+.kpi-summary-empty{text-align:center;color:var(--muted);padding:60px 20px;font-weight:700;}
+@media(max-width:700px){.kpi-summary-row{grid-template-columns:1fr auto;}.kpi-summary-track{grid-column:1 / -1;grid-row:2;}.kpi-summary-value{grid-column:2;grid-row:1;}.kpi-summary-label{grid-column:1;grid-row:1;}}
+</style></style>
 
 <style id="bankingKpiDirectoryStyles">
 .banking-kpi-directory{margin:18px 0;padding:16px;border:1px solid #d7dde5;border-radius:14px;background:#fff}
@@ -1098,8 +1108,12 @@ if(typeof directionFor!=='function'){
     </nav>
 
     <div class="section-title" id="departmentSection"><h2>🏢 Department</h2>
-      <div style="display:flex; gap:8px; flex-wrap:wrap;">
-        <span class="workflow-hint" id="departmentWorkflowHint">Select a department — all relevant KPIs will be mapped automatically.</span>
+      <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+        <span class="workflow-hint" id="departmentWorkflowHint">Please select a department. All relevant KPIs will be mapped automatically.</span>
+        <select id="departmentPicker" aria-label="Select department" class="input" style="min-width:220px;padding:8px 10px;font-weight:700;">
+          <option value="">Please select department</option>
+          <option>Management</option><option>Finance</option><option>HR</option><option>Sales / Business</option><option>Marketing</option><option>Operations / Manufacturing</option><option>Procurement</option><option>Supply Chain</option><option>Customer Service</option><option>Project Management</option><option>Banking</option><option>Risk &amp; Compliance</option><option>Legal</option><option>Audit</option><option>ESG / Sustainability</option><option>IT / Technology</option><option>Cybersecurity</option><option>Quality Management</option><option>Retail</option><option>E-commerce</option><option>Healthcare</option><option>Education</option><option>Hospitality</option><option>Real Estate</option><option>Construction</option><option>NGO / Non-profit</option><option>Government / Public Sector</option><option>Banking Credit Analysis</option><option>BC Performance</option><option>Bank &amp; NBFC Earnings / Investor Analysis</option><option>Micro &amp; Small Enterprise</option>
+        </select>
         <input type="file" id="configFileInput" accept="application/json" style="display:none;">
       </div>
     </div>
@@ -2373,6 +2387,7 @@ function resetLoadedDataForNewFile(){
   STATE.kpiManualMap={};
   STATE.customKpis=[];
   STATE.kpiDepartment='Auto Detect';
+  const dp=document.getElementById('departmentPicker'); if(dp) dp.value='';
   STATE.showAllKpis=false;
   STATE.documentMeta=null;
 
@@ -2443,7 +2458,21 @@ document.getElementById('newFileBtn').addEventListener('click',()=>{
 });
 
 
-document.getElementById('kpiDepartmentSelect').addEventListener('change',e=>{STATE.kpiDepartment=e.target.value;renderKPIs();});
+document.getElementById('kpiDepartmentSelect').addEventListener('change',e=>{
+  STATE.kpiDepartment=e.target.value;
+  const p=document.getElementById('departmentPicker'); if(p) p.value=e.target.value==='Auto Detect'?'':e.target.value;
+  renderKPIs();
+  if(STATE.data.length) chooseAndBuildCharts();
+});
+const departmentPicker=document.getElementById('departmentPicker');
+if(departmentPicker) departmentPicker.addEventListener('change',e=>{
+  const v=e.target.value;
+  if(!v){ STATE.kpiDepartment='Auto Detect'; } else { STATE.kpiDepartment=v; }
+  const k=document.getElementById('kpiDepartmentSelect'); if(k) k.value=STATE.kpiDepartment;
+  renderKPIs();
+  if(STATE.data.length) chooseAndBuildCharts();
+  const km=document.getElementById('kpiMappingSection'); if(km) km.scrollIntoView({behavior:'smooth',block:'start'});
+});
 
 document.getElementById('showAllKpisBtn').addEventListener('click',()=>{
   STATE.showAllKpis=!STATE.showAllKpis;
@@ -4292,9 +4321,8 @@ function getDepartmentScopedKpis(){
   const dept=activeDepartmentForKpis();
   if(dept==='Auto Detect') return all;
   const scoped=all.filter(k=>kpiBelongsToDepartment(k,dept));
-  // If the library has no explicit department tag, do not silently discard
-  // otherwise valid KPIs; only fall back when no KPI could be scoped.
-  return scoped.length ? scoped : all;
+  // Strict department architecture: never mix KPIs from another department.
+  return scoped;
 }
 
 function renderKpiMapping(kpis){
@@ -4302,8 +4330,10 @@ function renderKpiMapping(kpis){
   const autoDept=detectDepartment();
   const dept=STATE.kpiDepartment&&STATE.kpiDepartment!=='Auto Detect'?STATE.kpiDepartment:autoDept;
   // v5.2.1: Mapping table is strictly department-scoped.
-  const scoped = (dept && dept!=='Auto Detect') ? kpis.filter(k=>kpiBelongsToDepartment(k,dept)) : kpis;
-  if(scoped.length) kpis=scoped;
+  const scoped = (dept && dept!=='Auto Detect') ? kpis.filter(k=>kpiBelongsToDepartment(k,dept)) : [];
+  kpis=scoped;
+  const picker=document.getElementById('departmentPicker');
+  if(picker) picker.value=(dept && dept!=='Auto Detect')?dept:'';
   const hint=document.getElementById('kpiDepartmentHint');
   if(hint)hint.textContent='Detected area: '+dept+' · '+kpis.length+' KPI(s) available';
   const ds=document.getElementById('kpiDepartmentSelect');
@@ -5034,7 +5064,7 @@ function createChartCard(spec, custom){
         <button data-act="remove" title="Remove chart" aria-label="Remove this chart">✕</button>
       </div>
     </div>
-    <div class="chart-body"><canvas id="${id}_canvas" role="img" aria-label="${escapeHtml(spec.title)} chart"></canvas></div>
+    <div class="chart-body">${spec.kpiSummary ? `<div id="${id}_summary" class="kpi-summary-bars" role="list"></div>` : `<canvas id="${id}_canvas" role="img" aria-label="${escapeHtml(spec.title)} chart"></canvas>`}</div>
     <div class="chart-controls-row" style="${spec.kpiSummary?'display:none;':''}">
       <select class="ctrlType" aria-label="Chart type">
         <option value="bar" ${spec.kind==='bar'?'selected':''}>Bar</option>
@@ -5975,8 +6005,39 @@ document.addEventListener('click',(e)=>{
   if(t){e.preventDefault();e.stopImmediatePropagation();closeClickInsight(e);}
 },true);
 
+function renderKpiSummaryHtml(entry){
+  const box=entry.card?.querySelector('.kpi-summary-bars');
+  if(!box) return;
+  const group=entry.spec.kpiSummaryGroup||'number';
+  let ks=[];
+  try{ ks=getDepartmentScopedKpis().filter(k=>Number.isFinite(Number(k.value))); }catch(e){ ks=[]; }
+  ks=ks.filter(k=>{
+    if(group==='currency') return k.percent!==true && (k.unit==='currency'||k.unit==='₹'||isCurrencyKpi(k.name));
+    if(group==='percent') return !!k.percent;
+    if(group==='time') return k.unit==='days'||k.unit==='hours';
+    if(group==='ratio') return !!k.ratio;
+    return !k.percent && k.unit!=='days' && k.unit!=='hours' && !k.ratio && !(k.unit==='currency'||k.unit==='₹'||isCurrencyKpi(k.name));
+  }).slice().sort((a,b)=>Math.abs(Number(b.value))-Math.abs(Number(a.value))).slice(0,12);
+  if(!ks.length){ box.innerHTML='<div class="kpi-summary-empty">No calculated KPI is available for the selected department.</div>'; return; }
+  const max=Math.max(...ks.map(k=>Math.abs(Number(k.value))),1);
+  box.innerHTML=ks.map((k,i)=>{
+    const v=Number(k.value)||0, pct=Math.max(2,Math.min(100,Math.abs(v)/max*100));
+    const value=escapeHtml(fmtKpiValue(k));
+    const reason=escapeHtml(k.formula||'Calculated from mapped source data');
+    return `<button type="button" class="kpi-summary-row" data-kpi-id="${escapeHtml(k.id||'')}" data-kpi-name="${escapeHtml(k.name)}" data-kpi-value="${escapeHtml(value)}" data-kpi-reason="${reason}" aria-label="${escapeHtml(k.name)} ${value}"><span class="kpi-summary-label">${escapeHtml(k.name)}</span><span class="kpi-summary-track"><span class="kpi-summary-fill" style="width:${pct.toFixed(1)}%"></span></span><span class="kpi-summary-value">${value}</span></button>`;
+  }).join('');
+  box.querySelectorAll('.kpi-summary-row').forEach(btn=>btn.addEventListener('click',()=>{
+    const name=btn.dataset.kpiName||'KPI', val=btn.dataset.kpiValue||'—', reason=btn.dataset.kpiReason||'Calculated from mapped source data';
+    const growth=typeof kpiGrowthFor==='function'?kpiGrowthFor(name):null;
+    const growthText=growth==null?'':`<br><strong>Growth / Degrowth:</strong> ${escapeHtml(String(growth))}`;
+    if(typeof openClickInsight==='function') openClickInsight({title:name,body:`<strong>Current value:</strong> ${val}<br><strong>Calculation:</strong> ${reason}${growthText}`});
+    else alert(`${name}\nValue: ${val}\nCalculation: ${reason}`);
+  }));
+}
+
 function renderChart(entry){
   const spec=entry.spec;
+  if(spec.kpiSummary){ renderKpiSummaryHtml(entry); return; }
   const canvas=entry.canvas || document.getElementById(entry.canvasId);
   if(!canvas) return;
   try{
