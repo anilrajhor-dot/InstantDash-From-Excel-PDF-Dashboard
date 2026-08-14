@@ -361,7 +361,7 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"/><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"/><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"/></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.5.0</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.5.1</span>
   </div>
   <div class="spacer"></div>
   <span class="privacy">🔒 Your data never leaves your computer.</span>
@@ -917,9 +917,11 @@ async function parsePdfToWorkbook(file){
       if (/^(page|note|annexure|independent auditor|auditor's report)\b/i.test(label)) continue;
       if (/^\d+[\.)]?$/.test(label)) continue;
 
-      const row={Description:label};
-      assigned.forEach((v,idx)=>{ if(v!==null) row['Value '+(idx+1)]=v; });
-      rows.push(row);
+      // Keep the extracted values as an ordered array.  The previous build
+      // stored them under temporary names (Value 1, Value 2...) and later
+      // renamed the columns to dates, which silently blanked every numeric
+      // cell.  Keeping the array preserves the actual PDF values.
+      rows.push({Description:label, values:assigned.slice()});
     }
   }
 
@@ -929,7 +931,7 @@ async function parsePdfToWorkbook(file){
 
   // Try to recover useful period labels from nearby header text. If unavailable,
   // use neutral Value 1..N labels rather than pretending to know the periods.
-  const maxVals = Math.max(...rows.map(r=>Object.keys(r).filter(k=>k.startsWith('Value ')).length));
+  const maxVals = Math.max(...rows.map(r=>Array.isArray(r.values) ? r.values.length : 0));
   let valueNames = Array.from({length:maxVals},(_,i)=>'Value '+(i+1));
 
   const headerText = pages.flatMap(p=>p.lines.slice(0,80).map(l=>l.text)).join(' | ');
@@ -942,7 +944,8 @@ async function parsePdfToWorkbook(file){
   const header=['Description',...valueNames];
   const aoa=[header];
   for(const r of rows){
-    aoa.push([r.Description,...valueNames.map(n=>r[n] == null ? '' : r[n])]);
+    const vals = Array.isArray(r.values) ? r.values : [];
+    aoa.push([r.Description,...valueNames.map((_,i)=>vals[i] == null ? '' : vals[i])]);
   }
 
   const ws=XLSX.utils.aoa_to_sheet(aoa);
@@ -952,7 +955,7 @@ async function parsePdfToWorkbook(file){
     extractedRows:rows.length,
     numericLines,
     valueColumns:valueNames.length,
-    extraction:'coordinate-based-financial-table-v2'
+    extraction:'coordinate-based-financial-table-v3'
   };
 
   return {SheetNames:['PDF_Data'], Sheets:{PDF_Data:ws}, __pdfMeta:ws['!instantdash_pdf_meta']};
