@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>InstantDash — Excel / CSV / PDF → Dashboard · v1.7.3</title>
+<title>InstantDash — Excel / CSV / PDF → Dashboard · v1.7.4</title>
 
 <!-- ============================================================
      LIBRARIES (loaded from CDN, no build step required)
@@ -607,7 +607,7 @@ body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"/><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"/><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"/></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.7.3</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.7.4</span>
   </div>
   <span id="share"></span><button type="button" class="v154-share-tab" id="v154ShareTab" title="Share dashboard">📤 Share</button>
   <div class="spacer"></div>
@@ -717,7 +717,7 @@ body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var
 
       <div class="exec-bottom">
         <div class="exec-card">
-          <div class="exec-label">What needs attention</div>
+          <div class="exec-label">Data quality check</div>
           <ul class="exec-list" id="execAttentionList"></ul>
         </div>
         <div class="exec-card">
@@ -855,7 +855,7 @@ body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var
    --------------------------------------------------------------------- */
 const CONFIG = {
   APP_NAME: 'InstantDash',
-  VERSION: 'v1.7.3',
+  VERSION: 'v1.7.4',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -2791,6 +2791,12 @@ function miSemantic(kpi){
   if(/threats?\s*(detected|identified)|attacks?\s*(detected|identified)|vulnerabilit(y|ies)|exposure|security\s*incidents?|critical\s*incidents?|data\s*breach|breaches|malware\s*detected|phishing\s*(attempts?|incidents?)/i.test(n)) return 'risk';
   if(/threats?\s*blocked|attacks?\s*blocked|incidents?\s*resolved|vulnerabilit(y|ies)\s*resolved|patch(es|ing)?\s*(completed|applied)|controls?\s*implemented|security\s*compliance/i.test(n)) return 'protective';
   if(/stock[-\s]?outs?|availability|service\s*level|on[-\s]?time|fill\s*rate|uptime/i.test(n)) return 'quality';
+  /* ESG/resource-use measures have a meaningful default direction when no
+     explicit KPI Directory direction is supplied: lower consumption, waste,
+     emissions and environmental burden is generally favourable, subject to
+     output, service level and target context. */
+  if(/water\s*consumption|energy\s*consumption|electricity\s*consumption|fuel\s*consumption|resource\s*consumption|waste(\s*generated)?|waste\s*volume|waste\s*disposal|ghg|greenhouse\s*gas|carbon\s*(emissions?|footprint)|co2(\s*emissions?)?|emissions?|effluent|pollution/i.test(n)) return 'environmental';
+  if(/renewable\s*(energy|generation|share)|recycling\s*(rate|ratio)|recycled\s*(material|waste)|energy\s*efficiency|water\s*efficiency/i.test(n)) return 'environmental_positive';
   /* Expenditure is not intrinsically good or bad. Higher spend may reflect
      growth, inflation, capacity needs or inefficiency; compare it with plan
      and operating outcomes before classifying the movement. */
@@ -2807,12 +2813,16 @@ function miDirection(kpi){
      therefore do not label an increase as favourable merely because a source
      directory happens to say "Higher is Better". */
   if(/grievances?\s*(received|registered|lodged)|complaints?\s*(received|registered)|cases?\s*(received|opened|registered)|new\s*(grievances?|complaints?|cases?)/i.test(n)) return 'Contextual';
+  /* An explicit KPI Directory direction is authoritative. Default semantic
+     rules below are used only when the source does not provide one. */
+  const d=miDirectoryDirection(kpi);
+  if(d) return d;
   if(sem==='risk') return 'Lower is Better';
   if(sem==='protective') return 'Higher is Better';
   if(sem==='quality') return /stock[-\s]?outs?|complaints?|defects?|downtime|delay/i.test(String(kpi||'')) ? 'Lower is Better' : 'Higher is Better';
+  if(sem==='environmental') return 'Lower is Better';
+  if(sem==='environmental_positive') return 'Higher is Better';
   if(sem==='contextual') return 'Contextual';
-  const d=miDirectoryDirection(kpi);
-  if(d)return d;
   if(/(npa|slippage|default|complaint|pending|open|repeat|expense|cost|foir|ltv|risk|finding|stock[-\s]?out)/i.test(kpi)) return 'Lower is Better';
   return 'Higher is Better';
 }
@@ -2894,6 +2904,12 @@ function miGenericManagementRemark(name, direction, sem, favourable, change){
   if(/stock[-\s]?outs?/i.test(n)){
     return ` <span class="mi-remark"><b>Management remark:</b> assess stock-out movement alongside inventory levels, demand, service levels and lost-sales indicators to confirm whether availability has genuinely improved.</span>`;
   }
+  if(sem==='environmental'){
+    return ` <span class="mi-remark"><b>Management remark:</b> lower resource use, waste or environmental burden is generally favourable; confirm the movement against output, service levels, operational scale and the approved ESG target before drawing a broader conclusion.</span>`;
+  }
+  if(sem==='environmental_positive'){
+    return ` <span class="mi-remark"><b>Management remark:</b> higher environmental-efficiency or circularity activity is generally favourable; confirm that the improvement is sustained and supported by the relevant operational and ESG indicators.</span>`;
+  }
   if(/inventory\s*turnover|stock\s*turnover/i.test(n)){
     return ` <span class="mi-remark"><b>Management remark:</b> compare turnover with inventory value, ageing, sales volume and replenishment to determine whether the movement reflects slower demand or deliberate stock positioning.</span>`;
   }
@@ -2955,6 +2971,14 @@ function miMovementText(name,ch,prev,cur,lr){
   if(sem==='quality'){
     const favourable=ch.abs<0;
     return {bucket:favourable?'performance':'attention',text:sentence+(favourable?' Lower '+miEsc(name)+' is favourable based on the KPI meaning available in the data.':' Higher '+miEsc(name)+' warrants attention based on the KPI meaning available in the data.')+remark};
+  }
+  if(sem==='environmental'){
+    const favourable=ch.abs<0;
+    return {bucket:favourable?'performance':'attention',text:sentence+(favourable?' Lower '+miEsc(name)+' is generally favourable under the default ESG direction (lower is better).':' Higher '+miEsc(name)+' warrants attention under the default ESG direction (lower is better).')+remark};
+  }
+  if(sem==='environmental_positive'){
+    const favourable=ch.abs>0;
+    return {bucket:favourable?'performance':'attention',text:sentence+(favourable?' Higher '+miEsc(name)+' is generally favourable under the default ESG direction (higher is better).':' Lower '+miEsc(name)+' warrants attention under the default ESG direction (higher is better).')+remark};
   }
   const favourable=/lower/i.test(direction)?ch.abs<0:ch.abs>0;
   return {bucket:favourable?'performance':'attention',text:sentence+(favourable?' This movement is favourable based on the KPI direction available in the data.':' This movement is adverse based on the KPI direction available in the data.')+remark};
@@ -3742,7 +3766,7 @@ function wireRest(){
 
   function dashboardFile(){
     const html='<!doctype html>\n'+document.documentElement.outerHTML;
-    return new File([html],'InstantDash_Dashboard_v1.7.3.html',{type:'text/html'});
+    return new File([html],'InstantDash_Dashboard_v1.7.4.html',{type:'text/html'});
   }
   function open(){panel.style.display='flex';note.textContent='';}
   function hide(){panel.style.display='none';}
@@ -3765,14 +3789,14 @@ function wireRest(){
     try{
       if(navigator.share && (!navigator.canShare || navigator.canShare({files:[f]}))){
         await navigator.share({
-          title:'InstantDash Dashboard v1.7.3',
+          title:'InstantDash Dashboard v1.7.4',
           text:'Interactive InstantDash dashboard',
           files:[f]
         });
         note.textContent='Share completed.';
       }else if(navigator.share){
         await navigator.share({
-          title:'InstantDash Dashboard v1.7.3',
+          title:'InstantDash Dashboard v1.7.4',
           text:'Interactive InstantDash dashboard'
         });
       }else{
@@ -3785,7 +3809,7 @@ function wireRest(){
   });
 
   copyBtn && copyBtn.addEventListener('click',async()=>{
-    const text='InstantDash Dashboard v1.7.3 — interactive management dashboard.';
+    const text='InstantDash Dashboard v1.7.4 — interactive management dashboard.';
     try{
       await navigator.clipboard.writeText(text);
       note.textContent='Share text copied to clipboard.';
