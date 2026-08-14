@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<title>InstantDash — Excel to Dashboard v5.2.3</title>
+<title>InstantDash — Excel to Dashboard v5.2.4</title>
 <meta name="author" content="Developed by Anil Sharma, Former General Manager, Central Bank of India">
-<meta name="application-name" content="InstantDash v5.2.3">
-<meta name="description" content="InstantDash — Excel to Dashboard v5.2.3, developed by Anil Sharma">
+<meta name="application-name" content="InstantDash v5.2.4">
+<meta name="description" content="InstantDash — Excel to Dashboard v5.2.4, developed by Anil Sharma">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js';document.head.appendChild(s);"></script>
@@ -217,7 +217,7 @@ select, .input{
 .chart-body{position:relative; height:320px; min-height:320px; width:100%; overflow:hidden;}
 .chart-body canvas{display:block !important; width:100% !important; height:100% !important; min-height:300px;}
 .chart-controls-row{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; border-top:1px dashed var(--line); padding-top:8px;}
-/* ---------- v5.2.3 mobile-first dashboard polish ---------- */
+/* ---------- v5.2.4 mobile-first dashboard polish ---------- */
 .kpi-card{position:relative;overflow:hidden;min-height:196px;padding:18px 18px 16px;border-radius:18px;border:1px solid rgba(255,255,255,.06);background:linear-gradient(145deg,var(--card),rgba(255,255,255,.018));box-shadow:0 8px 24px rgba(0,0,0,.18);}
 .kpi-card:before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:var(--amber);}
 .kpi-card.kpi-derived:before{background:#304968;}
@@ -517,7 +517,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v403UiFix">
-/* v5.2.3: KPI directory is part of the loaded dashboard, never the landing page. */
+/* v5.2.4: KPI directory is part of the loaded dashboard, never the landing page. */
 #bankingKpiDirectory{display:block}
 #emptyState ~ #bankingKpiDirectory{display:block !important}
 </style>
@@ -549,7 +549,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v412InsightVisibility">
-/* v5.2.3 — high-contrast KPI Insight */
+/* v5.2.4 — high-contrast KPI Insight */
 .click-insight-backdrop{
   background:rgba(0,0,0,.62) !important;
 }
@@ -830,7 +830,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 @media(max-width:480px){.cc-grid{grid-template-columns:1fr}}
 </style>
 <style id="v441AreaDirectoryThemeFix">
-/* v5.2.3: the directory must follow the app theme. Earlier versions used
+/* v5.2.4: the directory must follow the app theme. Earlier versions used
    hard-coded white backgrounds, which made the dark-mode text almost invisible. */
 .banking-kpi-directory{
   margin:18px 0;
@@ -919,7 +919,7 @@ document.addEventListener('DOMContentLoaded', function(){
 </script>
 
 <style id="v444LandingDirectoryVisibility">
-/* v5.2.3 — Landing page is for file upload only.
+/* v5.2.4 — Landing page is for file upload only.
    Area/KPI directories appear after a dashboard is loaded. */
 #areaDirectoryBlock,
 #bankingKpiDirectory{
@@ -1026,11 +1026,11 @@ if(typeof directionFor!=='function'){
 #advisorBack .card{border:1px solid rgba(255,255,255,.12)}
 #advisorBack .badge{white-space:nowrap}
 @media(max-width:700px){#advisorBack .modal{width:96vw;max-height:92vh;overflow:auto}}
-</style><meta name="instantdash-build" content="v5.2.3"><meta name="instantdash-file" content="standalone-html"></head>
+</style><meta name="instantdash-build" content="v5.2.4"><meta name="instantdash-file" content="standalone-html"></head>
 <body>
 
 <div class="topbar">
-  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v5.2.3</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
+  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v5.2.4</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
   <div class="topbar-right">
     <div class="privacy-badge">🔒 <span class="txt">Processed locally — not uploaded to any server</span></div>
     <button class="icon-btn" id="shareTopBtn" title="Share dashboard" aria-label="Share dashboard" type="button">📤</button>
@@ -1448,7 +1448,7 @@ if(typeof directionFor!=='function'){
   </div>
 </div>
 
-<footer class="app-footer">InstantDash <strong>v5.2.3</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
+<footer class="app-footer">InstantDash <strong>v5.2.4</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
 </div>
 
 <!-- Ask Your Data floating widget -->
@@ -2096,7 +2096,7 @@ var KPI_DEFS = [
   {id:'patient_satisfaction',name:'Patient Satisfaction %',dept:'Healthcare',cat:'Customer',aliases:['patient satisfaction','patient satisfaction %','patient experience'],direct:true,agg:'avg',percent:true,higher:true},
   {id:'claim_denial_rate',name:'Claim Denial Rate %',dept:'Healthcare',cat:'Finance',aliases:['claim denial rate','claim denial rate %','insurance claim denial'],direct:true,agg:'avg',percent:true,lower:true},
 
-  {id:'student_enrolment',name:'Student Enrolment',dept:'Education',cat:'Students',aliases:['student enrolment','student enrollment','student count','enrolment'],direct:true,agg:'sum',higher:true},
+  {id:'student_enrolment',name:'Student Enrolment',dept:'Education',cat:'Students',aliases:['student enrolment','student enrollment','student count','students enrolled','student strength'],direct:true,agg:'sum',higher:true},
   {id:'attendance_rate_education',name:'Student Attendance %',dept:'Education',cat:'Students',aliases:['student attendance','student attendance %','attendance rate students'],direct:true,agg:'avg',percent:true,higher:true},
   {id:'pass_rate',name:'Pass Rate %',dept:'Education',cat:'Academic',aliases:['pass rate','pass percentage','success rate students'],direct:true,agg:'avg',percent:true,higher:true},
   {id:'dropout_rate',name:'Dropout Rate %',dept:'Education',cat:'Students',aliases:['dropout rate','drop out rate','student dropout'],direct:true,agg:'avg',percent:true,lower:true},
@@ -2857,7 +2857,7 @@ function fail(msg){
 
 
 
-// v5.2.3: expose the real file handler for the independent mobile file-picker hook.
+// v5.2.4: expose the real file handler for the independent mobile file-picker hook.
 window.instantDashHandleFile = handleFile;
 
 function chooseBestDataSheet(names, wb){
@@ -3453,7 +3453,7 @@ function renderPerformanceScorecard(){
 }
 
 
-/* ===================== InstantDash v5.2.3 =====================
+/* ===================== InstantDash v5.2.4 =====================
    Consolidated management/KPI intelligence layer.
    It is additive: existing v3.5.9 chart engine remains intact.
 ================================================================ */
@@ -4154,6 +4154,10 @@ function enforceAutomaticChartDefault(spec){
 function sourceMatchForKpi(def){
   const cols=STATE.columns||[]; let best=null;
   cols.forEach(col=>{ const p=STATE.profile[col.name]; if(!p||p.type!=='Number') return;
+    // Education's Student Enrolment must have explicit student/learner evidence.
+    // A generic 'Enrolment' column is frequently used by BC social-security data
+    // and must not be misclassified as an Education KPI.
+    if(def.id==='student_enrolment' && !/student|pupil|learner|student\s+strength/i.test(String(col.name||''))) return;
     let score=0, alias='';
     def.aliases.forEach(a=>{const sc=kpiAliasScore(col.name,a); if(sc>score){score=sc;alias=a;}});
     if(score>0){
@@ -4168,6 +4172,14 @@ function sourceMatchForKpi(def){
 function detectDepartment(){
   const cols=Array.isArray(STATE.columns)?STATE.columns:[];
   const rows=STATE.filteredData?.length?STATE.filteredData:(STATE.data||[]);
+
+  // 0) Strong BC identity signal. BC datasets commonly contain several BC
+  // identifier fields; this must take precedence over generic words such as
+  // 'enrolment', which can occur in BC social-security scheme columns.
+  const colNames=cols.map(c=>String(c.name||'').trim().toLowerCase());
+  const bcIdentityHits=colNames.filter(n=>/^(bc|bc name|bc id|bc code|bc no|bc number|business correspondent|business correspondent name|csp name|csp id|bank mitra|bank mitra id)$/.test(n)).length;
+  const bcEvidence=colNames.filter(n=>/business correspondent|\bbc\b|bc code|bc id|bc no|bc number|csp|bank mitra|aeps|micro atm|bc commission|commission earned by bc/.test(n)).length;
+  if(bcIdentityHits>=1 || bcEvidence>=2) return 'BC Performance';
 
   // 1) Explicit Area/Department/Category field.
   const areaCol=cols.find(c=>/^(area|department|category|kpi area|business area|segment)$/i.test(String(c.name||'').trim()));
@@ -4278,7 +4290,7 @@ function fmtKpiValue(k){
   return fmtNum(k.value,{compact:true});
 }
 
-// ---------- v5.2.3: SINGLE DEPARTMENT CODE SCOPING ----------
+// ---------- v5.2.4: SINGLE DEPARTMENT CODE SCOPING ----------
 function departmentCodeForLabel(label){
   const n=String(label||'').trim().toLowerCase();
   const map={
@@ -4329,7 +4341,7 @@ function renderKpiMapping(kpis){
   const box=document.getElementById('kpiMappingBody'); if(!box)return;
   const autoDept=detectDepartment();
   const dept=STATE.kpiDepartment&&STATE.kpiDepartment!=='Auto Detect'?STATE.kpiDepartment:autoDept;
-  // v5.2.3: Mapping table is strictly department-scoped.
+  // v5.2.4: Mapping table is strictly department-scoped.
   const scoped = (dept && dept!=='Auto Detect') ? kpis.filter(k=>kpiBelongsToDepartment(k,dept)) : [];
   kpis=scoped;
   const picker=document.getElementById('departmentPicker');
@@ -4352,7 +4364,7 @@ function renderKpiMapping(kpis){
     renderKPIs();
   }));
 }
-/* v5.2.3 — SINGLE CODE KPI ARCHITECTURE
+/* v5.2.4 — SINGLE CODE KPI ARCHITECTURE
    One primary department code is the authoritative key for:
    Department -> KPI -> Formula family.
    Human-readable multi-department labels remain display-only; the first
@@ -4907,7 +4919,7 @@ function chooseAndBuildCharts(){
   });
   const times=timeList();
   const specs=[];
-  // v5.2.3: always start the management dashboard with graphical KPI summaries.
+  // v5.2.4: always start the management dashboard with graphical KPI summaries.
   // Separate units so ₹, %, counts and time-based KPIs are never placed on one axis.
   const scopedForCharts=getDepartmentScopedKpis();
   const summaryGroups=['currency','percent','number','ratio','time'];
@@ -5228,7 +5240,7 @@ function fmtCurrencyCompact(n){
 
 function buildChartDataset(spec){
   spec=enforceAutomaticChartDefault(spec);
-  // v5.2.3: KPI summary charts are built from the already-calculated,
+  // v5.2.4: KPI summary charts are built from the already-calculated,
   // department-scoped KPI values, so a dashboard is still graphical even
   // when the source workbook has no usable date/category axis.
   if(spec.kpiSummary){
@@ -7632,7 +7644,7 @@ document.addEventListener('click',(e)=>{
 </style>
 
 <style id="v490ManagementWorkflow">
-/* v5.2.3 — single workflow + management KPI bar dashboard */
+/* v5.2.4 — single workflow + management KPI bar dashboard */
 .workflow-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0 16px;position:sticky;top:57px;z-index:45;background:var(--cream);padding:8px 0}
 .workflow-tab{min-height:48px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:14px;font-weight:800;font-size:13px;padding:10px 12px;box-shadow:var(--shadow);cursor:pointer}
 .workflow-tab.active{background:var(--amber);border-color:var(--amber);color:#17130a}
@@ -7791,7 +7803,7 @@ document.addEventListener('click',(e)=>{
   setTimeout(()=>{setupWorkflow();if(STATE?.data?.length)buildBars();},500);
 })();
 
-/* InstantDash v5.2.3 display settings */
+/* InstantDash v5.2.4 display settings */
 const DISPLAY_SETTINGS_KEY = "instantdash_display_v500";
 const DEFAULT_DISPLAY_SETTINGS = {
   currency:"₹", scale:"thousand", chart:"auto", density:"standard",
@@ -7876,7 +7888,7 @@ function applyDisplaySettings(){
 }
 applyDisplaySettings();
 
-/* InstantDash v5.2.3 — Business Improvement Advisor */
+/* InstantDash v5.2.4 — Business Improvement Advisor */
 function openAdvisor(){
  const m=document.getElementById("advisorBack"); if(!m)return;
  renderAdvisor();
@@ -8088,7 +8100,7 @@ function formatAdvisorValue(r){
  </div>
 </div>
 
-<!-- v5.2.3: robust top-bar controls -->
+<!-- v5.2.4: robust top-bar controls -->
 <script id="v519TopBarControls">
 (function(){
   function ready(){
@@ -8524,7 +8536,7 @@ function formatAdvisorValue(r){
 })();
 </script>
 
-<!-- InstantDash v5.2.3 — Single Department Code Master Engine -->
+<!-- InstantDash v5.2.4 — Single Department Code Master Engine -->
 <style id="v520DepartmentMasterStyle">
 #v520MasterOverlay{position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:100000;display:none;align-items:center;justify-content:center;padding:14px}
 #v520MasterOverlay.open{display:flex}
@@ -8682,7 +8694,7 @@ function formatAdvisorValue(r){
   function exportMaster(){
     const payload={version:'5.2.0',architecture:'single-department-code',departments:allDepts().map(d=>({code:d.code,name:d.name,kpis:d.kpis}))};
     const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
-    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='InstantDash_Department_KPI_Master_v5.2.3.json';a.click();
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='InstantDash_Department_KPI_Master_v5.2.4.json';a.click();
     setTimeout(()=>URL.revokeObjectURL(a.href),1000);
   }
   function reset(){if(confirm('Restore the preloaded Department/KPI master? Custom departments and KPIs will be removed.')){user={};save();selected='FIN';renderDepts();renderKpis();}}
