@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>InstantDash — Excel / CSV / PDF → Dashboard · v1.7.2</title>
+<title>InstantDash — Excel / CSV / PDF → Dashboard · v1.7.3</title>
 
 <!-- ============================================================
      LIBRARIES (loaded from CDN, no build step required)
@@ -291,6 +291,8 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
 .management-insights .mi-card.good{border-left:3px solid var(--ok)}
 .management-insights .mi-card.warn{border-left:3px solid var(--warn)}
 .management-insights .mi-card.neutral{border-left:3px solid var(--accent)}
+.management-insights .mi-card.review{border-left:3px solid var(--accent)}
+.management-insights .mi-card.review .mi-more{color:var(--accent)}
 .management-insights .mi-card.executive{grid-column:1/-1;border-left:4px solid var(--accent);background:var(--card)}
 .management-insights .mi-card.executive summary{padding:15px 16px 10px;font-size:14px}
 .management-insights .mi-card.executive .mi-body{padding:0 16px 16px}
@@ -605,7 +607,7 @@ body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"/><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"/><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"/></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.7.2</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.7.3</span>
   </div>
   <span id="share"></span><button type="button" class="v154-share-tab" id="v154ShareTab" title="Share dashboard">📤 Share</button>
   <div class="spacer"></div>
@@ -853,7 +855,7 @@ body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var
    --------------------------------------------------------------------- */
 const CONFIG = {
   APP_NAME: 'InstantDash',
-  VERSION: 'v1.7.2',
+  VERSION: 'v1.7.3',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -2789,6 +2791,10 @@ function miSemantic(kpi){
   if(/threats?\s*(detected|identified)|attacks?\s*(detected|identified)|vulnerabilit(y|ies)|exposure|security\s*incidents?|critical\s*incidents?|data\s*breach|breaches|malware\s*detected|phishing\s*(attempts?|incidents?)/i.test(n)) return 'risk';
   if(/threats?\s*blocked|attacks?\s*blocked|incidents?\s*resolved|vulnerabilit(y|ies)\s*resolved|patch(es|ing)?\s*(completed|applied)|controls?\s*implemented|security\s*compliance/i.test(n)) return 'protective';
   if(/stock[-\s]?outs?|availability|service\s*level|on[-\s]?time|fill\s*rate|uptime/i.test(n)) return 'quality';
+  /* Expenditure is not intrinsically good or bad. Higher spend may reflect
+     growth, inflation, capacity needs or inefficiency; compare it with plan
+     and operating outcomes before classifying the movement. */
+  if(/\b(cost|costs|expense|expenses|spend|spending|expenditure|budget|salary|salaries)\b/i.test(n)) return 'contextual';
   if(/audit.*finding|finding(s)?$|repeat\s*finding|open\s*finding|pending\s*finding/i.test(n)) return 'contextual';
   if(miIsContextual(kpi)) return 'contextual';
   return 'output';
@@ -2937,7 +2943,7 @@ function miMovementText(name,ch,prev,cur,lr){
   const relatedRemark=miRelatedManagementRemark(name,lr);
   const genericRemark=miGenericManagementRemark(name,direction,sem,/lower/i.test(direction)?ch.abs<0:ch.abs>0,ch);
   const remark=relatedRemark||genericRemark;
-  if(sem==='contextual') return {bucket:'drivers',text:sentence+' This is a contextual movement; assess it against demand, service outcomes, workload, access/reporting behaviour and the relevant target or operating outcome before calling it favourable or adverse.'+remark};
+  if(sem==='contextual') return {bucket:'review',text:sentence+' This movement requires context before it can be called favourable or adverse; assess it against the relevant target, budget, workload, service outcome, capacity or operating result.'+remark};
   if(sem==='risk'){
     if(ch.abs>0) return {bucket:'attention',text:sentence+' Higher exposure or incident volume warrants investigation; assess whether the movement reflects increased risk, improved detection, or both.'+remark};
     if(ch.abs<0) return {bucket:'performance',text:sentence+' Lower risk/exposure is a positive signal, subject to confirming that detection and reporting practices remained consistent.'+remark};
@@ -2954,19 +2960,21 @@ function miMovementText(name,ch,prev,cur,lr){
   return {bucket:favourable?'performance':'attention',text:sentence+(favourable?' This movement is favourable based on the KPI direction available in the data.':' This movement is adverse based on the KPI direction available in the data.')+remark};
 }
 function miStatus(items){
-  const a=(items.attention||[]).length, p=(items.performance||[]).length;
+  const a=(items.attention||[]).length, p=(items.performance||[]).length, r=(items.review||[]).length;
   if(a&&p)return 'Mixed';
-  if(a)return 'Attention required';
-  if(p)return 'Positive';
+  if(a)return r ? 'Mixed — review context' : 'Attention required';
+  if(p)return r ? 'Mixed — review context' : 'Positive';
+  if(r)return 'Review required';
   return 'Limited evidence';
 }
 function miStrip(v){return String(v||'').replace(/<[^>]*>/g,'').replace(/\s+/g,' ').trim();}
 function miCard(title,items,cls='neutral',open=false,maxItems=null){
   const arr=(Array.isArray(items)?items:[]).filter(x=>miStrip(x));
-  const limit=maxItems==null?(cls==='executive'?3:(cls==='good'||cls==='warn'?5:4)):maxItems;
+  const limit=maxItems==null?(cls==='executive'?3:(cls==='good'||cls==='warn'||cls==='review'?5:4)):maxItems;
   const fallback={
     good:'No material favourable movement was identified from the available comparable data.',
     warn:'No material adverse movement was identified from the available comparable data.',
+    review:'No contextual movement requiring additional review was identified.',
     neutral:'No specialised relationship was available; review the principal KPIs together with the comparable period, target or supporting driver.',
     executive:'The available data does not provide enough comparable evidence for a strong management conclusion.'
   };
@@ -3060,7 +3068,7 @@ function buildManagementSnapshot(items){
 function buildManagementInsights(){
   const grid=$('managementInsightsGrid'); if(!grid)return;
   const rows=APP.filtered||[]; if(!rows.length){grid.innerHTML=miCard('Management view',[],'neutral');return;}
-  const items={performance:[],attention:[],drivers:[],relationships:[],actions:[]};
+  const items={performance:[],attention:[],review:[],drivers:[],relationships:[],actions:[]};
   const dateCol=timeCols()[0];
   const lr=miLatestPeriodRows(rows,dateCol);
   const numeric=APP.columns.filter(c=>c.type==='number');
@@ -3251,7 +3259,8 @@ function buildManagementInsights(){
   if(items.attention.length)items.actions.push('Review the largest adverse movements first and confirm the operational reason with the responsible business owner.');
   if(items.relationships.length)items.actions.push('Review the derived ratios and KPI relationships before assessing individual movements; they provide context but do not establish causation.');
   if(items.drivers.length)items.actions.push('Use data-supported relationships and concentrations as the starting point for management review; contribution or correlation must not be treated as proof of causation.');
-  if(items.performance.length&&!items.attention.length)items.actions.push('Continue monitoring the favourable indicators and verify that improvements are sustained in the next comparable period.');
+  if(items.review.length)items.actions.push('Validate contextual movements against the approved plan, budget, workload, capacity and actual operating outcomes before labelling them favourable or adverse.');
+  if(items.performance.length&&!items.attention.length&&!items.review.length)items.actions.push('Continue monitoring the favourable indicators and verify that improvements are sustained in the next comparable period.');
   if(!items.performance.length&&!items.attention.length&&!items.drivers.length&&!items.relationships.length)items.actions.push('No material management variation can be established from the current data. Add a prior-period, target or comparable-period basis for stronger analysis.');
 
   /* FINAL CONTENT GUARANTEE — the three management sections must never be
@@ -3286,15 +3295,17 @@ function buildManagementInsights(){
   updateLivePreview();
   const top=[];
   if(items.attention.length) top.push(`<b>Priority concern:</b> ${miStrip(items.attention[0])}`);
-  if(items.performance.length) top.push(`<b>Positive development:</b> ${miStrip(items.performance[0])}`);
-  if(items.relationships.length) top.push(`<b>Key context:</b> ${miStrip(items.relationships[0])}`);
+  if(items.review.length && top.length<2) top.push(`<b>Requires review:</b> ${miStrip(items.review[0])}`);
+  if(items.performance.length && top.length<3) top.push(`<b>Positive development:</b> ${miStrip(items.performance[0])}`);
+  if(items.relationships.length && top.length<3) top.push(`<b>Key context:</b> ${miStrip(items.relationships[0])}`);
   if(!top.length) top.push('The available data does not provide enough comparable evidence for a strong management conclusion.');
   grid.innerHTML=miCard('Executive takeaway',top,'executive',true,3)+
     miCard('What is going well',items.performance,'good',false,5)+
+    miCard('Requires review',items.review,'review',false,5)+
     miCard('Variations requiring attention',items.attention,'warn',false,5)+
     miCard('Management interpretation & possible drivers',items.drivers,'neutral',false,4)+
     miCard('Key relationships & derived ratios',items.relationships,'neutral',false,4)+
-    miCard('Management action',items.actions,'neutral',false,3);
+    miCard('Management action',items.actions,'neutral',false,4);
   miSyncAccordions(); miWireMore();
 }
 
@@ -3380,12 +3391,14 @@ function buildExecutiveCockpit(){
   const mi = window.__miItems || {};
   const att = Array.isArray(mi.attention) ? mi.attention.length : 0;
   const perf = Array.isArray(mi.performance) ? mi.performance.length : 0;
+  const rev = Array.isArray(mi.review) ? mi.review.length : 0;
   const dataQualityIssue = warnCount > 0 || missingPct >= CONFIG.MISSING_WARN_PCT;
 
   let reviewStatus = 'Ready';
   if (att && perf) reviewStatus = 'Mixed';
-  else if (att) reviewStatus = 'Needs attention';
-  else if (perf) reviewStatus = 'Positive';
+  else if (att) reviewStatus = rev ? 'Mixed' : 'Needs attention';
+  else if (perf) reviewStatus = rev ? 'Mixed' : 'Positive';
+  else if (rev) reviewStatus = 'Review required';
 
   /* A data-quality exception takes precedence only when there is no
      stronger movement status to report. */
@@ -3396,8 +3409,8 @@ function buildExecutiveCockpit(){
     status.textContent = reviewStatus;
 
     if (reviewStatus === 'Mixed') {
-      sub.textContent = `${att} attention movement${att===1?'':'s'} and ${perf} favourable movement${perf===1?'':'s'} identified. Review before drawing conclusions.`;
-      badge.textContent = `● ${att} attention · ${perf} favourable`;
+      sub.textContent = `${att} attention, ${perf} favourable and ${rev} contextual review movement${rev===1?'':'s'} identified. Review before drawing conclusions.`;
+      badge.textContent = `● ${att} attention · ${perf} favourable${rev ? ' · ' + rev + ' review' : ''}`;
     } else if (reviewStatus === 'Needs attention') {
       sub.textContent = att
         ? `${att} adverse/attention movement${att===1?'':'s'} identified. Review before relying on conclusions.`
@@ -3406,6 +3419,9 @@ function buildExecutiveCockpit(){
     } else if (reviewStatus === 'Positive') {
       sub.textContent = `${perf} favourable movement${perf===1?'':'s'} identified. Confirm that the improvement is sustained.`;
       badge.textContent = `● ${perf} favourable`;
+    } else if (reviewStatus === 'Review required') {
+      sub.textContent = `${rev} contextual movement${rev===1?'':'s'} require supporting evidence before being labelled favourable or adverse.`;
+      badge.textContent = `● ${rev} review`;
     } else {
       sub.textContent = 'The loaded data is ready for management review.';
       badge.textContent = '● Good to review';
@@ -3495,16 +3511,17 @@ function updateLivePreview(){
 
   const att = Array.isArray(window.__miItems?.attention) ? window.__miItems.attention.length : 0;
   const perf = Array.isArray(window.__miItems?.performance) ? window.__miItems.performance.length : 0;
+  const rev = Array.isArray(window.__miItems?.review) ? window.__miItems.review.length : 0;
 
   // Keep the preview aligned with the Executive Dashboard's language.
-  const status = att && perf ? 'Mixed' : att ? 'Needs attention' : perf ? 'Positive' : 'Ready';
+  const status = att && perf ? 'Mixed' : att ? (rev ? 'Mixed' : 'Needs attention') : perf ? (rev ? 'Mixed' : 'Positive') : rev ? 'Review required' : 'Ready';
 
-  // Quality is the base score. Attention items reduce confidence; favourable
-  // items provide only a modest offset so the preview never overstates results.
+  // Quality is the base score. Attention and contextual-review items reduce
+  // confidence; favourable items provide only a modest offset.
   const score = Math.max(0, Math.min(100,
-    Math.round(quality - Math.min(30, att * 8) + Math.min(8, perf * 2))
+    Math.round(quality - Math.min(30, att * 8) - Math.min(20, rev * 4) + Math.min(8, perf * 2))
   ));
-  const scoreBasis = `Review score ${Math.round(score)}/100 · data quality ${quality.toFixed(0)}% · ${att} attention movement${att===1?'':'s'} · ${perf} favourable movement${perf===1?'':'s'}. This is a review-confidence indicator, not a performance rating.`;
+  const scoreBasis = `Review score ${Math.round(score)}/100 · data quality ${quality.toFixed(0)}% · ${att} attention · ${perf} favourable · ${rev} review. This is a review-confidence indicator, not a performance rating.`;
   ring.title = scoreBasis;
   ring.setAttribute('aria-label', scoreBasis);
 
@@ -3516,8 +3533,12 @@ function updateLivePreview(){
   movementEl.classList.remove('preview-neutral','preview-attention','preview-positive');
   if(att){
     movementEl.textContent=`${att} attention movement${att===1?'':'s'}`;
-    movementSub.textContent='Calculated from your data';
+    movementSub.textContent=rev ? `${rev} additional movement${rev===1?'':'s'} require context` : 'Calculated from your data';
     movementEl.classList.add('preview-attention');
+  } else if(rev){
+    movementEl.textContent=`${rev} review movement${rev===1?'':'s'}`;
+    movementSub.textContent='Context required before classification';
+    movementEl.classList.add('preview-neutral');
   } else if(perf){
     movementEl.textContent=`${perf} favourable movement${perf===1?'':'s'}`;
     movementSub.textContent='Favourable movements detected';
@@ -3560,6 +3581,8 @@ function updateLivePreview(){
     let summary='Dashboard calculated from the currently loaded and filtered data.';
     if(att){
       summary = `${att} attention item${att===1?'':'s'} detected. Review the underlying data and supporting KPIs before drawing conclusions.`;
+    } else if(rev){
+      summary = `${rev} contextual movement${rev===1?'':'s'} detected. Compare with the relevant target, budget, workload or operating outcome before classification.`;
     } else if(perf){
       summary = `${perf} favourable movement${perf===1?'':'s'} detected. Confirm that the improvement is sustained and supported by related KPIs.`;
     }
@@ -3719,7 +3742,7 @@ function wireRest(){
 
   function dashboardFile(){
     const html='<!doctype html>\n'+document.documentElement.outerHTML;
-    return new File([html],'InstantDash_Dashboard_v1.7.2.html',{type:'text/html'});
+    return new File([html],'InstantDash_Dashboard_v1.7.3.html',{type:'text/html'});
   }
   function open(){panel.style.display='flex';note.textContent='';}
   function hide(){panel.style.display='none';}
@@ -3742,14 +3765,14 @@ function wireRest(){
     try{
       if(navigator.share && (!navigator.canShare || navigator.canShare({files:[f]}))){
         await navigator.share({
-          title:'InstantDash Dashboard v1.7.2',
+          title:'InstantDash Dashboard v1.7.3',
           text:'Interactive InstantDash dashboard',
           files:[f]
         });
         note.textContent='Share completed.';
       }else if(navigator.share){
         await navigator.share({
-          title:'InstantDash Dashboard v1.7.2',
+          title:'InstantDash Dashboard v1.7.3',
           text:'Interactive InstantDash dashboard'
         });
       }else{
@@ -3762,7 +3785,7 @@ function wireRest(){
   });
 
   copyBtn && copyBtn.addEventListener('click',async()=>{
-    const text='InstantDash Dashboard v1.7.2 — interactive management dashboard.';
+    const text='InstantDash Dashboard v1.7.3 — interactive management dashboard.';
     try{
       await navigator.clipboard.writeText(text);
       note.textContent='Share text copied to clipboard.';
