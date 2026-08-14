@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<title>InstantDash — Excel to Dashboard v5.0.0</title>
+<title>InstantDash — Excel to Dashboard v5.1.0</title>
 <meta name="author" content="Developed by Anil Sharma, Former General Manager, Central Bank of India">
 <meta name="application-name" content="InstantDash v5.0.0">
 <meta name="description" content="InstantDash — Excel to Dashboard v5.0.0, developed by Anil Sharma">
@@ -1012,7 +1012,11 @@ if(typeof directionFor!=='function'){
 .kpi-card{min-width:0}
 @media(max-width:700px){.settings-grid{grid-template-columns:1fr}.dashboard-grid{grid-template-columns:1fr}}
 </style>
-</head>
+<style id="advisor-css">
+#advisorBack .card{border:1px solid rgba(255,255,255,.12)}
+#advisorBack .badge{white-space:nowrap}
+@media(max-width:700px){#advisorBack .modal{width:96vw;max-height:92vh;overflow:auto}}
+</style></head>
 <body>
 
 <div class="topbar">
@@ -7653,6 +7657,96 @@ function applyDisplaySettings(){
   els.forEach(el=>el.textContent=formatDisplayAmount(Number(el.dataset.amountValue)));
 }
 applyDisplaySettings();
+
+/* InstantDash v5.1.0 — Business Improvement Advisor */
+function openAdvisor(){
+ const m=document.getElementById("advisorBack"); if(!m)return;
+ renderAdvisor();
+ m.style.display="flex";
+}
+function closeAdvisor(e){
+ if(!e || e.target===document.getElementById("advisorBack")) document.getElementById("advisorBack").style.display="none";
+}
+function advisorRows(){
+ return (typeof analysisResults!=="undefined" ? analysisResults : []).filter(r=>r && Number.isFinite(Number(r.value)));
+}
+function advisorPct(r){ return Number.isFinite(Number(r.growth)) ? Number(r.growth) : null; }
+function advisorNature(r){
+ const n=String(r.nature||"").toLowerCase();
+ if(n.includes("lower")) return "lower";
+ if(n.includes("higher")) return "higher";
+ return "neutral";
+}
+function advisorStatus(r){
+ const g=advisorPct(r), a=Number(r.achievement);
+ if(Number.isFinite(a)){
+   if(a>=100) return "good";
+   if(a<90) return "attention";
+ }
+ if(g!==null){
+   if(advisorNature(r)==="higher" && g>=5) return "good";
+   if(advisorNature(r)==="higher" && g<=-5) return "attention";
+   if(advisorNature(r)==="lower" && g<=-5) return "good";
+   if(advisorNature(r)==="lower" && g>=5) return "attention";
+ }
+ return "watch";
+}
+function advisorReason(r){
+ const g=advisorPct(r), a=Number(r.achievement), nature=advisorNature(r);
+ if(Number.isFinite(a) && a<90) return `The KPI is at ${a.toFixed(1)}% of the stated target. This is a factual performance gap; the uploaded data does not by itself establish the cause.`;
+ if(g!==null){
+   if(nature==="higher" && g<=-5) return `The KPI declined ${Math.abs(g).toFixed(1)}% versus the previous period. This is a factual movement; a causal reason requires supporting driver-level data.`;
+   if(nature==="lower" && g>=5) return `The KPI increased ${g.toFixed(1)}% while lower values are preferable. This is a factual adverse movement; the cause is not established from this KPI alone.`;
+   if(nature==="higher" && g>=5) return `The KPI improved ${g.toFixed(1)}% versus the previous period. Consider identifying and replicating the drivers using supporting data.`;
+   if(nature==="lower" && g<=-5) return `The KPI improved by declining ${Math.abs(g).toFixed(1)}% versus the previous period. Consider identifying what changed and sustaining it.`;
+ }
+ return "No material movement or target gap was established from the available KPI values.";
+}
+function advisorAction(r){
+ const n=advisorNature(r), st=advisorStatus(r);
+ if(st==="attention"){
+   if(n==="higher") return "Investigate the source-level drivers, identify low-performing segments, and prepare a corrective action plan with an owner and review date.";
+   if(n==="lower") return "Identify the source-level contributors to the adverse increase, prioritise the largest contributors, and set a corrective action target.";
+   return "Review the underlying data and define a measurable management action.";
+ }
+ if(st==="good") return "Identify the practices or segments associated with the improvement and consider replicating them across comparable areas.";
+ return "Monitor the KPI and obtain driver-level data if management needs a causal explanation.";
+}
+function renderAdvisor(){
+ const rows=advisorRows();
+ const d=(typeof dept==="function"?dept():null);
+ const name=d?`${d.icon||""} ${d.name}`:"Selected Department";
+ const attention=rows.filter(r=>advisorStatus(r)==="attention").length;
+ const good=rows.filter(r=>advisorStatus(r)==="good").length;
+ document.getElementById("advisorSummary").innerHTML=`<b>${esc(name)}</b><br>${rows.length} KPI(s) with calculated values • ${good} positive • ${attention} requiring attention • ${rows.length-good-attention} to monitor.`;
+ if(!rows.length){
+   document.getElementById("advisorBody").innerHTML=`<div class="empty">Complete an analysis first. The Advisor needs calculated KPI results and will not invent recommendations from missing data.</div>`;
+   return;
+ }
+ const sorted=rows.slice().sort((a,b)=>{
+   const rank={attention:0,watch:1,good:2};
+   return (rank[advisorStatus(a)]-rank[advisorStatus(b)]);
+ });
+ let html="";
+ sorted.forEach((r,i)=>{
+   const st=advisorStatus(r);
+   const badge=st==="attention"?"🔴 Immediate Attention":st==="good"?"🟢 Strength":"🟠 Monitor";
+   const g=advisorPct(r);
+   html+=`<div class="card" style="margin-bottom:12px">
+    <div class="row between"><div><b>${esc(r.name)}</b><div class="sub">${esc(r.formula||"Direct source value")}</div></div><span class="badge">${badge}</span></div>
+    <div class="notice" style="margin-top:9px"><b>Observed:</b> ${esc(advisorReason(r))}</div>
+    <div style="margin-top:8px"><b>Recommended action:</b> ${esc(advisorAction(r))}</div>
+    <div class="sub" style="margin-top:8px">Current: ${esc(formatAdvisorValue(r))}${g===null?"":` • Movement: ${g>=0?"+":""}${g.toFixed(1)}%`}${Number.isFinite(Number(r.achievement))?` • Achievement: ${Number(r.achievement).toFixed(1)}%`:""}</div>
+   </div>`;
+ });
+ document.getElementById("advisorBody").innerHTML=html;
+}
+function formatAdvisorValue(r){
+ const v=Number(r.value); if(!Number.isFinite(v))return "—";
+ if(String(r.unit||"").includes("%")) return v.toFixed(2)+"%";
+ if(String(r.unit||"").includes("₹")) return typeof formatDisplayAmount==="function"?formatDisplayAmount(v):"₹"+v.toLocaleString("en-IN");
+ return v.toLocaleString("en-IN",{maximumFractionDigits:2})+(r.unit&&r.unit!=="Number"?" "+r.unit:"");
+}
 </script>
 
 <div id="settingsBack" class="modal-back" style="display:none" onclick="closeSettings(event)">
@@ -7760,6 +7854,20 @@ applyDisplaySettings();
       <button class="btn" onclick="resetDisplaySettings()">↺ Restore Defaults</button>
     </div>
   </div>
+</div>
+
+<div id="advisorBack" class="modal-back" style="display:none" onclick="closeAdvisor(event)">
+ <div class="modal" style="max-width:900px" onclick="event.stopPropagation()">
+  <div class="row between">
+   <div><h2>🧠 Business Improvement Advisor</h2><div class="sub">Evidence-based management guidance from the calculated KPI results.</div></div>
+   <button class="btn" onclick="closeAdvisor()">✕</button>
+  </div>
+  <div id="advisorSummary" class="notice" style="margin-top:14px"></div>
+  <div id="advisorBody" style="margin-top:14px"></div>
+  <div class="notice" style="margin-top:14px">
+   <b>Important:</b> Observations are based on calculated data. Recommendations are management suggestions, not proof of causation. Where the uploaded data cannot establish a reason, the advisor will say so.
+  </div>
+ </div>
 </div>
 </body>
 </html>
