@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<title>InstantDash — Excel to Dashboard v5.1.8</title>
+<title>InstantDash — Excel to Dashboard v5.1.9</title>
 <meta name="author" content="Developed by Anil Sharma, Former General Manager, Central Bank of India">
-<meta name="application-name" content="InstantDash v5.1.8">
-<meta name="description" content="InstantDash — Excel to Dashboard v5.1.8, developed by Anil Sharma">
+<meta name="application-name" content="InstantDash v5.1.9">
+<meta name="description" content="InstantDash — Excel to Dashboard v5.1.9, developed by Anil Sharma">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js';document.head.appendChild(s);"></script>
@@ -217,7 +217,7 @@ select, .input{
 .chart-body{position:relative; height:320px; min-height:320px; width:100%; overflow:hidden;}
 .chart-body canvas{display:block !important; width:100% !important; height:100% !important; min-height:300px;}
 .chart-controls-row{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; border-top:1px dashed var(--line); padding-top:8px;}
-/* ---------- v5.1.8 mobile-first dashboard polish ---------- */
+/* ---------- v5.1.9 mobile-first dashboard polish ---------- */
 .kpi-card{position:relative;overflow:hidden;min-height:196px;padding:18px 18px 16px;border-radius:18px;border:1px solid rgba(255,255,255,.06);background:linear-gradient(145deg,var(--card),rgba(255,255,255,.018));box-shadow:0 8px 24px rgba(0,0,0,.18);}
 .kpi-card:before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:var(--amber);}
 .kpi-card.kpi-derived:before{background:#304968;}
@@ -507,7 +507,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v403UiFix">
-/* v5.1.8: KPI directory is part of the loaded dashboard, never the landing page. */
+/* v5.1.9: KPI directory is part of the loaded dashboard, never the landing page. */
 #bankingKpiDirectory{display:block}
 #emptyState ~ #bankingKpiDirectory{display:block !important}
 </style>
@@ -539,7 +539,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v412InsightVisibility">
-/* v5.1.8 — high-contrast KPI Insight */
+/* v5.1.9 — high-contrast KPI Insight */
 .click-insight-backdrop{
   background:rgba(0,0,0,.62) !important;
 }
@@ -820,7 +820,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 @media(max-width:480px){.cc-grid{grid-template-columns:1fr}}
 </style>
 <style id="v441AreaDirectoryThemeFix">
-/* v5.1.8: the directory must follow the app theme. Earlier versions used
+/* v5.1.9: the directory must follow the app theme. Earlier versions used
    hard-coded white backgrounds, which made the dark-mode text almost invisible. */
 .banking-kpi-directory{
   margin:18px 0;
@@ -909,7 +909,7 @@ document.addEventListener('DOMContentLoaded', function(){
 </script>
 
 <style id="v444LandingDirectoryVisibility">
-/* v5.1.8 — Landing page is for file upload only.
+/* v5.1.9 — Landing page is for file upload only.
    Area/KPI directories appear after a dashboard is loaded. */
 #areaDirectoryBlock,
 #bankingKpiDirectory{
@@ -1016,11 +1016,11 @@ if(typeof directionFor!=='function'){
 #advisorBack .card{border:1px solid rgba(255,255,255,.12)}
 #advisorBack .badge{white-space:nowrap}
 @media(max-width:700px){#advisorBack .modal{width:96vw;max-height:92vh;overflow:auto}}
-</style><meta name="instantdash-build" content="v5.1.8"><meta name="instantdash-file" content="standalone-html"></head>
+</style><meta name="instantdash-build" content="v5.1.9"><meta name="instantdash-file" content="standalone-html"></head>
 <body>
 
 <div class="topbar">
-  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v5.1.8</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
+  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v5.1.9</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
   <div class="topbar-right">
     <div class="privacy-badge">🔒 <span class="txt">Processed locally — not uploaded to any server</span></div>
     <button class="icon-btn" id="shareTopBtn" title="Share dashboard" aria-label="Share dashboard as an image" style="display:none;">📤</button>
@@ -1434,7 +1434,7 @@ if(typeof directionFor!=='function'){
   </div>
 </div>
 
-<footer class="app-footer">InstantDash <strong>v5.1.8</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
+<footer class="app-footer">InstantDash <strong>v5.1.9</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
 </div>
 
 <!-- Ask Your Data floating widget -->
@@ -2828,7 +2828,7 @@ function fail(msg){
 
 
 
-// v5.1.8: expose the real file handler for the independent mobile file-picker hook.
+// v5.1.9: expose the real file handler for the independent mobile file-picker hook.
 window.instantDashHandleFile = handleFile;
 
 function chooseBestDataSheet(names, wb){
@@ -3424,7 +3424,7 @@ function renderPerformanceScorecard(){
 }
 
 
-/* ===================== InstantDash v5.1.8 =====================
+/* ===================== InstantDash v5.1.9 =====================
    Consolidated management/KPI intelligence layer.
    It is additive: existing v3.5.9 chart engine remains intact.
 ================================================================ */
@@ -7430,7 +7430,7 @@ document.addEventListener('click',(e)=>{
 </style>
 
 <style id="v490ManagementWorkflow">
-/* v5.1.8 — single workflow + management KPI bar dashboard */
+/* v5.1.9 — single workflow + management KPI bar dashboard */
 .workflow-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0 16px;position:sticky;top:57px;z-index:45;background:var(--cream);padding:8px 0}
 .workflow-tab{min-height:48px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:14px;font-weight:800;font-size:13px;padding:10px 12px;box-shadow:var(--shadow);cursor:pointer}
 .workflow-tab.active{background:var(--amber);border-color:var(--amber);color:#17130a}
@@ -7589,7 +7589,7 @@ document.addEventListener('click',(e)=>{
   setTimeout(()=>{setupWorkflow();if(STATE?.data?.length)buildBars();},500);
 })();
 
-/* InstantDash v5.1.8 display settings */
+/* InstantDash v5.1.9 display settings */
 const DISPLAY_SETTINGS_KEY = "instantdash_display_v500";
 const DEFAULT_DISPLAY_SETTINGS = {
   currency:"₹", scale:"thousand", chart:"auto", density:"standard",
@@ -7674,7 +7674,7 @@ function applyDisplaySettings(){
 }
 applyDisplaySettings();
 
-/* InstantDash v5.1.8 — Business Improvement Advisor */
+/* InstantDash v5.1.9 — Business Improvement Advisor */
 function openAdvisor(){
  const m=document.getElementById("advisorBack"); if(!m)return;
  renderAdvisor();
@@ -7885,6 +7885,103 @@ function formatAdvisorValue(r){
   </div>
  </div>
 </div>
+
+<!-- v5.1.9: robust top-bar controls -->
+<script id="v519TopBarControls">
+(function(){
+  function ready(){
+    const help=document.getElementById('helpToggle');
+    const settings=document.getElementById('settingsToggle');
+    const share=document.getElementById('shareTopBtn');
+    const privacy=document.querySelector('.privacy-badge');
+
+    // Help: use the actual Help & Guide modal.
+    if(help){
+      help.onclick=function(ev){
+        ev.preventDefault(); ev.stopPropagation();
+        const m=document.getElementById('helpModal');
+        if(m){ m.classList.add('open'); m.style.display='flex'; }
+      };
+      help.setAttribute('type','button');
+    }
+
+    // Settings: prefer the newer display/dashboard settings panel.
+    if(settings){
+      settings.onclick=function(ev){
+        ev.preventDefault(); ev.stopPropagation();
+        const m=document.getElementById('settingsBack');
+        if(m && typeof window.openSettings==='function'){
+          window.openSettings();
+        }else if(m){
+          m.style.display='flex';
+        }else{
+          const old=document.getElementById('settingsModal');
+          if(old){ old.classList.add('open'); old.style.display='flex'; }
+        }
+      };
+      settings.setAttribute('type','button');
+    }
+
+    // Share: always expose the top-bar share control after data is loaded.
+    if(share){
+      const hasData=!!(window.STATE && Array.isArray(window.STATE.data) && window.STATE.data.length);
+      share.style.display=hasData ? 'flex' : 'none';
+      share.onclick=async function(ev){
+        ev.preventDefault(); ev.stopPropagation();
+        if(window.STATE && Array.isArray(window.STATE.data) && window.STATE.data.length){
+          try{
+            if(typeof window.shareDashboardPng==='function'){
+              await window.shareDashboardPng(share);
+              return;
+            }
+          }catch(e){}
+          try{
+            if(navigator.share){
+              await navigator.share({title:'InstantDash Dashboard',text:'InstantDash management dashboard'});
+            }
+          }catch(e){}
+        }else if(typeof window.showMessage==='function'){
+          window.showMessage('Load a spreadsheet first, then you can share the dashboard.','info');
+        }
+      };
+      share.setAttribute('type','button');
+    }
+
+    // Make the privacy/lock badge interactive instead of a dead decorative element.
+    if(privacy){
+      privacy.setAttribute('role','button');
+      privacy.setAttribute('tabindex','0');
+      privacy.setAttribute('title','Privacy information');
+      const showPrivacy=function(ev){
+        if(ev) ev.preventDefault();
+        let m=document.getElementById('instantdashPrivacyModal');
+        if(!m){
+          m=document.createElement('div');
+          m.id='instantdashPrivacyModal';
+          m.className='modal-overlay';
+          m.style.display='flex';
+          m.innerHTML='<div class="modal" style="max-width:560px"><button class="modal-close" type="button" aria-label="Close">✕</button><h3>🔒 Privacy & Local Processing</h3><p>InstantDash processes the uploaded Excel/CSV data in your browser. The dashboard calculations are performed locally by the application.</p><p>Your uploaded spreadsheet is not intentionally sent to an InstantDash server for processing.</p><div style="text-align:right;margin-top:14px"><button class="btn" type="button">Close</button></div></div>';
+          document.body.appendChild(m);
+          const close=function(){m.style.display='none';};
+          m.querySelector('.modal-close').onclick=close;
+          m.querySelector('.btn').onclick=close;
+          m.onclick=function(e){if(e.target===m)close();};
+        }else{
+          m.style.display='flex';
+        }
+      };
+      privacy.onclick=showPrivacy;
+      privacy.onkeydown=function(e){if(e.key==='Enter'||e.key===' '){showPrivacy(e);}};
+    }
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',ready);
+  else ready();
+  // Re-apply after late dashboard rendering.
+  setTimeout(ready,300);
+  setTimeout(ready,1200);
+})();
+</script>
+
 </body>
 </html>
 
