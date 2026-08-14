@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>InstantDash — Excel to Dashboard · v1.1.0</title>
+<title>InstantDash — Excel to Dashboard · v1.2.0</title>
 
 <!-- ============================================================
      LIBRARIES (loaded from CDN, no build step required)
@@ -294,7 +294,7 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"/><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"/><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"/></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel to Dashboard · v1.1.0</span>
+    <span class="sub">Excel to Dashboard · v1.2.0</span>
   </div>
   <div class="spacer"></div>
   <span class="privacy">🔒 Your data never leaves your computer.</span>
@@ -471,7 +471,7 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
    --------------------------------------------------------------------- */
 const CONFIG = {
   APP_NAME: 'InstantDash',
-  VERSION: 'v1.1.0',
+  VERSION: 'v1.2.0',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -2157,152 +2157,163 @@ function buildInsights(){
 function miEsc(v){ return esc(v == null ? '' : String(v)); }
 function miPct(v){ return isFinite(v) ? (v * 100).toFixed(1) + '%' : '—'; }
 function miSigned(v){ return (v > 0 ? '+' : '') + fmtFull(v); }
-function miDirectionFor(kpiName, fallback='Higher is Better'){
-  const dcol = APP.columns.find(c => /direction|better|polarity/i.test(c.name));
-  if (dcol){
-    const vals = APP.rows.map(r => r[dcol.name]).filter(v => v != null && String(v).trim());
-    const exact = vals.find(v => String(v).trim().toLowerCase().includes(String(kpiName||'').trim().toLowerCase()));
-    if (exact) return String(exact);
-  }
-  return fallback;
-}
 function miFindCol(re){ return APP.columns.find(c => re.test(c.name)); }
+function miNum(v){ return typeof v === 'number' && isFinite(v) ? v : null; }
 function miDirectoryDirection(kpiName){
   try{
-    if (!APP.workbook || !APP.workbook.Sheets || !APP.workbook.Sheets.KPI_Directory || kpiName == null) return null;
-    const ws = APP.workbook.Sheets.KPI_Directory;
-    const a = XLSX.utils.sheet_to_json(ws, {header:1, raw:true, defval:null});
-    if (!a.length) return null;
-    const h = a[0].map(v => String(v == null ? '' : v).trim().toLowerCase());
-    const ki = h.indexOf('kpi'), di = h.indexOf('direction');
-    if (ki < 0 || di < 0) return null;
-    for (let i=1;i<a.length;i++){
-      if (String(a[i][ki] == null ? '' : a[i][ki]).trim().toLowerCase() === String(kpiName).trim().toLowerCase()) return a[i][di] == null ? null : String(a[i][di]);
-    }
-  }catch(_){ /* optional directory sheet must never break the dashboard */ }
+    if (!APP.workbook?.Sheets?.KPI_Directory || kpiName == null) return null;
+    const a=XLSX.utils.sheet_to_json(APP.workbook.Sheets.KPI_Directory,{header:1,raw:true,defval:null});
+    if(!a.length) return null;
+    const h=a[0].map(v=>String(v??'').trim().toLowerCase());
+    const ki=h.indexOf('kpi'),di=h.indexOf('direction'); if(ki<0||di<0)return null;
+    const key=String(kpiName).trim().toLowerCase();
+    for(let i=1;i<a.length;i++) if(String(a[i][ki]??'').trim().toLowerCase()===key) return String(a[i][di]??'');
+  }catch(_){ }
   return null;
 }
-function miNum(v){ return typeof v === 'number' && isFinite(v) ? v : null; }
-function miGroupSum(rows, groupCol, valueCol){
-  const m = new Map();
-  rows.forEach(r => {
-    const g = r[groupCol]; const v = miNum(r[valueCol]);
-    if (g == null || v == null) return;
-    const k = String(g); m.set(k, (m.get(k)||0) + v);
-  });
-  return [...m.entries()].map(([key,value]) => ({key,value}));
+function miLatestPeriodRows(rows,dateCol){
+  if(!dateCol || dateCol.type!=='date') return null;
+  const dates=rows.map(r=>r[dateCol.name]).filter(d=>d instanceof Date&&!isNaN(d.getTime())).sort((a,b)=>a-b);
+  if(dates.length<2)return null;
+  const latest=dates[dates.length-1], prev=[...dates].reverse().find(d=>d.getTime()<latest.getTime());
+  if(!prev)return null;
+  const same=(d,x)=>d instanceof Date&&d.getFullYear()===x.getFullYear()&&d.getMonth()===x.getMonth()&&d.getDate()===x.getDate();
+  return {latest,prev,current:rows.filter(r=>same(r[dateCol.name],latest)),previous:rows.filter(r=>same(r[dateCol.name],prev))};
 }
-function miCard(title, items, cls='neutral'){
-  const list = items && items.length ? `<ul>${items.map(x=>`<li>${x}</li>`).join('')}</ul>` : '<p>No material observation can be established from the available data.</p>';
+function miSum(rows,col){ return rows.reduce((s,r)=>s+(miNum(r[col])??0),0); }
+function miChange(a,b){ return {abs:b-a,pct:a!==0?(b-a)/Math.abs(a):null}; }
+function miDirection(kpi){
+  const d=miDirectoryDirection(kpi);
+  if(d)return d;
+  if(/(npa|slippage|default|complaint|pending|open|repeat|expense|cost|foir|ltv|utili[sz]ation|risk|finding)/i.test(kpi)) return 'Lower is Better';
+  return 'Higher is Better';
+}
+function miCard(title,items,cls='neutral'){
+  const list=items&&items.length?`<ul>${items.map(x=>`<li>${x}</li>`).join('')}</ul>`:'<p>No material observation can be established from the available data.</p>';
   return `<div class="mi-card ${cls}"><h3>${title}</h3>${list}</div>`;
 }
-function buildManagementInsights(){
-  const grid = $('managementInsightsGrid');
-  if (!grid) return;
-  const rows = APP.filtered || [];
-  if (!rows.length){ grid.innerHTML = miCard('Management view', [], 'neutral'); return; }
-
-  const items = {performance:[], attention:[], drivers:[], actions:[]};
-  const targetCol = miFindCol(/^(target|targets)$/i) || miFindCol(/target/i);
-  const actualCol = miFindCol(/^(actual|actuals)$/i) || miFindCol(/actual/i);
-  const kpiCol = miFindCol(/^(kpi|metric|indicator)$/i);
-  const dirCol = miFindCol(/direction|better|polarity/i);
-  const dateCol = timeCols()[0];
-  const dimCols = groupables().filter(c => !kpiCol || c.name !== kpiCol.name).slice(0,3);
-
-  /* 1. Target vs actual analysis — strongest management signal when present. */
-  if (targetCol && actualCol){
-    let groups;
-    if (kpiCol) {
-      const map = new Map();
-      rows.forEach(r=>{
-        const k = r[kpiCol.name]; const t=miNum(r[targetCol.name]); const a=miNum(r[actualCol.name]);
-        if (k==null || t==null || a==null) return;
-        const key=String(k); const x=map.get(key)||{target:0,actual:0}; x.target+=t; x.actual+=a; map.set(key,x);
-      });
-      groups=[...map.entries()].map(([k,x])=>({k,...x}));
-    } else {
-      let t=0,a=0; rows.forEach(r=>{const tv=miNum(r[targetCol.name]),av=miNum(r[actualCol.name]);if(tv!=null)t+=tv;if(av!=null)a+=av;});
-      groups=[{k:'Overall',target:t,actual:a}];
-    }
-    const scored=groups.map(x=>{
-      const direction = kpiCol ? (miDirectoryDirection(x.k) || (dirCol ? (()=>{
-        const vals=rows.filter(r=>String(r[kpiCol.name])===x.k).map(r=>r[dirCol.name]).filter(v=>v!=null);
-        return vals.length ? String(vals[0]) : null;
-      })() : null) || 'Higher is Better') : 'Higher is Better';
-      const gap=x.actual-x.target;
-      const achievement=x.target!==0 ? x.actual/x.target : null;
-      const favourable=/lower/i.test(direction) ? gap<=0 : gap>=0;
-      return {...x,direction,gap,achievement,favourable};
-    });
-    const good=scored.filter(x=>x.favourable).sort((a,b)=>Math.abs(b.gap)-Math.abs(a.gap)).slice(0,5);
-    const bad=scored.filter(x=>!x.favourable).sort((a,b)=>Math.abs(b.gap)-Math.abs(a.gap)).slice(0,5);
-    good.forEach(x=>items.performance.push(`<b>${miEsc(x.k)}</b>: actual ${fmtFull(x.actual)} vs target ${fmtFull(x.target)} (${miPct(x.achievement)} achievement) — favourable against the stated direction.`));
-    bad.forEach(x=>items.attention.push(`<b>${miEsc(x.k)}</b>: actual ${fmtFull(x.actual)} vs target ${fmtFull(x.target)}; gap ${miSigned(x.gap)} (${x.target ? miPct(x.gap/x.target) : '—'}) — requires management attention.`));
-
-    /* Driver analysis: find the dimension whose group movements explain the
-       largest share of the headline actual-vs-target gap. */
-    if (bad.length && dimCols.length){
-      const headline=bad[0];
-      const candidates=[];
-      const driverRows = kpiCol ? rows.filter(r=>String(r[kpiCol.name])===headline.k) : rows;
-      dimCols.forEach(dc=>{
-        const m=new Map();
-        driverRows.forEach(r=>{
-          const g=r[dc.name],t=miNum(r[targetCol.name]),a=miNum(r[actualCol.name]);
-          if(g==null||t==null||a==null)return;
-          const key=String(g); const z=m.get(key)||{t:0,a:0}; z.t+=t;z.a+=a;m.set(key,z);
-        });
-        [...m.entries()].forEach(([g,z])=>candidates.push({dim:dc.name,g,t:z.t,a:z.a,gap:z.a-z.t}));
-      });
-      candidates.sort((a,b)=>Math.abs(b.gap)-Math.abs(a.gap));
-      candidates.slice(0,4).forEach(x=>items.drivers.push(`<b>${miEsc(x.dim)}: ${miEsc(x.g)}</b> shows the largest absolute target/actual movement in the available data (gap ${miSigned(x.gap)}). This is a <b>data-supported driver</b>, not a causal explanation.`));
-    }
-  }
-
-  /* 2. Period-on-period movement when a usable date and numeric measures exist. */
-  if (dateCol && dateCol.type==='date'){
-    const measures=rankMeasures().filter(c=>c.name!==targetCol?.name && c.name!==actualCol?.name).slice(0,6);
-    measures.forEach(c=>{
-      const by=new Map();
-      rows.forEach(r=>{const d=r[c.name]; const dt=r[dateCol.name]; if(!(dt instanceof Date)||miNum(d)==null)return; const key=`${dt.getFullYear()}-${pad(dt.getMonth()+1)}`; by.set(key,(by.get(key)||0)+d);});
-      const arr=[...by.entries()].sort((a,b)=>a[0].localeCompare(b[0]));
-      if(arr.length<2)return;
-      const prev=arr[arr.length-2][1], latest=arr[arr.length-1][1], ch=latest-prev, pct=prev?ch/prev:null;
-      if(!isFinite(ch)||prev===0)return;
-      const sign=ch>=0?'increased':'decreased';
-      const sentence=`<b>${miEsc(c.name)}</b> ${sign} from ${fmtFull(prev)} to ${fmtFull(latest)} (${pct==null?'—':miPct(pct)}).`;
-      if(Math.abs(pct||0)>=0.10) items.performance.push(sentence);
-      else items.drivers.push(sentence+' Movement is below the 10% materiality threshold used for this management view.');
-    });
-  }
-
-  /* 3. Generic concentration / driver analysis when there is no target pair. */
-  if (!targetCol || !actualCol){
-    const m=rankMeasures()[0], d=rankDimensions()[0];
-    if(m&&d){
-      const g=miGroupSum(rows,d.name,m.name).sort((a,b)=>b.value-a.value);
-      const total=g.reduce((s,x)=>s+x.value,0);
-      if(g.length&&total){
-        const top=g[0]; items.drivers.push(`<b>${miEsc(top.key)}</b> is the largest contributor to ${miEsc(m.name)} at ${fmtFull(top.value)} (${miPct(top.value/total)} of the total). Management should assess whether this concentration is intentional and sustainable.`);
-        if(g.length>1){ const bottom=g[g.length-1]; items.attention.push(`<b>${miEsc(bottom.key)}</b> has the lowest contribution to ${miEsc(m.name)} at ${fmtFull(bottom.value)}. Review the underlying volume, productivity or business mix before drawing a causal conclusion.`); }
+function miPair(cols,reA,reB){
+  const a=cols.find(c=>reA.test(c.name)); const b=cols.find(c=>reB.test(c.name));
+  return a&&b?[a,b]:null;
+}
+function miSemanticRelationships(rows, dateCol, items){
+  const pair=(a,b)=>miPair(APP.columns,a,b);
+  const rels=[
+    {a:/(audit.*planned|planned.*audit)/i,b:/(audit.*completed|completed.*audit)/i,type:'planCompletion'},
+    {a:/(target)/i,b:/(actual)/i,type:'targetActual'},
+    {a:/(received)/i,b:/(resolved|closed)/i,type:'receivedResolved'},
+    {a:/(opening.*pending|opening.*outstanding)/i,b:/(closing.*pending|closing.*outstanding)/i,type:'openingClosing'},
+    {a:/(findings|slippage|fresh.*slippage)/i,b:/(high.*risk|high.*risk.*finding)/i,type:'severity'},
+    {a:/(findings|cases|accounts)/i,b:/(resolved|closed|recovered)/i,type:'resolution'}
+  ];
+  const used=new Set();
+  rels.forEach(rel=>{
+    const p=pair(rel.a,rel.b); if(!p||used.has(p[0].name+'|'+p[1].name))return; used.add(p[0].name+'|'+p[1].name);
+    const a=p[0].name,b=p[1].name;
+    if(dateCol){
+      const lr=miLatestPeriodRows(rows,dateCol); if(!lr)return;
+      const av=miSum(lr.previous,a), bv=miSum(lr.previous,b), ac=miSum(lr.current,a), bc=miSum(lr.current,b);
+      if(rel.type==='planCompletion' && av!==0 && ac!==0){
+        const pr=av?bv/av:null, cr=ac?bc/ac:null;
+        if(pr!=null&&cr!=null){
+          const pp=(cr-pr)*100;
+          items.attention.push(`<b>Execution gap:</b> ${miEsc(b)} versus ${miEsc(a)} moved from ${fmtFull(bv)} / ${fmtFull(av)} (${miPct(pr)}) to ${fmtFull(bc)} / ${fmtFull(ac)} (${miPct(cr)}). The completion-to-plan ratio changed by ${pp.toFixed(1)} percentage points; the latest period has ${fmtFull(ac-bc)} fewer completed than planned.`);
+        }
+      }
+      if(rel.type==='receivedResolved' && av!==0 && ac!==0){
+        const pr=bv/av,cr=bc/ac;
+        if(cr>pr) items.performance.push(`<b>Resolution intensity improved:</b> ${miEsc(b)} relative to ${miEsc(a)} rose from ${miPct(pr)} to ${miPct(cr)}.`);
+        else if(cr<pr) items.attention.push(`<b>Resolution intensity weakened:</b> ${miEsc(b)} relative to ${miEsc(a)} fell from ${miPct(pr)} to ${miPct(cr)}.`);
+      }
+      if(rel.type==='openingClosing'){
+        const ch=miChange(bv,bc); if(ch.abs<0) items.performance.push(`<b>Pending/outstanding items reduced:</b> ${miEsc(b)} fell from ${fmtFull(bv)} to ${fmtFull(bc)} (${miPct(ch.pct)}).`);
+        else if(ch.abs>0) items.attention.push(`<b>Pending/outstanding items increased:</b> ${miEsc(b)} rose from ${fmtFull(bv)} to ${fmtFull(bc)} (${miPct(ch.pct)}).`);
+      }
+      if(rel.type==='severity' && av!==0 && ac!==0){
+        const pr=bv/av,cr=bc/ac;
+        if(cr<pr) items.performance.push(`<b>Severity mix improved:</b> ${miEsc(b)} as a share of ${miEsc(a)} fell from ${miPct(pr)} to ${miPct(cr)}. This is a data-supported mix change, not proof of the underlying cause.`);
+        else if(cr>pr) items.attention.push(`<b>Severity mix deteriorated:</b> ${miEsc(b)} as a share of ${miEsc(a)} increased from ${miPct(pr)} to ${miPct(cr)}. Review the underlying cases before concluding causation.`);
+      }
+      if(rel.type==='resolution' && av!==0 && ac!==0){
+        const pr=bv/av,cr=bc/ac;
+        if(cr>pr) items.performance.push(`<b>Resolution coverage improved:</b> ${miEsc(b)} relative to ${miEsc(a)} increased from ${miPct(pr)} to ${miPct(cr)}.`);
       }
     }
+  });
+}
+function buildManagementInsights(){
+  const grid=$('managementInsightsGrid'); if(!grid)return;
+  const rows=APP.filtered||[]; if(!rows.length){grid.innerHTML=miCard('Management view',[],'neutral');return;}
+  const items={performance:[],attention:[],drivers:[],actions:[]};
+  const dateCol=timeCols()[0];
+  const lr=miLatestPeriodRows(rows,dateCol);
+  const numeric=APP.columns.filter(c=>c.type==='number');
+
+  /* Relationship analysis comes first because management meaning is often in
+     the interaction of KPIs, not in an isolated percentage movement. */
+  miSemanticRelationships(rows,dateCol,items);
+
+  /* Latest-vs-previous movement: classify only where the KPI's business
+     direction is reasonably knowable. Increases/decreases without a known
+     direction are described as movements requiring interpretation. */
+  if(lr){
+    numeric.forEach(c=>{
+      const prev=miSum(lr.previous,c.name), cur=miSum(lr.current,c.name);
+      if(prev===0)return;
+      const ch=miChange(prev,cur); if(Math.abs(ch.pct||0)<0.10)return;
+      const dir=miDirection(c.name), favourable=/lower/i.test(dir)?ch.abs<0:ch.abs>0;
+      const sentence=`<b>${miEsc(c.name)}</b> ${ch.abs>=0?'increased':'decreased'} from ${fmtFull(prev)} to ${fmtFull(cur)} (${miPct(ch.pct)}).`;
+      if(/(findings|finding)/i.test(c.name) && !/(high.*risk|open|repeat|pending)/i.test(c.name)){
+        items.drivers.push(sentence+' An increase in findings is not by itself proof of weaker controls; assess audit coverage and completion volume before concluding causation.');
+      }else if(/planned|planning/i.test(c.name)){
+        items.drivers.push(sentence+' Higher planning volume is not automatically favourable; assess the plan against available capacity and actual completion.');
+      }else if(favourable) items.performance.push(sentence+' This movement is favourable based on the KPI direction available in the data.');
+      else items.attention.push(sentence+' This movement is adverse based on the KPI direction available in the data.');
+    });
   }
 
-  /* 4. Data-quality caveat — prevents overconfident management explanations. */
+  /* Target vs actual, including direction-aware classification and gaps. */
+  const target=miFindCol(/^(target|targets)$/i)||miFindCol(/target/i);
+  const actual=miFindCol(/^(actual|actuals)$/i)||miFindCol(/actual/i);
+  const kpi=miFindCol(/^(kpi|metric|indicator)$/i);
+  if(target&&actual){
+    const groups=new Map();
+    rows.forEach(r=>{
+      const t=miNum(r[target.name]),a=miNum(r[actual.name]),k=kpi?String(r[kpi.name]??'Overall'):'Overall';
+      if(t==null||a==null)return; const x=groups.get(k)||{t:0,a:0};x.t+=t;x.a+=a;groups.set(k,x);
+    });
+    [...groups.entries()].forEach(([name,x])=>{
+      const gap=x.a-x.t, achievement=x.t?x.a/x.t:null, dir=miDirectoryDirection(name)||'Higher is Better';
+      const fav=/lower/i.test(dir)?gap<=0:gap>=0;
+      const line=`<b>${miEsc(name)}</b>: actual ${fmtFull(x.a)} vs target ${fmtFull(x.t)}; gap ${miSigned(gap)} (${achievement==null?'—':miPct(gap/x.t)}).`;
+      if(fav)items.performance.push(line+' Favourable against the stated direction.'); else items.attention.push(line+' Requires management attention.');
+    });
+  }
+
+  /* Driver / concentration analysis: identify the largest contributors, but
+     explicitly avoid calling contribution a causal reason. */
+  const main=numeric.filter(c=>c.name!==target?.name&&c.name!==actual?.name)[0];
+  const dims=groupables().filter(c=>c.name!==kpi?.name).slice(0,3);
+  if(main&&dims.length){
+    dims.forEach(d=>{
+      const map=new Map(); rows.forEach(r=>{const g=r[d.name],v=miNum(r[main.name]);if(g==null||v==null)return;map.set(String(g),(map.get(String(g))||0)+v);});
+      const arr=[...map.entries()].map(([k,v])=>({k,v})).sort((a,b)=>b.v-a.v); const total=arr.reduce((s,x)=>s+x.v,0);
+      if(arr.length>1&&total){const top=arr[0];items.drivers.push(`<b>${miEsc(top.k)}</b> is the largest contributor to ${miEsc(main.name)} at ${fmtFull(top.v)} (${miPct(top.v/total)} of the total). This is a concentration signal, not proof of causation.`);}
+    });
+  }
+
   const missing=APP.columns.filter(c=>c.missingPct>=CONFIG.MISSING_WARN_PCT);
-  if(missing.length) items.attention.push(`Management interpretation should be read with caution because ${missing.map(c=>`<b>${miEsc(c.name)}</b> has ${c.missingPct.toFixed(0)}% missing values`).join('; ')}.`);
-  if(APP.dupeRows) items.attention.push(`<b>${APP.dupeRows.toLocaleString()}</b> duplicate rows were detected; validate the source before relying on aggregate movements.`);
+  if(missing.length)items.attention.push(`Management interpretation should be read with caution because ${missing.map(c=>`<b>${miEsc(c.name)}</b> has ${c.missingPct.toFixed(0)}% missing values`).join('; ')}.`);
+  if(APP.dupeRows)items.attention.push(`<b>${APP.dupeRows.toLocaleString()}</b> duplicate rows were detected; validate the source before relying on aggregate movements.`);
 
-  if(items.attention.length) items.actions.push('Review the largest adverse variances first, validate the underlying branch/product/KPI records, and confirm the operational reason with the responsible business owner.');
-  if(items.drivers.length) items.actions.push('Use the identified data-supported drivers as the starting point for management review; do not treat correlation or contribution as proof of causation.');
-  if(!items.performance.length && !items.attention.length && !items.drivers.length) items.actions.push('No material management variation can be established from the current data. Add a target, prior-period or comparable-period column to enable stronger variance analysis.');
+  if(items.attention.length)items.actions.push('Review the largest adverse movements first and confirm the operational reason with the responsible business owner.');
+  if(items.drivers.length)items.actions.push('Use data-supported relationships and concentrations as the starting point for management review; contribution or correlation must not be treated as proof of causation.');
+  if(items.performance.length && !items.attention.length)items.actions.push('Continue monitoring the favourable indicators and verify that improvements are sustained in the next comparable period.');
+  if(!items.performance.length&&!items.attention.length&&!items.drivers.length)items.actions.push('No material management variation can be established from the current data. Add a prior-period, target or comparable-period basis for stronger analysis.');
 
-  grid.innerHTML =
-    miCard('What is going well',items.performance,'good')+
+  grid.innerHTML=miCard('What is going well',items.performance,'good')+
     miCard('Variations requiring attention',items.attention,'warn')+
-    miCard('Drivers / reasons indicated by the data',items.drivers,'neutral')+
+    miCard('Management interpretation / data-supported drivers',items.drivers,'neutral')+
     miCard('Management action',items.actions,'neutral');
 }
 
