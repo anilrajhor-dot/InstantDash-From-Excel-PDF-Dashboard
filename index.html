@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>InstantDash — Excel to Dashboard · v1.4.7</title>
+<title>InstantDash — Excel to Dashboard · v1.4.8</title>
 
 <!-- ============================================================
      LIBRARIES (loaded from CDN, no build step required)
@@ -132,7 +132,7 @@ main{max-width:1360px;margin:0 auto;padding:24px}
 .drop .formats{font-size:12px;color:var(--muted);margin-top:16px}
 
 
-/* ---------- premium landing experience v1.4.7 ---------- */
+/* ---------- premium landing experience v1.4.8 ---------- */
 </style>
 <style>
 .mi-remark{display:inline}
@@ -359,7 +359,7 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"/><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"/><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"/></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel to Dashboard · v1.4.7</span>
+    <span class="sub">Excel to Dashboard · v1.4.8</span>
   </div>
   <div class="spacer"></div>
   <span class="privacy">🔒 Your data never leaves your computer.</span>
@@ -547,7 +547,7 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
    --------------------------------------------------------------------- */
 const CONFIG = {
   APP_NAME: 'InstantDash',
-  VERSION: 'v1.4.7',
+  VERSION: 'v1.4.8',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -2330,6 +2330,48 @@ function miRelatedManagementRemark(name,lr){
 function miGenericManagementRemark(name, direction, sem, favourable, change){
   const n=String(name||'').toLowerCase();
   const lower=/lower/i.test(direction||'');
+
+  /* KPI-specific remarks take precedence over broad category remarks.
+     They remain evidence-led and deliberately avoid claiming causation. */
+  if(/pending\s*(cases?|items?|matters?)|outstanding\s*(cases?|items?|matters?)/i.test(n)){
+    return ` <span class="mi-remark"><b>Management remark:</b> review ageing, severity, ownership and closure timelines; distinguish fresh inflow from accumulated backlog before assessing the operational impact.</span>`;
+  }
+  if(/cases?\s*opened|new\s*cases?|cases?\s*received/i.test(n)){
+    return ` <span class="mi-remark"><b>Management remark:</b> compare new case inflow with pending and resolved cases, including ageing and severity, to determine whether workload pressure is building or easing.</span>`;
+  }
+  if(/legal\s*cost|legal\s*(expense|fees?)/i.test(n)){
+    return ` <span class="mi-remark"><b>Management remark:</b> compare legal cost with case volume, settlement activity, case complexity and the approved legal budget before treating the movement as an efficiency gain or concern.</span>`;
+  }
+  if(/settlement\s*(amount|value)|settled\s*amount/i.test(n)){
+    return ` <span class="mi-remark"><b>Management remark:</b> review settlement value alongside the number, age and severity of cases settled; a higher amount may reflect case mix rather than improved or adverse performance.</span>`;
+  }
+  if(/compliance\s*(notice|notices|case|cases|action|actions)/i.test(n)){
+    return ` <span class="mi-remark"><b>Management remark:</b> assess the change alongside compliance breaches, review coverage and closure status to distinguish stronger detection from deterioration in compliance outcomes.</span>`;
+  }
+  if(/critical\s*incidents?|major\s*incidents?/i.test(n)){
+    return ` <span class="mi-remark"><b>Management remark:</b> validate the movement against incident detection, reporting coverage, severity and response effectiveness before drawing a conclusion about control strength.</span>`;
+  }
+  if(/threats?\s*(detected|identified)/i.test(n)){
+    return ` <span class="mi-remark"><b>Management remark:</b> assess detection volume together with threats blocked, severity and monitoring coverage; higher detection may reflect stronger visibility rather than higher underlying exposure.</span>`;
+  }
+  if(/threats?\s*(blocked|prevented)/i.test(n)){
+    return ` <span class="mi-remark"><b>Management remark:</b> review blocked threats alongside detected threats, severity and control coverage to confirm that preventive protection remains effective.</span>`;
+  }
+  if(/vulnerabilit(y|ies)/i.test(n)){
+    return ` <span class="mi-remark"><b>Management remark:</b> review the age, severity and remediation status of vulnerabilities and confirm whether exposure is being reduced within agreed timelines.</span>`;
+  }
+  if(/stock[-\s]?outs?/i.test(n)){
+    return ` <span class="mi-remark"><b>Management remark:</b> assess stock-out movement alongside inventory levels, demand, service levels and lost-sales indicators to confirm whether availability has genuinely improved.</span>`;
+  }
+  if(/inventory\s*turnover|stock\s*turnover/i.test(n)){
+    return ` <span class="mi-remark"><b>Management remark:</b> compare turnover with inventory value, ageing, sales volume and replenishment to determine whether the movement reflects slower demand or deliberate stock positioning.</span>`;
+  }
+  if(/average\s*basket|basket\s*value|average\s*order\s*value/i.test(n)){
+    return ` <span class="mi-remark"><b>Management remark:</b> review basket value alongside customers and transaction volume to distinguish higher spend per transaction from changes in customer or product mix.</span>`;
+  }
+  if(/employee|headcount|staff/i.test(n)){
+    return ` <span class="mi-remark"><b>Management remark:</b> assess staffing movement against workload, productivity, vacancies and service levels before concluding whether capacity has strengthened or weakened.</span>`;
+  }
   if(/sales|revenue|income|profit|margin/i.test(n)){
     return ` <span class="mi-remark"><b>Management remark:</b> review the movement against volume, pricing, mix and sustainability before attributing a cause.</span>`;
   }
