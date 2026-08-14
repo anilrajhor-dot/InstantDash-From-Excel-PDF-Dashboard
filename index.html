@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>InstantDash — Excel / CSV / PDF → Dashboard · v1.6.8</title>
+<title>InstantDash — Excel / CSV / PDF → Dashboard · v1.6.9</title>
 
 <!-- ============================================================
      LIBRARIES (loaded from CDN, no build step required)
@@ -51,7 +51,7 @@ body.dark{
   --shadow-h:0 2px 6px rgba(0,0,0,.5), 0 16px 40px rgba(0,0,0,.45);
 }
 
-/* v1.6.8 — reliable manual Light/Night theme switching */
+/* v1.6.9 — reliable manual Light/Night theme switching */
 html.theme-dark{color-scheme:dark}
 html.theme-light{color-scheme:light}
 body.dark select,body.dark input,body.dark textarea{background:var(--card);color:var(--text);border-color:var(--border)}
@@ -142,7 +142,7 @@ main{max-width:1360px;margin:0 auto;padding:24px}
 
 /* ---------- premium landing experience v1.4.8 ---------- */
 
-/* v1.6.8 — live executive preview clarity */
+/* v1.6.9 — live executive preview clarity */
 .live-pill{display:inline-flex;align-items:center;margin-left:8px;padding:4px 9px;border-radius:999px;font-size:.58em;letter-spacing:.08em;font-weight:800;background:rgba(34,197,94,.14);color:#31b66b;vertical-align:middle}
 .exec-live-note{margin-top:10px;font-size:11px;color:var(--muted);line-height:1.45}
 @media(max-width:700px){.live-pill{font-size:.55em}.exec-live-note{font-size:10.5px}}
@@ -334,7 +334,7 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
 @media (prefers-reduced-motion: reduce){ *{animation-duration:.01ms !important;transition-duration:.01ms !important} }
 
 
-/* ---------- desktop / laptop workspace refinement v1.6.8 ---------- */
+/* ---------- desktop / laptop workspace refinement v1.6.9 ---------- */
 html{overflow-x:hidden}
 body{overflow-x:hidden}
 .tbl-wrap{width:100%;max-width:100%;overflow-x:auto;overflow-y:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
@@ -449,7 +449,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v155-sticky-nav">
-/* InstantDash v1.6.8 — desktop/mobile persistent navigation */
+/* InstantDash v1.6.9 — desktop/mobile persistent navigation */
 .id-sticky-nav{
   position:fixed;
   left:50%;
@@ -495,58 +495,23 @@ body{overflow-x:hidden}
 </style>
 
 
-<style id="instantdash-v156-ui-fixes">
-/* v1.6.8 — persistent Share access + wider Pivot Rows selector */
-#id-floating-share{
-  position:fixed;
-  right:16px;
-  bottom:max(18px, env(safe-area-inset-bottom));
-  z-index:10000;
-  border:1px solid rgba(255,255,255,.14);
-  border-radius:14px;
-  background:#fbb800;
-  color:#111;
-  box-shadow:0 10px 28px rgba(0,0,0,.38);
-  font:700 15px/1 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-  padding:12px 16px;
-  cursor:pointer;
-  white-space:nowrap;
-}
-#id-floating-share:hover{filter:brightness(1.08);transform:translateY(-1px)}
-body{padding-bottom:96px}
-@media(min-width:900px){body{padding-bottom:110px}}
-
-#id-floating-share:active{transform:translateY(0)}
+<style id="instantdash-v169-ui-fixes">
+/* v1.6.9 — cleaner Share access + wider Pivot Rows selector */
 .pivot-controls .frow:first-child{min-width:260px}
 .pivot-controls .frow:first-child select{min-width:260px}
-@media (min-width:901px){
-  #id-floating-share{
-    right:22px;
-    bottom:24px;
-    padding:13px 18px;
-  }
-}
 @media (max-width:700px){
-  #id-floating-share{
-    right:14px;
-    bottom:max(14px, env(safe-area-inset-bottom));
-    font-size:14px;
-    padding:10px 13px;
-    border-radius:12px;
-    box-shadow:0 8px 22px rgba(0,0,0,.30);
-    opacity:.96;
-  }
   .pivot-controls .frow:first-child,
   .pivot-controls .frow:first-child select{
     min-width:0;
     width:100%;
   }
+  .v154-share-tab{padding:8px 10px;font-size:12px}
 }
 </style>
 
 
 <style id="instantdash-v160-executive-css">
-/* InstantDash v1.6.8 — Executive Management Cockpit */
+/* InstantDash v1.6.9 — Executive Management Cockpit */
 .executive-cockpit{margin-top:22px}
 .exec-head{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:12px}
 .exec-head h2{font-size:18px}
@@ -595,7 +560,7 @@ body{padding-bottom:96px}
 
 
 <style id="instantdash-v161-theme-hardening">
-/* InstantDash v1.6.8 — theme hardening */
+/* InstantDash v1.6.9 — theme hardening */
 html.theme-dark body{background:var(--bg);color:var(--text)}
 html.theme-light body{background:var(--bg);color:var(--text)}
 body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var(--text)}
@@ -612,6 +577,7 @@ body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var
 <style id="instantdash-v163-ready-state">
 .preview-chip{background:rgba(45,170,95,.14);color:#35a968;border:1px solid rgba(45,170,95,.18)}
 .preview-neutral{color:var(--muted)!important}
+.preview-ready-ring{background:conic-gradient(var(--ok) 0%,var(--border) 0)!important}
 .preview-attention{color:var(--accent-2)!important}
 .preview-positive{color:var(--ok)!important}
 .preview-live-chart{display:flex!important}
@@ -628,7 +594,7 @@ body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"/><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"/><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"/></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.6.8</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.6.9</span>
   </div>
   <span id="share"></span><button type="button" class="v154-share-tab" id="v154ShareTab" title="Share dashboard">📤 Share</button>
   <div class="spacer"></div>
@@ -876,7 +842,7 @@ body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var
    --------------------------------------------------------------------- */
 const CONFIG = {
   APP_NAME: 'InstantDash',
-  VERSION: 'v1.6.8',
+  VERSION: 'v1.6.9',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -3361,7 +3327,7 @@ function wireChartBuilder(){
    ===================================================================== */
 
 /* =====================================================================
-   InstantDash v1.6.8 — Executive Management Cockpit
+   InstantDash v1.6.9 — Executive Management Cockpit
    Generic: uses only detected runtime column roles and statistics.
    ===================================================================== */
 function buildExecutiveCockpit(){
@@ -3540,8 +3506,13 @@ function updateLivePreview(){
     insight.innerHTML=`<b>Management insight</b> · ${summary}`;
   }
 
-  ring.classList.remove('preview-empty-ring');
-  ring.style.background=`conic-gradient(var(--accent) ${score}%,var(--border) 0)`;
+  ring.classList.remove('preview-empty-ring','preview-ready-ring');
+  if(status==='Ready') {
+    ring.classList.add('preview-ready-ring');
+    ring.style.background=`conic-gradient(var(--ok) ${score}%,var(--border) 0)`;
+  } else {
+    ring.style.background=`conic-gradient(var(--accent) ${score}%,var(--border) 0)`;
+  }
 }
 
 function buildEverything(){
@@ -3689,7 +3660,7 @@ function wireRest(){
 
   function dashboardFile(){
     const html='<!doctype html>\n'+document.documentElement.outerHTML;
-    return new File([html],'InstantDash_Dashboard_v1.6.8.html',{type:'text/html'});
+    return new File([html],'InstantDash_Dashboard_v1.6.9.html',{type:'text/html'});
   }
   function open(){panel.style.display='flex';note.textContent='';}
   function hide(){panel.style.display='none';}
@@ -3712,14 +3683,14 @@ function wireRest(){
     try{
       if(navigator.share && (!navigator.canShare || navigator.canShare({files:[f]}))){
         await navigator.share({
-          title:'InstantDash Dashboard v1.6.8',
+          title:'InstantDash Dashboard v1.6.9',
           text:'Interactive InstantDash dashboard',
           files:[f]
         });
         note.textContent='Share completed.';
       }else if(navigator.share){
         await navigator.share({
-          title:'InstantDash Dashboard v1.6.8',
+          title:'InstantDash Dashboard v1.6.9',
           text:'Interactive InstantDash dashboard'
         });
       }else{
@@ -3732,7 +3703,7 @@ function wireRest(){
   });
 
   copyBtn && copyBtn.addEventListener('click',async()=>{
-    const text='InstantDash Dashboard v1.6.8 — interactive management dashboard.';
+    const text='InstantDash Dashboard v1.6.9 — interactive management dashboard.';
     try{
       await navigator.clipboard.writeText(text);
       note.textContent='Share text copied to clipboard.';
@@ -3742,28 +3713,3 @@ function wireRest(){
   });
 })();
 </script>
-
-
-<button id="id-floating-share" type="button" aria-label="Share InstantDash dashboard">
-  📤 Share
-</button>
-<script id="instantdash-v156-share-trigger">
-(function(){
-  const floating = document.getElementById('id-floating-share');
-  if(!floating) return;
-  floating.addEventListener('click', function(){
-    const shareTab = document.querySelector('.v154-share-tab');
-    if(shareTab) shareTab.click();
-    else {
-      const panel = document.querySelector('.v154-share-panel');
-      if(panel) {
-        panel.style.display='flex';
-        panel.setAttribute('aria-hidden','false');
-      }
-    }
-  });
-})();
-</script>
-
-</body>
-</html>
