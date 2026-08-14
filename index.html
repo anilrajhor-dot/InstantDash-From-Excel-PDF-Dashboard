@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>InstantDash — Excel to Dashboard · v1.3.0</title>
+<title>InstantDash — Excel to Dashboard · v1.3.1</title>
 
 <!-- ============================================================
      LIBRARIES (loaded from CDN, no build step required)
@@ -294,7 +294,7 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"/><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"/><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"/></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel to Dashboard · v1.3.0</span>
+    <span class="sub">Excel to Dashboard · v1.3.1</span>
   </div>
   <div class="spacer"></div>
   <span class="privacy">🔒 Your data never leaves your computer.</span>
@@ -471,7 +471,7 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
    --------------------------------------------------------------------- */
 const CONFIG = {
   APP_NAME: 'InstantDash',
-  VERSION: 'v1.3.0',
+  VERSION: 'v1.3.1',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -2231,7 +2231,7 @@ function miSemanticRelationships(rows, dateCol, items){
       }
       if(rel.type==='severity' && av!==0 && ac!==0){
         const pr=bv/av,cr=bc/ac;
-        if(cr<pr) items.performance.push(`<b>Severity mix improved:</b> ${miEsc(b)} as a share of ${miEsc(a)} fell from ${miPct(pr)} to ${miPct(cr)}. This is a data-supported mix change, not proof of the underlying cause.`);
+        if(cr<pr) items.performance.push(`<b>Severity mix became more favourable:</b> ${miEsc(b)} as a share of ${miEsc(a)} fell from ${miPct(pr)} to ${miPct(cr)}. This is a data-supported mix change, not proof of the underlying cause.`);
         else if(cr>pr) items.attention.push(`<b>Severity mix deteriorated:</b> ${miEsc(b)} as a share of ${miEsc(a)} increased from ${miPct(pr)} to ${miPct(cr)}. Review the underlying cases before concluding causation.`);
       }
       if(rel.type==='resolution' && av!==0 && ac!==0){
@@ -2267,9 +2267,9 @@ function buildManagementInsights(){
       if(pc!==0){
         const latestRate=cc/pc, shortfall=pc-cc;
         if(shortfall>0){
-          items.attention.push(`<b>Execution gap:</b> ${miEsc(completed)} were ${fmtFull(cc)} against ${fmtFull(pc)} ${miEsc(planned)} in the latest period. The completion-to-plan ratio was ${miPct(latestRate)}, leaving ${fmtFull(shortfall)} planned audits uncompleted.`);
+          items.attention.push(`<b>Execution gap:</b> ${miEsc(completed.name)} were ${fmtFull(cc)} against ${fmtFull(pc)} ${miEsc(planned.name)} in the latest period. The completion-to-plan ratio was ${miPct(latestRate)}, leaving ${fmtFull(shortfall)} planned audits uncompleted.`);
         }else if(shortfall<0){
-          items.performance.push(`<b>Plan execution:</b> ${miEsc(completed)} exceeded ${miEsc(planned)} in the latest period (${fmtFull(cc)} vs ${fmtFull(pc)}). This indicates completion above the current plan; confirm whether the excess relates to carry-forward or additional audits.`);
+          items.performance.push(`<b>Plan execution:</b> ${miEsc(completed.name)} exceeded ${miEsc(planned.name)} in the latest period (${fmtFull(cc)} vs ${fmtFull(pc)}). This indicates completion above the current plan; confirm whether the excess relates to carry-forward or additional audits.`);
         }
         if(p!==0 && c!==0){
           const prevRate=c/p;
@@ -2296,9 +2296,9 @@ function buildManagementInsights(){
       const fp=sum(prev,findings), hp=sum(prev,highRisk), fc=sum(cur,findings), hc=sum(cur,highRisk);
       if(fp>0&&fc>0){
         const prevMix=hp/fp, curMix=hc/fc;
-        if(curMix<prevMix) items.performance.push(`<b>Severity mix became more favourable:</b> ${miEsc(highRisk)} as a share of ${miEsc(findings)} fell from ${miPct(prevMix)} to ${miPct(curMix)}. This is a data-supported mix change, not proof of the underlying cause.`);
-        else if(curMix>prevMix) items.attention.push(`<b>Severity mix became less favourable:</b> ${miEsc(highRisk)} as a share of ${miEsc(findings)} increased from ${miPct(prevMix)} to ${miPct(curMix)}. Review the underlying cases before concluding causation.`);
-        items.relationships.push(`<b>High-risk share:</b> ${miEsc(highRisk)} represented ${miPct(curMix)} of ${miEsc(findings)} in the latest period, compared with ${miPct(prevMix)} previously.`);
+        if(curMix<prevMix) items.performance.push(`<b>Severity mix became more favourable:</b> ${miEsc(highRisk.name)} as a share of ${miEsc(findings.name)} fell from ${miPct(prevMix)} to ${miPct(curMix)}. This is a data-supported mix change, not proof of the underlying cause.`);
+        else if(curMix>prevMix) items.attention.push(`<b>Severity mix became less favourable:</b> ${miEsc(highRisk.name)} as a share of ${miEsc(findings.name)} increased from ${miPct(prevMix)} to ${miPct(curMix)}. Review the underlying cases before concluding causation.`);
+        items.relationships.push(`<b>High-risk share:</b> ${miEsc(highRisk.name)} represented ${miPct(curMix)} of ${miEsc(findings.name)} in the latest period, compared with ${miPct(prevMix)} previously.`);
       }
     }
 
@@ -2309,8 +2309,8 @@ function buildManagementInsights(){
     const open=findCol(/open.*finding|pending.*finding/i);
     if(resolved){
       const rp=sum(prev,resolved), rc=sum(cur,resolved);
-      if(rc>rp) items.performance.push(`<b>Resolution activity improved:</b> ${miEsc(resolved)} increased from ${fmtFull(rp)} to ${fmtFull(rc)} (${miPct((rc-rp)/(rp||1))}). This indicates higher closure activity; assess it alongside new findings and the outstanding backlog.`);
-      else if(rc<rp) items.attention.push(`<b>Resolution activity declined:</b> ${miEsc(resolved)} decreased from ${fmtFull(rp)} to ${fmtFull(rc)} (${miPct((rc-rp)/(rp||1))}). Management should assess the reason for the lower closure volume and its effect on the backlog.`);
+      if(rc>rp) items.performance.push(`<b>Resolution activity improved:</b> ${miEsc(resolved.name)} increased from ${fmtFull(rp)} to ${fmtFull(rc)} (${miPct((rc-rp)/(rp||1))}). This indicates higher closure activity; assess it alongside new findings and the outstanding backlog.`);
+      else if(rc<rp) items.attention.push(`<b>Resolution activity declined:</b> ${miEsc(resolved.name)} decreased from ${fmtFull(rp)} to ${fmtFull(rc)} (${miPct((rc-rp)/(rp||1))}). Management should assess the reason for the lower closure volume and its effect on the backlog.`);
       if(findings){
         const fp=sum(prev,findings), fc=sum(cur,findings);
         if(fp>0&&fc>0){
