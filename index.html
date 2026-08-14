@@ -142,7 +142,7 @@ main{max-width:1360px;margin:0 auto;padding:24px}
 
 /* ---------- premium landing experience v1.4.8 ---------- */
 
-/* v1.7.0 — live executive preview clarity */
+/* v1.7.1 — management polish and score transparency */
 .live-pill{display:inline-flex;align-items:center;margin-left:8px;padding:4px 9px;border-radius:999px;font-size:.58em;letter-spacing:.08em;font-weight:800;background:rgba(34,197,94,.14);color:#31b66b;vertical-align:middle}
 .exec-live-note{margin-top:10px;font-size:11px;color:var(--muted);line-height:1.45}
 @media(max-width:700px){.live-pill{font-size:.55em}.exec-live-note{font-size:10.5px}}
@@ -173,7 +173,7 @@ body.dark .landing-hero{box-shadow:0 18px 70px rgba(0,0,0,.42)}
 .preview-top{display:flex;align-items:center;gap:5px;color:var(--muted);font-size:9px;padding:2px 2px 12px;border-bottom:1px solid var(--border)}
 .preview-top b{font-size:11px;color:var(--text);margin-left:7px}.preview-chip{margin-left:auto;padding:3px 7px;border-radius:999px;background:color-mix(in srgb,var(--ok) 16%,transparent);color:var(--ok);font-weight:700}
 .mini-dot{width:6px;height:6px;border-radius:50%;background:var(--border)}
-.preview-score{display:flex;align-items:center;justify-content:space-between;padding:18px 8px 12px}.preview-score small,.preview-metrics small{display:block;color:var(--muted);font-size:9px}.preview-score strong{display:block;font:700 27px Poppins,sans-serif;letter-spacing:-.03em;margin-top:2px}.score-ring{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--accent) 0%,var(--border) 0);position:relative;font:700 13px Poppins,sans-serif}.score-ring:after{content:"";position:absolute;inset:6px;border-radius:50%;background:var(--card)}.score-ring span{position:relative;z-index:1}
+.preview-score{display:flex;align-items:center;justify-content:space-between;padding:18px 8px 12px}.preview-score small,.preview-metrics small{display:block;color:var(--muted);font-size:9px}.preview-score strong{display:block;font:700 27px Poppins,sans-serif;letter-spacing:-.03em;margin-top:2px}.preview-score-note{display:block;font-style:normal;color:var(--muted);font-size:8px;margin-top:4px}.score-ring{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--accent) 0%,var(--border) 0);position:relative;font:700 13px Poppins,sans-serif}.score-ring:after{content:"";position:absolute;inset:6px;border-radius:50%;background:var(--card)}.score-ring span{position:relative;z-index:1}
 .preview-metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px}.preview-metrics>div{padding:11px;border:1px solid var(--border);border-radius:11px;background:var(--card-2)}.preview-metrics b{display:block;font:700 17px Poppins,sans-serif;margin-top:2px}.preview-metrics div:first-child b{color:var(--ok)}.preview-metrics div:nth-child(2) b{color:var(--accent-2)}.preview-metrics i{font-style:normal;font-size:9px;color:var(--muted)}
 .preview-chart{height:104px;margin:13px 3px 10px;display:flex;align-items:end;gap:8px;padding:12px 10px 8px;border-radius:11px;background:var(--card-2);position:relative;overflow:hidden}.preview-chart span{width:11%;border-radius:4px 4px 2px 2px;background:linear-gradient(to top,var(--accent-2),var(--accent));opacity:.9}.preview-line{position:absolute;left:10px;right:10px;top:48%;height:2px;background:var(--text);opacity:.18;transform:rotate(-5deg)}
 .preview-insight{display:flex;gap:9px;align-items:flex-start;padding:10px;border:1px solid var(--border);border-radius:11px;background:var(--card-2);font-size:9.5px;color:var(--muted);line-height:1.45}.preview-insight span{color:var(--accent);font-size:11px}.preview-insight p{margin:0}.preview-insight b{color:var(--text)}
@@ -584,6 +584,17 @@ body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var
 
 </style>
 
+
+<style id="instantdash-v171-management-polish">
+/* v1.7.1 — management wording, score transparency and mobile polish */
+#previewScoreRing{cursor:help}
+.exec-status{white-space:normal}
+@media(max-width:560px){
+  .preview-metrics b{font-size:15px;line-height:1.25}
+  .preview-insight{font-size:9.2px}
+}
+</style>
+
 </head>
 <body>
 <div class="author-line">Developed by Anil Sharma &nbsp;•&nbsp; Former General Manager, Central Bank of India</div>
@@ -624,7 +635,7 @@ body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var
       <div class="hero-preview" aria-hidden="true">
         <div class="preview-window">
           <div class="preview-top"><span class="mini-dot"></span><span class="mini-dot"></span><span class="mini-dot"></span><b>Management preview</b><span class="preview-chip" id="previewChip">AWAITING FILE</span></div>
-          <div class="preview-score"><div><small>Dashboard status</small><strong id="previewStatus">Upload a file</strong></div><div class="score-ring preview-empty-ring" id="previewScoreRing"><span id="previewScore">—</span></div></div>
+          <div class="preview-score"><div><small>Dashboard status</small><strong id="previewStatus">Upload a file</strong><i class="preview-score-note">Score is a review-confidence indicator</i></div><div class="score-ring preview-empty-ring" id="previewScoreRing"><span id="previewScore">—</span></div></div>
           <div class="preview-metrics"><div><small>Data quality</small><b id="previewQuality">—</b><i id="previewQualitySub">Calculated after upload</i></div><div><small>Key movement</small><b id="previewMovement">—</b><i id="previewMovementSub">Calculated after upload</i></div></div>
           <div class="preview-chart preview-empty-chart" id="previewChart"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><div class="preview-line"></div></div>
           <div class="preview-insight"><span>◆</span><p id="previewInsight"><b>Management insight</b> · Upload your Excel, CSV or PDF to calculate the dashboard from your own data.</p></div>
@@ -842,7 +853,7 @@ body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var
    --------------------------------------------------------------------- */
 const CONFIG = {
   APP_NAME: 'InstantDash',
-  VERSION: 'v1.7.0',
+  VERSION: 'v1.7.1',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -861,6 +872,7 @@ const CONFIG = {
   BIG_FILE_WARN: 200000,      // show a friendly warning above this many rows
   OUTLIER_SIGMA: 3,           // flag values beyond N standard deviations
   MISSING_WARN_PCT: 10,       // warning icon above this % of missing values
+  MATERIAL_MOVE_PCT: 10,       // reference threshold for a material KPI movement
   DATE_DAY_FIRST: true,       // ambiguous 03/04/2024 reads as 3 April (set false for US files)
 
   // 8-colour palette for multi-series charts. First two are the brand colours.
@@ -3378,11 +3390,11 @@ function buildExecutiveCockpit(){
     status.textContent = reviewStatus;
 
     if (reviewStatus === 'Mixed') {
-      sub.textContent = `${att} material attention movement${att===1?'':'s'} and ${perf} favourable movement${perf===1?'':'s'} identified. Review before drawing conclusions.`;
+      sub.textContent = `${att} attention movement${att===1?'':'s'} and ${perf} favourable movement${perf===1?'':'s'} identified. Review before drawing conclusions.`;
       badge.textContent = `● ${att} attention · ${perf} favourable`;
     } else if (reviewStatus === 'Needs attention') {
       sub.textContent = att
-        ? `${att} material adverse/attention movement${att===1?'':'s'} identified. Review before relying on conclusions.`
+        ? `${att} adverse/attention movement${att===1?'':'s'} identified. Review before relying on conclusions.`
         : `${warnCount || 1} field${warnCount===1?'':'s'} ${warnCount===1?'has':'have'} material missing data. Review before relying on conclusions.`;
       badge.textContent = att ? `● ${att} attention` : '● Review data quality';
     } else if (reviewStatus === 'Positive') {
@@ -3424,6 +3436,7 @@ function buildExecutiveCockpit(){
   const dims=rankDimensions()[0];
   if(dims) coverage.push(`<b>Primary dimension:</b> ${esc(dims.name)} · ${dims.unique.toLocaleString()} distinct values`);
   coverage.push(`<b>Analysis:</b> ${APP.charts.length} charts · filters · pivot · raw data`);
+  coverage.push(`<b>Review threshold:</b> ${CONFIG.MATERIAL_MOVE_PCT}% reference movement for materiality; confirm business context before concluding.`);
   const cl=$('execCoverageList'); if(cl) cl.innerHTML=coverage.map(x=>`<li>${x}</li>`).join('');
 }
 
@@ -3478,13 +3491,16 @@ function updateLivePreview(){
   const perf = Array.isArray(window.__miItems?.performance) ? window.__miItems.performance.length : 0;
 
   // Keep the preview aligned with the Executive Dashboard's language.
-  const status = att && perf ? 'Mixed' : att ? 'Needs attention' : 'Ready';
+  const status = att && perf ? 'Mixed' : att ? 'Needs attention' : perf ? 'Positive' : 'Ready';
 
   // Quality is the base score. Attention items reduce confidence; favourable
   // items provide only a modest offset so the preview never overstates results.
   const score = Math.max(0, Math.min(100,
     Math.round(quality - Math.min(30, att * 8) + Math.min(8, perf * 2))
   ));
+  const scoreBasis = `Review score ${Math.round(score)}/100 · data quality ${quality.toFixed(0)}% · ${att} attention movement${att===1?'':'s'} · ${perf} favourable movement${perf===1?'':'s'}. This is a review-confidence indicator, not a performance rating.`;
+  ring.title = scoreBasis;
+  ring.setAttribute('aria-label', scoreBasis);
 
   statusEl.textContent=status;
   scoreEl.textContent=String(score);
@@ -3493,11 +3509,11 @@ function updateLivePreview(){
 
   movementEl.classList.remove('preview-neutral','preview-attention','preview-positive');
   if(att){
-    movementEl.textContent=`${att} attention`;
+    movementEl.textContent=`${att} attention movement${att===1?'':'s'}`;
     movementSub.textContent='Calculated from your data';
     movementEl.classList.add('preview-attention');
   } else if(perf){
-    movementEl.textContent=`${perf} positive`;
+    movementEl.textContent=`${perf} favourable movement${perf===1?'':'s'}`;
     movementSub.textContent='Favourable movements detected';
     movementEl.classList.add('preview-positive');
   } else {
@@ -3537,7 +3553,7 @@ function updateLivePreview(){
   if(insight){
     let summary='Dashboard calculated from the currently loaded and filtered data.';
     if(att){
-      summary = `${att} material attention item${att===1?'':'s'} detected. Review the underlying data and supporting KPIs before drawing conclusions.`;
+      summary = `${att} attention item${att===1?'':'s'} detected. Review the underlying data and supporting KPIs before drawing conclusions.`;
     } else if(perf){
       summary = `${perf} favourable movement${perf===1?'':'s'} detected. Confirm that the improvement is sustained and supported by related KPIs.`;
     }
@@ -3545,7 +3561,7 @@ function updateLivePreview(){
   }
 
   ring.classList.remove('preview-empty-ring','preview-ready-ring');
-  if(status==='Ready') {
+  if(status==='Ready' || status==='Positive') {
     ring.classList.add('preview-ready-ring');
     ring.style.background=`conic-gradient(var(--ok) ${score}%,var(--border) 0)`;
   } else {
@@ -3697,7 +3713,7 @@ function wireRest(){
 
   function dashboardFile(){
     const html='<!doctype html>\n'+document.documentElement.outerHTML;
-    return new File([html],'InstantDash_Dashboard_v1.7.0.html',{type:'text/html'});
+    return new File([html],'InstantDash_Dashboard_v1.7.1.html',{type:'text/html'});
   }
   function open(){panel.style.display='flex';note.textContent='';}
   function hide(){panel.style.display='none';}
@@ -3720,14 +3736,14 @@ function wireRest(){
     try{
       if(navigator.share && (!navigator.canShare || navigator.canShare({files:[f]}))){
         await navigator.share({
-          title:'InstantDash Dashboard v1.7.0',
+          title:'InstantDash Dashboard v1.7.1',
           text:'Interactive InstantDash dashboard',
           files:[f]
         });
         note.textContent='Share completed.';
       }else if(navigator.share){
         await navigator.share({
-          title:'InstantDash Dashboard v1.7.0',
+          title:'InstantDash Dashboard v1.7.1',
           text:'Interactive InstantDash dashboard'
         });
       }else{
@@ -3740,7 +3756,7 @@ function wireRest(){
   });
 
   copyBtn && copyBtn.addEventListener('click',async()=>{
-    const text='InstantDash Dashboard v1.7.0 — interactive management dashboard.';
+    const text='InstantDash Dashboard v1.7.1 — interactive management dashboard.';
     try{
       await navigator.clipboard.writeText(text);
       note.textContent='Share text copied to clipboard.';
