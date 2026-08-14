@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<title>InstantDash — Excel to Dashboard v5.1.10</title>
+<title>InstantDash — Excel to Dashboard v5.1.11</title>
 <meta name="author" content="Developed by Anil Sharma, Former General Manager, Central Bank of India">
-<meta name="application-name" content="InstantDash v5.1.10">
-<meta name="description" content="InstantDash — Excel to Dashboard v5.1.10, developed by Anil Sharma">
+<meta name="application-name" content="InstantDash v5.1.11">
+<meta name="description" content="InstantDash — Excel to Dashboard v5.1.11, developed by Anil Sharma">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js';document.head.appendChild(s);"></script>
@@ -217,7 +217,7 @@ select, .input{
 .chart-body{position:relative; height:320px; min-height:320px; width:100%; overflow:hidden;}
 .chart-body canvas{display:block !important; width:100% !important; height:100% !important; min-height:300px;}
 .chart-controls-row{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; border-top:1px dashed var(--line); padding-top:8px;}
-/* ---------- v5.1.10 mobile-first dashboard polish ---------- */
+/* ---------- v5.1.11 mobile-first dashboard polish ---------- */
 .kpi-card{position:relative;overflow:hidden;min-height:196px;padding:18px 18px 16px;border-radius:18px;border:1px solid rgba(255,255,255,.06);background:linear-gradient(145deg,var(--card),rgba(255,255,255,.018));box-shadow:0 8px 24px rgba(0,0,0,.18);}
 .kpi-card:before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:var(--amber);}
 .kpi-card.kpi-derived:before{background:#304968;}
@@ -507,7 +507,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v403UiFix">
-/* v5.1.10: KPI directory is part of the loaded dashboard, never the landing page. */
+/* v5.1.11: KPI directory is part of the loaded dashboard, never the landing page. */
 #bankingKpiDirectory{display:block}
 #emptyState ~ #bankingKpiDirectory{display:block !important}
 </style>
@@ -539,7 +539,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v412InsightVisibility">
-/* v5.1.10 — high-contrast KPI Insight */
+/* v5.1.11 — high-contrast KPI Insight */
 .click-insight-backdrop{
   background:rgba(0,0,0,.62) !important;
 }
@@ -820,7 +820,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 @media(max-width:480px){.cc-grid{grid-template-columns:1fr}}
 </style>
 <style id="v441AreaDirectoryThemeFix">
-/* v5.1.10: the directory must follow the app theme. Earlier versions used
+/* v5.1.11: the directory must follow the app theme. Earlier versions used
    hard-coded white backgrounds, which made the dark-mode text almost invisible. */
 .banking-kpi-directory{
   margin:18px 0;
@@ -909,7 +909,7 @@ document.addEventListener('DOMContentLoaded', function(){
 </script>
 
 <style id="v444LandingDirectoryVisibility">
-/* v5.1.10 — Landing page is for file upload only.
+/* v5.1.11 — Landing page is for file upload only.
    Area/KPI directories appear after a dashboard is loaded. */
 #areaDirectoryBlock,
 #bankingKpiDirectory{
@@ -1016,11 +1016,11 @@ if(typeof directionFor!=='function'){
 #advisorBack .card{border:1px solid rgba(255,255,255,.12)}
 #advisorBack .badge{white-space:nowrap}
 @media(max-width:700px){#advisorBack .modal{width:96vw;max-height:92vh;overflow:auto}}
-</style><meta name="instantdash-build" content="v5.1.10"><meta name="instantdash-file" content="standalone-html"></head>
+</style><meta name="instantdash-build" content="v5.1.11"><meta name="instantdash-file" content="standalone-html"></head>
 <body>
 
 <div class="topbar">
-  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v5.1.10</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
+  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v5.1.11</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
   <div class="topbar-right">
     <div class="privacy-badge">🔒 <span class="txt">Processed locally — not uploaded to any server</span></div>
     <button class="icon-btn" id="shareTopBtn" title="Share dashboard" aria-label="Share dashboard as an image" style="display:none;">📤</button>
@@ -1434,7 +1434,7 @@ if(typeof directionFor!=='function'){
   </div>
 </div>
 
-<footer class="app-footer">InstantDash <strong>v5.1.10</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
+<footer class="app-footer">InstantDash <strong>v5.1.11</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
 </div>
 
 <!-- Ask Your Data floating widget -->
@@ -2187,6 +2187,78 @@ var KPI_DEFS = [
   {id:'schedule_adherence',name:'Schedule Adherence %',dept:'Project Management, Operations',cat:'Delivery',aliases:['schedule adherence','schedule adherence %','on schedule %'],direct:true,agg:'avg',percent:true,higher:true}
 ];
 </script>
+<script id="instantdashCodeEngine">
+/* ============================================================
+   v5.1.11 — Department / KPI Code Engine
+   Stable machine-readable codes for department → KPI → formula.
+   Recognises codes in column headings such as FIN.REV, FIN:REV,
+   FIN_REV, KPI.REV, KPI-REV, or [FIN][REV].
+   Existing plain-language KPI names continue to work unchanged.
+   ============================================================ */
+const INSTANTDASH_CODEBOOK_VERSION = '1.0';
+const DEPARTMENT_CODES = Object.freeze({
+  MGT:'Management', FIN:'Finance', HR:'HR', SAL:'Sales / Business', MKT:'Marketing',
+  OPS:'Operations / Manufacturing', PRC:'Procurement', SCM:'Supply Chain', CS:'Customer Service',
+  PM:'Project Management', BNK:'Banking', RISK:'Risk & Compliance', LEG:'Legal', AUD:'Audit',
+  ESG:'ESG / Sustainability', IT:'IT / Technology', CYB:'Cybersecurity', QLT:'Quality Management',
+  RTL:'Retail', ECOM:'E-commerce', HLT:'Healthcare', EDU:'Education', HOS:'Hospitality',
+  RE:'Real Estate', CON:'Construction', NPO:'NGO / Non-profit', GOV:'Government / Public Sector',
+  BCA:'Banking Credit Analysis', BCP:'BC Performance', BNE:'Bank & NBFC Earnings / Investor Analysis',
+  MSE:'Micro & Small Enterprise'
+});
+const DEPARTMENT_CODE_BY_NAME = Object.freeze(Object.fromEntries(Object.entries(DEPARTMENT_CODES).map(([c,n])=>[n,c])));
+const KPI_CODE_OVERRIDES = Object.freeze({
+  revenue:'REV', purchases:'PUR', cogs:'COGS', gross_profit:'GP', gross_margin:'GPM', ebitda:'EBITDA',
+  ebitda_margin:'EBITDAM', ebit:'EBIT', net_profit:'NP', net_margin:'NPM', operating_cost:'OPEX',
+  contribution:'CONTR', contribution_margin:'CONTRM', cash:'CASH', operating_cash_flow:'OCF',
+  investing_cash_flow:'ICF', financing_cash_flow:'FCF', net_cash_flow:'NCF', current_assets:'CA',
+  current_liabilities:'CL', working_capital:'WC', current_ratio:'CR', quick_ratio:'QR', debtors:'AR',
+  creditors:'AP', stock:'INV', debtor_days:'DSO', creditor_days:'DPO', stock_days:'DIO',
+  revenue_growth:'REV_G', profit_growth:'NP_G', target:'TARGET', actual:'ACTUAL',
+  target_achievement:'ACHV', variance:'VAR', variance_pct:'VAR_PCT', roce:'ROCE', roe:'ROE', debt_equity:'DE',
+  headcount:'HC', new_joiners:'JOIN', exits:'EXIT', attrition:'ATTR', retention:'RET', attendance:'ATT',
+  absenteeism:'ABS', overtime_hours:'OT', performance_score:'PERF', training_hours:'TRN_HRS',
+  training_completion:'TRN_PCT', cost_per_hire:'CPH', time_to_hire:'TTH', productivity_employee:'PROD_EMP',
+  orders:'ORD', units_sold:'UNITS', average_order_value:'AOV', new_customers:'NEW_CUST',
+  repeat_customers:'REP_CUST', conversion_rate:'CVR', pipeline_value:'PIPE', win_rate:'WIN',
+  average_deal_size:'ADS', sales_cycle:'SCYCLE', customer_retention:'CUST_RET', cac:'CAC', clv:'CLV'
+});
+function makeKpiCode(id){
+  if(KPI_CODE_OVERRIDES[id]) return KPI_CODE_OVERRIDES[id];
+  return String(id||'KPI').replace(/[^A-Za-z0-9]+/g,'_').replace(/^_+|_+$/g,'').toUpperCase().slice(0,24);
+}
+function normaliseCodeToken(v){
+  return String(v??'').trim().toUpperCase().replace(/[\[\]{}()]/g,' ').replace(/^(?:KPI|CODE)\s*[:=\-]\s*/,'').replace(/\s+/g,'_');
+}
+function codeVariantsForKpi(def){
+  const code=String(def.code||makeKpiCode(def.id)).toUpperCase();
+  const deptCodes=(def.dept||'').split(',').map(x=>DEPARTMENT_CODE_BY_NAME[String(x).trim()]).filter(Boolean);
+  const out=new Set([code,'KPI_'+code,'KPI-'+code,'KPI.'+code]);
+  deptCodes.forEach(d=>{out.add(d+'_'+code);out.add(d+'-'+code);out.add(d+'.'+code);out.add('KPI_'+d+'_'+code);});
+  return [...out];
+}
+function codeMatchForKpi(def,columnName){
+  const raw=String(columnName||'').trim().toUpperCase(); if(!raw)return null;
+  const compact=raw.replace(/[\[\]{}()\s]/g,'_').replace(/_+/g,'_');
+  for(const v of codeVariantsForKpi(def).map(x=>String(x).toUpperCase())){
+    if(raw===v || compact===v || raw.includes(v) || compact.includes(v)) return v;
+  }
+  return null;
+}
+(function enrichKpiCodebook(){
+  KPI_DEFS.forEach(def=>{
+    def.code=makeKpiCode(def.id);
+    def.departmentCodes=(def.dept||'').split(',').map(x=>DEPARTMENT_CODE_BY_NAME[String(x).trim()]).filter(Boolean);
+    def.machineKey=(def.departmentCodes[0]||'GEN')+'.'+def.code;
+  });
+})();
+function departmentCodeFor(name){return DEPARTMENT_CODE_BY_NAME[String(name||'').trim()]||'';}
+function departmentNameForCode(code){return DEPARTMENT_CODES[String(code||'').trim().toUpperCase()]||'';}
+function kpiCodeForId(id){const d=KPI_DEFS.find(x=>x.id===id);return d?d.code:'';}
+function getKpiCodeDirectory(){
+  return KPI_DEFS.map(d=>({department:d.dept,departmentCodes:d.departmentCodes,code:d.code,name:d.name,formula:d.formula||'Direct source value',category:d.cat||'',id:d.id}));
+}
+</script>
 <script>
 /* ================================================================
    InstantDash — Excel to Dashboard
@@ -2828,7 +2900,7 @@ function fail(msg){
 
 
 
-// v5.1.10: expose the real file handler for the independent mobile file-picker hook.
+// v5.1.11: expose the real file handler for the independent mobile file-picker hook.
 window.instantDashHandleFile = handleFile;
 
 function chooseBestDataSheet(names, wb){
@@ -3424,7 +3496,7 @@ function renderPerformanceScorecard(){
 }
 
 
-/* ===================== InstantDash v5.1.10 =====================
+/* ===================== InstantDash v5.1.11 =====================
    Consolidated management/KPI intelligence layer.
    It is additive: existing v3.5.9 chart engine remains intact.
 ================================================================ */
@@ -4125,8 +4197,15 @@ function enforceAutomaticChartDefault(spec){
 function sourceMatchForKpi(def){
   const cols=STATE.columns||[]; let best=null;
   cols.forEach(col=>{ const p=STATE.profile[col.name]; if(!p||p.type!=='Number') return;
+    // Machine-readable code gets priority over fuzzy/plain-language matching.
+    const codeHit=typeof codeMatchForKpi==='function'?codeMatchForKpi(def,col.name):null;
+    if(codeHit){
+      const candidate={column:col.name,score:1.25,alias:'code:'+codeHit};
+      if(!best||candidate.score>best.score) best=candidate;
+      return;
+    }
     let score=0, alias='';
-    def.aliases.forEach(a=>{const sc=kpiAliasScore(col.name,a); if(sc>score){score=sc;alias=a;}});
+    (def.aliases||[]).forEach(a=>{const sc=kpiAliasScore(col.name,a); if(sc>score){score=sc;alias=a;}});
     if(score>0){
       if(p.role==='Identifier') score*=.15;
       if(p.isPercentage && def.percent) score=Math.min(1,score+.06);
@@ -4262,7 +4341,7 @@ function renderKpiMapping(kpis){
   if(ds)ds.value=STATE.kpiDepartment||'Auto Detect';
   if(!kpis.length){box.innerHTML='<div class="kpi-empty">No reliable KPI mappings were found. Review the Data Profile or add a custom mapping.</div>';return;}
   const opts=STATE.columns.map(c=>`<option value="${escapeHtml(c.name)}">${escapeHtml(c.name)}</option>`).join('');
-  box.innerHTML=`<table class="kpi-mapping-table"><thead><tr><th>KPI</th><th>Department</th><th>Category</th><th>Source column</th><th>Confidence</th><th>Value</th><th>Formula / method</th></tr></thead><tbody>${kpis.map(k=>`<tr><td><strong>${escapeHtml(k.name)}</strong></td><td>${escapeHtml(k.dept)}</td><td>${escapeHtml(k.cat)}</td><td>${k.source?`<select class="kpi-map-select" data-kpi="${escapeHtml(k.id)}"><option value="" ${!(STATE.kpiManualMap&&STATE.kpiManualMap[k.id])?'selected':''}>Auto: ${escapeHtml(k.source)}</option>${STATE.columns.map(c=>`<option value="${escapeHtml(c.name)}" ${(STATE.kpiManualMap&&STATE.kpiManualMap[k.id]===c.name)?'selected':''}>${escapeHtml(c.name)}</option>`).join('')}</select>`:'Calculated'}</td><td><span class="kpi-badge ${k.confidence}">${k.confidence}</span></td><td><strong>${escapeHtml(fmtKpiValue(k))}</strong></td><td>${escapeHtml(k.formula)}</td></tr>`).join('')}</tbody></table>`;
+  box.innerHTML=`<div class="codebook-note"><strong>Code engine:</strong> Department + KPI codes are machine-readable. Examples: <code>FIN.REV</code>, <code>FIN.NP</code>, <code>HR.HC</code>. Coded column names take priority over fuzzy name matching.</div><table class="kpi-mapping-table"><thead><tr><th>Dept Code</th><th>KPI Code</th><th>KPI</th><th>Department</th><th>Category</th><th>Source column</th><th>Confidence</th><th>Value</th><th>Formula / method</th></tr></thead><tbody>${kpis.map(k=>`<tr><td><code>${escapeHtml((k.departmentCodes||[]).join(', ')||departmentCodeFor(k.dept))}</code></td><td><code>${escapeHtml(k.code||makeKpiCode(k.id))}</code></td><td><strong>${escapeHtml(k.name)}</strong></td><td>${escapeHtml(k.dept)}</td><td>${escapeHtml(k.cat)}</td><td>${k.source?`<select class="kpi-map-select" data-kpi="${escapeHtml(k.id)}"><option value="" ${!(STATE.kpiManualMap&&STATE.kpiManualMap[k.id])?'selected':''}>Auto: ${escapeHtml(k.source)}</option>${STATE.columns.map(c=>`<option value="${escapeHtml(c.name)}" ${(STATE.kpiManualMap&&STATE.kpiManualMap[k.id]===c.name)?'selected':''}>${escapeHtml(c.name)}</option>`).join('')}</select>`:'Calculated'}</td><td><span class="kpi-badge ${k.confidence}">${k.confidence}</span></td><td><strong>${escapeHtml(fmtKpiValue(k))}</strong></td><td>${escapeHtml(k.formula)}</td></tr>`).join('')}</tbody></table>`;
   box.querySelectorAll('.kpi-map-select').forEach(sel=>sel.addEventListener('change',()=>{
     const id=sel.dataset.kpi, def=KPI_DEFS.find(d=>d.id===id); if(!def)return;
     if(sel.value){ if(!STATE.kpiManualMap)STATE.kpiManualMap={}; STATE.kpiManualMap[id]=sel.value; }
@@ -7430,7 +7509,7 @@ document.addEventListener('click',(e)=>{
 </style>
 
 <style id="v490ManagementWorkflow">
-/* v5.1.10 — single workflow + management KPI bar dashboard */
+/* v5.1.11 — single workflow + management KPI bar dashboard */
 .workflow-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0 16px;position:sticky;top:57px;z-index:45;background:var(--cream);padding:8px 0}
 .workflow-tab{min-height:48px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:14px;font-weight:800;font-size:13px;padding:10px 12px;box-shadow:var(--shadow);cursor:pointer}
 .workflow-tab.active{background:var(--amber);border-color:var(--amber);color:#17130a}
@@ -7589,7 +7668,7 @@ document.addEventListener('click',(e)=>{
   setTimeout(()=>{setupWorkflow();if(STATE?.data?.length)buildBars();},500);
 })();
 
-/* InstantDash v5.1.10 display settings */
+/* InstantDash v5.1.11 display settings */
 const DISPLAY_SETTINGS_KEY = "instantdash_display_v500";
 const DEFAULT_DISPLAY_SETTINGS = {
   currency:"₹", scale:"thousand", chart:"auto", density:"standard",
@@ -7674,7 +7753,7 @@ function applyDisplaySettings(){
 }
 applyDisplaySettings();
 
-/* InstantDash v5.1.10 — Business Improvement Advisor */
+/* InstantDash v5.1.11 — Business Improvement Advisor */
 function openAdvisor(){
  const m=document.getElementById("advisorBack"); if(!m)return;
  renderAdvisor();
@@ -7886,7 +7965,7 @@ function formatAdvisorValue(r){
  </div>
 </div>
 
-<!-- v5.1.10: robust top-bar controls -->
+<!-- v5.1.11: robust top-bar controls -->
 <script id="v519TopBarControls">
 (function(){
   function ready(){
@@ -8059,6 +8138,9 @@ function formatAdvisorValue(r){
   setTimeout(ready,1200);
 })();
 </script>
+<style id="instantdash-code-engine-css">
+.codebook-note{margin:0 0 10px;padding:9px 11px;border:1px solid var(--line);border-radius:10px;background:var(--cream);color:var(--muted);font-size:12px;line-height:1.5}.codebook-note code{font-weight:700;color:var(--ink)}.kpi-mapping-table code{font-weight:700;font-size:11px;white-space:nowrap}@media(max-width:900px){.kpi-mapping-wrap{overflow-x:auto}.kpi-mapping-table{min-width:1050px}}
+</style>
 </body>
 </html>
 
