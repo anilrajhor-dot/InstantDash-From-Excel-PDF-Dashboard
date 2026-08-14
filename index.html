@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<title>InstantDash — Excel to Dashboard v5.2.2</title>
+<title>InstantDash — Excel to Dashboard v5.2.3</title>
 <meta name="author" content="Developed by Anil Sharma, Former General Manager, Central Bank of India">
-<meta name="application-name" content="InstantDash v5.2.2">
-<meta name="description" content="InstantDash — Excel to Dashboard v5.2.2, developed by Anil Sharma">
+<meta name="application-name" content="InstantDash v5.2.3">
+<meta name="description" content="InstantDash — Excel to Dashboard v5.2.3, developed by Anil Sharma">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js';document.head.appendChild(s);"></script>
@@ -217,7 +217,7 @@ select, .input{
 .chart-body{position:relative; height:320px; min-height:320px; width:100%; overflow:hidden;}
 .chart-body canvas{display:block !important; width:100% !important; height:100% !important; min-height:300px;}
 .chart-controls-row{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; border-top:1px dashed var(--line); padding-top:8px;}
-/* ---------- v5.2.2 mobile-first dashboard polish ---------- */
+/* ---------- v5.2.3 mobile-first dashboard polish ---------- */
 .kpi-card{position:relative;overflow:hidden;min-height:196px;padding:18px 18px 16px;border-radius:18px;border:1px solid rgba(255,255,255,.06);background:linear-gradient(145deg,var(--card),rgba(255,255,255,.018));box-shadow:0 8px 24px rgba(0,0,0,.18);}
 .kpi-card:before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:var(--amber);}
 .kpi-card.kpi-derived:before{background:#304968;}
@@ -517,7 +517,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v403UiFix">
-/* v5.2.2: KPI directory is part of the loaded dashboard, never the landing page. */
+/* v5.2.3: KPI directory is part of the loaded dashboard, never the landing page. */
 #bankingKpiDirectory{display:block}
 #emptyState ~ #bankingKpiDirectory{display:block !important}
 </style>
@@ -549,7 +549,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 </style>
 
 <style id="v412InsightVisibility">
-/* v5.2.2 — high-contrast KPI Insight */
+/* v5.2.3 — high-contrast KPI Insight */
 .click-insight-backdrop{
   background:rgba(0,0,0,.62) !important;
 }
@@ -830,7 +830,7 @@ footer.app-footer{text-align:center; color:var(--muted); font-size:12px; padding
 @media(max-width:480px){.cc-grid{grid-template-columns:1fr}}
 </style>
 <style id="v441AreaDirectoryThemeFix">
-/* v5.2.2: the directory must follow the app theme. Earlier versions used
+/* v5.2.3: the directory must follow the app theme. Earlier versions used
    hard-coded white backgrounds, which made the dark-mode text almost invisible. */
 .banking-kpi-directory{
   margin:18px 0;
@@ -919,7 +919,7 @@ document.addEventListener('DOMContentLoaded', function(){
 </script>
 
 <style id="v444LandingDirectoryVisibility">
-/* v5.2.2 — Landing page is for file upload only.
+/* v5.2.3 — Landing page is for file upload only.
    Area/KPI directories appear after a dashboard is loaded. */
 #areaDirectoryBlock,
 #bankingKpiDirectory{
@@ -1026,11 +1026,11 @@ if(typeof directionFor!=='function'){
 #advisorBack .card{border:1px solid rgba(255,255,255,.12)}
 #advisorBack .badge{white-space:nowrap}
 @media(max-width:700px){#advisorBack .modal{width:96vw;max-height:92vh;overflow:auto}}
-</style><meta name="instantdash-build" content="v5.2.2"><meta name="instantdash-file" content="standalone-html"></head>
+</style><meta name="instantdash-build" content="v5.2.3"><meta name="instantdash-file" content="standalone-html"></head>
 <body>
 
 <div class="topbar">
-  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v5.2.2</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
+  <div class="brand"><span class="dot"></span> InstantDash <span class="version-badge" title="Application version">v5.2.3</span></div><div class="developer-attribution">Developed by <strong>Anil Sharma</strong><span>Former General Manager, Central Bank of India</span></div>
   <div class="topbar-right">
     <div class="privacy-badge">🔒 <span class="txt">Processed locally — not uploaded to any server</span></div>
     <button class="icon-btn" id="shareTopBtn" title="Share dashboard" aria-label="Share dashboard" type="button">📤</button>
@@ -1448,7 +1448,7 @@ if(typeof directionFor!=='function'){
   </div>
 </div>
 
-<footer class="app-footer">InstantDash <strong>v5.2.2</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
+<footer class="app-footer">InstantDash <strong>v5.2.3</strong> · Excel / CSV / PDF upload · <strong>Developed by Anil Sharma, Former General Manager, Central Bank of India</strong> · runs 100% locally in your browser</footer>
 </div>
 
 <!-- Ask Your Data floating widget -->
@@ -1952,7 +1952,7 @@ var KPI_DEFS = [
   {id:'bn_pat_ratio',name:'PAT / Total Income %',dept:'Bank & NBFC Earnings / Investor Analysis',cat:'Cost Ratios',aliases:['pat %','net profit %','pat to total income'],direct:true,agg:'avg',percent:true,higher:true},
   // Business Correspondent (BC) Performance
   // Built for bank-supplied BC-wise performance and commission data.
-  {id:'bc_unique_count',name:'Unique BCs in Data',dept:'BC Performance',cat:'BC Network',aliases:['unique bcs','unique bc count','bc count','number of unique bc','unique business correspondents'],derived:true,calc:()=>{const cols=STATE.columns||[];const c=cols.find(x=>/^(bc|business correspondent)\s*(name|id|code)?$/i.test(String(x.name).trim())||/bc\s*(name|id|code)|business correspondent/i.test(String(x.name)));if(!c)return null;const vals=STATE.filteredData.map(r=>String(r[c.name]??'').trim()).filter(Boolean);return new Set(vals).size;},formula:'Distinct count of BC Name / BC ID / BC Code',higher:true},
+  {id:'bc_unique_count',name:'Unique BCs in Data',dept:'BC Performance',cat:'BC Network',aliases:['unique bcs','unique bc count','bc count','number of unique bc','unique business correspondents'],derived:true,calc:()=>{const rows=STATE.filteredData||[];const cols=STATE.columns||[];const norm=v=>String(v??'').trim().toLowerCase().replace(/[._-]+/g,' ').replace(/\s+/g,' ');const candidates=cols.map(c=>{const n=norm(c.name);let rank=0;if(/\bbc\s*(id|code|number|no)\b|\bbusiness correspondent\s*(id|code|number|no)\b|\bcsp\s*(id|code|number|no)\b|\bbank mitra\s*(id|code|number|no)\b/.test(n))rank=40;else if(/\bbc\s*(name|names?)\b|\bbusiness correspondent\s*(name|names?)\b|\bcsp\s*(name|names?)\b|\bbank mitra\s*(name|names?)\b/.test(n))rank=30;else if(/^bc$/.test(n)||/^business correspondent$/.test(n)||/^csp$/.test(n)||/^bank mitra$/.test(n))rank=20;else if(/\bbc\b|business correspondent|csp|bank mitra/.test(n))rank=10;const vals=rows.map(r=>String(r[c.name]??'').trim()).filter(Boolean);const unique=new Set(vals.map(norm)).size;return {c,rank,nonBlank:vals.length,unique};}).filter(x=>x.rank>0&&x.nonBlank>0&&x.unique>0).sort((a,b)=>(b.rank-a.rank)||(b.nonBlank-a.nonBlank)||(b.unique-a.unique));if(!candidates.length)return null;const primary=candidates[0];const primaryName=primary.c.name;const identityCols=candidates.filter(x=>x.rank>=30).map(x=>x.c.name);const keys=new Set();rows.forEach(r=>{let v='';for(const col of identityCols){const z=String(r[col]??'').trim();if(z){v=z;break;}}if(!v)v=String(r[primaryName]??'').trim();if(v)keys.add(norm(v));});return keys.size;},formula:'Distinct count of BC ID / BC Code / BC Name (best populated BC identifier selected automatically)',higher:true},
   {id:'bc_avg_commission_per_bc',name:'Average Commission per BC',dept:'BC Performance',cat:'Income / Productivity',aliases:['average commission per bc','avg commission per bc','commission per bc','average bc commission'],derived:true,calc:ctx=>{if(ctx.bc_commission==null)return null;const n=ctx.bc_unique_count||ctx.bc_active||ctx.bc_total;return n?ctx.bc_commission/n:null;},formula:'Commission Earned ÷ Number of BCs',higher:true},
   {id:'bc_active',name:'Active BCs',dept:'BC Performance',cat:'BC Network',aliases:['active bc','active bcs','active business correspondent','active business correspondents','bc active'],direct:true,agg:'sum',higher:true},
   {id:'bc_total',name:'Total BCs',dept:'BC Performance',cat:'BC Network',aliases:['total bc','total bcs','total business correspondent','total business correspondents','bc count','number of bc','number of bcs'],direct:true,agg:'sum',higher:true},
@@ -2857,7 +2857,7 @@ function fail(msg){
 
 
 
-// v5.2.2: expose the real file handler for the independent mobile file-picker hook.
+// v5.2.3: expose the real file handler for the independent mobile file-picker hook.
 window.instantDashHandleFile = handleFile;
 
 function chooseBestDataSheet(names, wb){
@@ -3453,7 +3453,7 @@ function renderPerformanceScorecard(){
 }
 
 
-/* ===================== InstantDash v5.2.2 =====================
+/* ===================== InstantDash v5.2.3 =====================
    Consolidated management/KPI intelligence layer.
    It is additive: existing v3.5.9 chart engine remains intact.
 ================================================================ */
@@ -4278,7 +4278,7 @@ function fmtKpiValue(k){
   return fmtNum(k.value,{compact:true});
 }
 
-// ---------- v5.2.2: SINGLE DEPARTMENT CODE SCOPING ----------
+// ---------- v5.2.3: SINGLE DEPARTMENT CODE SCOPING ----------
 function departmentCodeForLabel(label){
   const n=String(label||'').trim().toLowerCase();
   const map={
@@ -4329,7 +4329,7 @@ function renderKpiMapping(kpis){
   const box=document.getElementById('kpiMappingBody'); if(!box)return;
   const autoDept=detectDepartment();
   const dept=STATE.kpiDepartment&&STATE.kpiDepartment!=='Auto Detect'?STATE.kpiDepartment:autoDept;
-  // v5.2.2: Mapping table is strictly department-scoped.
+  // v5.2.3: Mapping table is strictly department-scoped.
   const scoped = (dept && dept!=='Auto Detect') ? kpis.filter(k=>kpiBelongsToDepartment(k,dept)) : [];
   kpis=scoped;
   const picker=document.getElementById('departmentPicker');
@@ -4352,7 +4352,7 @@ function renderKpiMapping(kpis){
     renderKPIs();
   }));
 }
-/* v5.2.2 — SINGLE CODE KPI ARCHITECTURE
+/* v5.2.3 — SINGLE CODE KPI ARCHITECTURE
    One primary department code is the authoritative key for:
    Department -> KPI -> Formula family.
    Human-readable multi-department labels remain display-only; the first
@@ -4892,7 +4892,9 @@ function buildLongFormKpiCharts(){
 
 function chooseAndBuildCharts(){
   destroyAllCharts();
-  const measures=measuresList();
+  // Only use measures that contain at least one real numeric value. This prevents
+  // an empty first numeric-looking column from producing a large blank chart.
+  const measures=measuresList().filter(m=>STATE.filteredData.some(r=>{const v=getNumeric(r,m);return Number.isFinite(v);}));
   const dims=dimensionsList().filter(d=>{
     const p=STATE.profile[d]||{};
     const nonBlank=(p.count||0)-(p.missing||0);
@@ -4905,7 +4907,7 @@ function chooseAndBuildCharts(){
   });
   const times=timeList();
   const specs=[];
-  // v5.2.2: always start the management dashboard with graphical KPI summaries.
+  // v5.2.3: always start the management dashboard with graphical KPI summaries.
   // Separate units so ₹, %, counts and time-based KPIs are never placed on one axis.
   const scopedForCharts=getDepartmentScopedKpis();
   const summaryGroups=['currency','percent','number','ratio','time'];
@@ -4929,8 +4931,12 @@ function chooseAndBuildCharts(){
 
   // 1. Date + measure -> database/currency rule first; date grouping is user-selectable
   if(times.length && measures.length){
-    specs.push({kind:defaultChartKind(measures[0], STATE.filteredData), autoDefault:true, x:times[0], y:measures[0], agg:aggFor(measures[0]), title:`${verbFor(measures[0])} ${measures[0]} by ${times[0]}`, sort:'desc'});
-    if(measures[1]) specs.push({kind:defaultChartKind(measures[1], STATE.filteredData), autoDefault:true, x:times[0], y:measures[1], agg:aggFor(measures[1]), title:`${verbFor(measures[1])} ${measures[1]} by ${times[0]}`, sort:'desc'});
+    const usableTimes=times.filter(t=>STATE.filteredData.filter(r=>getDateVal(r,t)).length>=2);
+    const tx=usableTimes[0]||times[0];
+    if(tx){
+      specs.push({kind:defaultChartKind(measures[0], STATE.filteredData), autoDefault:true, x:tx, y:measures[0], agg:aggFor(measures[0]), title:`${verbFor(measures[0])} ${measures[0]} by ${tx}`, sort:'desc'});
+      if(measures[1]) specs.push({kind:defaultChartKind(measures[1], STATE.filteredData), autoDefault:true, x:tx, y:measures[1], agg:aggFor(measures[1]), title:`${verbFor(measures[1])} ${measures[1]} by ${tx}`, sort:'desc'});
+    }
   }
   // 2. Dimension + measure -> bar sorted desc
   dims.slice(0,2).forEach((d,i)=>{
@@ -5222,7 +5228,7 @@ function fmtCurrencyCompact(n){
 
 function buildChartDataset(spec){
   spec=enforceAutomaticChartDefault(spec);
-  // v5.2.2: KPI summary charts are built from the already-calculated,
+  // v5.2.3: KPI summary charts are built from the already-calculated,
   // department-scoped KPI values, so a dashboard is still graphical even
   // when the source workbook has no usable date/category axis.
   if(spec.kpiSummary){
@@ -6065,6 +6071,22 @@ function renderChart(entry){
   if(!canvas) return;
   try{
     const ds=buildChartDataset(spec);
+    const hasPoints = Array.isArray(ds.labels) ? ds.labels.length>0 : (Array.isArray(ds.datasets) ? ds.datasets.some(d=>Array.isArray(d.data)&&d.data.some(v=>Number.isFinite(Number(v)))) : Number.isFinite(Number(ds.value)));
+    let empty=entry.card?.querySelector('.chart-empty-message');
+    if(!hasPoints){
+      if(!empty){
+        empty=document.createElement('div');
+        empty.className='chart-empty-message';
+        empty.style.cssText='position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;color:var(--muted);font-size:14px;line-height:1.45;';
+        empty.innerHTML='<div><strong>No plottable data for this chart.</strong><br>Check the selected measure/date column in KPI Mapping &amp; Data Dictionary.</div>';
+        const body=entry.card?.querySelector('.chart-body');
+        if(body){body.style.position='relative';body.appendChild(empty);}
+      }
+      if(canvas) canvas.style.visibility='hidden';
+      return;
+    }
+    if(empty) empty.remove();
+    if(canvas) canvas.style.visibility='visible';
     MiniChart.render(canvas, ds, spec, STATE.darkMode);
   MiniChart.attachInteraction(canvas, spec, ds);
   // Drill-down is only offered for plain bar/donut charts grouped by a real
@@ -7610,7 +7632,7 @@ document.addEventListener('click',(e)=>{
 </style>
 
 <style id="v490ManagementWorkflow">
-/* v5.2.2 — single workflow + management KPI bar dashboard */
+/* v5.2.3 — single workflow + management KPI bar dashboard */
 .workflow-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0 16px;position:sticky;top:57px;z-index:45;background:var(--cream);padding:8px 0}
 .workflow-tab{min-height:48px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:14px;font-weight:800;font-size:13px;padding:10px 12px;box-shadow:var(--shadow);cursor:pointer}
 .workflow-tab.active{background:var(--amber);border-color:var(--amber);color:#17130a}
@@ -7769,7 +7791,7 @@ document.addEventListener('click',(e)=>{
   setTimeout(()=>{setupWorkflow();if(STATE?.data?.length)buildBars();},500);
 })();
 
-/* InstantDash v5.2.2 display settings */
+/* InstantDash v5.2.3 display settings */
 const DISPLAY_SETTINGS_KEY = "instantdash_display_v500";
 const DEFAULT_DISPLAY_SETTINGS = {
   currency:"₹", scale:"thousand", chart:"auto", density:"standard",
@@ -7854,7 +7876,7 @@ function applyDisplaySettings(){
 }
 applyDisplaySettings();
 
-/* InstantDash v5.2.2 — Business Improvement Advisor */
+/* InstantDash v5.2.3 — Business Improvement Advisor */
 function openAdvisor(){
  const m=document.getElementById("advisorBack"); if(!m)return;
  renderAdvisor();
@@ -8066,7 +8088,7 @@ function formatAdvisorValue(r){
  </div>
 </div>
 
-<!-- v5.2.2: robust top-bar controls -->
+<!-- v5.2.3: robust top-bar controls -->
 <script id="v519TopBarControls">
 (function(){
   function ready(){
@@ -8502,7 +8524,7 @@ function formatAdvisorValue(r){
 })();
 </script>
 
-<!-- InstantDash v5.2.2 — Single Department Code Master Engine -->
+<!-- InstantDash v5.2.3 — Single Department Code Master Engine -->
 <style id="v520DepartmentMasterStyle">
 #v520MasterOverlay{position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:100000;display:none;align-items:center;justify-content:center;padding:14px}
 #v520MasterOverlay.open{display:flex}
@@ -8660,7 +8682,7 @@ function formatAdvisorValue(r){
   function exportMaster(){
     const payload={version:'5.2.0',architecture:'single-department-code',departments:allDepts().map(d=>({code:d.code,name:d.name,kpis:d.kpis}))};
     const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
-    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='InstantDash_Department_KPI_Master_v5.2.2.json';a.click();
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='InstantDash_Department_KPI_Master_v5.2.3.json';a.click();
     setTimeout(()=>URL.revokeObjectURL(a.href),1000);
   }
   function reset(){if(confirm('Restore the preloaded Department/KPI master? Custom departments and KPIs will be removed.')){user={};save();selected='FIN';renderDepts();renderKpis();}}
