@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>InstantDash — Excel to Dashboard · v1.3.1</title>
+<title>InstantDash — Excel to Dashboard · v1.4.0</title>
 
 <!-- ============================================================
      LIBRARIES (loaded from CDN, no build step required)
@@ -224,16 +224,31 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
 /* ---------- management insights ---------- */
 .management-insights{margin-top:22px}
 .management-insights .mi-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:14px}
-.management-insights .mi-card{background:var(--card-2);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
-.management-insights .mi-card h3{font-size:13px;margin:0 0 7px}
+.management-insights .mi-card{background:var(--card-2);border:1px solid var(--border);border-radius:12px;padding:0;overflow:hidden}
+.management-insights .mi-card summary{cursor:pointer;list-style:none;padding:13px 15px;font-family:Poppins,sans-serif;font-weight:650;font-size:13px;display:flex;align-items:center;gap:9px}
+.management-insights .mi-card summary::-webkit-details-marker{display:none}
+.management-insights .mi-card summary::before{content:'▸';color:var(--accent);font-size:11px;transition:transform .18s ease}
+.management-insights .mi-card[open] summary::before{transform:rotate(90deg)}
+.management-insights .mi-card .mi-body{padding:0 15px 14px}
 .management-insights .mi-card p{margin:0;font-size:12.5px;line-height:1.6}
-.management-insights .mi-card ul{margin:6px 0 0;padding-left:18px}
-.management-insights .mi-card li{margin:4px 0;font-size:12.5px;line-height:1.5}
+.management-insights .mi-card ul{margin:4px 0 0;padding-left:18px}
+.management-insights .mi-card li{margin:5px 0;font-size:12.5px;line-height:1.5}
 .management-insights .mi-card.good{border-left:3px solid var(--ok)}
 .management-insights .mi-card.warn{border-left:3px solid var(--warn)}
 .management-insights .mi-card.neutral{border-left:3px solid var(--accent)}
-@media (max-width:700px){.management-insights .mi-grid{grid-template-columns:1fr}}
-@media print{.management-insights{break-inside:auto}.management-insights .mi-grid{grid-template-columns:1fr 1fr}}
+.management-insights .mi-card.executive{grid-column:1/-1;border-left:4px solid var(--accent);background:var(--card)}
+.management-insights .mi-card.executive summary{padding:15px 16px 10px;font-size:14px}
+.management-insights .mi-card.executive .mi-body{padding:0 16px 16px}
+.management-insights .mi-status{display:inline-flex;align-items:center;border:1px solid var(--border);border-radius:999px;padding:3px 9px;font-size:10.5px;font-weight:600;margin-left:auto;color:var(--muted);background:var(--card-2)}
+.management-insights .mi-executive-lead{font-size:13px;line-height:1.6;color:var(--text);margin:0 0 8px}
+@media (max-width:700px){
+  .management-insights .mi-grid{grid-template-columns:1fr;padding:10px}
+  .management-insights .mi-card.executive{grid-column:auto}
+  .management-insights .mi-card li{font-size:12.5px;line-height:1.55}
+  .management-insights .mi-card summary{padding:12px 13px}
+  .management-insights .mi-card .mi-body{padding:0 13px 13px}
+}
+@media print{.management-insights{break-inside:auto}.management-insights .mi-grid{grid-template-columns:1fr 1fr}.management-insights .mi-card.executive{grid-column:1/-1}.management-insights .mi-card{break-inside:avoid}.management-insights .mi-card summary::before{display:none}}
 
 /* ---------- misc ---------- */
 #loader{position:fixed;inset:0;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(4px);display:none;place-items:center;z-index:200}
@@ -294,7 +309,7 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"/><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"/><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"/></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel to Dashboard · v1.3.1</span>
+    <span class="sub">Excel to Dashboard · v1.4.0</span>
   </div>
   <div class="spacer"></div>
   <span class="privacy">🔒 Your data never leaves your computer.</span>
@@ -471,7 +486,7 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
    --------------------------------------------------------------------- */
 const CONFIG = {
   APP_NAME: 'InstantDash',
-  VERSION: 'v1.3.1',
+  VERSION: 'v1.4.0',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -2188,9 +2203,24 @@ function miDirection(kpi){
   if(/(npa|slippage|default|complaint|pending|open|repeat|expense|cost|foir|ltv|utili[sz]ation|risk|finding)/i.test(kpi)) return 'Lower is Better';
   return 'Higher is Better';
 }
-function miCard(title,items,cls='neutral'){
+function miStatus(items){
+  const a=(items.attention||[]).length, p=(items.performance||[]).length;
+  if(a&&p)return 'Mixed';
+  if(a)return 'Attention required';
+  if(p)return 'Positive';
+  return 'Limited evidence';
+}
+function miStrip(v){return String(v||'').replace(/<[^>]*>/g,'').replace(/\s+/g,' ').trim();}
+function miCard(title,items,cls='neutral',open=false){
   const list=items&&items.length?`<ul>${items.map(x=>`<li>${x}</li>`).join('')}</ul>`:'<p>No material observation can be established from the available data.</p>';
-  return `<div class="mi-card ${cls}"><h3>${title}</h3>${list}</div>`;
+  const isExec=cls==='executive';
+  const badge=isExec?`<span class="mi-status" id="miStatus">${miEsc(window.__miStatus||'')}</span>`:'';
+  return `<details class="mi-card ${cls}"${open?' open':''}><summary>${title}${badge}</summary><div class="mi-body">${list}</div></details>`;
+}
+function miSyncAccordions(){
+  const cards=[...document.querySelectorAll('#managementInsightsGrid .mi-card')];
+  const mobile=window.matchMedia('(max-width:700px)').matches;
+  cards.forEach((d,i)=>{ if(d.classList.contains('executive')) d.open=true; else d.open=mobile ? i<3 : true; });
 }
 function miPair(cols,reA,reB){
   const a=cols.find(c=>reA.test(c.name)); const b=cols.find(c=>reB.test(c.name));
@@ -2392,11 +2422,19 @@ function buildManagementInsights(){
   if(items.performance.length&&!items.attention.length)items.actions.push('Continue monitoring the favourable indicators and verify that improvements are sustained in the next comparable period.');
   if(!items.performance.length&&!items.attention.length&&!items.drivers.length&&!items.relationships.length)items.actions.push('No material management variation can be established from the current data. Add a prior-period, target or comparable-period basis for stronger analysis.');
 
-  grid.innerHTML=miCard('What is going well',items.performance,'good')+
+  window.__miStatus=miStatus(items);
+  const top=[];
+  if(items.attention.length) top.push(`<b>Priority concern:</b> ${miStrip(items.attention[0])}`);
+  if(items.performance.length) top.push(`<b>Positive development:</b> ${miStrip(items.performance[0])}`);
+  if(items.relationships.length) top.push(`<b>Key context:</b> ${miStrip(items.relationships[0])}`);
+  if(!top.length) top.push('The available data does not provide enough comparable evidence for a strong management conclusion.');
+  grid.innerHTML=miCard('Executive takeaway',top,'executive',true)+
+    miCard('What is going well',items.performance,'good')+
     miCard('Variations requiring attention',items.attention,'warn')+
-    miCard('Management interpretation / data-supported drivers',items.drivers,'neutral')+
+    miCard('Management interpretation & possible drivers',items.drivers,'neutral')+
     miCard('Key relationships & derived ratios',items.relationships,'neutral')+
     miCard('Management action',items.actions,'neutral');
+  miSyncAccordions();
 }
 
 /* =====================================================================
@@ -2529,6 +2567,7 @@ function wireRest(){
   // Let CONFIG.APP_NAME drive the visible name in one place
   $('appName').textContent = CONFIG.APP_NAME;
   document.title = CONFIG.APP_NAME + ' — Excel to Dashboard';
+  window.addEventListener('resize',()=>miSyncAccordions());
   setTheme(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
   wireIngest();
   wireChartBuilder();
