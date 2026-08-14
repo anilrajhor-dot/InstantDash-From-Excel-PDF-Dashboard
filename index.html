@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>InstantDash — Excel to Dashboard · v1.4.6</title>
+<title>InstantDash — Excel to Dashboard · v1.4.7</title>
 
 <!-- ============================================================
      LIBRARIES (loaded from CDN, no build step required)
@@ -132,7 +132,7 @@ main{max-width:1360px;margin:0 auto;padding:24px}
 .drop .formats{font-size:12px;color:var(--muted);margin-top:16px}
 
 
-/* ---------- premium landing experience v1.4.6 ---------- */
+/* ---------- premium landing experience v1.4.7 ---------- */
 </style>
 <style>
 .mi-remark{display:inline}
@@ -282,6 +282,8 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
 .management-insights .mi-card.executive summary{padding:15px 16px 10px;font-size:14px}
 .management-insights .mi-card.executive .mi-body{padding:0 16px 16px}
 .management-insights .mi-status{display:inline-flex;align-items:center;border:1px solid var(--border);border-radius:999px;padding:3px 9px;font-size:10.5px;font-weight:600;margin-left:auto;color:var(--muted);background:var(--card-2)}
+.management-insights .mi-count{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 6px;border-radius:999px;font-size:9.5px;font-weight:700;color:var(--muted);background:var(--card-2);border:1px solid var(--border)}
+.management-insights .mi-empty{margin:0;padding:5px 0;font-size:12.5px;line-height:1.6;color:var(--muted)}
 .management-insights .mi-executive-lead{font-size:13px;line-height:1.6;color:var(--text);margin:0 0 8px}
 .management-insights .mi-card.executive .mi-body li{font-size:13px;line-height:1.6;margin:7px 0}
 .management-insights .mi-card.good .mi-more{color:var(--ok)}
@@ -357,7 +359,7 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"/><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"/><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"/></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel to Dashboard · v1.4.6</span>
+    <span class="sub">Excel to Dashboard · v1.4.7</span>
   </div>
   <div class="spacer"></div>
   <span class="privacy">🔒 Your data never leaves your computer.</span>
@@ -545,7 +547,7 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
    --------------------------------------------------------------------- */
 const CONFIG = {
   APP_NAME: 'InstantDash',
-  VERSION: 'v1.4.6',
+  VERSION: 'v1.4.7',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -2393,17 +2395,24 @@ function miStatus(items){
 }
 function miStrip(v){return String(v||'').replace(/<[^>]*>/g,'').replace(/\s+/g,' ').trim();}
 function miCard(title,items,cls='neutral',open=false,maxItems=null){
-  const arr=Array.isArray(items)?items:[];
+  const arr=(Array.isArray(items)?items:[]).filter(x=>miStrip(x));
   const limit=maxItems==null?(cls==='executive'?3:(cls==='good'||cls==='warn'?5:4)):maxItems;
+  const fallback={
+    good:'No material favourable movement was identified from the available comparable data.',
+    warn:'No material adverse movement was identified from the available comparable data.',
+    neutral:'No specialised relationship was available; review the principal KPIs together with the comparable period, target or supporting driver.',
+    executive:'The available data does not provide enough comparable evidence for a strong management conclusion.'
+  };
   let list='';
   if(arr.length){
     const shown=arr.slice(0,limit), rest=arr.slice(limit);
     list=`<ul>${shown.map(x=>`<li>${x}</li>`).join('')}${rest.map(x=>`<li class="mi-secondary">${x}</li>`).join('')}</ul>`;
     if(rest.length) list+=`<button type="button" class="mi-more" aria-expanded="false">View all ${arr.length}</button>`;
-  }else list='<p>No material observation can be established from the available data.</p>';
+  }else list=`<p class="mi-empty"><b>${fallback[cls]||fallback.neutral}</b></p>`;
   const isExec=cls==='executive';
-  const badge=isExec?`<span class="mi-status" id="miStatus">${miEsc(window.__miStatus||'')}</span>`:'';
-  return `<details class="mi-card ${cls}"${open?' open':''}><summary>${title}${badge}</summary><div class="mi-body">${list}</div></details>`;
+  const badge=isExec?`<span class="mi-status" id="miStatus">${miEsc(window.__miStatus||'Mixed')}</span>`:'';
+  const count=arr.length?`<span class="mi-count">${arr.length}</span>`:'';
+  return `<details class="mi-card ${cls}"${open?' open':''}><summary>${title}${count}${badge}</summary><div class="mi-body">${list}</div></details>`;
 }
 function miWireMore(){
   document.querySelectorAll('#managementInsightsGrid .mi-more').forEach(btn=>{
