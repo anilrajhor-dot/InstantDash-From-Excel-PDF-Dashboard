@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>InstantDash v4.7.2</title>
+<title>InstantDash v4.8.2</title>
 <style>
 :root{
   --bg:#111217;--panel:#1b1c22;--panel2:#202128;--line:#343640;--text:#f5f5f7;
@@ -63,12 +63,12 @@ footer{color:#777;font-size:11px;text-align:center;padding:12px}
  .section{padding:14px}
 }
 .kpi-selection{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.kpi-check{display:flex;gap:10px;align-items:flex-start;padding:11px;border:1px solid var(--line);border-radius:12px;background:#18191e;cursor:pointer}.kpi-check input{width:20px;height:20px;accent-color:#fbbb00}.kpi-check span{display:flex;flex-direction:column;gap:3px}.kpi-check small{color:var(--muted);font-size:12px;line-height:1.3}@media(max-width:700px){.kpi-selection{grid-template-columns:1fr}}</style>
-</head>
+<style>.bar-block{margin:10px 0;padding:10px 0;border-top:1px solid #292b31}.bar-block:first-child{border-top:0}.clickable-bar{cursor:pointer;border-radius:10px;padding:10px}.clickable-bar:hover{background:#202128}.clickable-bar:focus{outline:2px solid #fbbb00;outline-offset:2px}.bar-title{display:flex;justify-content:space-between;gap:10px;color:#b9bbc4;font-size:11px;margin-bottom:7px}.bar-row{display:grid;grid-template-columns:58px 1fr auto;gap:8px;align-items:center;font-size:11px;color:#aeb0b9;margin:5px 0}.target-row{opacity:.85}.dash-fill.target{background:#fbbb00}.bar-context{font-size:10px;color:#777b87;margin:6px 0 0 66px}.dash-source-map{margin-top:5px;font-size:10px;color:#777b87}.insight-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.insight-item{background:#22232a;border:1px solid #363842;border-radius:12px;padding:11px}.insight-item span{display:block;color:#9da0aa;font-size:11px;margin-bottom:4px}.insight-item b{display:block;font-size:15px;color:#f4f4f6;line-height:1.35}.insight-reason{margin-top:12px;border:1px solid #f0b74a;background:#2b2418;border-radius:12px;padding:13px}.insight-reason h4{margin:0 0 6px;color:#ffcf63}.insight-reason p{margin:0;color:#e7e2d8;line-height:1.5;font-size:13px}.kpi-insight-modal{max-height:88vh;overflow:auto}@media(max-width:520px){.insight-grid{grid-template-columns:1fr}}</style></head>
 <body>
 <div class="app">
 <header>
   <div>
-    <div class="brand">🟡 InstantDash <span class="version">v4.8.0</span></div>
+    <div class="brand">🟡 InstantDash <span class="version">v4.8.2</span></div>
     <div class="by">Developed by Anil Sharma • Former General Manager, Central Bank of India</div>
   </div>
   <div class="top-actions">
@@ -181,7 +181,7 @@ footer{color:#777;font-size:11px;text-align:center;padding:12px}
   </div>
   <div id="dashboardBars" style="margin-top:16px"></div>
 </section>
-<footer>InstantDash v4.8.1 • Department-first KPI architecture • Auto KPI calculation • Smart Power BI-style dashboard • Department → KPI Mapping → Analysis → Report → Dashboard.</footer>
+<footer>InstantDash v4.8.2 • Department-first KPI architecture • Auto KPI calculation • Smart Power BI-style dashboard • Department → KPI Mapping → Analysis → Report → Dashboard.</footer>
 </div>
 
 <div id="modalBack" class="modal-back" onclick="closeModal(event)">
@@ -525,50 +525,25 @@ function dashboardFormat(r,v){
  return fmtIN(v)+(u?' '+u:'');
 }
 function dashboardEscFormula(x){ return esc(x||'Direct source value'); }
-function dashboardCard(r, idx, all){
- const hasTarget=validNum(r.target);
- const hasValue=validNum(r.value);
- const nature=String(r.nature||'higher').toLowerCase();
- const unit=String(r.unit||'');
- let visual='';
- let status='No target supplied';
- let statusClass='info';
- if(!hasValue){
-   visual=`<div class="dash-empty">Data not available in uploaded source columns</div>`;
-   status='Not available'; statusClass='warn';
- }else if(hasTarget && r.target!==0){
-   const achievement=(validNum(r.achievement)?r.achievement:(r.value/r.target*100));
-   const width=Math.max(2,Math.min(100,Math.abs(achievement)));
-   let good=nature==='lower'?r.value<=r.target:r.value>=r.target;
-   if(nature==='target') good=Math.abs(r.value-r.target)<=Math.abs(r.target)*0.05;
-   status=(achievement>=100?'Target achieved':'Below target')+' • '+achievement.toFixed(1)+'%';
-   statusClass=good?'good':'bad';
-   visual=`<div class="dash-bars"><div class="dash-bar-row"><span>Actual</span><div class="dash-track"><div class="dash-fill ${good?'good':'bad'}" style="width:${width}%"></div></div><b>${esc(dashboardFormat(r,r.value))}</b></div><div class="dash-target"><span>Target</span><b>${esc(dashboardFormat(r,r.target))}</b></div></div>`;
- }else if(unit==='%'){
-   const pct=Math.max(0,Math.min(100,Math.abs(r.value)));
-   visual=`<div class="dash-bars"><div class="dash-bar-row"><span>Level</span><div class="dash-track"><div class="dash-fill neutral" style="width:${pct}%"></div></div><b>${esc(dashboardFormat(r,r.value))}</b></div></div>`;
-   status='Percentage / rate'; statusClass='info';
- }else if(validNum(r.growth)){
-   const g=Math.max(-100,Math.min(100,r.growth));
-   const width=Math.max(2,Math.min(100,Math.abs(g)));
-   const positive=g>=0;
-   visual=`<div class="dash-bars"><div class="dash-bar-row"><span>${positive?'Growth':'Degrowth'}</span><div class="dash-track"><div class="dash-fill ${positive?'good':'bad'}" style="width:${width}%"></div></div><b>${g>=0?'+':''}${g.toFixed(1)}%</b></div></div>`;
-   status=positive?'Growing':'Declining'; statusClass=positive?'good':'bad';
- }else{
-   visual=`<div class="dash-value-visual"><div class="dash-value-line"><span>Actual value</span><strong>${esc(dashboardFormat(r,r.value))}</strong></div><div class="dash-track"><div class="dash-fill neutral" style="width:100%"></div></div></div>`;
-   status='Actual value'; statusClass='info';
- }
- const growth=validNum(r.growth)?`<span class="dash-meta">Period change: <b>${r.growth>=0?'+':''}${r.growth.toFixed(1)}%</b></span>`:'';
- const autoMap=findHeader(r.source);
- return `<div class="dash-kpi-card">
-   <div class="dash-kpi-head"><div><span class="dash-index">${idx+1}</span><h3>${esc(r.name)}</h3></div><span class="dash-status ${statusClass}">${esc(status)}</span></div>
-   <div style="margin-top:5px;font-size:10px;color:#777b87">${autoMap?`Auto-mapped source: <b>${esc(autoMap)}</b>`:'Calculated / derived KPI'}</div>
-   <div class="dash-big-value">${esc(dashboardFormat(r,r.value))}</div>
-   ${visual}
-   <div class="dash-meta-grid"><span class="dash-meta">Nature: <b>${esc(nature==='higher'?'Higher is better':nature==='lower'?'Lower is better':nature==='target'?'Target based':'Neutral')}</b></span>${growth}</div>
-   <div class="dash-formula"><b>Formula:</b> ${dashboardEscFormula(r.formula)}</div>
-   <div class="dash-source">Source: ${esc(r.source||'Calculated')}</div>
- </div>`;
+function dashboardReason(r){
+ const parts=[];
+ if(validNum(r.previous)&&validNum(r.value)){const d=r.growth>0?'increased':r.growth<0?'decreased':'remained unchanged';parts.push(`Current value ${d} from ${dashboardFormat(r,r.previous)} to ${dashboardFormat(r,r.value)}.`);}else if(validNum(r.value))parts.push(`Current value is ${dashboardFormat(r,r.value)}; prior-period data is not available.`);
+ if(validNum(r.target)&&r.target!==0){const n=String(r.nature||'higher').toLowerCase();const good=n==='lower'?r.value<=r.target:r.value>=r.target;parts.push(`${good?'The KPI is at or better than':'The KPI is below'} the target of ${dashboardFormat(r,r.target)}${validNum(r.achievement)?` (${r.achievement.toFixed(1)}% achievement)`:''}.`);}
+ if(validNum(r.growth))parts.push(`Period movement is ${r.growth>=0?'+':''}${r.growth.toFixed(1)}%. This is a factual movement from the uploaded data; no external cause is assumed.`);
+ parts.push(`Source: ${r.source||'Calculated / mapped source'}. Formula: ${r.formula||'Direct source value'}.`);return parts.join(' ');
+}
+function openKpiInsight(i){const r=analysisResults[i];if(!r)return;const n=String(r.nature||'higher').toLowerCase();const nature=n==='higher'?'Higher is better':n==='lower'?'Lower is better':n==='target'?'Target based':'Neutral';const rows=[['Current',dashboardFormat(r,r.value)],['Previous',dashboardFormat(r,r.previous)],['Growth / Degrowth',validNum(r.growth)?`${r.growth>=0?'+':''}${r.growth.toFixed(1)}%`:'Not available'],['Target',dashboardFormat(r,r.target)],['Achievement',validNum(r.achievement)?r.achievement.toFixed(1)+'%':'Not available'],['KPI nature',nature],['Source',r.source||'Calculated / mapped source'],['Formula',r.formula||'Direct source value']];document.getElementById('kpiInsightTitle').textContent=`${r.name} — KPI Insight`;document.getElementById('kpiInsightBody').innerHTML=`<div class="insight-grid">${rows.map(x=>`<div class="insight-item"><span>${esc(x[0])}</span><b>${esc(x[1])}</b></div>`).join('')}</div><div class="insight-reason"><h4>Why did it move?</h4><p>${dashboardReason(r)}</p></div>`;document.getElementById('kpiInsightModal').style.display='flex';}
+function closeKpiInsight(){document.getElementById('kpiInsightModal').style.display='none';}
+function dashboardCard(r,idx,all){
+ const hasTarget=validNum(r.target)&&r.target!==0,hasValue=validNum(r.value),hasPrev=validNum(r.previous),hasGrowth=validNum(r.growth),nature=String(r.nature||'higher').toLowerCase();let status='No target supplied',statusClass='info';
+ if(!hasValue){status='Not available';statusClass='warn';}else if(hasTarget){const achievement=validNum(r.achievement)?r.achievement:r.value/r.target*100;let good=nature==='lower'?r.value<=r.target:r.value>=r.target;if(nature==='target')good=Math.abs(r.value-r.target)<=Math.abs(r.target)*.05;status=(good?'Target met':'Below target')+' • '+achievement.toFixed(1)+'%';statusClass=good?'good':'bad';}else if(hasGrowth){status=r.growth>=0?'Growing':'Declining';statusClass=r.growth>=0?'good':'bad';}
+ const actualWidth=hasValue?(hasTarget?Math.max(2,Math.min(100,Math.abs(r.value/r.target*100))):100):0,targetWidth=hasTarget?100:0,pctWidth=hasValue&&String(r.unit||'')==='%'?Math.max(0,Math.min(100,Math.abs(r.value))):0,growthWidth=hasGrowth?Math.max(2,Math.min(100,Math.abs(r.growth))):0,growthGood=hasGrowth?(nature==='lower'?r.growth<=0:r.growth>=0):false,sourceLabel=findHeader(r.source);
+ const click=`onclick="openKpiInsight(${idx})" onkeydown="if(event.key==='Enter'||event.key===' ')openKpiInsight(${idx})"`;
+ return `<div class="dash-kpi-card"><div class="dash-kpi-head"><div><span class="dash-index">${idx+1}</span><h3>${esc(r.name)}</h3></div><span class="dash-status ${statusClass}">${esc(status)}</span></div><div class="dash-source-map">${sourceLabel?`Auto-mapped source: <b>${esc(sourceLabel)}</b>`:'Calculated / derived KPI'}</div><div class="dash-big-value">${esc(dashboardFormat(r,r.value))}</div>
+ <div class="bar-block clickable-bar" role="button" tabindex="0" ${click}><div class="bar-title"><span>Actual vs Target</span><b>${hasTarget?esc(dashboardFormat(r,r.target)):'No target'}</b></div><div class="bar-row"><span>Actual</span><div class="dash-track"><div class="dash-fill ${statusClass==='good'?'good':statusClass==='bad'?'bad':'neutral'}" style="width:${actualWidth}%"></div></div><b>${esc(dashboardFormat(r,r.value))}</b></div>${hasTarget?`<div class="bar-row target-row"><span>Target</span><div class="dash-track"><div class="dash-fill target" style="width:${targetWidth}%"></div></div><b>${esc(dashboardFormat(r,r.target))}</b></div>`:''}</div>
+ <div class="bar-block clickable-bar" role="button" tabindex="0" ${click}><div class="bar-title"><span>Growth / Degrowth</span><b>${hasGrowth?(r.growth>=0?'+':'')+r.growth.toFixed(1)+'%':'Not available'}</b></div><div class="bar-row"><span>${hasGrowth?(r.growth>=0?'Growth':'Degrowth'):'Movement'}</span><div class="dash-track"><div class="dash-fill ${growthGood?'good':hasGrowth?'bad':'neutral'}" style="width:${growthWidth}%"></div></div><b>${hasGrowth?(r.growth>=0?'+':'')+r.growth.toFixed(1)+'%':'—'}</b></div>${hasPrev?`<div class="bar-context">Previous: <b>${esc(dashboardFormat(r,r.previous))}</b> → Current: <b>${esc(dashboardFormat(r,r.value))}</b></div>`:''}</div>
+ <div class="bar-block clickable-bar" role="button" tabindex="0" ${click}><div class="bar-title"><span>${r.unit==='%'?'Percentage / Rate':'KPI Level'}</span><b>${esc(dashboardFormat(r,r.value))}</b></div><div class="bar-row"><span>Level</span><div class="dash-track"><div class="dash-fill neutral" style="width:${r.unit==='%'?pctWidth:100}%"></div></div><b>${esc(dashboardFormat(r,r.value))}</b></div></div>
+ <div class="dash-meta-grid"><span class="dash-meta">Nature: <b>${esc(nature==='higher'?'Higher is better':nature==='lower'?'Lower is better':nature==='target'?'Target based':'Neutral')}</b></span>${hasGrowth?`<span class="dash-meta">Movement: <b>${r.growth>=0?'+':''}${r.growth.toFixed(1)}%</b></span>`:''}</div><div class="dash-formula"><b>Formula:</b> ${dashboardEscFormula(r.formula)}</div><div class="dash-source">Tap any bar for <b>important data + movement explanation</b></div></div>`;
 }
 function buildExecutiveIntelligence(){
  const available=analysisResults.filter(r=>validNum(r.value));
@@ -620,5 +595,6 @@ function renderDashboard(){
 }
 
 </script>
+<div id="kpiInsightModal" class="modal-back" onclick="if(event.target===this)closeKpiInsight()"><div class="modal kpi-insight-modal"><div class="row between"><h2 id="kpiInsightTitle" style="margin:0">KPI Insight</h2><button class="btn" onclick="closeKpiInsight()">✕</button></div><div id="kpiInsightBody" style="margin-top:14px"></div><div class="actions"><button class="btn primary" onclick="closeKpiInsight()">Close</button></div></div></div>
 <script>renderDepartments();</script>
 </body></html>
