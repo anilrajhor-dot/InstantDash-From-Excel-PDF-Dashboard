@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>InstantDash v4.6.0</title>
+<title>InstantDash v4.6.1</title>
 <style>
 :root{
   --bg:#111217;--panel:#1b1c22;--panel2:#202128;--line:#343640;--text:#f5f5f7;
@@ -68,7 +68,7 @@ footer{color:#777;font-size:11px;text-align:center;padding:12px}
 <div class="app">
 <header>
   <div>
-    <div class="brand">🟡 InstantDash <span class="version">v4.6.0</span></div>
+    <div class="brand">🟡 InstantDash <span class="version">v4.6.1</span></div>
     <div class="by">Developed by Anil Sharma • Former General Manager, Central Bank of India</div>
   </div>
   <div class="top-actions">
@@ -90,6 +90,10 @@ footer{color:#777;font-size:11px;text-align:center;padding:12px}
     <div><h2>① Select Department / Nature of Area</h2><div class="sub">Choose the business area first. InstantDash will then load only the KPI library relevant to that area.</div></div>
     <button class="btn primary" onclick="openDeptModal()">＋ Add Department</button>
   </div>
+  <div class="field" style="max-width:520px;margin-top:15px">
+    <label>Select Department / Nature of Area</label>
+    <select id="deptSelect" onchange="selectDept(this.value)"></select>
+  </div>
   <div id="deptGrid" class="grid" style="margin-top:15px"></div>
   <div class="actions">
     <button class="btn" onclick="editSelectedDept()">✏️ Edit Selected</button>
@@ -105,6 +109,10 @@ footer{color:#777;font-size:11px;text-align:center;padding:12px}
   </div>
   <div class="notice" style="margin:14px 0">
     Map each KPI to the Excel source column. A KPI is calculated only after its mapping is confirmed. Missing columns are never invented.
+  </div>
+  <div class="field" style="max-width:520px">
+    <label>Select / Search KPI</label>
+    <select id="kpiSelect" onchange="highlightKpi(this.value)"></select>
   </div>
   <div class="table-wrap"><table>
     <thead><tr><th>KPI</th><th>Source Column</th><th>Calculation</th><th>Nature</th><th>Unit</th><th>Target Column</th><th>Actions</th></tr></thead>
@@ -145,7 +153,7 @@ footer{color:#777;font-size:11px;text-align:center;padding:12px}
   <div id="resultGrid" class="results"></div>
 </section>
 
-<footer>InstantDash v4.6.0 • Department-first KPI architecture • Data calculations remain subject to source-file quality.</footer>
+<footer>InstantDash v4.6.1 • Department-first KPI architecture • Data calculations remain subject to source-file quality.</footer>
 </div>
 
 <div id="modalBack" class="modal-back" onclick="closeModal(event)">
@@ -159,23 +167,104 @@ footer{color:#777;font-size:11px;text-align:center;padding:12px}
 <script>
 const DEFAULT = {
  departments: [
-  {id:"audit",name:"Internal Audit",icon:"🔍",desc:"Audit planning, findings, risk, resolution and cost",kpis:[
-   ["Audits Planned","Audits Planned","direct","higher","Number",""],
-   ["Audits Completed","Audits Completed","direct","higher","Number",""],
-   ["Audit Findings","Audit Findings","direct","lower","Number",""],
-   ["High Risk Findings","High Risk Findings","direct","lower","Number",""],
-   ["Open Findings","Open Findings","direct","lower","Number",""],
-   ["Findings Resolved","Findings Resolved","direct","higher","Number",""],
-   ["Repeat Findings","Repeat Findings","direct","lower","Number",""],
-   ["Audit Cost","Audit Cost","direct","lower","₹",""]
+  {id:"banking",name:"Banking",icon:"🏦",desc:"Banking business, profitability, asset quality and productivity",kpis:[
+   ["Deposits","Deposits","direct","higher","₹ Cr","Target"],["Advances","Advances","direct","higher","₹ Cr","Target"],
+   ["CASA Ratio","CASA Ratio","direct","higher","%","Target"],["Credit Deposit Ratio","Credit Deposit Ratio","ratio","higher","%","Target"],
+   ["Gross NPA","Gross NPA","direct","lower","%","Target"],["Net NPA","Net NPA","direct","lower","%","Target"],
+   ["ROA","ROA","direct","higher","%","Target"],["ROE","ROE","direct","higher","%","Target"],
+   ["Net Interest Income","Net Interest Income","direct","higher","₹ Cr","Target"],["NIM","NIM","direct","higher","%","Target"],
+   ["Provision Coverage Ratio","Provision Coverage Ratio","direct","higher","%","Target"],["Cost to Income Ratio","Cost to Income Ratio","direct","lower","%","Target"],
+   ["Business per Employee","Business per Employee","direct","higher","₹ Cr","Target"],["Profit per Employee","Profit per Employee","direct","higher","₹ Lakh","Target"],
+   ["GNPA Amount","GNPA Amount","direct","lower","₹ Cr","Target"],["NNPA Amount","NNPA Amount","direct","lower","₹ Cr","Target"]
   ]},
-  {id:"finance",name:"Finance",icon:"💰",desc:"Financial performance and control KPIs",kpis:[]},
-  {id:"hr",name:"HR",icon:"👥",desc:"People, staffing and productivity KPIs",kpis:[]},
-  {id:"credit",name:"Credit",icon:"💳",desc:"Credit growth, quality and recovery KPIs",kpis:[]},
-  {id:"operations",name:"Operations",icon:"⚙️",desc:"Operational efficiency and service KPIs",kpis:[]},
-  {id:"sales",name:"Sales & Marketing",icon:"📈",desc:"Sales, customers and growth KPIs",kpis:[]}
+  {id:"finance",name:"Finance",icon:"💰",desc:"Financial performance, profitability, liquidity and control",kpis:[
+   ["Revenue","Revenue","direct","higher","₹ Cr","Target"],["Gross Profit","Gross Profit","direct","higher","₹ Cr","Target"],
+   ["EBITDA","EBITDA","direct","higher","₹ Cr","Target"],["EBITDA Margin","EBITDA Margin","direct","higher","%","Target"],
+   ["EBIT","EBIT","direct","higher","₹ Cr","Target"],["PBT","PBT","direct","higher","₹ Cr","Target"],
+   ["Net Profit","Net Profit","direct","higher","₹ Cr","Target"],["Net Profit Margin","Net Profit Margin","direct","higher","%","Target"],
+   ["ROA","ROA","direct","higher","%","Target"],["ROE","ROE","direct","higher","%","Target"],
+   ["Operating Cash Flow","Operating Cash Flow","direct","higher","₹ Cr","Target"],["Working Capital","Working Capital","direct","lower","₹ Cr","Target"],
+   ["Current Ratio","Current Ratio","direct","higher","Ratio","Target"],["Debt Equity Ratio","Debt Equity Ratio","direct","lower","Ratio","Target"],
+   ["Interest Coverage Ratio","Interest Coverage Ratio","direct","higher","Ratio","Target"]
+  ]},
+  {id:"audit",name:"Internal Audit",icon:"🔍",desc:"Audit planning, findings, risk, resolution and cost",kpis:[
+   ["Audits Planned","Audits Planned","direct","higher","Number","Target"],["Audits Completed","Audits Completed","direct","higher","Number","Target"],
+   ["Audit Completion %","Audit Completion %","ratio","higher","%","Target"],["Audit Findings","Audit Findings","direct","lower","Number","Target"],
+   ["High Risk Findings","High Risk Findings","direct","lower","Number","Target"],["Open Findings","Open Findings","direct","lower","Number","Target"],
+   ["Findings Resolved","Findings Resolved","direct","higher","Number","Target"],["Resolution %","Resolution %","ratio","higher","%","Target"],
+   ["Repeat Findings","Repeat Findings","direct","lower","Number","Target"],["Repeat Finding %","Repeat Finding %","ratio","lower","%","Target"],
+   ["Average Closure Days","Average Closure Days","direct","lower","Days","Target"],["Audit Cost","Audit Cost","direct","lower","₹ Lakh","Target"]
+  ]},
+  {id:"hr",name:"Human Resources",icon:"👥",desc:"People, staffing, productivity, retention and learning",kpis:[
+   ["Employee Strength","Employee Strength","direct","higher","Number","Target"],["New Hires","New Hires","direct","higher","Number","Target"],
+   ["Attrition Rate","Attrition Rate","direct","lower","%","Target"],["Absenteeism Rate","Absenteeism Rate","direct","lower","%","Target"],
+   ["Training Hours","Training Hours","direct","higher","Hours","Target"],["Training Cost","Training Cost","direct","lower","₹ Lakh","Target"],
+   ["Training Completion %","Training Completion %","ratio","higher","%","Target"],["Employee Productivity","Employee Productivity","direct","higher","Number","Target"],
+   ["Cost per Employee","Cost per Employee","direct","lower","₹","Target"],["Employee Engagement Score","Employee Engagement Score","direct","higher","Score","Target"],
+   ["Internal Promotion Rate","Internal Promotion Rate","direct","higher","%","Target"],["Vacancy Rate","Vacancy Rate","direct","lower","%","Target"]
+  ]},
+  {id:"credit",name:"Credit",icon:"💳",desc:"Credit growth, quality, recovery and portfolio monitoring",kpis:[
+   ["Loan Applications","Loan Applications","direct","higher","Number","Target"],["Loans Sanctioned","Loans Sanctioned","direct","higher","₹ Cr","Target"],
+   ["Loans Disbursed","Loans Disbursed","direct","higher","₹ Cr","Target"],["Average Ticket Size","Average Ticket Size","direct","higher","₹ Lakh","Target"],
+   ["Delinquency Rate","Delinquency Rate","direct","lower","%","Target"],["GNPA %","GNPA %","direct","lower","%","Target"],
+   ["NNPA %","NNPA %","direct","lower","%","Target"],["Recovery Rate","Recovery Rate","direct","higher","%","Target"],
+   ["Collection Efficiency","Collection Efficiency","direct","higher","%","Target"],["SMA Accounts","SMA Accounts","direct","lower","Number","Target"],
+   ["Write-offs","Write-offs","direct","lower","₹ Cr","Target"],["Credit Growth","Credit Growth","direct","higher","%","Target"]
+  ]},
+  {id:"manufacturing",name:"Manufacturing",icon:"🏭",desc:"Production, capacity, quality, cost and productivity",kpis:[
+   ["Production","Production","direct","higher","Units","Target"],["Production Value","Production Value","direct","higher","₹ Cr","Target"],
+   ["Capacity","Capacity","direct","higher","Units","Target"],["Capacity Utilisation","Capacity Utilisation","ratio","higher","%","Target"],
+   ["Rejection Quantity","Rejection Quantity","direct","lower","Units","Target"],["Rejection Rate","Rejection Rate","ratio","lower","%","Target"],
+   ["Production Cost","Production Cost","direct","lower","₹ Cr","Target"],["Unit Cost","Unit Cost","direct","lower","₹","Target"],
+   ["Downtime","Downtime","direct","lower","Hours","Target"],["OEE","OEE","direct","higher","%","Target"],
+   ["On Time Production","On Time Production","direct","higher","%","Target"],["Energy Consumption","Energy Consumption","direct","lower","Units","Target"]
+  ]},
+  {id:"sales",name:"Sales & Marketing",icon:"📈",desc:"Revenue, volumes, customers, conversion and market performance",kpis:[
+   ["Sales Revenue","Sales Revenue","direct","higher","₹ Cr","Target"],["Sales Volume","Sales Volume","direct","higher","Units","Target"],
+   ["Sales Growth","Sales Growth","direct","higher","%","Target"],["Gross Margin","Gross Margin","direct","higher","%","Target"],
+   ["Average Selling Price","Average Selling Price","direct","higher","₹","Target"],["New Customers","New Customers","direct","higher","Number","Target"],
+   ["Customer Acquisition Cost","Customer Acquisition Cost","direct","lower","₹","Target"],["Conversion Rate","Conversion Rate","direct","higher","%","Target"],
+   ["Market Share","Market Share","direct","higher","%","Target"],["Repeat Customer Rate","Repeat Customer Rate","direct","higher","%","Target"],
+   ["Sales per Employee","Sales per Employee","direct","higher","₹ Lakh","Target"],["Order Value","Order Value","direct","higher","₹ Cr","Target"]
+  ]},
+  {id:"operations",name:"Operations",icon:"⚙️",desc:"Operational efficiency, service levels, turnaround and productivity",kpis:[
+   ["Transactions","Transactions","direct","higher","Number","Target"],["Processing Time","Processing Time","direct","lower","Minutes","Target"],
+   ["Turnaround Time","Turnaround Time","direct","lower","Days","Target"],["SLA Compliance","SLA Compliance","direct","higher","%","Target"],
+   ["Error Rate","Error Rate","direct","lower","%","Target"],["Productivity","Productivity","direct","higher","Number","Target"],
+   ["Cost per Transaction","Cost per Transaction","direct","lower","₹","Target"],["Backlog","Backlog","direct","lower","Number","Target"],
+   ["Pending Cases","Pending Cases","direct","lower","Number","Target"],["First Time Right","First Time Right","direct","higher","%","Target"],
+   ["Service Availability","Service Availability","direct","higher","%","Target"],["Capacity Utilisation","Capacity Utilisation","direct","higher","%","Target"]
+  ]},
+  {id:"customer",name:"Customer Service",icon:"🎧",desc:"Customer experience, complaints and service quality",kpis:[
+   ["Customer Complaints","Customer Complaints","direct","lower","Number","Target"],["Complaints Resolved","Complaints Resolved","direct","higher","Number","Target"],
+   ["Resolution Rate","Resolution Rate","ratio","higher","%","Target"],["Average Resolution Time","Average Resolution Time","direct","lower","Hours","Target"],
+   ["Customer Satisfaction","Customer Satisfaction","direct","higher","Score","Target"],["NPS","NPS","direct","higher","Score","Target"],
+   ["First Contact Resolution","First Contact Resolution","direct","higher","%","Target"],["Escalations","Escalations","direct","lower","Number","Target"],
+   ["Repeat Complaints","Repeat Complaints","direct","lower","Number","Target"],["Service TAT","Service TAT","direct","lower","Hours","Target"]
+  ]},
+  {id:"risk",name:"Risk & Compliance",icon:"🛡️",desc:"Risk exposures, incidents, compliance and controls",kpis:[
+   ["Risk Incidents","Risk Incidents","direct","lower","Number","Target"],["High Risk Incidents","High Risk Incidents","direct","lower","Number","Target"],
+   ["Open Risk Issues","Open Risk Issues","direct","lower","Number","Target"],["Issues Resolved","Issues Resolved","direct","higher","Number","Target"],
+   ["Compliance Rate","Compliance Rate","direct","higher","%","Target"],["Policy Exceptions","Policy Exceptions","direct","lower","Number","Target"],
+   ["Control Failures","Control Failures","direct","lower","Number","Target"],["Loss Events","Loss Events","direct","lower","₹ Cr","Target"],
+   ["Risk Coverage","Risk Coverage","direct","higher","%","Target"],["Regulatory Breaches","Regulatory Breaches","direct","lower","Number","Target"]
+  ]},
+  {id:"it",name:"IT & Technology",icon:"💻",desc:"IT availability, incidents, delivery, security and cost",kpis:[
+   ["System Availability","System Availability","direct","higher","%","Target"],["IT Incidents","IT Incidents","direct","lower","Number","Target"],
+   ["Critical Incidents","Critical Incidents","direct","lower","Number","Target"],["Mean Time to Resolve","Mean Time to Resolve","direct","lower","Hours","Target"],
+   ["Projects Delivered","Projects Delivered","direct","higher","Number","Target"],["Project On Time %","Project On Time %","direct","higher","%","Target"],
+   ["IT Cost","IT Cost","direct","lower","₹ Cr","Target"],["Cyber Incidents","Cyber Incidents","direct","lower","Number","Target"],
+   ["Backup Success Rate","Backup Success Rate","direct","higher","%","Target"],["Security Patch Compliance","Security Patch Compliance","direct","higher","%","Target"]
+  ]},
+  {id:"admin",name:"Administration",icon:"🏢",desc:"Administrative efficiency, expenditure and facilities",kpis:[
+   ["Administrative Cost","Administrative Cost","direct","lower","₹ Cr","Target"],["Utility Cost","Utility Cost","direct","lower","₹ Lakh","Target"],
+   ["Facility Utilisation","Facility Utilisation","direct","higher","%","Target"],["Requests Received","Requests Received","direct","higher","Number","Target"],
+   ["Requests Completed","Requests Completed","direct","higher","Number","Target"],["Resolution Rate","Resolution Rate","ratio","higher","%","Target"],
+   ["Average Processing Time","Average Processing Time","direct","lower","Days","Target"],["Vendor Performance","Vendor Performance","direct","higher","Score","Target"]
+  ]},
+  {id:"custom",name:"Other / Custom",icon:"➕",desc:"Create your own department and KPI library",kpis:[]}
  ],
- selected:"audit"
+ selected:"banking"
 };
 let state = JSON.parse(localStorage.getItem("instantdash46")||"null") || DEFAULT;
 let rows=[], headers=[], fileName="", deptField=null;
@@ -194,7 +283,9 @@ function showSection(id){
 }
 function renderDepartments(){
  const el=document.getElementById("deptGrid");
- el.innerHTML=state.departments.map(d=>`<div class="card ${d.id===state.selected?"selected":""}" onclick="selectDept('${d.id}')">
+ const sel=document.getElementById("deptSelect");
+ if(sel) sel.innerHTML=state.departments.slice().sort((a,b)=>a.name.localeCompare(b.name)).map(d=>`<option value="${esc(d.id)}" ${d.id===state.selected?"selected":""}>${esc(d.icon)} ${esc(d.name)}</option>`).join("");
+ el.innerHTML=state.departments.slice().sort((a,b)=>a.name.localeCompare(b.name)).map(d=>`<div class="card ${d.id===state.selected?"selected":""}" onclick="selectDept('${d.id}')">
  <div style="font-size:30px">${d.icon}</div><h3>${esc(d.name)}</h3><p>${esc(d.desc)}</p>
  <span class="badge">${d.kpis.length} KPI${d.kpis.length===1?"":"s"}</span>
  </div>`).join("");
@@ -224,9 +315,16 @@ function deleteSelectedDept(){
  if(confirm("Delete selected department and its KPI map?")){state.departments=state.departments.filter(d=>d.id!==state.selected);state.selected=state.departments[0].id;save();renderDepartments()}
 }
 function goMapping(){showSection("mapping")}
+function highlightKpi(i){
+ const rows=document.querySelectorAll("#kpiBody tr");
+ rows.forEach((r,n)=>r.classList.toggle("selected",String(n)===String(i)));
+ if(i!=="" && rows[i]) rows[i].scrollIntoView({behavior:"smooth",block:"center"});
+}
 function renderMapping(){
  const d=dept();document.getElementById("mappingDept").textContent=`Selected department: ${d.icon} ${d.name} • ${d.kpis.length} KPI(s)`;
  const body=document.getElementById("kpiBody");
+ const ks=document.getElementById("kpiSelect");
+ if(ks) ks.innerHTML=d.kpis.slice().map((k,i)=>`<option value="${i}">${esc(k[0])}</option>`).join("");
  if(!d.kpis.length){body.innerHTML=`<tr><td colspan="7"><div class="empty">No KPIs configured. Use “＋ Add KPI” to create the department KPI library.</div></td></tr>`;return}
  body.innerHTML=d.kpis.map((k,i)=>`<tr>
  <td><b>${esc(k[0])}</b></td><td>${esc(k[1])||"—"}</td><td>${esc(k[2])}</td><td>${esc(k[3])}</td><td>${esc(k[4])}</td><td>${esc(k[5])||"—"}</td>
