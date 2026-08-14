@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>InstantDash — Excel / CSV / PDF → Dashboard · v1.5.6</title>
+<title>InstantDash — Excel / CSV / PDF → Dashboard · v1.5.7</title>
 
 <!-- ============================================================
      LIBRARIES (loaded from CDN, no build step required)
@@ -50,6 +50,12 @@ body.dark{
   --shadow:  0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
   --shadow-h:0 2px 6px rgba(0,0,0,.5), 0 16px 40px rgba(0,0,0,.45);
 }
+
+/* v1.5.7 — reliable manual Light/Night theme switching */
+html.theme-dark{color-scheme:dark}
+html.theme-light{color-scheme:light}
+body.dark select,body.dark input,body.dark textarea{background:var(--card);color:var(--text);border-color:var(--border)}
+body.dark .privacy,body.dark .icon-btn,body.dark .btn{color:var(--text)}
 
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
@@ -323,7 +329,7 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
 @media (prefers-reduced-motion: reduce){ *{animation-duration:.01ms !important;transition-duration:.01ms !important} }
 
 
-/* ---------- desktop / laptop workspace refinement v1.5.6 ---------- */
+/* ---------- desktop / laptop workspace refinement v1.5.7 ---------- */
 html{overflow-x:hidden}
 body{overflow-x:hidden}
 .tbl-wrap{width:100%;max-width:100%;overflow-x:auto;overflow-y:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
@@ -438,7 +444,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v155-sticky-nav">
-/* InstantDash v1.5.6 — desktop/mobile persistent navigation */
+/* InstantDash v1.5.7 — desktop/mobile persistent navigation */
 .id-sticky-nav{
   position:fixed;
   left:50%;
@@ -485,7 +491,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v156-ui-fixes">
-/* v1.5.6 — persistent Share access + wider Pivot Rows selector */
+/* v1.5.7 — persistent Share access + wider Pivot Rows selector */
 #id-floating-share{
   position:fixed;
   right:16px;
@@ -537,7 +543,7 @@ body{overflow-x:hidden}
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"/><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"/><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"/></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.5.6</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.5.7</span>
   </div>
   <span id="share"></span><button type="button" class="v154-share-tab" id="v154ShareTab" title="Share dashboard">📤 Share</button>
   <div class="spacer"></div>
@@ -3222,15 +3228,33 @@ function buildEverything(){
    THEME + REMAINING WIRING + START
    ===================================================================== */
 function setTheme(dark){
-  APP.dark = dark;
-  document.body.classList.toggle('dark', dark);
-  $('themeToggle').textContent = dark ? '☀️' : '🌙';
+  APP.dark = !!dark;
+  document.body.classList.toggle('dark', APP.dark);
+  document.documentElement.classList.toggle('theme-dark', APP.dark);
+  document.documentElement.classList.toggle('theme-light', !APP.dark);
+  try { localStorage.setItem('instantdash-theme', APP.dark ? 'dark' : 'light'); } catch(e) {}
+  const toggle = $('themeToggle');
+  if (toggle){
+    toggle.textContent = APP.dark ? '☀️' : '🌙';
+    toggle.title = APP.dark ? 'Switch to day mode' : 'Switch to night mode';
+    toggle.setAttribute('aria-label', toggle.title);
+  }
   // Charts hold their colours in their options, so they need redrawing.
   if (!$('app').hidden) APP.charts.forEach(spec => drawChart(spec));
 }
 
+function getInitialTheme(){
+  try {
+    const saved = localStorage.getItem('instantdash-theme');
+    if (saved === 'dark') return true;
+    if (saved === 'light') return false;
+  } catch(e) {}
+  return !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+}
+
 function wireRest(){
-  $('themeToggle').onclick = () => setTheme(!APP.dark);
+  const themeToggle = $('themeToggle');
+  if (themeToggle) themeToggle.addEventListener('click', () => setTheme(!APP.dark));
   $('headerRow').onchange = () => {
     const v = Math.max(1, Math.min(+$('headerRow').value || 1, APP.aoa.length));
     $('headerRow').value = v;
@@ -3268,7 +3292,7 @@ function wireRest(){
   $('appName').textContent = CONFIG.APP_NAME;
   document.title = CONFIG.APP_NAME + ' — Excel to Dashboard';
   window.addEventListener('resize',()=>miSyncAccordions());
-  setTheme(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  setTheme(getInitialTheme());
   wireIngest();
   wireChartBuilder();
   wireRest();
@@ -3303,7 +3327,7 @@ function wireRest(){
 
   function dashboardFile(){
     const html='<!doctype html>\n'+document.documentElement.outerHTML;
-    return new File([html],'InstantDash_Dashboard_v1.5.6.html',{type:'text/html'});
+    return new File([html],'InstantDash_Dashboard_v1.5.7.html',{type:'text/html'});
   }
   function open(){panel.style.display='flex';note.textContent='';}
   function hide(){panel.style.display='none';}
@@ -3326,14 +3350,14 @@ function wireRest(){
     try{
       if(navigator.share && (!navigator.canShare || navigator.canShare({files:[f]}))){
         await navigator.share({
-          title:'InstantDash Dashboard v1.5.6',
+          title:'InstantDash Dashboard v1.5.7',
           text:'Interactive InstantDash dashboard',
           files:[f]
         });
         note.textContent='Share completed.';
       }else if(navigator.share){
         await navigator.share({
-          title:'InstantDash Dashboard v1.5.6',
+          title:'InstantDash Dashboard v1.5.7',
           text:'Interactive InstantDash dashboard'
         });
       }else{
@@ -3346,7 +3370,7 @@ function wireRest(){
   });
 
   copyBtn && copyBtn.addEventListener('click',async()=>{
-    const text='InstantDash Dashboard v1.5.6 — interactive management dashboard.';
+    const text='InstantDash Dashboard v1.5.7 — interactive management dashboard.';
     try{
       await navigator.clipboard.writeText(text);
       note.textContent='Share text copied to clipboard.';
