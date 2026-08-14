@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>InstantDash — Excel / CSV / PDF → Dashboard · v1.5.3</title>
+<title>InstantDash — Excel / CSV / PDF → Dashboard · v1.5.4</title>
 
 <!-- ============================================================
      LIBRARIES (loaded from CDN, no build step required)
@@ -323,7 +323,7 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
 @media (prefers-reduced-motion: reduce){ *{animation-duration:.01ms !important;transition-duration:.01ms !important} }
 
 
-/* ---------- desktop / laptop workspace refinement v1.5.3 ---------- */
+/* ---------- desktop / laptop workspace refinement v1.5.4 ---------- */
 html{overflow-x:hidden}
 body{overflow-x:hidden}
 .tbl-wrap{width:100%;max-width:100%;overflow-x:auto;overflow-y:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
@@ -397,6 +397,45 @@ body{overflow-x:hidden}
 </style>
 
 
+
+<style id="v154-share-tab-css">
+  .v154-share-tab{
+    display:inline-flex;align-items:center;gap:7px;
+    border:1px solid rgba(128,128,128,.28);
+    background:transparent;color:inherit;border-radius:10px;
+    padding:8px 12px;font-weight:700;cursor:pointer;
+    font-size:13px;white-space:nowrap;
+  }
+  .v154-share-tab:hover{background:rgba(128,128,128,.10)}
+  .v154-share-panel{
+    position:fixed;inset:0;z-index:9999;display:none;
+    align-items:center;justify-content:center;
+    background:rgba(0,0,0,.55);backdrop-filter:blur(5px);
+    padding:18px;
+  }
+  .v154-share-card{
+    width:min(560px,100%);border-radius:18px;
+    padding:22px;background:var(--panel,#17171b);
+    color:var(--text,#f4f4f5);
+    border:1px solid rgba(128,128,128,.25);
+    box-shadow:0 20px 70px rgba(0,0,0,.35);
+  }
+  .v154-share-card h3{margin:0 0 6px;font-size:20px}
+  .v154-share-card p{margin:0 0 16px;color:var(--muted,#a0a0a8);line-height:1.5}
+  .v154-share-actions{display:flex;gap:9px;flex-wrap:wrap}
+  .v154-share-actions button{
+    border:1px solid rgba(128,128,128,.28);border-radius:10px;
+    padding:10px 13px;background:transparent;color:inherit;
+    font-weight:700;cursor:pointer
+  }
+  .v154-share-actions .primary{background:#fff;color:#111;border-color:#fff}
+  .v154-share-close{float:right;font-size:20px;line-height:1;border:0!important;padding:3px 7px!important}
+  @media(max-width:700px){
+    .v154-share-tab{padding:8px 9px;font-size:12px}
+    .v154-share-card{padding:18px}
+  }
+</style>
+
 </head>
 <body>
 <div class="author-line">Developed by Anil Sharma &nbsp;•&nbsp; Former General Manager, Central Bank of India</div>
@@ -407,8 +446,9 @@ body{overflow-x:hidden}
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"/><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"/><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"/></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.5.3</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.5.4</span>
   </div>
+  <button type="button" class="v154-share-tab" id="v154ShareTab" title="Share dashboard">📤 Share</button>
   <div class="spacer"></div>
   <span class="privacy">🔒 Your data never leaves your computer.</span>
   <button class="icon-btn no-print" id="themeToggle" title="Switch theme" aria-label="Switch theme">🌙</button>
@@ -3144,5 +3184,87 @@ function wireRest(){
 })();
 
 </script>
+
+<div id="v154SharePanel" class="v154-share-panel" role="dialog" aria-modal="true" aria-labelledby="v154ShareTitle">
+  <div class="v154-share-card">
+    <button type="button" class="v154-share-close" id="v154ShareClose" aria-label="Close">×</button>
+    <h3 id="v154ShareTitle">📤 Share Dashboard</h3>
+    <p>Share the current InstantDash dashboard or create an HTML dashboard file that can be opened on another computer or device.</p>
+    <div class="v154-share-actions">
+      <button type="button" class="primary" id="v154NativeShare">📤 Share now</button>
+      <button type="button" id="v154SaveShare">💾 Save dashboard</button>
+      <button type="button" id="v154CopyShare">🔗 Copy share text</button>
+    </div>
+    <p id="v154ShareNote" style="margin-top:14px;font-size:12px"></p>
+  </div>
+</div>
+
+<script id="v154-share-script">
+(function(){
+  const tab=document.getElementById('v154ShareTab');
+  const panel=document.getElementById('v154SharePanel');
+  const close=document.getElementById('v154ShareClose');
+  const nativeBtn=document.getElementById('v154NativeShare');
+  const saveBtn=document.getElementById('v154SaveShare');
+  const copyBtn=document.getElementById('v154CopyShare');
+  const note=document.getElementById('v154ShareNote');
+  if(!tab||!panel)return;
+
+  function dashboardFile(){
+    const html='<!doctype html>\n'+document.documentElement.outerHTML;
+    return new File([html],'InstantDash_Dashboard_v1.5.4.html',{type:'text/html'});
+  }
+  function open(){panel.style.display='flex';note.textContent='';}
+  function hide(){panel.style.display='none';}
+  tab.addEventListener('click',open);
+  close && close.addEventListener('click',hide);
+  panel.addEventListener('click',e=>{if(e.target===panel)hide();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')hide();});
+
+  saveBtn && saveBtn.addEventListener('click',()=>{
+    const f=dashboardFile();
+    const url=URL.createObjectURL(f);
+    const a=document.createElement('a'); a.href=url; a.download=f.name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),2000);
+    note.textContent='Dashboard HTML saved. You can attach this file to Mail or WhatsApp.';
+  });
+
+  nativeBtn && nativeBtn.addEventListener('click',async()=>{
+    const f=dashboardFile();
+    try{
+      if(navigator.share && (!navigator.canShare || navigator.canShare({files:[f]}))){
+        await navigator.share({
+          title:'InstantDash Dashboard v1.5.4',
+          text:'Interactive InstantDash dashboard',
+          files:[f]
+        });
+        note.textContent='Share completed.';
+      }else if(navigator.share){
+        await navigator.share({
+          title:'InstantDash Dashboard v1.5.4',
+          text:'Interactive InstantDash dashboard'
+        });
+      }else{
+        saveBtn.click();
+      }
+    }catch(e){
+      if(e && e.name==='AbortError') return;
+      note.textContent='Direct sharing is not available on this browser. Use “Save dashboard” and attach the HTML file.';
+    }
+  });
+
+  copyBtn && copyBtn.addEventListener('click',async()=>{
+    const text='InstantDash Dashboard v1.5.4 — interactive management dashboard.';
+    try{
+      await navigator.clipboard.writeText(text);
+      note.textContent='Share text copied to clipboard.';
+    }catch(e){
+      note.textContent=text;
+    }
+  });
+})();
+</script>
+
 </body>
 </html>
