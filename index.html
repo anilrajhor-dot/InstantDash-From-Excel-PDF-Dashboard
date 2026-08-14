@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>InstantDash v4.6.1</title>
+<title>InstantDash v4.6.2</title>
 <style>
 :root{
   --bg:#111217;--panel:#1b1c22;--panel2:#202128;--line:#343640;--text:#f5f5f7;
@@ -68,7 +68,7 @@ footer{color:#777;font-size:11px;text-align:center;padding:12px}
 <div class="app">
 <header>
   <div>
-    <div class="brand">🟡 InstantDash <span class="version">v4.6.1</span></div>
+    <div class="brand">🟡 InstantDash <span class="version">v4.6.2</span></div>
     <div class="by">Developed by Anil Sharma • Former General Manager, Central Bank of India</div>
   </div>
   <div class="top-actions">
@@ -78,82 +78,99 @@ footer{color:#777;font-size:11px;text-align:center;padding:12px}
   </div>
 </header>
 
+
 <div class="steps">
   <div id="s1" class="step active">① Select Department</div>
-  <div id="s2" class="step">② Map KPIs</div>
-  <div id="s3" class="step">③ Confirm & Analyse</div>
-  <div id="s4" class="step">④ Results</div>
+  <div id="s2" class="step">② KPI Selection & Mapping</div>
+  <div id="s3" class="step">③ Finish Analysis</div>
+  <div id="s4" class="step">④ Report & Dashboard</div>
 </div>
 
 <section id="dept" class="section">
-  <div class="row between">
-    <div><h2>① Select Department / Nature of Area</h2><div class="sub">Choose the business area first. InstantDash will then load only the KPI library relevant to that area.</div></div>
-    <button class="btn primary" onclick="openDeptModal()">＋ Add Department</button>
-  </div>
-  <div class="field" style="max-width:520px;margin-top:15px">
-    <label>Select Department / Nature of Area</label>
+  <h2>① Please Select Department / Nature of Area</h2>
+  <div class="sub">Select a pre-loaded department. If it is not available, add your own department.</div>
+  <div class="field" style="max-width:650px;margin-top:15px">
+    <label>Department / Nature of Area</label>
     <select id="deptSelect" onchange="selectDept(this.value)"></select>
   </div>
-  <div id="deptGrid" class="grid" style="margin-top:15px"></div>
+  <div id="deptInfo" class="notice" style="margin-top:12px"></div>
   <div class="actions">
-    <button class="btn" onclick="editSelectedDept()">✏️ Edit Selected</button>
-    <button class="btn danger" onclick="deleteSelectedDept()">🗑️ Delete Selected</button>
-    <button class="btn primary" onclick="goMapping()">Continue to KPI Mapping →</button>
+    <button class="btn primary" onclick="continueDepartment()">Continue → KPI Mapping</button>
+    <button class="btn" onclick="openDeptModal()">＋ Add Department</button>
+    <button class="btn" onclick="editSelectedDept()">✏️ Edit Department</button>
   </div>
 </section>
 
 <section id="mapping" class="section hidden">
   <div class="row between">
-    <div><h2>② KPI Mapping</h2><div id="mappingDept" class="sub"></div></div>
+    <div>
+      <h2>② KPI Selection & Mapping</h2>
+      <div id="mappingDept" class="sub"></div>
+    </div>
+    <span id="mappingCount" class="badge"></span>
+  </div>
+  <div id="addMoreQuestion" class="notice" style="margin:14px 0">
+    Do you want to add more KPIs to this department?
+    <div class="actions">
+      <button class="btn primary" onclick="enableKpiEditing()">Yes — Add / Edit KPI</button>
+      <button class="btn" onclick="lockKpiEditing()">No — Continue</button>
+    </div>
+  </div>
+  <div id="kpiEditControls" class="actions hidden">
     <button class="btn primary" onclick="openKpiModal()">＋ Add KPI</button>
+    <button class="btn" onclick="editFirstKpi()">✏️ Edit Selected KPI</button>
+    <button class="btn danger" onclick="deleteSelectedKpi()">🗑️ Delete Selected KPI</button>
   </div>
-  <div class="notice" style="margin:14px 0">
-    Map each KPI to the Excel source column. A KPI is calculated only after its mapping is confirmed. Missing columns are never invented.
-  </div>
-  <div class="field" style="max-width:520px">
-    <label>Select / Search KPI</label>
+  <div class="field" style="max-width:650px;margin-top:12px">
+    <label>Select KPI</label>
     <select id="kpiSelect" onchange="highlightKpi(this.value)"></select>
   </div>
   <div class="table-wrap"><table>
-    <thead><tr><th>KPI</th><th>Source Column</th><th>Calculation</th><th>Nature</th><th>Unit</th><th>Target Column</th><th>Actions</th></tr></thead>
+    <thead><tr><th>KPI</th><th>Source Column</th><th>Calculation</th><th>Nature</th><th>Unit</th><th>Target</th><th class="editOnly">Edit</th></tr></thead>
     <tbody id="kpiBody"></tbody>
   </table></div>
-  <div class="actions">
+  <div id="mappingNext" class="actions">
     <button class="btn" onclick="showSection('dept')">← Change Department</button>
-    <button class="btn" onclick="openKpiModal()">＋ Add KPI</button>
-    <button class="btn primary" onclick="goAnalyse()">Confirm Mapping & Analyse →</button>
+    <button class="btn primary" onclick="goAnalyse()">Finish KPI Mapping →</button>
   </div>
 </section>
 
 <section id="analyse" class="section hidden">
-  <h2>③ Confirm & Analyse</h2>
+  <h2>③ Finish Analysis</h2>
   <div id="analysisSummary" class="notice"></div>
   <div class="filebox" style="margin-top:14px">
-    <h3>Upload Excel / CSV</h3>
-    <p class="sub">The file may have different columns for different departments. The selected department and KPI map control the interpretation.</p>
+    <h3>Upload Data File</h3>
+    <p class="sub">Upload the Excel/CSV containing the selected department's data.</p>
     <input id="fileInput" type="file" accept=".xlsx,.xls,.csv" onchange="loadFile(event)">
     <div id="fileStatus" class="sub" style="margin-top:10px">No file loaded.</div>
   </div>
   <div id="mappingCheck" style="margin-top:14px"></div>
   <div class="actions">
-    <button class="btn" onclick="showSection('mapping')">← Edit KPI Mapping</button>
-    <button class="btn primary" onclick="runAnalysis()">▶ Run Analysis</button>
+    <button class="btn" onclick="showSection('mapping')">← Back to KPI Mapping</button>
+    <button id="finishBtn" class="btn primary" disabled onclick="finishAnalysis()">✓ Finish Analysis & Generate Report</button>
   </div>
 </section>
 
-<section id="results" class="section hidden">
+<section id="report" class="section hidden">
   <div class="row between">
-    <div><h2>④ Results Dashboard</h2><div id="resultSubtitle" class="sub"></div></div>
+    <div><h2>④ Analysis Report</h2><div id="reportSubtitle" class="sub"></div></div>
+    <button class="btn primary" onclick="showSection('dashboard')">Open Dashboard →</button>
+  </div>
+  <div id="reportBody" style="margin-top:14px"></div>
+</section>
+
+<section id="dashboard" class="section hidden">
+  <div class="row between">
+    <div><h2>Management Dashboard</h2><div id="dashboardSubtitle" class="sub"></div></div>
     <div class="actions" style="margin-top:0">
+      <button class="btn" onclick="showSection('report')">← Report</button>
       <button class="btn" onclick="showSection('mapping')">✏️ Change KPI Mapping</button>
       <button class="btn" onclick="showSection('dept')">🏢 Change Department</button>
     </div>
   </div>
-  <div id="resultNotice" class="notice" style="margin:14px 0"></div>
-  <div id="resultGrid" class="results"></div>
+  <div id="dashboardBars" style="margin-top:16px"></div>
 </section>
-
-<footer>InstantDash v4.6.1 • Department-first KPI architecture • Data calculations remain subject to source-file quality.</footer>
+<footer>InstantDash v4.6.2 • Department-first KPI architecture • Department → KPI Mapping → Analysis → Report → Dashboard.</footer>
 </div>
 
 <div id="modalBack" class="modal-back" onclick="closeModal(event)">
@@ -276,21 +293,33 @@ function showSection(id){
  document.querySelectorAll("section").forEach(s=>s.classList.add("hidden"));
  document.getElementById(id).classList.remove("hidden");
  document.querySelectorAll(".step").forEach(s=>s.classList.remove("active"));
- ({dept:"s1",mapping:"s2",analyse:"s3",results:"s4"})[id] && document.getElementById(({dept:"s1",mapping:"s2",analyse:"s3",results:"s4"})[id]).classList.add("active");
+ ({dept:"s1",mapping:"s2",analyse:"s3",report:"s4",dashboard:"s4"})[id] && document.getElementById(({dept:"s1",mapping:"s2",analyse:"s3",report:"s4",dashboard:"s4"})[id]).classList.add("active");
  window.scrollTo({top:0,behavior:"smooth"});
  if(id==="mapping") renderMapping();
  if(id==="dept") renderDepartments();
+ if(id==="report") renderReport();
+ if(id==="dashboard") renderDashboard();
 }
 function renderDepartments(){
- const el=document.getElementById("deptGrid");
  const sel=document.getElementById("deptSelect");
- if(sel) sel.innerHTML=state.departments.slice().sort((a,b)=>a.name.localeCompare(b.name)).map(d=>`<option value="${esc(d.id)}" ${d.id===state.selected?"selected":""}>${esc(d.icon)} ${esc(d.name)}</option>`).join("");
- el.innerHTML=state.departments.slice().sort((a,b)=>a.name.localeCompare(b.name)).map(d=>`<div class="card ${d.id===state.selected?"selected":""}" onclick="selectDept('${d.id}')">
- <div style="font-size:30px">${d.icon}</div><h3>${esc(d.name)}</h3><p>${esc(d.desc)}</p>
- <span class="badge">${d.kpis.length} KPI${d.kpis.length===1?"":"s"}</span>
- </div>`).join("");
+ if(sel) sel.innerHTML=state.departments.slice().sort((a,b)=>a.name.localeCompare(b.name))
+   .map(d=>`<option value="${esc(d.id)}" ${d.id===state.selected?"selected":""}>${esc(d.icon)} ${esc(d.name)}</option>`).join("");
+ const d=dept();
+ const info=document.getElementById("deptInfo");
+ if(info) info.innerHTML=`<b>${esc(d.icon)} ${esc(d.name)}</b><br>${esc(d.desc)}<br><span class="badge">${d.kpis.length} pre-loaded KPI(s)</span>`;
 }
 function selectDept(id){state.selected=id;save();renderDepartments()}
+function continueDepartment(){ showSection("mapping"); renderMapping(); }
+function enableKpiEditing(){ document.getElementById("kpiEditControls").classList.remove("hidden"); document.querySelectorAll(".editOnly").forEach(e=>e.style.display="table-cell"); }
+function lockKpiEditing(){ document.getElementById("kpiEditControls").classList.add("hidden"); document.querySelectorAll(".editOnly").forEach(e=>e.style.display="none"); }
+function editFirstKpi(){ const sel=document.getElementById("kpiSelect"); if(sel && sel.value!=="") openKpiModal(Number(sel.value)); }
+function deleteSelectedKpi(){ const sel=document.getElementById("kpiSelect"); if(sel && sel.value!=="") deleteKpi(Number(sel.value)); }
+function finishAnalysis(){
+ if(!rows.length) return alert("Please upload the data file first.");
+ runAnalysis();
+ showSection("report");
+ renderReport();
+}
 function openDeptModal(edit=false){
  const d=dept();
  document.getElementById("modalTitle").textContent=edit?"Edit Department":"Add Department";
@@ -321,14 +350,16 @@ function highlightKpi(i){
  if(i!=="" && rows[i]) rows[i].scrollIntoView({behavior:"smooth",block:"center"});
 }
 function renderMapping(){
- const d=dept();document.getElementById("mappingDept").textContent=`Selected department: ${d.icon} ${d.name} • ${d.kpis.length} KPI(s)`;
- const body=document.getElementById("kpiBody");
+ const d=dept();
+ document.getElementById("mappingDept").textContent=`Selected department: ${d.icon} ${d.name}`;
+ document.getElementById("mappingCount").textContent=`${d.kpis.length} KPI(s) loaded`;
  const ks=document.getElementById("kpiSelect");
- if(ks) ks.innerHTML=d.kpis.slice().map((k,i)=>`<option value="${i}">${esc(k[0])}</option>`).join("");
- if(!d.kpis.length){body.innerHTML=`<tr><td colspan="7"><div class="empty">No KPIs configured. Use “＋ Add KPI” to create the department KPI library.</div></td></tr>`;return}
+ if(ks) ks.innerHTML=d.kpis.map((k,i)=>`<option value="${i}">${esc(k[0])}</option>`).join("");
+ const body=document.getElementById("kpiBody");
+ if(!d.kpis.length){body.innerHTML=`<tr><td colspan="7"><div class="empty">No KPIs configured. Choose “Yes — Add / Edit KPI”.</div></td></tr>`;return}
  body.innerHTML=d.kpis.map((k,i)=>`<tr>
  <td><b>${esc(k[0])}</b></td><td>${esc(k[1])||"—"}</td><td>${esc(k[2])}</td><td>${esc(k[3])}</td><td>${esc(k[4])}</td><td>${esc(k[5])||"—"}</td>
- <td><button class="btn small" onclick="openKpiModal(${i})">✏️</button> <button class="btn small danger" onclick="deleteKpi(${i})">🗑️</button></td>
+ <td class="editOnly" style="display:none"><button class="btn small" onclick="openKpiModal(${i})">✏️</button></td>
  </tr>`).join("");
 }
 function openKpiModal(index=-1){
@@ -356,6 +387,50 @@ function closeModal(e){if(!e||e.target===document.getElementById("modalBack"))do
 function goAnalyse(){
  showSection("analyse");document.getElementById("analysisSummary").innerHTML=`<b>${esc(dept().icon)} ${esc(dept().name)}</b><br>${dept().kpis.length} KPI(s) configured. Upload the department's Excel/CSV file, then confirm the detected column mapping.`;
  if(rows.length) renderMappingCheck();
+}
+let analysisResults=[];
+function runAnalysis(){
+ if(!rows.length)return alert("Please upload an Excel or CSV file first.");
+ const d=dept(), data=filteredRows();
+ const periodCol=headers.find(h=>["period","audit period","month","date","financial year","fy","year"].includes(normal(h)))||headers[0];
+ const current=data[data.length-1], previous=data.length>1?data[data.length-2]:null;
+ const currentPeriod=current?current[periodCol]:"—", previousPeriod=previous?previous[periodCol]:"—";
+ analysisResults=[];
+ d.kpis.forEach(k=>{
+  const h=findHeader(k[1]); if(!h)return;
+  let v=num(current[h]), pv=previous?num(previous[h]):NaN;
+  let growth=null;if(isFinite(v)&&isFinite(pv)&&pv!==0)growth=(v-pv)/Math.abs(pv)*100;
+  let target=NaN;if(k[5]){const th=findHeader(k[5]);if(th)target=num(current[th])}
+  let achievement=isFinite(target)&&target!==0?v/target*100:null;
+  analysisResults.push({name:k[0],source:h,calc:k[2],nature:k[3],unit:k[4],value:v,previous:pv,growth,target,achievement,currentPeriod,previousPeriod});
+ });
+ document.getElementById("finishBtn").disabled=false;
+ document.getElementById("analysisSummary").innerHTML=`<b>${esc(d.icon)} ${esc(d.name)}</b><br>${analysisResults.length} KPI(s) ready for analysis • Current period: <b>${esc(currentPeriod)}</b> • Previous period: <b>${esc(previousPeriod)}</b>`;
+}
+function renderReport(){
+ const d=dept();
+ document.getElementById("reportSubtitle").textContent=`${d.icon} ${d.name} • ${fileName}`;
+ let html=`<div class="notice"><b>Analysis completed.</b> ${analysisResults.length} mapped KPI(s) were calculated from the uploaded data. No unmapped KPI has been invented.</div>
+ <div class="table-wrap" style="margin-top:14px"><table><thead><tr><th>KPI</th><th>Current</th><th>Previous</th><th>Growth</th><th>Target</th><th>Achievement</th></tr></thead><tbody>`;
+ analysisResults.forEach(r=>{
+  const fmt=(v)=>isFinite(v)?(r.unit==="₹"?"₹"+v.toLocaleString("en-IN",{maximumFractionDigits:2}):v.toLocaleString("en-IN",{maximumFractionDigits:2})+(r.unit==="%"?"%":r.unit==="Number"?"":" "+r.unit)):"—";
+  html+=`<tr><td><b>${esc(r.name)}</b><br><small>${esc(r.source)} • ${esc(r.calc)}</small></td><td>${fmt(r.value)}</td><td>${fmt(r.previous)}</td><td>${r.growth===null?"—":(r.growth>=0?"+":"")+r.growth.toFixed(1)+"%"}</td><td>${fmt(r.target)}</td><td>${r.achievement===null?"—":r.achievement.toFixed(1)+"%"}</td></tr>`;
+ });
+ html+=`</tbody></table></div>`;
+ document.getElementById("reportBody").innerHTML=html;
+}
+function renderDashboard(){
+ const d=dept();document.getElementById("dashboardSubtitle").textContent=`${d.icon} ${d.name} • ${fileName}`;
+ const max=Math.max(...analysisResults.map(r=>Math.abs(r.value)).filter(isFinite),1);
+ let html="";
+ analysisResults.forEach(r=>{
+  if(!isFinite(r.value))return;
+  const pct=Math.max(2,Math.min(100,Math.abs(r.value)/max*100));
+  const cls=(r.nature==="lower" && r.growth>0)||(r.nature==="higher"&&r.growth<0)?"red":"green";
+  const label=r.unit==="₹"?"₹"+r.value.toLocaleString("en-IN",{maximumFractionDigits:2}):r.value.toLocaleString("en-IN",{maximumFractionDigits:2})+(r.unit==="%"?"%":r.unit==="Number"?"":" "+r.unit);
+  html+=`<div class="card" style="margin-bottom:12px"><div class="row between"><b>${esc(r.name)}</b><span>${esc(label)}</span></div><div style="height:14px;background:#2a2b32;border-radius:20px;overflow:hidden;margin-top:9px"><div class="${cls}" style="width:${pct}%;height:100%;background:${cls==="green"?"#45dc8b":"#ff5555"};border-radius:20px"></div></div><div class="sub" style="margin-top:6px">${r.growth===null?"No previous-period comparison":`Growth: ${r.growth>=0?"+":""}${r.growth.toFixed(1)}%`} ${r.achievement===null?"":` • Target achievement: ${r.achievement.toFixed(1)}%`}</div></div>`;
+ });
+ document.getElementById("dashboardBars").innerHTML=html||`<div class="empty">No calculated KPI values available.</div>`;
 }
 function resetSession(){
  rows=[];headers=[];fileName="";deptField=null;document.getElementById("fileInput").value="";document.getElementById("fileStatus").textContent="No file loaded.";
@@ -408,29 +483,3 @@ function filteredRows(){
  const name=normal(dept().name);const matching=rows.filter(r=>normal(r[deptField])===name);
  return matching.length?matching:rows;
 }
-function runAnalysis(){
- if(!rows.length)return alert("Please upload an Excel or CSV file first.");
- const d=dept(), data=filteredRows();
- const periodCol=headers.find(h=>["period","audit period","month","date","financial year","fy","year"].includes(normal(h)))||headers[0];
- const ordered=[...data];
- const current=ordered[ordered.length-1], previous=ordered.length>1?ordered[ordered.length-2]:null;
- const currentPeriod=current?current[periodCol]:"—", previousPeriod=previous?previous[periodCol]:"—";
- const grid=document.getElementById("resultGrid");grid.innerHTML="";
- d.kpis.forEach(k=>{
-  const h=findHeader(k[1]);if(!h)return;
-  const v=num(current[h]);const pv=previous?num(previous[h]):NaN;
-  let growth=null;if(isFinite(v)&&isFinite(pv)&&pv!==0)growth=(v-pv)/Math.abs(pv)*100;
-  const unit=k[4]==="₹"?"₹":(k[4]||"");let display=isFinite(v)?(unit==="₹"?"₹"+v.toLocaleString("en-IN",{maximumFractionDigits:2}):v.toLocaleString("en-IN",{maximumFractionDigits:2})+(unit==="%"?"%":unit==="Number"?"":" "+unit)):"—";
-  let status="";if(growth!==null)status=(growth>=0?"+":"")+growth.toFixed(1)+"% vs previous";
-  if(k[3]==="lower"&&growth!==null)status+=" • lower is better";else if(k[3]==="higher"&&growth!==null)status+=" • higher is better";
-  const div=document.createElement("div");div.className="kpi";div.innerHTML=`<div class="value">${esc(display)}</div><div class="name">${esc(k[0])}</div><div class="meta">Source: ${esc(h)}<br>Current period: ${esc(currentPeriod)}<br>Previous: ${esc(previousPeriod)}<br>${esc(status||"Comparison not available")}</div>`;
-  grid.appendChild(div);
- });
- document.getElementById("resultSubtitle").textContent=`${d.icon} ${d.name} • ${fileName} • Current period: ${currentPeriod}`;
- document.getElementById("resultNotice").innerHTML=`<b>Analysis basis:</b> ${deptField?`Department field “${esc(deptField)}” detected. Matching rows were used where available.`:`No Department/Area column was found. Results use the complete uploaded dataset under the selected “${esc(d.name)}” KPI map; no department split has been assumed.`}`;
- showSection("results");
-}
-renderDepartments();
-</script>
-</body>
-</html>
