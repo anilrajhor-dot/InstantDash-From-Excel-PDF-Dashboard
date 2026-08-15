@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>InstantDash — Excel / CSV / PDF → Dashboard · v1.7.4</title>
+<title>InstantDash — Excel / CSV / PDF → Dashboard · v1.8.0</title>
 
 <!-- ============================================================
      LIBRARIES (loaded from CDN, no build step required)
@@ -51,7 +51,7 @@ body.dark{
   --shadow-h:0 2px 6px rgba(0,0,0,.5), 0 16px 40px rgba(0,0,0,.45);
 }
 
-/* v1.7.0 — reliable manual Light/Night theme switching */
+/* v1.8.0 — reliable manual Light/Night theme switching */
 html.theme-dark{color-scheme:dark}
 html.theme-light{color-scheme:light}
 body.dark select,body.dark input,body.dark textarea{background:var(--card);color:var(--text);border-color:var(--border)}
@@ -142,7 +142,7 @@ main{max-width:1360px;margin:0 auto;padding:24px}
 
 /* ---------- premium landing experience v1.4.8 ---------- */
 
-/* v1.7.2 — KPI direction hardening and management wording */
+/* v1.8.0 — live executive preview clarity */
 .live-pill{display:inline-flex;align-items:center;margin-left:8px;padding:4px 9px;border-radius:999px;font-size:.58em;letter-spacing:.08em;font-weight:800;background:rgba(34,197,94,.14);color:#31b66b;vertical-align:middle}
 .exec-live-note{margin-top:10px;font-size:11px;color:var(--muted);line-height:1.45}
 @media(max-width:700px){.live-pill{font-size:.55em}.exec-live-note{font-size:10.5px}}
@@ -173,7 +173,7 @@ body.dark .landing-hero{box-shadow:0 18px 70px rgba(0,0,0,.42)}
 .preview-top{display:flex;align-items:center;gap:5px;color:var(--muted);font-size:9px;padding:2px 2px 12px;border-bottom:1px solid var(--border)}
 .preview-top b{font-size:11px;color:var(--text);margin-left:7px}.preview-chip{margin-left:auto;padding:3px 7px;border-radius:999px;background:color-mix(in srgb,var(--ok) 16%,transparent);color:var(--ok);font-weight:700}
 .mini-dot{width:6px;height:6px;border-radius:50%;background:var(--border)}
-.preview-score{display:flex;align-items:center;justify-content:space-between;padding:18px 8px 12px}.preview-score small,.preview-metrics small{display:block;color:var(--muted);font-size:9px}.preview-score strong{display:block;font:700 27px Poppins,sans-serif;letter-spacing:-.03em;margin-top:2px}.preview-score-note{display:block;font-style:normal;color:var(--muted);font-size:8px;margin-top:4px}.score-ring{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--accent) 0%,var(--border) 0);position:relative;font:700 13px Poppins,sans-serif}.score-ring:after{content:"";position:absolute;inset:6px;border-radius:50%;background:var(--card)}.score-ring span{position:relative;z-index:1}
+.preview-score{display:flex;align-items:center;justify-content:space-between;padding:18px 8px 12px}.preview-score small,.preview-metrics small{display:block;color:var(--muted);font-size:9px}.preview-score strong{display:block;font:700 27px Poppins,sans-serif;letter-spacing:-.03em;margin-top:2px}.score-ring{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--accent) 0%,var(--border) 0);position:relative;font:700 13px Poppins,sans-serif}.score-ring:after{content:"";position:absolute;inset:6px;border-radius:50%;background:var(--card)}.score-ring span{position:relative;z-index:1}
 .preview-metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px}.preview-metrics>div{padding:11px;border:1px solid var(--border);border-radius:11px;background:var(--card-2)}.preview-metrics b{display:block;font:700 17px Poppins,sans-serif;margin-top:2px}.preview-metrics div:first-child b{color:var(--ok)}.preview-metrics div:nth-child(2) b{color:var(--accent-2)}.preview-metrics i{font-style:normal;font-size:9px;color:var(--muted)}
 .preview-chart{height:104px;margin:13px 3px 10px;display:flex;align-items:end;gap:8px;padding:12px 10px 8px;border-radius:11px;background:var(--card-2);position:relative;overflow:hidden}.preview-chart span{width:11%;border-radius:4px 4px 2px 2px;background:linear-gradient(to top,var(--accent-2),var(--accent));opacity:.9}.preview-line{position:absolute;left:10px;right:10px;top:48%;height:2px;background:var(--text);opacity:.18;transform:rotate(-5deg)}
 .preview-insight{display:flex;gap:9px;align-items:flex-start;padding:10px;border:1px solid var(--border);border-radius:11px;background:var(--card-2);font-size:9.5px;color:var(--muted);line-height:1.45}.preview-insight span{color:var(--accent);font-size:11px}.preview-insight p{margin:0}.preview-insight b{color:var(--text)}
@@ -291,8 +291,6 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
 .management-insights .mi-card.good{border-left:3px solid var(--ok)}
 .management-insights .mi-card.warn{border-left:3px solid var(--warn)}
 .management-insights .mi-card.neutral{border-left:3px solid var(--accent)}
-.management-insights .mi-card.review{border-left:3px solid var(--accent)}
-.management-insights .mi-card.review .mi-more{color:var(--accent)}
 .management-insights .mi-card.executive{grid-column:1/-1;border-left:4px solid var(--accent);background:var(--card)}
 .management-insights .mi-card.executive summary{padding:15px 16px 10px;font-size:14px}
 .management-insights .mi-card.executive .mi-body{padding:0 16px 16px}
@@ -336,7 +334,7 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
 @media (prefers-reduced-motion: reduce){ *{animation-duration:.01ms !important;transition-duration:.01ms !important} }
 
 
-/* ---------- desktop / laptop workspace refinement v1.7.0 ---------- */
+/* ---------- desktop / laptop workspace refinement v1.8.0 ---------- */
 html{overflow-x:hidden}
 body{overflow-x:hidden}
 .tbl-wrap{width:100%;max-width:100%;overflow-x:auto;overflow-y:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
@@ -451,7 +449,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v155-sticky-nav">
-/* InstantDash v1.7.0 — desktop/mobile persistent navigation */
+/* InstantDash v1.8.0 — desktop/mobile persistent navigation */
 .id-sticky-nav{
   position:fixed;
   left:50%;
@@ -498,7 +496,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v169-ui-fixes">
-/* v1.7.0 — cleaner Share access + wider Pivot Rows selector */
+/* v1.8.0 — cleaner Share access + wider Pivot Rows selector */
 .pivot-controls .frow:first-child{min-width:260px}
 .pivot-controls .frow:first-child select{min-width:260px}
 @media (max-width:700px){
@@ -513,7 +511,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v160-executive-css">
-/* InstantDash v1.7.0 — Executive Management Cockpit */
+/* InstantDash v1.8.0 — Executive Management Cockpit */
 .executive-cockpit{margin-top:22px}
 .exec-head{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:12px}
 .exec-head h2{font-size:18px}
@@ -562,7 +560,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v161-theme-hardening">
-/* InstantDash v1.7.0 — theme hardening */
+/* InstantDash v1.8.0 — theme hardening */
 html.theme-dark body{background:var(--bg);color:var(--text)}
 html.theme-light body{background:var(--bg);color:var(--text)}
 body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var(--text)}
@@ -586,17 +584,6 @@ body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var
 
 </style>
 
-
-<style id="instantdash-v171-management-polish">
-/* v1.7.2 — management wording, KPI direction hardening and mobile polish */
-#previewScoreRing{cursor:help}
-.exec-status{white-space:normal}
-@media(max-width:560px){
-  .preview-metrics b{font-size:15px;line-height:1.25}
-  .preview-insight{font-size:9.2px}
-}
-</style>
-
 </head>
 <body>
 <div class="author-line">Developed by Anil Sharma &nbsp;•&nbsp; Former General Manager, Central Bank of India</div>
@@ -607,7 +594,7 @@ body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"/><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"/><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"/></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.7.4</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.8.0</span>
   </div>
   <span id="share"></span><button type="button" class="v154-share-tab" id="v154ShareTab" title="Share dashboard">📤 Share</button>
   <div class="spacer"></div>
@@ -637,7 +624,7 @@ body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var
       <div class="hero-preview" aria-hidden="true">
         <div class="preview-window">
           <div class="preview-top"><span class="mini-dot"></span><span class="mini-dot"></span><span class="mini-dot"></span><b>Management preview</b><span class="preview-chip" id="previewChip">AWAITING FILE</span></div>
-          <div class="preview-score"><div><small>Dashboard status</small><strong id="previewStatus">Upload a file</strong><i class="preview-score-note">Score is a review-confidence indicator</i></div><div class="score-ring preview-empty-ring" id="previewScoreRing"><span id="previewScore">—</span></div></div>
+          <div class="preview-score"><div><small>Dashboard status</small><strong id="previewStatus">Upload a file</strong></div><div class="score-ring preview-empty-ring" id="previewScoreRing"><span id="previewScore">—</span></div></div>
           <div class="preview-metrics"><div><small>Data quality</small><b id="previewQuality">—</b><i id="previewQualitySub">Calculated after upload</i></div><div><small>Key movement</small><b id="previewMovement">—</b><i id="previewMovementSub">Calculated after upload</i></div></div>
           <div class="preview-chart preview-empty-chart" id="previewChart"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><div class="preview-line"></div></div>
           <div class="preview-insight"><span>◆</span><p id="previewInsight"><b>Management insight</b> · Upload your Excel, CSV or PDF to calculate the dashboard from your own data.</p></div>
@@ -717,7 +704,7 @@ body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var
 
       <div class="exec-bottom">
         <div class="exec-card">
-          <div class="exec-label">Data quality check</div>
+          <div class="exec-label">What needs attention</div>
           <ul class="exec-list" id="execAttentionList"></ul>
         </div>
         <div class="exec-card">
@@ -855,7 +842,7 @@ body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var
    --------------------------------------------------------------------- */
 const CONFIG = {
   APP_NAME: 'InstantDash',
-  VERSION: 'v1.7.4',
+  VERSION: 'v1.8.0',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -874,7 +861,6 @@ const CONFIG = {
   BIG_FILE_WARN: 200000,      // show a friendly warning above this many rows
   OUTLIER_SIGMA: 3,           // flag values beyond N standard deviations
   MISSING_WARN_PCT: 10,       // warning icon above this % of missing values
-  MATERIAL_MOVE_PCT: 10,       // reference threshold for a material KPI movement
   DATE_DAY_FIRST: true,       // ambiguous 03/04/2024 reads as 3 April (set false for US files)
 
   // 8-colour palette for multi-series charts. First two are the brand colours.
@@ -2779,8 +2765,30 @@ function miLatestPeriodRows(rows,dateCol){
 }
 function miSum(rows,col){ return rows.reduce((s,r)=>s+(miNum(r[col])??0),0); }
 function miChange(a,b){ return {abs:b-a,pct:a!==0?(b-a)/Math.abs(a):null}; }
+/* v1.8.0 — domain-aware interpretation layer.
+   The dashboard must distinguish a true performance KPI from a contextual
+   activity/capacity measure. It must also recognise common ESG and healthcare
+   measures without pretending that the data proves causation. */
+function miDomain(kpi){
+  const n=String(kpi||'').toLowerCase();
+  if(/energy|electricity|power|water|waste|carbon|co2|emission|ghg|fuel|resource\s*consumption|paper|plastic/i.test(n)) return 'esg';
+  if(/patient|bed\s*occupancy|occupancy|average\s*length\s*of\s*stay|length\s*of\s*stay|admission|discharge|outpatient|inpatient|clinical/i.test(n)) return 'healthcare';
+  if(/revenue|sales|income|profit|margin|ebitda/i.test(n)) return 'financial';
+  if(/customer|client|member|account|subscriber/i.test(n)) return 'customer';
+  return 'general';
+}
+function miContextualByDomain(kpi){
+  const n=String(kpi||'').toLowerCase();
+  if(/average\s*length\s*of\s*stay|length\s*of\s*stay/i.test(n)) return true;
+  if(/patient\s*(volume|visits?|footfall|throughput)|outpatient\s*volume|inpatient\s*volume/i.test(n)) return true;
+  if(/bed\s*occupancy|occupancy\s*rate/i.test(n)) return true;
+  return false;
+}
+function miIsESGResource(kpi){
+  return miDomain(kpi)==='esg';
+}
 function miIsContextual(kpi){
-  return /(employees?|staff|headcount|branches?|outlets?|targets?|target|planned|planning|budget|capacity|sanctioned\s*target|business\s*target|cost\s*budget)/i.test(String(kpi||''));
+  return miContextualByDomain(kpi) || /(employees?|staff|headcount|branches?|outlets?|targets?|target|planned|planning|budget|capacity|sanctioned\s*target|business\s*target|cost\s*budget)/i.test(String(kpi||''));
 }
 /* Semantic KPI classification: direction alone is not enough. Some KPIs
    describe risk/exposure or protective activity, where a numerical increase
@@ -2791,38 +2799,27 @@ function miSemantic(kpi){
   if(/threats?\s*(detected|identified)|attacks?\s*(detected|identified)|vulnerabilit(y|ies)|exposure|security\s*incidents?|critical\s*incidents?|data\s*breach|breaches|malware\s*detected|phishing\s*(attempts?|incidents?)/i.test(n)) return 'risk';
   if(/threats?\s*blocked|attacks?\s*blocked|incidents?\s*resolved|vulnerabilit(y|ies)\s*resolved|patch(es|ing)?\s*(completed|applied)|controls?\s*implemented|security\s*compliance/i.test(n)) return 'protective';
   if(/stock[-\s]?outs?|availability|service\s*level|on[-\s]?time|fill\s*rate|uptime/i.test(n)) return 'quality';
-  /* ESG/resource-use measures have a meaningful default direction when no
-     explicit KPI Directory direction is supplied: lower consumption, waste,
-     emissions and environmental burden is generally favourable, subject to
-     output, service level and target context. */
-  if(/water\s*consumption|energy\s*consumption|electricity\s*consumption|fuel\s*consumption|resource\s*consumption|waste(\s*generated)?|waste\s*volume|waste\s*disposal|ghg|greenhouse\s*gas|carbon\s*(emissions?|footprint)|co2(\s*emissions?)?|emissions?|effluent|pollution/i.test(n)) return 'environmental';
-  if(/renewable\s*(energy|generation|share)|recycling\s*(rate|ratio)|recycled\s*(material|waste)|energy\s*efficiency|water\s*efficiency/i.test(n)) return 'environmental_positive';
-  /* Expenditure is not intrinsically good or bad. Higher spend may reflect
-     growth, inflation, capacity needs or inefficiency; compare it with plan
-     and operating outcomes before classifying the movement. */
-  if(/\b(cost|costs|expense|expenses|spend|spending|expenditure|budget|salary|salaries)\b/i.test(n)) return 'contextual';
   if(/audit.*finding|finding(s)?$|repeat\s*finding|open\s*finding|pending\s*finding/i.test(n)) return 'contextual';
+  /* Grievances received measure demand/reporting volume, not outcome quality.
+     An increase can reflect deterioration, better access/reporting, or a mix
+     change, so it must not be labelled automatically as favourable/adverse. */
+  if(/grievances?\s*(received|registered|lodged)|grievance\s*volume/i.test(n)) return 'contextual';
   if(miIsContextual(kpi)) return 'contextual';
   return 'output';
 }
 function miDirection(kpi){
   const sem=miSemantic(kpi);
-  const n=String(kpi||'').toLowerCase();
-  /* Inflow measures such as grievances received are not performance outputs.
-     A rise can mean higher demand, better reporting/access, or deterioration;
-     therefore do not label an increase as favourable merely because a source
-     directory happens to say "Higher is Better". */
-  if(/grievances?\s*(received|registered|lodged)|complaints?\s*(received|registered)|cases?\s*(received|opened|registered)|new\s*(grievances?|complaints?|cases?)/i.test(n)) return 'Contextual';
-  /* An explicit KPI Directory direction is authoritative. Default semantic
-     rules below are used only when the source does not provide one. */
-  const d=miDirectoryDirection(kpi);
-  if(d) return d;
   if(sem==='risk') return 'Lower is Better';
   if(sem==='protective') return 'Higher is Better';
   if(sem==='quality') return /stock[-\s]?outs?|complaints?|defects?|downtime|delay/i.test(String(kpi||'')) ? 'Lower is Better' : 'Higher is Better';
-  if(sem==='environmental') return 'Lower is Better';
-  if(sem==='environmental_positive') return 'Higher is Better';
   if(sem==='contextual') return 'Contextual';
+  if(/grievances?\s*(received|registered|lodged)|grievance\s*volume/i.test(String(kpi||''))) return 'Contextual';
+  /* Common ESG resource-use measures are normally lower-is-better. This is
+     a default interpretation only; an explicit KPI Directory direction still
+     takes precedence below when supplied. */
+  if(miIsESGResource(kpi)) return 'Lower is Better';
+  const d=miDirectoryDirection(kpi);
+  if(d)return d;
   if(/(npa|slippage|default|complaint|pending|open|repeat|expense|cost|foir|ltv|risk|finding|stock[-\s]?out)/i.test(kpi)) return 'Lower is Better';
   return 'Higher is Better';
 }
@@ -2874,6 +2871,23 @@ function miGenericManagementRemark(name, direction, sem, favourable, change){
 
   /* KPI-specific remarks take precedence over broad category remarks.
      They remain evidence-led and deliberately avoid claiming causation. */
+  if(miDomain(name)==='esg'){
+    if(/energy|electricity|power|fuel|water|waste|carbon|co2|emission|ghg|resource\s*consumption/i.test(n)){
+      return ` <span class="mi-remark"><b>Management remark:</b> review resource use against output, service level, operating scale and the approved ESG target; a lower resource intensity is more informative than absolute consumption alone.</span>`;
+    }
+  }
+  if(/average\s*length\s*of\s*stay|length\s*of\s*stay/i.test(n)){
+    return ` <span class="mi-remark"><b>Management remark:</b> length of stay is contextual; review case mix, clinical complexity, bed occupancy, discharge practice and readmission indicators before treating a change as an improvement or deterioration.</span>`;
+  }
+  if(/patient\s*(volume|visits?|footfall|throughput)|outpatient\s*volume|inpatient\s*volume/i.test(n)){
+    return ` <span class="mi-remark"><b>Management remark:</b> review patient activity alongside capacity, occupancy, revenue, service quality and case mix; higher volume is not automatically better if service capacity or quality is constrained.</span>`;
+  }
+  if(/bed\s*occupancy|occupancy\s*rate/i.test(n)){
+    return ` <span class="mi-remark"><b>Management remark:</b> assess occupancy against available capacity, case mix, length of stay, service quality and the approved operating range; both very low and very high occupancy may require review.</span>`;
+  }
+  if(/grievances?\s*(received|registered|lodged)|grievance\s*volume/i.test(n)){
+    return ` <span class="mi-remark"><b>Management remark:</b> an increase in grievances received is not by itself evidence of deterioration; review grievance mix, access/reporting, service demand, resolution rate and ageing before drawing a conclusion.</span>`;
+  }
   if(/pending\s*(cases?|items?|matters?)|outstanding\s*(cases?|items?|matters?)/i.test(n)){
     return ` <span class="mi-remark"><b>Management remark:</b> review ageing, severity, ownership and closure timelines; distinguish fresh inflow from accumulated backlog before assessing the operational impact.</span>`;
   }
@@ -2903,12 +2917,6 @@ function miGenericManagementRemark(name, direction, sem, favourable, change){
   }
   if(/stock[-\s]?outs?/i.test(n)){
     return ` <span class="mi-remark"><b>Management remark:</b> assess stock-out movement alongside inventory levels, demand, service levels and lost-sales indicators to confirm whether availability has genuinely improved.</span>`;
-  }
-  if(sem==='environmental'){
-    return ` <span class="mi-remark"><b>Management remark:</b> lower resource use, waste or environmental burden is generally favourable; confirm the movement against output, service levels, operational scale and the approved ESG target before drawing a broader conclusion.</span>`;
-  }
-  if(sem==='environmental_positive'){
-    return ` <span class="mi-remark"><b>Management remark:</b> higher environmental-efficiency or circularity activity is generally favourable; confirm that the improvement is sustained and supported by the relevant operational and ESG indicators.</span>`;
   }
   if(/inventory\s*turnover|stock\s*turnover/i.test(n)){
     return ` <span class="mi-remark"><b>Management remark:</b> compare turnover with inventory value, ageing, sales volume and replenishment to determine whether the movement reflects slower demand or deliberate stock positioning.</span>`;
@@ -2959,7 +2967,7 @@ function miMovementText(name,ch,prev,cur,lr){
   const relatedRemark=miRelatedManagementRemark(name,lr);
   const genericRemark=miGenericManagementRemark(name,direction,sem,/lower/i.test(direction)?ch.abs<0:ch.abs>0,ch);
   const remark=relatedRemark||genericRemark;
-  if(sem==='contextual') return {bucket:'review',text:sentence+' This movement requires context before it can be called favourable or adverse; assess it against the relevant target, budget, workload, service outcome, capacity or operating result.'+remark};
+  if(sem==='contextual') return {bucket:'drivers',text:sentence+' This is a contextual movement; assess it against the relevant target, capacity, business plan or operating outcome.'+remark};
   if(sem==='risk'){
     if(ch.abs>0) return {bucket:'attention',text:sentence+' Higher exposure or incident volume warrants investigation; assess whether the movement reflects increased risk, improved detection, or both.'+remark};
     if(ch.abs<0) return {bucket:'performance',text:sentence+' Lower risk/exposure is a positive signal, subject to confirming that detection and reporting practices remained consistent.'+remark};
@@ -2972,33 +2980,23 @@ function miMovementText(name,ch,prev,cur,lr){
     const favourable=ch.abs<0;
     return {bucket:favourable?'performance':'attention',text:sentence+(favourable?' Lower '+miEsc(name)+' is favourable based on the KPI meaning available in the data.':' Higher '+miEsc(name)+' warrants attention based on the KPI meaning available in the data.')+remark};
   }
-  if(sem==='environmental'){
-    const favourable=ch.abs<0;
-    return {bucket:favourable?'performance':'attention',text:sentence+(favourable?' Lower '+miEsc(name)+' is generally favourable under the default ESG direction (lower is better).':' Higher '+miEsc(name)+' warrants attention under the default ESG direction (lower is better).')+remark};
-  }
-  if(sem==='environmental_positive'){
-    const favourable=ch.abs>0;
-    return {bucket:favourable?'performance':'attention',text:sentence+(favourable?' Higher '+miEsc(name)+' is generally favourable under the default ESG direction (higher is better).':' Lower '+miEsc(name)+' warrants attention under the default ESG direction (higher is better).')+remark};
-  }
   const favourable=/lower/i.test(direction)?ch.abs<0:ch.abs>0;
   return {bucket:favourable?'performance':'attention',text:sentence+(favourable?' This movement is favourable based on the KPI direction available in the data.':' This movement is adverse based on the KPI direction available in the data.')+remark};
 }
 function miStatus(items){
-  const a=(items.attention||[]).length, p=(items.performance||[]).length, r=(items.review||[]).length;
+  const a=(items.attention||[]).length, p=(items.performance||[]).length;
   if(a&&p)return 'Mixed';
-  if(a)return r ? 'Mixed — review context' : 'Attention required';
-  if(p)return r ? 'Mixed — review context' : 'Positive';
-  if(r)return 'Review required';
+  if(a)return 'Attention required';
+  if(p)return 'Positive';
   return 'Limited evidence';
 }
 function miStrip(v){return String(v||'').replace(/<[^>]*>/g,'').replace(/\s+/g,' ').trim();}
 function miCard(title,items,cls='neutral',open=false,maxItems=null){
   const arr=(Array.isArray(items)?items:[]).filter(x=>miStrip(x));
-  const limit=maxItems==null?(cls==='executive'?3:(cls==='good'||cls==='warn'||cls==='review'?5:4)):maxItems;
+  const limit=maxItems==null?(cls==='executive'?3:(cls==='good'||cls==='warn'?5:4)):maxItems;
   const fallback={
     good:'No material favourable movement was identified from the available comparable data.',
     warn:'No material adverse movement was identified from the available comparable data.',
-    review:'No contextual movement requiring additional review was identified.',
     neutral:'No specialised relationship was available; review the principal KPIs together with the comparable period, target or supporting driver.',
     executive:'The available data does not provide enough comparable evidence for a strong management conclusion.'
   };
@@ -3089,13 +3087,54 @@ function buildManagementSnapshot(items){
   set('snapActionSub',action?'Record the agreed action, owner and review date where material.':'Use the approved plan or target as the review basis.');
 }
 
+function miAddOperationalRelationships(rows, lr, items){
+  if(!lr) return;
+  const findCol=re=>APP.columns.find(c=>re.test(c.name));
+  const sum=(rs,c)=>miSum(rs,c.name);
+  const ratioLine=(label,resource,output,prevR,curR)=>{
+    if(prevR==null||curR==null||!isFinite(prevR)||!isFinite(curR)) return;
+    const ch=miChange(prevR,curR);
+    const bucket=ch.abs<0?'performance':'attention';
+    items[bucket].push(`<b>${miEsc(label)}:</b> ${miEsc(resource.name)} per ${miEsc(output.name)} moved from ${fmtFull(prevR)} to ${fmtFull(curR)} (${miPct(ch.pct)}). This is an efficiency signal; validate against output mix, operating scale and target before concluding performance.`);
+    items.relationships.push(`<b>${miEsc(label)}:</b> resource use per unit of output changed from ${fmtFull(prevR)} to ${fmtFull(curR)}. Intensity is generally more decision-useful than absolute resource consumption when output has changed.`);
+  };
+
+  // ESG intensity: pair resource consumption with a plausible activity/output KPI.
+  const resources=APP.columns.filter(c=>c.type==='number' && /energy|electricity|power|water|waste|carbon|co2|emission|ghg|fuel/i.test(c.name));
+  const outputs=APP.columns.filter(c=>c.type==='number' && /patient|customers?|clients?|members?|transactions?|orders?|units?|production|output|revenue|sales/i.test(c.name));
+  if(resources.length && outputs.length){
+    const resource=resources[0], output=outputs[0];
+    const prO=sum(lr.previous,output), crO=sum(lr.current,output), prR=sum(lr.previous,resource), crR=sum(lr.current,resource);
+    if(prO>0&&crO>0){
+      ratioLine(`${resource.name} intensity`,resource,output,prR/prO,crR/crO);
+    }
+  }
+
+  // Healthcare: volume + capacity/service context. Do not label volume itself as good.
+  const patient=findCol(/patient\s*(volume|visits?|footfall|throughput)|outpatient\s*volume|inpatient\s*volume/i);
+  const occupancy=findCol(/bed\s*occupancy|occupancy\s*rate/i);
+  const stay=findCol(/average\s*length\s*of\s*stay|length\s*of\s*stay/i);
+  if(patient && occupancy){
+    const pp=sum(lr.previous,patient),cp=sum(lr.current,patient),po=sum(lr.previous,occupancy),co=sum(lr.current,occupancy);
+    if(pp!==0&&po!==0) items.relationships.push(`<b>Healthcare activity versus occupancy:</b> ${miEsc(patient.name)} moved from ${fmtFull(pp)} to ${fmtFull(cp)} while ${miEsc(occupancy.name)} moved from ${fmtFull(po)} to ${fmtFull(co)}. Review capacity and service quality before interpreting the volume movement.`);
+  }
+  if(patient && stay){
+    const pp=sum(lr.previous,patient),cp=sum(lr.current,patient),ps=sum(lr.previous,stay),cs=sum(lr.current,stay);
+    if(pp!==0&&ps!==0) items.relationships.push(`<b>Healthcare volume versus length of stay:</b> ${miEsc(patient.name)} moved ${miPct(miChange(pp,cp).pct)} while ${miEsc(stay.name)} moved ${miPct(miChange(ps,cs).pct)}. The combination should be reviewed with case mix, capacity and readmission indicators.`);
+  }
+}
+
 function buildManagementInsights(){
   const grid=$('managementInsightsGrid'); if(!grid)return;
   const rows=APP.filtered||[]; if(!rows.length){grid.innerHTML=miCard('Management view',[],'neutral');return;}
-  const items={performance:[],attention:[],review:[],drivers:[],relationships:[],actions:[]};
+  const items={performance:[],attention:[],drivers:[],relationships:[],actions:[]};
   const dateCol=timeCols()[0];
   const lr=miLatestPeriodRows(rows,dateCol);
   const numeric=APP.columns.filter(c=>c.type==='number');
+
+  /* v1.8.0: calculate operational intensity/relationship signals before
+     classifying isolated movements. */
+  miAddOperationalRelationships(rows,lr,items);
 
   /* Relationship analysis is deliberately evaluated before isolated KPI
      movements. It gives management context rather than treating every
@@ -3210,7 +3249,9 @@ function buildManagementInsights(){
       const ch=miChange(prev,cur); if(Math.abs(ch.pct||0)<0.10)return;
       const name=c.name;
       const sentence=`<b>${miEsc(name)}</b> ${ch.abs>=0?'increased':'decreased'} from ${fmtFull(prev)} to ${fmtFull(cur)} (${miPct(ch.pct)}).`;
-      if(/planned|planning/i.test(name)){
+      if(miSemantic(name)==='contextual'){
+        items.drivers.push(sentence+' This is a contextual movement; assess it against capacity, target, case mix, operating range or the actual business outcome before calling it favourable or adverse.');
+      }else if(/planned|planning/i.test(name)){
         items.drivers.push(sentence+' This is a volume change, not a performance conclusion; assess it against capacity and actual completion.');
       }else if(/findings/i.test(name) && !/high.*risk|open|repeat|resolved|closed|pending/i.test(name)){
         items.drivers.push(sentence+' An increase in findings is not by itself proof of weaker controls; assess audit coverage, completion volume and findings intensity before concluding causation.');
@@ -3283,8 +3324,7 @@ function buildManagementInsights(){
   if(items.attention.length)items.actions.push('Review the largest adverse movements first and confirm the operational reason with the responsible business owner.');
   if(items.relationships.length)items.actions.push('Review the derived ratios and KPI relationships before assessing individual movements; they provide context but do not establish causation.');
   if(items.drivers.length)items.actions.push('Use data-supported relationships and concentrations as the starting point for management review; contribution or correlation must not be treated as proof of causation.');
-  if(items.review.length)items.actions.push('Validate contextual movements against the approved plan, budget, workload, capacity and actual operating outcomes before labelling them favourable or adverse.');
-  if(items.performance.length&&!items.attention.length&&!items.review.length)items.actions.push('Continue monitoring the favourable indicators and verify that improvements are sustained in the next comparable period.');
+  if(items.performance.length&&!items.attention.length)items.actions.push('Continue monitoring the favourable indicators and verify that improvements are sustained in the next comparable period.');
   if(!items.performance.length&&!items.attention.length&&!items.drivers.length&&!items.relationships.length)items.actions.push('No material management variation can be established from the current data. Add a prior-period, target or comparable-period basis for stronger analysis.');
 
   /* FINAL CONTENT GUARANTEE — the three management sections must never be
@@ -3319,17 +3359,15 @@ function buildManagementInsights(){
   updateLivePreview();
   const top=[];
   if(items.attention.length) top.push(`<b>Priority concern:</b> ${miStrip(items.attention[0])}`);
-  if(items.review.length && top.length<2) top.push(`<b>Requires review:</b> ${miStrip(items.review[0])}`);
-  if(items.performance.length && top.length<3) top.push(`<b>Positive development:</b> ${miStrip(items.performance[0])}`);
-  if(items.relationships.length && top.length<3) top.push(`<b>Key context:</b> ${miStrip(items.relationships[0])}`);
+  if(items.performance.length) top.push(`<b>Positive development:</b> ${miStrip(items.performance[0])}`);
+  if(items.relationships.length) top.push(`<b>Key context:</b> ${miStrip(items.relationships[0])}`);
   if(!top.length) top.push('The available data does not provide enough comparable evidence for a strong management conclusion.');
   grid.innerHTML=miCard('Executive takeaway',top,'executive',true,3)+
     miCard('What is going well',items.performance,'good',false,5)+
-    miCard('Requires review',items.review,'review',false,5)+
     miCard('Variations requiring attention',items.attention,'warn',false,5)+
     miCard('Management interpretation & possible drivers',items.drivers,'neutral',false,4)+
     miCard('Key relationships & derived ratios',items.relationships,'neutral',false,4)+
-    miCard('Management action',items.actions,'neutral',false,4);
+    miCard('Management action',items.actions,'neutral',false,3);
   miSyncAccordions(); miWireMore();
 }
 
@@ -3386,7 +3424,7 @@ function wireChartBuilder(){
    ===================================================================== */
 
 /* =====================================================================
-   InstantDash v1.7.0 — Executive Management Cockpit
+   InstantDash v1.8.0 — Executive Management Cockpit
    Generic: uses only detected runtime column roles and statistics.
    ===================================================================== */
 function buildExecutiveCockpit(){
@@ -3415,14 +3453,12 @@ function buildExecutiveCockpit(){
   const mi = window.__miItems || {};
   const att = Array.isArray(mi.attention) ? mi.attention.length : 0;
   const perf = Array.isArray(mi.performance) ? mi.performance.length : 0;
-  const rev = Array.isArray(mi.review) ? mi.review.length : 0;
   const dataQualityIssue = warnCount > 0 || missingPct >= CONFIG.MISSING_WARN_PCT;
 
   let reviewStatus = 'Ready';
   if (att && perf) reviewStatus = 'Mixed';
-  else if (att) reviewStatus = rev ? 'Mixed' : 'Needs attention';
-  else if (perf) reviewStatus = rev ? 'Mixed' : 'Positive';
-  else if (rev) reviewStatus = 'Review required';
+  else if (att) reviewStatus = 'Needs attention';
+  else if (perf) reviewStatus = 'Positive';
 
   /* A data-quality exception takes precedence only when there is no
      stronger movement status to report. */
@@ -3433,19 +3469,16 @@ function buildExecutiveCockpit(){
     status.textContent = reviewStatus;
 
     if (reviewStatus === 'Mixed') {
-      sub.textContent = `${att} attention, ${perf} favourable and ${rev} contextual review movement${rev===1?'':'s'} identified. Review before drawing conclusions.`;
-      badge.textContent = `● ${att} attention · ${perf} favourable${rev ? ' · ' + rev + ' review' : ''}`;
+      sub.textContent = `${att} material attention movement${att===1?'':'s'} and ${perf} favourable movement${perf===1?'':'s'} identified. Review before drawing conclusions.`;
+      badge.textContent = `● ${att} attention · ${perf} favourable`;
     } else if (reviewStatus === 'Needs attention') {
       sub.textContent = att
-        ? `${att} adverse/attention movement${att===1?'':'s'} identified. Review before relying on conclusions.`
+        ? `${att} material adverse/attention movement${att===1?'':'s'} identified. Review before relying on conclusions.`
         : `${warnCount || 1} field${warnCount===1?'':'s'} ${warnCount===1?'has':'have'} material missing data. Review before relying on conclusions.`;
       badge.textContent = att ? `● ${att} attention` : '● Review data quality';
     } else if (reviewStatus === 'Positive') {
       sub.textContent = `${perf} favourable movement${perf===1?'':'s'} identified. Confirm that the improvement is sustained.`;
       badge.textContent = `● ${perf} favourable`;
-    } else if (reviewStatus === 'Review required') {
-      sub.textContent = `${rev} contextual movement${rev===1?'':'s'} require supporting evidence before being labelled favourable or adverse.`;
-      badge.textContent = `● ${rev} review`;
     } else {
       sub.textContent = 'The loaded data is ready for management review.';
       badge.textContent = '● Good to review';
@@ -3482,7 +3515,6 @@ function buildExecutiveCockpit(){
   const dims=rankDimensions()[0];
   if(dims) coverage.push(`<b>Primary dimension:</b> ${esc(dims.name)} · ${dims.unique.toLocaleString()} distinct values`);
   coverage.push(`<b>Analysis:</b> ${APP.charts.length} charts · filters · pivot · raw data`);
-  coverage.push(`<b>Review threshold:</b> ${CONFIG.MATERIAL_MOVE_PCT}% reference movement for materiality; confirm business context before concluding.`);
   const cl=$('execCoverageList'); if(cl) cl.innerHTML=coverage.map(x=>`<li>${x}</li>`).join('');
 }
 
@@ -3535,19 +3567,15 @@ function updateLivePreview(){
 
   const att = Array.isArray(window.__miItems?.attention) ? window.__miItems.attention.length : 0;
   const perf = Array.isArray(window.__miItems?.performance) ? window.__miItems.performance.length : 0;
-  const rev = Array.isArray(window.__miItems?.review) ? window.__miItems.review.length : 0;
 
   // Keep the preview aligned with the Executive Dashboard's language.
-  const status = att && perf ? 'Mixed' : att ? (rev ? 'Mixed' : 'Needs attention') : perf ? (rev ? 'Mixed' : 'Positive') : rev ? 'Review required' : 'Ready';
+  const status = att && perf ? 'Mixed' : att ? 'Needs attention' : 'Ready';
 
-  // Quality is the base score. Attention and contextual-review items reduce
-  // confidence; favourable items provide only a modest offset.
+  // Quality is the base score. Attention items reduce confidence; favourable
+  // items provide only a modest offset so the preview never overstates results.
   const score = Math.max(0, Math.min(100,
-    Math.round(quality - Math.min(30, att * 8) - Math.min(20, rev * 4) + Math.min(8, perf * 2))
+    Math.round(quality - Math.min(30, att * 8) + Math.min(8, perf * 2))
   ));
-  const scoreBasis = `Review score ${Math.round(score)}/100 · data quality ${quality.toFixed(0)}% · ${att} attention · ${perf} favourable · ${rev} review. This is a review-confidence indicator, not a performance rating.`;
-  ring.title = scoreBasis;
-  ring.setAttribute('aria-label', scoreBasis);
 
   statusEl.textContent=status;
   scoreEl.textContent=String(score);
@@ -3556,15 +3584,11 @@ function updateLivePreview(){
 
   movementEl.classList.remove('preview-neutral','preview-attention','preview-positive');
   if(att){
-    movementEl.textContent=`${att} attention movement${att===1?'':'s'}`;
-    movementSub.textContent=rev ? `${rev} additional movement${rev===1?'':'s'} require context` : 'Calculated from your data';
+    movementEl.textContent=`${att} attention`;
+    movementSub.textContent='Calculated from your data';
     movementEl.classList.add('preview-attention');
-  } else if(rev){
-    movementEl.textContent=`${rev} review movement${rev===1?'':'s'}`;
-    movementSub.textContent='Context required before classification';
-    movementEl.classList.add('preview-neutral');
   } else if(perf){
-    movementEl.textContent=`${perf} favourable movement${perf===1?'':'s'}`;
+    movementEl.textContent=`${perf} positive`;
     movementSub.textContent='Favourable movements detected';
     movementEl.classList.add('preview-positive');
   } else {
@@ -3604,9 +3628,7 @@ function updateLivePreview(){
   if(insight){
     let summary='Dashboard calculated from the currently loaded and filtered data.';
     if(att){
-      summary = `${att} attention item${att===1?'':'s'} detected. Review the underlying data and supporting KPIs before drawing conclusions.`;
-    } else if(rev){
-      summary = `${rev} contextual movement${rev===1?'':'s'} detected. Compare with the relevant target, budget, workload or operating outcome before classification.`;
+      summary = `${att} material attention item${att===1?'':'s'} detected. Review the underlying data and supporting KPIs before drawing conclusions.`;
     } else if(perf){
       summary = `${perf} favourable movement${perf===1?'':'s'} detected. Confirm that the improvement is sustained and supported by related KPIs.`;
     }
@@ -3614,7 +3636,7 @@ function updateLivePreview(){
   }
 
   ring.classList.remove('preview-empty-ring','preview-ready-ring');
-  if(status==='Ready' || status==='Positive') {
+  if(status==='Ready') {
     ring.classList.add('preview-ready-ring');
     ring.style.background=`conic-gradient(var(--ok) ${score}%,var(--border) 0)`;
   } else {
@@ -3766,7 +3788,7 @@ function wireRest(){
 
   function dashboardFile(){
     const html='<!doctype html>\n'+document.documentElement.outerHTML;
-    return new File([html],'InstantDash_Dashboard_v1.7.4.html',{type:'text/html'});
+    return new File([html],'InstantDash_Dashboard_v1.8.0.html',{type:'text/html'});
   }
   function open(){panel.style.display='flex';note.textContent='';}
   function hide(){panel.style.display='none';}
@@ -3789,14 +3811,14 @@ function wireRest(){
     try{
       if(navigator.share && (!navigator.canShare || navigator.canShare({files:[f]}))){
         await navigator.share({
-          title:'InstantDash Dashboard v1.7.4',
+          title:'InstantDash Dashboard v1.8.0',
           text:'Interactive InstantDash dashboard',
           files:[f]
         });
         note.textContent='Share completed.';
       }else if(navigator.share){
         await navigator.share({
-          title:'InstantDash Dashboard v1.7.4',
+          title:'InstantDash Dashboard v1.8.0',
           text:'Interactive InstantDash dashboard'
         });
       }else{
@@ -3809,7 +3831,7 @@ function wireRest(){
   });
 
   copyBtn && copyBtn.addEventListener('click',async()=>{
-    const text='InstantDash Dashboard v1.7.4 — interactive management dashboard.';
+    const text='InstantDash Dashboard v1.8.0 — interactive management dashboard.';
     try{
       await navigator.clipboard.writeText(text);
       note.textContent='Share text copied to clipboard.';
