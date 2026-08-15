@@ -147,7 +147,7 @@ main{max-width:1360px;margin:0 auto;padding:24px}
 .exec-live-note{margin-top:10px;font-size:11px;color:var(--muted);line-height:1.45}
 @media(max-width:700px){.live-pill{font-size:.55em}.exec-live-note{font-size:10.5px}}
 
-/* v1.10.20 — clickable movement summary */
+/* v1.10.21 — clickable movement summary */
 #execStatusBadge.movement-link{cursor:pointer;user-select:none;transition:transform .15s ease,box-shadow .15s ease}
 #execStatusBadge.movement-link:hover{transform:translateY(-1px);box-shadow:0 3px 10px rgba(0,0,0,.10)}
 #execStatusBadge.movement-link:focus{outline:3px solid rgba(245,179,1,.35);outline-offset:2px}
@@ -384,7 +384,7 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
 .modal-back{position:fixed;inset:0;background:rgba(14,14,16,.45);display:none;place-items:center;z-index:150;padding:20px}
 .modal-back.on{display:grid}
 .modal{background:var(--card);border-radius:16px;box-shadow:var(--shadow-h);width:100%;max-width:460px;padding:20px;border:1px solid var(--border)}
-/* InstantDash v1.10.20 — clickable movement evidence drawer */
+/* InstantDash v1.10.21 — reliable movement evidence tabs */
 .mi-count-btn{appearance:none;border:1px solid var(--border);cursor:pointer;background:var(--card-2);color:var(--muted);font:700 9.5px/1 system-ui,-apple-system,sans-serif}
 .mi-count-btn:hover{border-color:var(--accent);color:var(--text);transform:translateY(-1px)}
 .mi-evidence-back{position:fixed;inset:0;background:rgba(14,14,16,.55);display:none;place-items:center;z-index:400;padding:16px;backdrop-filter:blur(5px)}
@@ -4125,18 +4125,22 @@ function wireMovementSummaryLinks(){
          must never remove the click handler — this was the cause of intermittent
          tab failures after the modal was refreshed/reopened. */
       tabs.innerHTML=specs.map(x=>`<button type="button" class="mi-evidence-tab ${active===x[0]?'active':''}" data-bucket="${x[0]}" aria-selected="${active===x[0]?'true':'false'}" ${x[2]?'':'disabled'}>${x[1]} · ${x[2]}</button>`).join('');
-    };
-    if(tabs.dataset.tabWired!=='1'){
-      tabs.addEventListener('click',e=>{
-        const b=e.target.closest('.mi-evidence-tab');
-        if(!b || b.disabled)return;
-        active=b.dataset.bucket;
-        showAll=false;
-        renderTabs();
-        renderList();
+      /* Bind directly to each freshly-created button. This is deliberately
+         independent of event delegation so iOS Safari cannot retain a stale
+         delegated target after the modal/tab DOM is rebuilt. */
+      tabs.querySelectorAll('.mi-evidence-tab:not([disabled])').forEach(btn=>{
+        btn.onclick=(e)=>{
+          e.preventDefault();
+          e.stopPropagation();
+          const bucket=btn.getAttribute('data-bucket');
+          if(!bucket)return;
+          active=bucket;
+          showAll=false;
+          renderTabs();
+          renderList();
+        };
       });
-      tabs.dataset.tabWired='1';
-    }
+    };
     const renderList=()=>{
       const arr=active==='performance'?perf:(active==='attention'?att:ctx);
       const ranked=rankMovements(arr);
