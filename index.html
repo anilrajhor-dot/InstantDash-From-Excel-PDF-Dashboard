@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>InstantDash — Excel / CSV / PDF → Dashboard · v1.8.4</title>
+<title>InstantDash — Excel / CSV / PDF → Dashboard · v1.8.5</title>
 
 <!-- ============================================================
      LIBRARIES (loaded from CDN, no build step required)
@@ -51,7 +51,7 @@ body.dark{
   --shadow-h:0 2px 6px rgba(0,0,0,.5), 0 16px 40px rgba(0,0,0,.45);
 }
 
-/* v1.8.4 — reliable manual Light/Night theme switching */
+/* v1.8.5 — reliable manual Light/Night theme switching */
 html.theme-dark{color-scheme:dark}
 html.theme-light{color-scheme:light}
 body.dark select,body.dark input,body.dark textarea{background:var(--card);color:var(--text);border-color:var(--border)}
@@ -142,7 +142,7 @@ main{max-width:1360px;margin:0 auto;padding:24px}
 
 /* ---------- premium landing experience v1.4.8 ---------- */
 
-/* v1.8.4 — live executive preview clarity */
+/* v1.8.5 — live executive preview clarity */
 .live-pill{display:inline-flex;align-items:center;margin-left:8px;padding:4px 9px;border-radius:999px;font-size:.58em;letter-spacing:.08em;font-weight:800;background:rgba(34,197,94,.14);color:#31b66b;vertical-align:middle}
 .exec-live-note{margin-top:10px;font-size:11px;color:var(--muted);line-height:1.45}
 @media(max-width:700px){.live-pill{font-size:.55em}.exec-live-note{font-size:10.5px}}
@@ -334,7 +334,7 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
 @media (prefers-reduced-motion: reduce){ *{animation-duration:.01ms !important;transition-duration:.01ms !important} }
 
 
-/* ---------- desktop / laptop workspace refinement v1.8.4 ---------- */
+/* ---------- desktop / laptop workspace refinement v1.8.5 ---------- */
 html{overflow-x:hidden}
 body{overflow-x:hidden}
 .tbl-wrap{width:100%;max-width:100%;overflow-x:auto;overflow-y:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
@@ -449,7 +449,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v155-sticky-nav">
-/* InstantDash v1.8.4 — desktop/mobile persistent navigation */
+/* InstantDash v1.8.5 — desktop/mobile persistent navigation */
 .id-sticky-nav{
   position:fixed;
   left:50%;
@@ -496,7 +496,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v169-ui-fixes">
-/* v1.8.4 — cleaner Share access + wider Pivot Rows selector */
+/* v1.8.5 — cleaner Share access + wider Pivot Rows selector */
 .pivot-controls .frow:first-child{min-width:260px}
 .pivot-controls .frow:first-child select{min-width:260px}
 @media (max-width:700px){
@@ -511,7 +511,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v160-executive-css">
-/* InstantDash v1.8.4 — Executive Management Cockpit */
+/* InstantDash v1.8.5 — Executive Management Cockpit */
 .executive-cockpit{margin-top:22px}
 .exec-head{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:12px}
 .exec-head h2{font-size:18px}
@@ -560,7 +560,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v161-theme-hardening">
-/* InstantDash v1.8.4 — theme hardening */
+/* InstantDash v1.8.5 — theme hardening */
 html.theme-dark body{background:var(--bg);color:var(--text)}
 html.theme-light body{background:var(--bg);color:var(--text)}
 body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var(--text)}
@@ -594,7 +594,7 @@ body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"/><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"/><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"/></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.8.4</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.8.5</span>
   </div>
   <span id="share"></span><button type="button" class="v154-share-tab" id="v154ShareTab" title="Share dashboard">📤 Share</button>
   <div class="spacer"></div>
@@ -842,7 +842,7 @@ body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var
    --------------------------------------------------------------------- */
 const CONFIG = {
   APP_NAME: 'InstantDash',
-  VERSION: 'v1.8.4',
+  VERSION: 'v1.8.5',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -2765,7 +2765,7 @@ function miLatestPeriodRows(rows,dateCol){
 }
 function miSum(rows,col){ return rows.reduce((s,r)=>s+(miNum(r[col])??0),0); }
 function miChange(a,b){ return {abs:b-a,pct:a!==0?(b-a)/Math.abs(a):null}; }
-/* v1.8.4 — domain-aware interpretation layer.
+/* v1.8.5 — domain-aware interpretation layer.
    The dashboard must distinguish a true performance KPI from a contextual
    activity/capacity measure. It must also recognise common ESG and healthcare
    measures without pretending that the data proves causation. */
@@ -2814,6 +2814,9 @@ function miSemantic(kpi){
   /* Purchase amount is ambiguous without knowing whether it is procurement
      spend, customer spend or another value measure. Treat it as contextual
      rather than calling a decrease adverse automatically. */
+  if(/repeat\s*customers?|returning\s*customers?|retained\s*customers?|customer\s*retention|retention\s*rate/i.test(n)) return 'quality';
+  if(/cancellation\s*rate|readmission\s*rate|complaint\s*rate|defect(ive)?\s*units?|rejected\s*units?|reject(ion)?\s*rate|error\s*rate|failure\s*rate|downtime\s*hours?/i.test(n)) return 'quality';
+  if(/pass\s*rate|completion\s*rate|success\s*rate/i.test(n)) return 'quality';
   if(/purchase\s*amount|purchases?\s*amount|purchase\s*value/i.test(n)) return 'contextual';
   if(/audit.*finding|finding(s)?$|repeat\s*finding|open\s*finding|pending\s*finding/i.test(n)) return 'contextual';
   /* Grievances received measure demand/reporting volume, not outcome quality.
@@ -2830,7 +2833,7 @@ function miDirection(kpi){
      such as Repeat Customers, Cancellation Rate or Readmission Rate. */
   if(sem==='risk') return 'Lower is Better';
   if(sem==='protective') return 'Higher is Better';
-  if(sem==='quality') return /availability|service\s*level|on[-\s]?time|fill\s*rate|uptime|satisfaction|attendance/i.test(String(kpi||'')) ? 'Higher is Better' : 'Lower is Better';
+  if(sem==='quality') return /availability|service\s*level|on[-\s]?time|fill\s*rate|uptime|satisfaction|attendance|repeat\s*customers?|returning\s*customers?|retained\s*customers?|customer\s*retention|retention\s*rate|pass\s*rate|completion\s*rate|success\s*rate/i.test(String(kpi||'')) ? 'Higher is Better' : 'Lower is Better';
   if(sem==='contextual') return 'Contextual';
   if(/grievances?\s*(received|registered|lodged)|grievance\s*volume/i.test(String(kpi||''))) return 'Contextual';
   /* Common ESG resource-use measures are normally lower-is-better. */
@@ -3013,7 +3016,7 @@ function miMovementText(name,ch,prev,cur,lr){
        availability, satisfaction and attendance are higher-is-better. If a
        workbook directory conflicts with that meaning, do not silently invert
        the result. */
-    const lowerIsBetter=!/availability|service\s*level|on[-\s]?time|fill\s*rate|uptime|satisfaction|attendance|repeat\s*customers?|returning\s*customers?|retained\s*customers?|customer\s*retention|retention\s*rate/i.test(String(name||''));
+    const lowerIsBetter=!/availability|service\s*level|on[-\s]?time|fill\s*rate|uptime|satisfaction|attendance|repeat\s*customers?|returning\s*customers?|retained\s*customers?|customer\s*retention|retention\s*rate|pass\s*rate|completion\s*rate|success\s*rate/i.test(String(name||''));
     const favourable=lowerIsBetter?ch.abs<0:ch.abs>0;
     return {bucket:favourable?'performance':'attention',text:sentence+(favourable?
       (lowerIsBetter?' Lower ':' Higher ')+miEsc(name)+' is favourable based on the KPI meaning available in the data.':
@@ -3021,6 +3024,18 @@ function miMovementText(name,ch,prev,cur,lr){
   }
   const favourable=/lower/i.test(direction)?ch.abs<0:ch.abs>0;
   return {bucket:favourable?'performance':'attention',text:sentence+(favourable?' This movement is favourable based on the KPI direction available in the data.':' This movement is adverse based on the KPI direction available in the data.')+remark};
+}
+function miActionForKpi(name){
+  const n=String(name||'').toLowerCase();
+  if(/repeat\s*customers?|returning\s*customers?|retention/i.test(n)) return 'Review retention, acquisition and purchase frequency; confirm whether the improvement is broad-based.';
+  if(/cancellation|readmission|complaint|defect|rejected|rejection|error|failure/i.test(n)) return 'Review the underlying cases, rate per activity and severity; confirm that measurement and activity levels are comparable.';
+  if(/downtime/i.test(n)) return 'Review downtime against machine/operating hours, output and service impact; focus on downtime intensity rather than hours alone.';
+  if(/energy|water|waste|carbon|emission|fuel/i.test(n)) return 'Review resource intensity against output, operating scale and the approved ESG target.';
+  if(/revenue|sales|income|profit|margin/i.test(n)) return 'Review volume, pricing, mix and margin together before attributing the financial movement.';
+  if(/cost|expense|spend|salary|wage/i.test(n)) return 'Compare the movement with workload, output, staffing/capacity and the approved plan; review unit cost where available.';
+  if(/orders?|transactions?|applications?|units?|volume|quantity/i.test(n)) return 'Compare activity with conversion, capacity, quality and value indicators to identify the operational driver.';
+  if(/patient|beneficiar|customer|client|member/i.test(n)) return 'Review the movement alongside activity, capacity, service quality and the relevant outcome KPI.';
+  return 'Validate the movement with the responsible business owner against the closest supporting KPI, target or operating driver.';
 }
 function miStatus(items){
   const a=(items.attention||[]).length, p=(items.performance||[]).length;
@@ -3034,10 +3049,10 @@ function miCard(title,items,cls='neutral',open=false,maxItems=null){
   const arr=(Array.isArray(items)?items:[]).filter(x=>miStrip(x));
   const limit=maxItems==null?(cls==='executive'?3:(cls==='good'||cls==='warn'?5:4)):maxItems;
   const fallback={
-    good:'No material favourable movement was identified from the available comparable data.',
-    warn:'No material adverse movement was identified from the available comparable data.',
-    neutral:'No specialised relationship was available; review the principal KPIs together with the comparable period, target or supporting driver.',
-    executive:'The available data does not provide enough comparable evidence for a strong management conclusion.'
+    good:'No material favourable movement can be established from the available comparable data.',
+    warn:'No material adverse movement can be established from the available comparable data.',
+    neutral:'The available data does not establish a material relationship; add a comparable period, target or linked KPI for stronger management interpretation.',
+    executive:'Evidence is limited. A comparable period, target or linked KPI is needed before drawing a strong management conclusion.'
   };
   let list='';
   if(arr.length){
@@ -3116,10 +3131,10 @@ function buildManagementSnapshot(items){
   const positive=items.performance&&items.performance[0];
   const context=(items.relationships&&items.relationships[0]) || (items.drivers&&items.drivers[0]);
   const action=items.actions&&items.actions[0];
-  set('snapConcern',clean(concern,'No material adverse movement identified.'));
-  set('snapConcernSub',concern?'Review with the responsible business owner.':'Based on the available comparable data.');
-  set('snapPositive',clean(positive,'No material favourable movement identified.'));
-  set('snapPositiveSub',positive?'Confirm that the improvement is sustained.':'Based on the available comparable data.');
+  set('snapConcern',clean(concern,'Insufficient evidence to identify a material adverse movement.'));
+  set('snapConcernSub',concern?'Review with the responsible business owner.':'Add a comparable period, target or linked KPI.');
+  set('snapPositive',clean(positive,'Insufficient evidence to identify a material favourable movement.'));
+  set('snapPositiveSub',positive?'Confirm that the improvement is sustained.':'Add a comparable period, target or linked KPI.');
   set('snapContext',clean(context,'Review the principal KPIs together.'));
   set('snapContextSub',context?'Context only — not proof of causation.':'Use target, comparable period or supporting drivers where available.');
   set('snapAction',clean(action,'Validate the most material movement.'));
@@ -3171,7 +3186,7 @@ function buildManagementInsights(){
   const lr=miLatestPeriodRows(rows,dateCol);
   const numeric=APP.columns.filter(c=>c.type==='number');
 
-  /* v1.8.4: calculate operational intensity/relationship signals before
+  /* v1.8.5: calculate operational intensity/relationship signals before
      classifying isolated movements. */
   miAddOperationalRelationships(rows,lr,items);
 
@@ -3457,11 +3472,14 @@ function buildManagementInsights(){
     items[bucket]=items[bucket].map(item=>item.includes('Management remark:')?item:item+' <span class="mi-remark"><b>Management remark:</b> review the movement against the closest supporting KPI, target or operating driver before drawing a causal conclusion.</span>');
   });
 
-  if(items.attention.length)items.actions.push('Review the largest adverse movements first and confirm the operational reason with the responsible business owner.');
+  if(items.attention.length){
+    const topNames=items.attention.slice(0,3).map(x=>{const m=String(x).match(/^<b>(.*?)<\/b>/);return m?m[1].replace(/<[^>]+>/g,''):null;}).filter(Boolean);
+    topNames.forEach(name=>items.actions.push(`<b>${miEsc(name)}:</b> ${miActionForKpi(name)}`));
+  }
   if(items.relationships.length)items.actions.push('Review the derived ratios and KPI relationships before assessing individual movements; they provide context but do not establish causation.');
   if(items.drivers.length)items.actions.push('Use data-supported relationships and concentrations as the starting point for management review; contribution or correlation must not be treated as proof of causation.');
   if(items.performance.length&&!items.attention.length)items.actions.push('Continue monitoring the favourable indicators and verify that improvements are sustained in the next comparable period.');
-  if(!items.performance.length&&!items.attention.length&&!items.drivers.length&&!items.relationships.length)items.actions.push('No material management variation can be established from the current data. Add a prior-period, target or comparable-period basis for stronger analysis.');
+  if(!items.performance.length&&!items.attention.length&&!items.drivers.length&&!items.relationships.length)items.actions.push('Insufficient comparable evidence for a management conclusion. Add a prior-period, target or linked KPI before classifying performance.');
 
   /* FINAL CONTENT GUARANTEE — the three management sections must never be
      empty. If no specialised relationship/driver rule fired, build a useful
@@ -3472,7 +3490,7 @@ function buildManagementInsights(){
       items.drivers.push(`<b>Management interpretation:</b> the principal movements above should be read together rather than in isolation. Review the largest movement with its supporting volume, mix, quality or productivity indicators before attributing a cause.`);
       if(src.length>1) items.drivers.push(`<b>Possible driver review:</b> compare the leading movement with the next supporting KPI(s) and the comparable period to determine whether the change is broad-based or concentrated.`);
     }else{
-      items.drivers.push(`<b>Management interpretation:</b> no material directional movement has been established. Review the available KPIs against the business plan, target and comparable period to identify the operational drivers.`);
+      items.drivers.push(`<b>Evidence status:</b> no reliable comparable-period movement has been established from the current data. Add a date/period field, target or linked KPI before classifying performance.`);
     }
   }
   if(!items.relationships.length){
@@ -3481,7 +3499,7 @@ function buildManagementInsights(){
       items.relationships.push(`<b>KPI relationship review:</b> interpret the principal movement alongside related volume, value, quality, productivity or risk indicators. A single KPI should not be used to infer causation.`);
       if(src.length>1) items.relationships.push(`<b>Cross-check:</b> compare the movements together to identify whether they reinforce one another or move in opposite directions; the latter warrants specific management review.`);
     }else{
-      items.relationships.push(`<b>Relationship check:</b> no material derived ratio is available from the current data. Add a comparable period, target or linked KPI to strengthen management interpretation.`);
+      items.relationships.push(`<b>Evidence check:</b> no material derived ratio is available from the current data. Add a comparable period, target or linked KPI to strengthen management interpretation.`);
     }
   }
   if(!items.actions.length){
@@ -3560,7 +3578,7 @@ function wireChartBuilder(){
    ===================================================================== */
 
 /* =====================================================================
-   InstantDash v1.8.4 — Executive Management Cockpit
+   InstantDash v1.8.5 — Executive Management Cockpit
    Generic: uses only detected runtime column roles and statistics.
    ===================================================================== */
 function buildExecutiveCockpit(){
@@ -3924,7 +3942,7 @@ function wireRest(){
 
   function dashboardFile(){
     const html='<!doctype html>\n'+document.documentElement.outerHTML;
-    return new File([html],'InstantDash_Dashboard_v1.8.4.html',{type:'text/html'});
+    return new File([html],'InstantDash_Dashboard_v1.8.5.html',{type:'text/html'});
   }
   function open(){panel.style.display='flex';note.textContent='';}
   function hide(){panel.style.display='none';}
@@ -3947,14 +3965,14 @@ function wireRest(){
     try{
       if(navigator.share && (!navigator.canShare || navigator.canShare({files:[f]}))){
         await navigator.share({
-          title:'InstantDash Dashboard v1.8.4',
+          title:'InstantDash Dashboard v1.8.5',
           text:'Interactive InstantDash dashboard',
           files:[f]
         });
         note.textContent='Share completed.';
       }else if(navigator.share){
         await navigator.share({
-          title:'InstantDash Dashboard v1.8.4',
+          title:'InstantDash Dashboard v1.8.5',
           text:'Interactive InstantDash dashboard'
         });
       }else{
@@ -3967,7 +3985,7 @@ function wireRest(){
   });
 
   copyBtn && copyBtn.addEventListener('click',async()=>{
-    const text='InstantDash Dashboard v1.8.4 — interactive management dashboard.';
+    const text='InstantDash Dashboard v1.8.5 — interactive management dashboard.';
     try{
       await navigator.clipboard.writeText(text);
       note.textContent='Share text copied to clipboard.';
