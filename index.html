@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>InstantDash — Excel / CSV / PDF → Dashboard · v1.8.5</title>
+<title>InstantDash — Excel / CSV / PDF → Dashboard · v1.8.6</title>
 
 <!-- ============================================================
      LIBRARIES (loaded from CDN, no build step required)
@@ -51,7 +51,7 @@ body.dark{
   --shadow-h:0 2px 6px rgba(0,0,0,.5), 0 16px 40px rgba(0,0,0,.45);
 }
 
-/* v1.8.5 — reliable manual Light/Night theme switching */
+/* v1.8.6 — reliable manual Light/Night theme switching */
 html.theme-dark{color-scheme:dark}
 html.theme-light{color-scheme:light}
 body.dark select,body.dark input,body.dark textarea{background:var(--card);color:var(--text);border-color:var(--border)}
@@ -142,7 +142,7 @@ main{max-width:1360px;margin:0 auto;padding:24px}
 
 /* ---------- premium landing experience v1.4.8 ---------- */
 
-/* v1.8.5 — live executive preview clarity */
+/* v1.8.6 — live executive preview clarity */
 .live-pill{display:inline-flex;align-items:center;margin-left:8px;padding:4px 9px;border-radius:999px;font-size:.58em;letter-spacing:.08em;font-weight:800;background:rgba(34,197,94,.14);color:#31b66b;vertical-align:middle}
 .exec-live-note{margin-top:10px;font-size:11px;color:var(--muted);line-height:1.45}
 @media(max-width:700px){.live-pill{font-size:.55em}.exec-live-note{font-size:10.5px}}
@@ -334,7 +334,7 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
 @media (prefers-reduced-motion: reduce){ *{animation-duration:.01ms !important;transition-duration:.01ms !important} }
 
 
-/* ---------- desktop / laptop workspace refinement v1.8.5 ---------- */
+/* ---------- desktop / laptop workspace refinement v1.8.6 ---------- */
 html{overflow-x:hidden}
 body{overflow-x:hidden}
 .tbl-wrap{width:100%;max-width:100%;overflow-x:auto;overflow-y:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
@@ -449,7 +449,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v155-sticky-nav">
-/* InstantDash v1.8.5 — desktop/mobile persistent navigation */
+/* InstantDash v1.8.6 — desktop/mobile persistent navigation */
 .id-sticky-nav{
   position:fixed;
   left:50%;
@@ -496,7 +496,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v169-ui-fixes">
-/* v1.8.5 — cleaner Share access + wider Pivot Rows selector */
+/* v1.8.6 — cleaner Share access + wider Pivot Rows selector */
 .pivot-controls .frow:first-child{min-width:260px}
 .pivot-controls .frow:first-child select{min-width:260px}
 @media (max-width:700px){
@@ -511,7 +511,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v160-executive-css">
-/* InstantDash v1.8.5 — Executive Management Cockpit */
+/* InstantDash v1.8.6 — Executive Management Cockpit */
 .executive-cockpit{margin-top:22px}
 .exec-head{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:12px}
 .exec-head h2{font-size:18px}
@@ -560,7 +560,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v161-theme-hardening">
-/* InstantDash v1.8.5 — theme hardening */
+/* InstantDash v1.8.6 — theme hardening */
 html.theme-dark body{background:var(--bg);color:var(--text)}
 html.theme-light body{background:var(--bg);color:var(--text)}
 body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var(--text)}
@@ -594,7 +594,7 @@ body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"/><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"/><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"/></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.8.5</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.8.6</span>
   </div>
   <span id="share"></span><button type="button" class="v154-share-tab" id="v154ShareTab" title="Share dashboard">📤 Share</button>
   <div class="spacer"></div>
@@ -624,7 +624,7 @@ body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var
       <div class="hero-preview" aria-hidden="true">
         <div class="preview-window">
           <div class="preview-top"><span class="mini-dot"></span><span class="mini-dot"></span><span class="mini-dot"></span><b>Management preview</b><span class="preview-chip" id="previewChip">AWAITING FILE</span></div>
-          <div class="preview-score"><div><small>Dashboard status</small><strong id="previewStatus">Upload a file</strong></div><div class="score-ring preview-empty-ring" id="previewScoreRing"><span id="previewScore">—</span></div></div>
+          <div class="preview-score"><div><small>Review status</small><strong id="previewStatus">Upload a file</strong></div><div class="score-ring preview-empty-ring" id="previewScoreRing"><span id="previewScore">—</span></div></div>
           <div class="preview-metrics"><div><small>Data quality</small><b id="previewQuality">—</b><i id="previewQualitySub">Calculated after upload</i></div><div><small>Key movement</small><b id="previewMovement">—</b><i id="previewMovementSub">Calculated after upload</i></div></div>
           <div class="preview-chart preview-empty-chart" id="previewChart"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><div class="preview-line"></div></div>
           <div class="preview-insight"><span>◆</span><p id="previewInsight"><b>Management insight</b> · Upload your Excel, CSV or PDF to calculate the dashboard from your own data.</p></div>
@@ -704,7 +704,7 @@ body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var
 
       <div class="exec-bottom">
         <div class="exec-card">
-          <div class="exec-label">What needs attention</div>
+          <div class="exec-label">Data quality check</div>
           <ul class="exec-list" id="execAttentionList"></ul>
         </div>
         <div class="exec-card">
@@ -842,7 +842,7 @@ body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var
    --------------------------------------------------------------------- */
 const CONFIG = {
   APP_NAME: 'InstantDash',
-  VERSION: 'v1.8.5',
+  VERSION: 'v1.8.6',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -2765,7 +2765,7 @@ function miLatestPeriodRows(rows,dateCol){
 }
 function miSum(rows,col){ return rows.reduce((s,r)=>s+(miNum(r[col])??0),0); }
 function miChange(a,b){ return {abs:b-a,pct:a!==0?(b-a)/Math.abs(a):null}; }
-/* v1.8.5 — domain-aware interpretation layer.
+/* v1.8.6 — domain-aware interpretation layer.
    The dashboard must distinguish a true performance KPI from a contextual
    activity/capacity measure. It must also recognise common ESG and healthcare
    measures without pretending that the data proves causation. */
@@ -2792,7 +2792,13 @@ function miIsESGResource(kpi){
   return miDomain(kpi)==='esg';
 }
 function miIsContextual(kpi){
-  return miContextualByDomain(kpi) || /(employees?|staff|headcount|branches?|outlets?|targets?|target|planned|planning|budget|capacity|sanctioned\s*target|business\s*target|cost\s*budget)/i.test(String(kpi||''));
+  return miContextualByDomain(kpi) || /(employees?|staff|headcount|branches?|outlets?|targets?|target|planned|planning|budget|capacity|sanctioned\s*target|business\s*target|cost\s*budget|website\s*visitors?|web\s*visitors?|traffic|operating\s*cost|operating\s*expense|operating\s*expenses?)/i.test(String(kpi||''));
+}
+function miHasComparableOutput(){
+  return APP.columns.some(c=>c.type==='number' && /patient|customers?|clients?|members?|transactions?|orders?|units?|production|output|revenue|sales|visitors?|traffic/i.test(c.name));
+}
+function miHasCostContext(){
+  return APP.columns.some(c=>c.type==='number' && /patient|customers?|clients?|members?|transactions?|orders?|units?|production|output|revenue|sales/i.test(c.name));
 }
 /* Semantic KPI classification: direction alone is not enough. Some KPIs
    describe risk/exposure or protective activity, where a numerical increase
@@ -2800,6 +2806,12 @@ function miIsContextual(kpi){
    KPIs. The semantic layer is intentionally conservative. */
 function miSemantic(kpi){
   const n=String(kpi||'').toLowerCase();
+  /* Absolute resource use is contextual when an output/activity denominator
+     exists; intensity is the meaningful performance signal. */
+  if(/energy|electricity|power|water|waste|carbon|co2|emission|ghg|fuel/i.test(n) && miHasComparableOutput()) return 'contextual';
+  /* Operating cost/expense should not be called favourable merely because it
+     fell when workload or output may also have fallen. */
+  if(/operating\s*(cost|expense|expenses?)/i.test(n) && miHasCostContext()) return 'contextual';
   if(/threats?\s*(detected|identified)|attacks?\s*(detected|identified)|vulnerabilit(y|ies)|exposure|security\s*incidents?|critical\s*incidents?|data\s*breach|breaches|malware\s*detected|phishing\s*(attempts?|incidents?)/i.test(n)) return 'risk';
   if(/threats?\s*blocked|attacks?\s*blocked|incidents?\s*resolved|vulnerabilit(y|ies)\s*resolved|patch(es|ing)?\s*(completed|applied)|controls?\s*implemented|security\s*compliance/i.test(n)) return 'protective';
   /* Outcome-quality and service-reliability measures where lower values are
@@ -3164,6 +3176,33 @@ function miAddOperationalRelationships(rows, lr, items){
     }
   }
 
+  // Web traffic versus orders: derive a simple conversion proxy when both
+  // measures are available. Visitor volume alone is contextual.
+  const visitors=findCol(/website\s*visitors?|web\s*visitors?|site\s*visitors?|traffic/i);
+  const orders=findCol(/^orders?$|order\s*volume|transactions?/i);
+  if(visitors && orders){
+    const pv=sum(lr.previous,visitors), cv=sum(lr.current,visitors);
+    const po=sum(lr.previous,orders), co=sum(lr.current,orders);
+    if(pv>0 && cv>0){
+      const pr=po/pv, cr=co/cv, ch=miChange(pr,cr);
+      items.relationships.push(`<b>Visitor-to-order conversion proxy:</b> ${miEsc(orders)} / ${miEsc(visitors)} moved from ${miPct(pr)} to ${miPct(cr)}. Review traffic quality and channel mix; this ratio is a proxy where visitor and order definitions are comparable.`);
+      if(ch.abs>0){
+        const bucket=ch.abs>0?'performance':'attention';
+        items[bucket].push(`<b>Visitor-to-order conversion proxy:</b> the ratio moved from ${miPct(pr)} to ${miPct(cr)}. Confirm that visitor and order definitions remain comparable before treating the change as a performance improvement or deterioration.`);
+      }
+    }
+  }
+
+  // Cost per output/customer: absolute cost is contextual when scale changes.
+  const costs=APP.columns.filter(c=>c.type==='number' && /operating\s*(cost|expense|expenses?)|total\s*(cost|expense|expenses?)/i.test(c.name));
+  const costOutput=APP.columns.find(c=>c.type==='number' && /patient|customers?|clients?|members?|transactions?|orders?|units?|production|output|revenue|sales/i.test(c.name));
+  if(costs.length && costOutput){
+    const cost=costs[0], prO=sum(lr.previous,costOutput), crO=sum(lr.current,costOutput), prC=sum(lr.previous,cost), crC=sum(lr.current,cost);
+    if(prO>0 && crO>0){
+      ratioLine(`${cost.name} per ${costOutput.name}`,cost,costOutput,prC/prO,crC/crO);
+    }
+  }
+
   // Healthcare: volume + capacity/service context. Do not label volume itself as good.
   const patient=findCol(/patient\s*(volume|visits?|footfall|throughput)|outpatient\s*volume|inpatient\s*volume/i);
   const occupancy=findCol(/bed\s*occupancy|occupancy\s*rate/i);
@@ -3186,7 +3225,7 @@ function buildManagementInsights(){
   const lr=miLatestPeriodRows(rows,dateCol);
   const numeric=APP.columns.filter(c=>c.type==='number');
 
-  /* v1.8.5: calculate operational intensity/relationship signals before
+  /* v1.8.6: calculate operational intensity/relationship signals before
      classifying isolated movements. */
   miAddOperationalRelationships(rows,lr,items);
 
@@ -3469,7 +3508,7 @@ function buildManagementInsights(){
 
   // Final safeguard: no KPI movement should appear without a management remark.
   ['performance','attention'].forEach(bucket=>{
-    items[bucket]=items[bucket].map(item=>item.includes('Management remark:')?item:item+' <span class="mi-remark"><b>Management remark:</b> review the movement against the closest supporting KPI, target or operating driver before drawing a causal conclusion.</span>');
+    items[bucket]=items[bucket].map(item=>item.includes('Management remark:')?item:item+' <span class="mi-remark"><b>Review basis:</b> validate against the closest supporting KPI, target or operating driver.</span>');
   });
 
   if(items.attention.length){
@@ -3496,8 +3535,8 @@ function buildManagementInsights(){
   if(!items.relationships.length){
     const src=[...items.performance,...items.attention];
     if(src.length){
-      items.relationships.push(`<b>KPI relationship review:</b> interpret the principal movement alongside related volume, value, quality, productivity or risk indicators. A single KPI should not be used to infer causation.`);
-      if(src.length>1) items.relationships.push(`<b>Cross-check:</b> compare the movements together to identify whether they reinforce one another or move in opposite directions; the latter warrants specific management review.`);
+      items.relationships.push(`<b>KPI relationship review:</b> read the principal movement with related volume, value, quality, productivity or risk indicators. Do not infer causation from one KPI.`);
+      if(src.length>1) items.relationships.push(`<b>Cross-check:</b> compare the movements together; conflicting movements warrant specific management review.`);
     }else{
       items.relationships.push(`<b>Evidence check:</b> no material derived ratio is available from the current data. Add a comparable period, target or linked KPI to strengthen management interpretation.`);
     }
@@ -3578,7 +3617,7 @@ function wireChartBuilder(){
    ===================================================================== */
 
 /* =====================================================================
-   InstantDash v1.8.5 — Executive Management Cockpit
+   InstantDash v1.8.6 — Executive Management Cockpit
    Generic: uses only detected runtime column roles and statistics.
    ===================================================================== */
 function buildExecutiveCockpit(){
@@ -3727,8 +3766,10 @@ function updateLivePreview(){
 
   // Quality is the base score. Attention items reduce confidence; favourable
   // items provide only a modest offset so the preview never overstates results.
+  /* Review-readiness is a navigation aid, not a business-performance score.
+     It reflects data completeness and the number of material exceptions only. */
   const score = Math.max(0, Math.min(100,
-    Math.round(quality - Math.min(30, att * 8) + Math.min(8, perf * 2))
+    Math.round(quality - Math.min(40, att * 10))
   ));
 
   statusEl.textContent=status;
@@ -3789,7 +3830,7 @@ function updateLivePreview(){
     insight.innerHTML=`<b>Management insight</b> · ${summary}`;
   }
 
-  ring.classList.remove('preview-empty-ring','preview-ready-ring');
+  ring.title='Review-readiness indicator: based on data completeness and material attention items; not a performance score.'; ring.classList.remove('preview-empty-ring','preview-ready-ring');
   if(status==='Ready') {
     ring.classList.add('preview-ready-ring');
     ring.style.background=`conic-gradient(var(--ok) ${score}%,var(--border) 0)`;
@@ -3942,7 +3983,7 @@ function wireRest(){
 
   function dashboardFile(){
     const html='<!doctype html>\n'+document.documentElement.outerHTML;
-    return new File([html],'InstantDash_Dashboard_v1.8.5.html',{type:'text/html'});
+    return new File([html],'InstantDash_Dashboard_v1.8.6.html',{type:'text/html'});
   }
   function open(){panel.style.display='flex';note.textContent='';}
   function hide(){panel.style.display='none';}
@@ -3965,14 +4006,14 @@ function wireRest(){
     try{
       if(navigator.share && (!navigator.canShare || navigator.canShare({files:[f]}))){
         await navigator.share({
-          title:'InstantDash Dashboard v1.8.5',
+          title:'InstantDash Dashboard v1.8.6',
           text:'Interactive InstantDash dashboard',
           files:[f]
         });
         note.textContent='Share completed.';
       }else if(navigator.share){
         await navigator.share({
-          title:'InstantDash Dashboard v1.8.5',
+          title:'InstantDash Dashboard v1.8.6',
           text:'Interactive InstantDash dashboard'
         });
       }else{
@@ -3985,7 +4026,7 @@ function wireRest(){
   });
 
   copyBtn && copyBtn.addEventListener('click',async()=>{
-    const text='InstantDash Dashboard v1.8.5 — interactive management dashboard.';
+    const text='InstantDash Dashboard v1.8.6 — interactive management dashboard.';
     try{
       await navigator.clipboard.writeText(text);
       note.textContent='Share text copied to clipboard.';
