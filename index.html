@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>InstantDash — Excel / CSV / PDF → Dashboard · v1.10.39</title>
+<title>InstantDash — Excel / CSV / PDF → Dashboard · v1.10.40</title>
 
 <!-- ============================================================
      LIBRARIES (loaded from CDN, no build step required)
@@ -157,7 +157,7 @@ main{max-width:1360px;margin:0 auto;padding:24px}
 .mi-movement-facts>div{min-width:0;padding:7px 9px;border-radius:11px;background:#faf7f0}
 .mi-movement-facts span{display:block;font-size:10px;letter-spacing:.14em;font-weight:800;color:#77736c;margin-bottom:4px}
 .mi-movement-facts b{display:block;font-size:15px;line-height:1.2;overflow-wrap:anywhere}
-/* v1.10.39 — movement fact values must remain readable in dark mode */
+/* v1.10.40 — movement fact values must remain readable in dark mode */
 .mi-movement-facts>div:not(.mi-arrow) b{color:#111 !important;-webkit-text-fill-color:#111 !important;opacity:1 !important}
 .mi-movement-facts>div:not(.mi-arrow){color:#111}
 
@@ -168,7 +168,7 @@ main{max-width:1360px;margin:0 auto;padding:24px}
 .mi-movement-facts .mi-change.contextual b{color:#77736c}
 @media(max-width:640px){.mi-movement-facts{grid-template-columns:1fr 24px 1fr}.mi-movement-facts .mi-change{grid-column:1/-1}.mi-movement-facts .mi-change b{font-size:18px}}
 
-/* InstantDash v1.10.39 — Management Action Centre */
+/* InstantDash v1.10.40 — Management Action Centre */
 .management-action-centre{margin-top:12px}
 .mac-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:10px;flex-wrap:wrap}
 .mac-title{font-size:15px;font-weight:800;letter-spacing:-.01em}
@@ -388,7 +388,7 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
 .modal-back{position:fixed;inset:0;background:rgba(14,14,16,.45);display:none;place-items:center;z-index:150;padding:20px}
 .modal-back.on{display:grid}
 .modal{background:var(--card);border-radius:16px;box-shadow:var(--shadow-h);width:100%;max-width:460px;padding:20px;border:1px solid var(--border)}
-/* InstantDash v1.10.39 — robust movement evidence tabs: direct JS buttons, no radio/CSS dependency */
+/* InstantDash v1.10.40 — robust movement evidence tabs: direct JS buttons, no radio/CSS dependency */
 .mi-evidence-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0;position:relative;z-index:20}
 .mi-evidence-tab{appearance:none;-webkit-appearance:none;border:1px solid var(--border);background:var(--card-2);color:var(--text);border-radius:999px;padding:10px 14px;font:750 15px/1 system-ui,-apple-system,sans-serif;cursor:pointer;pointer-events:auto;touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;position:relative;z-index:21;transition:.15s ease}
 .mi-evidence-tab:hover{transform:translateY(-1px);border-color:var(--accent)}
@@ -548,7 +548,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v155-sticky-nav">
-/* InstantDash v1.10.39 — desktop/mobile persistent navigation */
+/* InstantDash v1.10.40 — desktop/mobile persistent navigation */
 .id-sticky-nav{
   position:fixed;
   left:50%;
@@ -610,7 +610,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v160-executive-css">
-/* InstantDash v1.10.39 — Executive Management Cockpit */
+/* InstantDash v1.10.40 — Executive Management Cockpit */
 .executive-cockpit{margin-top:22px}
 .exec-head{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:12px}
 .exec-head h2{font-size:18px}
@@ -660,7 +660,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v161-theme-hardening">
-/* InstantDash v1.10.39 — theme hardening */
+/* InstantDash v1.10.40 — theme hardening */
 html.theme-dark body{background:var(--bg);color:var(--text)}
 html.theme-light body{background:var(--bg);color:var(--text)}
 body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var(--text)}
@@ -686,7 +686,7 @@ body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var
 
 
 <style id="instantdash-v170-responsive-final">
-/* InstantDash v1.10.39 — responsive laptop + mobile polish */
+/* InstantDash v1.10.40 — responsive laptop + mobile polish */
 .section-head{gap:12px;align-items:center}
 .section-head h2{min-width:0}
 .insight-box{white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word}
@@ -815,6 +815,32 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 }
 </style>
 
+
+<style id="v11040-dark-tab-fix">
+/* InstantDash v1.10.40 — final Dark Mode movement-tab readability fix.
+   Inactive tabs must always use the theme text colour; the generic active
+   rule must never make an inactive tab appear black on a dark background. */
+#miEvidenceModal .mi-evidence-tab:not(.active){
+  background:var(--card-2)!important;
+  border-color:var(--border)!important;
+  color:var(--text)!important;
+  opacity:1!important;
+}
+body.dark #miEvidenceModal .mi-evidence-tab:not(.active){
+  background:#232328!important;
+  border-color:#2E2E35!important;
+  color:#F4EDE2!important;
+}
+#miEvidenceModal .mi-evidence-tab.active[data-bucket="performance"]{
+  background:var(--ok)!important;border-color:var(--ok)!important;color:#111!important;
+}
+#miEvidenceModal .mi-evidence-tab.active[data-bucket="attention"]{
+  background:var(--warn)!important;border-color:var(--warn)!important;color:#111!important;
+}
+#miEvidenceModal .mi-evidence-tab.active[data-bucket="contextual"]{
+  background:var(--muted)!important;border-color:var(--muted)!important;color:#111!important;
+}
+</style>
 </head>
 <body>
 <div id="pageScroll">
@@ -826,7 +852,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"/><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"/><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"/></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.10.39</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.10.40</span>
   </div>
   <span id="share"></span><button type="button" class="v154-share-tab" id="v154ShareTab" title="Share dashboard">📤 Share</button>
   <div class="spacer"></div>
@@ -1118,7 +1144,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
    --------------------------------------------------------------------- */
 const CONFIG = {
   APP_NAME: 'InstantDash',
-  VERSION: 'v1.10.39',
+  VERSION: 'v1.10.40',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -4304,7 +4330,7 @@ function wireChartBuilder(){
    ===================================================================== */
 
 /* =====================================================================
-   InstantDash v1.10.39 — Executive Management Cockpit
+   InstantDash v1.10.40 — Executive Management Cockpit
    Generic: uses only detected runtime column roles and statistics.
    ===================================================================== */
 function buildExecutiveCockpit(){
@@ -4956,7 +4982,7 @@ function wireRest(){
 
 
 <style id="v137-movement-scroll-native-final">
-/* InstantDash v1.10.39 — FINAL iPhone movement modal scroll fix.
+/* InstantDash v1.10.40 — FINAL iPhone movement modal scroll fix.
    Do not use a nested scrolling child. The white dialog itself is the only
    vertical scroll host. The overlay is fixed but never participates in the
    vertical gesture. */
@@ -5052,7 +5078,7 @@ function wireRest(){
 
 
 <style id="v138-ios-modal-drag-scroll">
-/* InstantDash v1.10.39 — iOS fallback scrolling for Movement Details.
+/* InstantDash v1.10.40 — iOS fallback scrolling for Movement Details.
    Some iOS/GitHub webviews intermittently ignore native overflow scrolling
    on fixed-position dialogs. This fallback makes vertical finger dragging
    deterministic while leaving buttons/tabs fully tappable. */
