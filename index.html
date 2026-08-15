@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>InstantDash — Excel / CSV / PDF → Dashboard · v1.10.1</title>
+<title>InstantDash — Excel / CSV / PDF → Dashboard · v1.10.2</title>
 
 <!-- ============================================================
      LIBRARIES (loaded from CDN, no build step required)
@@ -51,7 +51,7 @@ body.dark{
   --shadow-h:0 2px 6px rgba(0,0,0,.5), 0 16px 40px rgba(0,0,0,.45);
 }
 
-/* v1.10.1 — reliable manual Light/Night theme switching */
+/* v1.10.2 — reliable manual Light/Night theme switching */
 html.theme-dark{color-scheme:dark}
 html.theme-light{color-scheme:light}
 body.dark select,body.dark input,body.dark textarea{background:var(--card);color:var(--text);border-color:var(--border)}
@@ -142,12 +142,12 @@ main{max-width:1360px;margin:0 auto;padding:24px}
 
 /* ---------- premium landing experience v1.4.8 ---------- */
 
-/* v1.10.1 — live executive preview clarity */
+/* v1.10.2 — live executive preview clarity */
 .live-pill{display:inline-flex;align-items:center;margin-left:8px;padding:4px 9px;border-radius:999px;font-size:.58em;letter-spacing:.08em;font-weight:800;background:rgba(34,197,94,.14);color:#31b66b;vertical-align:middle}
 .exec-live-note{margin-top:10px;font-size:11px;color:var(--muted);line-height:1.45}
 @media(max-width:700px){.live-pill{font-size:.55em}.exec-live-note{font-size:10.5px}}
 
-/* v1.10.1 — clickable movement summary */
+/* v1.10.2 — clickable movement summary */
 #execStatusBadge.movement-link{cursor:pointer;user-select:none;transition:transform .15s ease,box-shadow .15s ease}
 #execStatusBadge.movement-link:hover{transform:translateY(-1px);box-shadow:0 3px 10px rgba(0,0,0,.10)}
 #execStatusBadge.movement-link:focus{outline:3px solid rgba(245,179,1,.35);outline-offset:2px}
@@ -325,7 +325,7 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
 .modal-back{position:fixed;inset:0;background:rgba(14,14,16,.45);display:none;place-items:center;z-index:150;padding:20px}
 .modal-back.on{display:grid}
 .modal{background:var(--card);border-radius:16px;box-shadow:var(--shadow-h);width:100%;max-width:460px;padding:20px;border:1px solid var(--border)}
-/* InstantDash v1.10.1 — clickable movement evidence drawer */
+/* InstantDash v1.10.2 — clickable movement evidence drawer */
 .mi-count-btn{appearance:none;border:1px solid var(--border);cursor:pointer;background:var(--card-2);color:var(--muted);font:700 9.5px/1 system-ui,-apple-system,sans-serif}
 .mi-count-btn:hover{border-color:var(--accent);color:var(--text);transform:translateY(-1px)}
 .mi-evidence-back{position:fixed;inset:0;background:rgba(14,14,16,.55);display:none;place-items:center;z-index:400;padding:16px;backdrop-filter:blur(5px)}
@@ -336,7 +336,7 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
 .mi-evidence-close{border:1px solid var(--border);background:var(--card-2);color:var(--text);border-radius:10px;padding:7px 10px;font-weight:800;cursor:pointer}
 .mi-evidence-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.mi-evidence-tab{border:1px solid var(--border);background:var(--card-2);color:var(--text);border-radius:999px;padding:8px 12px;font-weight:750;cursor:pointer}.mi-evidence-tab.active{background:var(--accent);color:#111;border-color:var(--accent)}
 .mi-evidence-list{display:grid;gap:10px}.mi-evidence-item{border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:12px;padding:13px;background:var(--card-2)}.mi-evidence-item.attention{border-left-color:var(--accent-2)}
-.mi-evidence-item h4{margin:0 0 7px;font-size:13px}.mi-evidence-item .finding{font-size:12px;line-height:1.55}.mi-evidence-meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}.mi-evidence-meta div{border:1px solid var(--border);border-radius:9px;padding:8px;background:var(--card)}.mi-evidence-meta b{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}.mi-evidence-meta span{display:block;margin-top:3px;font-size:11px;font-weight:700}.mi-evidence-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.mi-evidence-actions button{border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:9px;padding:7px 10px;font-weight:700;cursor:pointer}.mi-evidence-empty{padding:18px;border:1px dashed var(--border);border-radius:12px;color:var(--muted)}
+.mi-evidence-item h4{margin:0 0 7px;font-size:13px}.mi-evidence-item .finding{font-size:12px;line-height:1.55}.mi-evidence-meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}.mi-evidence-meta div{border:1px solid var(--border);border-radius:9px;padding:8px;background:var(--card)}.mi-evidence-meta b{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}.mi-evidence-meta span{display:block;margin-top:3px;font-size:11px;font-weight:700}.mi-evidence-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.mi-evidence-actions button{border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:9px;padding:7px 10px;font-weight:700;cursor:pointer}.mi-evidence-item-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.mi-priority-badge{display:inline-flex;align-items:center;white-space:nowrap;border:1px solid var(--border);border-radius:999px;padding:4px 8px;background:var(--card);font-size:9px;font-weight:800;color:var(--text)}.mi-priority-note{margin:0 0 10px;padding:9px 11px;border:1px solid var(--border);border-radius:10px;background:var(--card-2);color:var(--muted);font-size:10.5px;line-height:1.45}.mi-evidence-section-title{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:800;margin:4px 0 2px}.mi-evidence-more{display:flex;justify-content:center;padding:2px 0 4px}.mi-evidence-more button{border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:999px;padding:8px 14px;font-weight:800;cursor:pointer}.mi-evidence-empty{padding:18px;border:1px dashed var(--border);border-radius:12px;color:var(--muted)}
 @media(max-width:600px){.mi-evidence-modal{padding:16px;max-height:90vh}.mi-evidence-head{top:-16px}.mi-evidence-meta{grid-template-columns:1fr}.mi-evidence-item .finding{font-size:11.5px}}
 
 .modal h3{font-size:16px;margin-bottom:14px}
@@ -353,7 +353,7 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
 @media (prefers-reduced-motion: reduce){ *{animation-duration:.01ms !important;transition-duration:.01ms !important} }
 
 
-/* ---------- desktop / laptop workspace refinement v1.10.1 ---------- */
+/* ---------- desktop / laptop workspace refinement v1.10.2 ---------- */
 html{overflow-x:hidden}
 body{overflow-x:hidden}
 .tbl-wrap{width:100%;max-width:100%;overflow-x:auto;overflow-y:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
@@ -483,7 +483,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v155-sticky-nav">
-/* InstantDash v1.10.1 — desktop/mobile persistent navigation */
+/* InstantDash v1.10.2 — desktop/mobile persistent navigation */
 .id-sticky-nav{
   position:fixed;
   left:50%;
@@ -530,7 +530,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v169-ui-fixes">
-/* v1.10.1 — cleaner Share access + wider Pivot Rows selector */
+/* v1.10.2 — cleaner Share access + wider Pivot Rows selector */
 .pivot-controls .frow:first-child{min-width:260px}
 .pivot-controls .frow:first-child select{min-width:260px}
 @media (max-width:700px){
@@ -545,7 +545,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v160-executive-css">
-/* InstantDash v1.10.1 — Executive Management Cockpit */
+/* InstantDash v1.10.2 — Executive Management Cockpit */
 .executive-cockpit{margin-top:22px}
 .exec-head{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:12px}
 .exec-head h2{font-size:18px}
@@ -595,7 +595,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v161-theme-hardening">
-/* InstantDash v1.10.1 — theme hardening */
+/* InstantDash v1.10.2 — theme hardening */
 html.theme-dark body{background:var(--bg);color:var(--text)}
 html.theme-light body{background:var(--bg);color:var(--text)}
 body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var(--text)}
@@ -629,7 +629,7 @@ body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"/><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"/><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"/></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.10.1</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.10.2</span>
   </div>
   <span id="share"></span><button type="button" class="v154-share-tab" id="v154ShareTab" title="Share dashboard">📤 Share</button>
   <div class="spacer"></div>
@@ -888,7 +888,7 @@ body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var
    --------------------------------------------------------------------- */
 const CONFIG = {
   APP_NAME: 'InstantDash',
-  VERSION: 'v1.10.1',
+  VERSION: 'v1.10.2',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -2811,7 +2811,7 @@ function miLatestPeriodRows(rows,dateCol){
 }
 function miSum(rows,col){ return rows.reduce((s,r)=>s+(miNum(r[col])??0),0); }
 function miChange(a,b){ return {abs:b-a,pct:a!==0?(b-a)/Math.abs(a):null}; }
-/* v1.10.1 — domain-aware interpretation layer.
+/* v1.10.2 — domain-aware interpretation layer.
    The dashboard must distinguish a true performance KPI from a contextual
    activity/capacity measure. It must also recognise common ESG and healthcare
    measures without pretending that the data proves causation. */
@@ -3289,7 +3289,7 @@ function buildManagementInsights(){
   const lr=miLatestPeriodRows(rows,dateCol);
   const numeric=APP.columns.filter(c=>c.type==='number');
 
-  /* v1.10.1: calculate operational intensity/relationship signals before
+  /* v1.10.2: calculate operational intensity/relationship signals before
      classifying isolated movements. */
   miAddOperationalRelationships(rows,lr,items);
 
@@ -3629,7 +3629,7 @@ function buildManagementInsights(){
   wireMovementSummaryLinks();
 }
 
-/* v1.10.1 — clickable movement evidence details */
+/* v1.10.2 — clickable movement evidence details */
 function wireMovementSummaryLinks(){
   const modal=$('miEvidenceModal'), list=$('miEvidenceList'), tabs=$('miEvidenceTabs'), close=$('miEvidenceClose');
   if(!modal||!list||!tabs)return;
@@ -3644,32 +3644,52 @@ function wireMovementSummaryLinks(){
     if(miss<=20&&comparable)return ['Moderate','Comparable period available; some data-quality limitation exists'];
     return ['Limited','Interpret with caution; comparative or data-quality evidence is limited'];
   };
+  const movementScore=item=>{
+    const plain=escText(item);
+    // Prefer an explicit percentage change such as (+46.5%) or (-48.5%).
+    const explicit=plain.match(/\(([+-]?(?:\d+(?:\.\d+)?))%\)/);
+    if(explicit) return Math.abs(Number(explicit[1]));
+    // For percentage-point statements such as “fell from 24.0% to 2.9%”.
+    const pp=plain.match(/from\s+([+-]?(?:\d+(?:\.\d+)?)%)\s+to\s+([+-]?(?:\d+(?:\.\d+)?)%)/i);
+    if(pp) return Math.abs(Number(pp[2])-Number(pp[1]));
+    // Last-resort percentage found in the finding.
+    const any=plain.match(/([+-]?(?:\d+(?:\.\d+)?)%)/);
+    return any ? Math.abs(Number(any[1])) : 0;
+  };
+  const rankMovements=arr=>arr.map((item,index)=>({item,index,score:movementScore(item)}))
+    .sort((a,b)=>b.score-a.score || a.index-b.index);
   let active='performance';
+  let showAll=false;
   const open=(bucket='performance')=>{
     active=bucket;
+    showAll=false;
     const mi=window.__miItems||{};
     const perf=Array.isArray(mi.performance)?mi.performance:[];
     const att=Array.isArray(mi.attention)?mi.attention:[];
     const renderTabs=()=>{
       const specs=[['performance','✓ Favourable',perf.length],['attention','⚠ Attention',att.length]];
       tabs.innerHTML=specs.filter(x=>x[2]).map(x=>`<button type="button" class="mi-evidence-tab ${active===x[0]?'active':''}" data-bucket="${x[0]}">${x[1]} · ${x[2]}</button>`).join('');
-      tabs.querySelectorAll('.mi-evidence-tab').forEach(b=>b.onclick=()=>{active=b.dataset.bucket;renderTabs();renderList();});
+      tabs.querySelectorAll('.mi-evidence-tab').forEach(b=>b.onclick=()=>{active=b.dataset.bucket;showAll=false;renderTabs();renderList();});
     };
     const renderList=()=>{
       const arr=active==='performance'?perf:att;
+      const ranked=rankMovements(arr);
       const [level,basis]=confidence();
-      const total = perf.length + att.length;
+      const total=perf.length+att.length;
       $('miEvidenceTitle').textContent='Movement Details';
       $('miEvidenceSubtitle').textContent=`${total} material movement${total===1?'':'s'}: ${perf.length} favourable and ${att.length} attention, from the current loaded and filtered dataset.`;
-      const summaryLine = `<div class="mi-evidence-summary">
+      const summaryLine=`<div class="mi-evidence-summary">
         <b>${active==='performance'?'Favourable':'Attention'} movements:</b> ${arr.length}
-        <span>• Total material movements: ${perf.length + att.length}</span>
-      </div>`;
-      list.innerHTML=summaryLine+(arr.length?arr.map((item,i)=>{
+        <span>• Total material movements: ${total}</span>
+      </div>
+      <div class="mi-priority-note"><b>Priority ranking:</b> Top movements are ranked by the magnitude of the reported change. This is a review aid, not a standalone risk or performance score.</div>`;
+      const renderItem=(entry,rankedIndex)=>{
+        const item=entry.item;
         const plain=escText(item);
-        const title=(plain.match(/^([^:]+):/)||[])[1]||`${active==='performance'?'Favourable':'Attention'} movement ${i+1}`;
+        const title=(plain.match(/^([^:]+):/)||[])[1]||`${active==='performance'?'Favourable':'Attention'} movement ${entry.index+1}`;
+        const rankLabel=rankedIndex<3?`<span class="mi-priority-badge">Priority ${rankedIndex+1}</span>`:'';
         return `<article class="mi-evidence-item ${active==='attention'?'attention':''}">
-          <h4>${esc(title)}</h4>
+          <div class="mi-evidence-item-head"><h4>${esc(title)}</h4>${rankLabel}</div>
           <div class="finding">${item}</div>
           <div class="mi-evidence-meta">
             <div><b>Classification</b><span>${active==='performance'?'Favourable movement':'Attention movement'}</span></div>
@@ -3678,14 +3698,28 @@ function wireMovementSummaryLinks(){
           </div>
           <div class="mi-evidence-actions"><button type="button" data-mi-raw="1">View underlying data</button></div>
         </article>`;
-      }).join(''):`<div class="mi-evidence-empty">No ${active==='performance'?'favourable':'attention'} movement is currently established from the filtered data.</div>`);
+      };
+      if(!arr.length){
+        list.innerHTML=summaryLine+`<div class="mi-evidence-empty">No ${active==='performance'?'favourable':'attention'} movement is currently established from the filtered data.</div>`;
+        return;
+      }
+      const visible=showAll?ranked:ranked.slice(0,3);
+      const sectionTitle=showAll?'All movements':'Top priority movements';
+      const remaining=ranked.length-visible.length;
+      const toggle=ranked.length>3?`<div class="mi-evidence-more"><button type="button" id="miEvidenceMoreBtn">${showAll?'Show top 3':'Show all '+ranked.length}</button></div>`:'';
+      list.innerHTML=summaryLine+`<div class="mi-evidence-section-title">${sectionTitle}</div>`+visible.map((entry,i)=>renderItem(entry,i)).join('')+toggle;
+      const more=$('miEvidenceMoreBtn');
+      if(more)more.onclick=()=>{showAll=!showAll;renderList();};
       list.querySelectorAll('[data-mi-raw]').forEach(b=>b.onclick=()=>{modal.classList.remove('on');const raw=$('dataTable');if(raw)raw.scrollIntoView({behavior:'smooth',block:'start'});});
     };
     renderTabs();renderList();modal.classList.add('on');
   };
   if(close)close.onclick=()=>modal.classList.remove('on');
   modal.onclick=e=>{if(e.target===modal)modal.classList.remove('on');};
-  document.addEventListener('keydown',e=>{if(e.key==='Escape')modal.classList.remove('on');});
+  if(modal.dataset.escapeWired!=='1'){
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal.classList.contains('on'))modal.classList.remove('on');});
+    modal.dataset.escapeWired='1';
+  }
   const badge=$('execStatusBadge');
   if(badge && badge.dataset.movementWired!=='1'){
     badge.onclick=()=>open((window.__miItems?.attention?.length&&!window.__miItems?.performance?.length)?'attention':'performance');
@@ -3698,7 +3732,6 @@ function wireMovementSummaryLinks(){
     btn.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();e.stopPropagation();handler();}};
   });
 }
-
 /* =====================================================================
    ADD-CHART BUILDER
    ===================================================================== */
@@ -3752,7 +3785,7 @@ function wireChartBuilder(){
    ===================================================================== */
 
 /* =====================================================================
-   InstantDash v1.10.1 — Executive Management Cockpit
+   InstantDash v1.10.2 — Executive Management Cockpit
    Generic: uses only detected runtime column roles and statistics.
    ===================================================================== */
 function buildExecutiveCockpit(){
@@ -4172,7 +4205,7 @@ function wireRest(){
       .forEach(el=>el.remove());
 
     const html='<!doctype html>\n'+clone.outerHTML;
-    return new File([html],'InstantDash_Dashboard_v1.10.1.html',{type:'text/html'});
+    return new File([html],'InstantDash_Dashboard_v1.10.2.html',{type:'text/html'});
   }
   function open(){panel.style.display='flex';note.textContent='';}
   function hide(){panel.style.display='none';}
@@ -4186,7 +4219,7 @@ function wireRest(){
   // is unavailable, save the file and open a Mail compose window with clear instructions.
   mailBtn && mailBtn.addEventListener('click',async()=>{
     const f=dashboardFile();
-    const title='InstantDash Dashboard v1.10.1';
+    const title='InstantDash Dashboard v1.10.2';
     const text='Please find the attached InstantDash interactive dashboard.\n\nOpen the HTML file in a modern browser to view the dashboard.';
     try{
       if(navigator.share && (!navigator.canShare || navigator.canShare({files:[f]}))){
@@ -4222,14 +4255,14 @@ function wireRest(){
     try{
       if(navigator.share && (!navigator.canShare || navigator.canShare({files:[f]}))){
         await navigator.share({
-          title:'InstantDash Dashboard v1.10.1',
+          title:'InstantDash Dashboard v1.10.2',
           text:'Interactive InstantDash dashboard',
           files:[f]
         });
         note.textContent='Share completed.';
       }else if(navigator.share){
         await navigator.share({
-          title:'InstantDash Dashboard v1.10.1',
+          title:'InstantDash Dashboard v1.10.2',
           text:'Interactive InstantDash dashboard'
         });
       }else{
@@ -4242,7 +4275,7 @@ function wireRest(){
   });
 
   copyBtn && copyBtn.addEventListener('click',async()=>{
-    const text='InstantDash Dashboard v1.10.1 — interactive management dashboard.';
+    const text='InstantDash Dashboard v1.10.2 — interactive management dashboard.';
     try{
       await navigator.clipboard.writeText(text);
       note.textContent='Share text copied to clipboard.';
