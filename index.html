@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>InstantDash — Excel / CSV / PDF → Dashboard · v1.10.37</title>
+<title>InstantDash — Excel / CSV / PDF → Dashboard · v1.10.38</title>
 
 <!-- ============================================================
      LIBRARIES (loaded from CDN, no build step required)
@@ -822,7 +822,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"/><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"/><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"/></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.10.37</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.10.38</span>
   </div>
   <span id="share"></span><button type="button" class="v154-share-tab" id="v154ShareTab" title="Share dashboard">📤 Share</button>
   <div class="spacer"></div>
@@ -1114,7 +1114,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
    --------------------------------------------------------------------- */
 const CONFIG = {
   APP_NAME: 'InstantDash',
-  VERSION: 'v1.10.37',
+  VERSION: 'v1.10.38',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -5043,6 +5043,73 @@ function wireRest(){
   }
   new MutationObserver(sync).observe(modal,{attributes:true,attributeFilter:['class']});
   sync();
+})();
+</script>
+
+
+<style id="v138-ios-modal-drag-scroll">
+/* InstantDash v1.10.38 — iOS fallback scrolling for Movement Details.
+   Some iOS/GitHub webviews intermittently ignore native overflow scrolling
+   on fixed-position dialogs. This fallback makes vertical finger dragging
+   deterministic while leaving buttons/tabs fully tappable. */
+#miEvidenceModal .mi-evidence-modal{
+  overscroll-behavior-y:contain!important;
+  -webkit-user-select:none!important;
+  user-select:none!important;
+}
+#miEvidenceModal .mi-evidence-modal.mi-drag-scroll{
+  touch-action:none!important;
+}
+</style>
+<script id="v138-ios-modal-drag-scroll">
+(function(){
+  const modal=document.getElementById('miEvidenceModal');
+  const dialog=modal&&modal.querySelector('.mi-evidence-modal');
+  if(!modal||!dialog) return;
+
+  let active=false, startY=0, startTop=0, moved=false;
+
+  function isInteractive(el){
+    return !!(el && el.closest &&
+      el.closest('button,a,input,select,textarea,[role="button"],.mi-evidence-tab'));
+  }
+
+  dialog.addEventListener('touchstart', function(e){
+    if(!modal.classList.contains('on') || !e.touches.length) return;
+    if(isInteractive(e.target)) { active=false; return; }
+    active=true;
+    moved=false;
+    startY=e.touches[0].clientY;
+    startTop=dialog.scrollTop;
+  }, {passive:true});
+
+  dialog.addEventListener('touchmove', function(e){
+    if(!active || !e.touches.length) return;
+    const y=e.touches[0].clientY;
+    const dy=y-startY;
+    if(Math.abs(dy)<3) return;
+    moved=true;
+    dialog.classList.add('mi-drag-scroll');
+    const max=Math.max(0,dialog.scrollHeight-dialog.clientHeight);
+    dialog.scrollTop=Math.max(0,Math.min(max,startTop-dy));
+    e.preventDefault();
+  }, {passive:false});
+
+  dialog.addEventListener('touchend', function(){
+    active=false;
+    dialog.classList.remove('mi-drag-scroll');
+  }, {passive:true});
+
+  dialog.addEventListener('touchcancel', function(){
+    active=false;
+    dialog.classList.remove('mi-drag-scroll');
+  }, {passive:true});
+
+  /* Desktop/laptop fallback. */
+  dialog.addEventListener('wheel', function(e){
+    if(!modal.classList.contains('on')) return;
+    if(e.deltaY) dialog.scrollTop += e.deltaY;
+  }, {passive:true});
 })();
 </script>
 
