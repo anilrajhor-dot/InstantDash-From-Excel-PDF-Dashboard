@@ -449,7 +449,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v155-sticky-nav">
-/* InstantDash v1.8.2 — desktop/mobile persistent navigation */
+/* InstantDash v1.8.4 — desktop/mobile persistent navigation */
 .id-sticky-nav{
   position:fixed;
   left:50%;
@@ -511,7 +511,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v160-executive-css">
-/* InstantDash v1.8.2 — Executive Management Cockpit */
+/* InstantDash v1.8.4 — Executive Management Cockpit */
 .executive-cockpit{margin-top:22px}
 .exec-head{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:12px}
 .exec-head h2{font-size:18px}
@@ -560,7 +560,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v161-theme-hardening">
-/* InstantDash v1.8.2 — theme hardening */
+/* InstantDash v1.8.4 — theme hardening */
 html.theme-dark body{background:var(--bg);color:var(--text)}
 html.theme-light body{background:var(--bg);color:var(--text)}
 body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var(--text)}
@@ -2807,6 +2807,14 @@ function miSemantic(kpi){
      generic direction fallback. */
   if(/stock[-\s]?outs?|defective\s*units?|defect\s*rate|defects?|rejection\s*rate|rejects?|error\s*rate|failure\s*rate|downtime|delay|complaints?|cancellation\s*rate|readmission\s*rate|mortality\s*rate|infection\s*rate|no[-\s]?show\s*rate|turnaround\s*time|waiting\s*time/i.test(n)) return 'quality';
   if(/availability|service\s*level|on[-\s]?time|fill\s*rate|uptime|satisfaction|attendance/i.test(n)) return 'quality';
+  /* Customer retention / repeat-customer measures are outcome KPIs: a higher
+     value is normally favourable. Do not let a generic directory direction
+     invert their meaning. */
+  if(/repeat\s*customers?|returning\s*customers?|retained\s*customers?|customer\s*retention|retention\s*rate/i.test(n)) return 'quality';
+  /* Purchase amount is ambiguous without knowing whether it is procurement
+     spend, customer spend or another value measure. Treat it as contextual
+     rather than calling a decrease adverse automatically. */
+  if(/purchase\s*amount|purchases?\s*amount|purchase\s*value/i.test(n)) return 'contextual';
   if(/audit.*finding|finding(s)?$|repeat\s*finding|open\s*finding|pending\s*finding/i.test(n)) return 'contextual';
   /* Grievances received measure demand/reporting volume, not outcome quality.
      An increase can reflect deterioration, better access/reporting, or a mix
@@ -2817,9 +2825,9 @@ function miSemantic(kpi){
 }
 function miDirection(kpi){
   const sem=miSemantic(kpi);
-  /* An explicit KPI Directory direction is authoritative. */
-  const d=miDirectoryDirection(kpi);
-  if(d)return d;
+  /* Semantic meaning takes precedence for KPIs whose business meaning is
+     unambiguous. A directory direction can otherwise invert obvious cases
+     such as Repeat Customers, Cancellation Rate or Readmission Rate. */
   if(sem==='risk') return 'Lower is Better';
   if(sem==='protective') return 'Higher is Better';
   if(sem==='quality') return /availability|service\s*level|on[-\s]?time|fill\s*rate|uptime|satisfaction|attendance/i.test(String(kpi||'')) ? 'Higher is Better' : 'Lower is Better';
@@ -2827,6 +2835,9 @@ function miDirection(kpi){
   if(/grievances?\s*(received|registered|lodged)|grievance\s*volume/i.test(String(kpi||''))) return 'Contextual';
   /* Common ESG resource-use measures are normally lower-is-better. */
   if(miIsESGResource(kpi)) return 'Lower is Better';
+  /* For generic output measures, retain an explicit directory direction. */
+  const d=miDirectoryDirection(kpi);
+  if(d)return d;
   if(/(npa|slippage|default|complaint|pending|open|repeat|expense|cost|foir|ltv|risk|finding|stock[-\s]?out|cancellation|readmission|defect|downtime|delay|error|failure)/i.test(kpi)) return 'Lower is Better';
   return 'Higher is Better';
 }
@@ -2934,6 +2945,12 @@ function miGenericManagementRemark(name, direction, sem, favourable, change){
   if(/employee|headcount|staff/i.test(n)){
     return ` <span class="mi-remark"><b>Management remark:</b> assess staffing movement against workload, productivity, vacancies and service levels before concluding whether capacity has strengthened or weakened.</span>`;
   }
+  if(/repeat\s*customers?|returning\s*customers?|retained\s*customers?|customer\s*retention|retention\s*rate/i.test(n)){
+    return ` <span class="mi-remark"><b>Management remark:</b> review repeat customers against total active customers, acquisition, retention rate and purchase frequency to confirm whether customer loyalty has strengthened.</span>`;
+  }
+  if(/purchase\s*amount|purchases?\s*amount|purchase\s*value/i.test(n)){
+    return ` <span class="mi-remark"><b>Management remark:</b> purchase amount is contextual; compare it with orders, delivered volume, sales, inventory and unit economics before treating the movement as favourable or adverse.</span>`;
+  }
   if(/sales|revenue|income|profit|margin/i.test(n)){
     return ` <span class="mi-remark"><b>Management remark:</b> review the movement against volume, pricing, mix and sustainability before attributing a cause.</span>`;
   }
@@ -2996,7 +3013,7 @@ function miMovementText(name,ch,prev,cur,lr){
        availability, satisfaction and attendance are higher-is-better. If a
        workbook directory conflicts with that meaning, do not silently invert
        the result. */
-    const lowerIsBetter=!/availability|service\s*level|on[-\s]?time|fill\s*rate|uptime|satisfaction|attendance/i.test(String(name||''));
+    const lowerIsBetter=!/availability|service\s*level|on[-\s]?time|fill\s*rate|uptime|satisfaction|attendance|repeat\s*customers?|returning\s*customers?|retained\s*customers?|customer\s*retention|retention\s*rate/i.test(String(name||''));
     const favourable=lowerIsBetter?ch.abs<0:ch.abs>0;
     return {bucket:favourable?'performance':'attention',text:sentence+(favourable?
       (lowerIsBetter?' Lower ':' Higher ')+miEsc(name)+' is favourable based on the KPI meaning available in the data.':
@@ -3287,6 +3304,103 @@ function buildManagementInsights(){
     });
   }
 
+  /* Commercial/operational relationship analysis. These rules are designed
+     to convert isolated KPI movements into management-useful combinations,
+     while explicitly avoiding causal claims. */
+  if(lr){
+    const prev=lr.previous, cur=lr.current;
+    const findCol=re=>APP.columns.find(c=>re.test(c.name));
+    const sum=(rs,c)=>miSum(rs,c.name);
+    const pair=(a,b)=>{
+      if(!a||!b)return null;
+      const ap=sum(prev,a),ac=sum(cur,a),bp=sum(prev,b),bc=sum(cur,b);
+      if(!isFinite(ap)||!isFinite(ac)||!isFinite(bp)||!isFinite(bc)||ap===0||bp===0)return null;
+      return {a,b,ap,ac,bp,bc,ach:miChange(ap,ac),bch:miChange(bp,bc)};
+    };
+
+    // Customer retention + revenue: repeat-customer growth should not be
+    // classified in isolation, especially when the directory direction says otherwise.
+    const repeat=findCol(/repeat\\s*customers?|returning\\s*customers?|retained\\s*customers?/i);
+    const revenue=findCol(/^revenue$|^net\\s*sales$|sales\\s*revenue/i);
+    const customers=findCol(/^customers?$|active\\s*customers?|total\\s*customers?/i);
+    if(repeat){
+      const r=pair(repeat,revenue);
+      if(r){
+        items.relationships.push(`<b>Customer retention versus revenue:</b> ${miEsc(repeat.name)} moved from ${fmtFull(r.ap)} to ${fmtFull(r.ac)} (${miPct(r.ach.pct)}) while ${miEsc(revenue.name)} moved ${miPct(r.bch.pct)}. Review retention, acquisition and customer value together before attributing the revenue change.`);
+      } else if(customers){
+        const x=pair(repeat,customers);
+        if(x) items.relationships.push(`<b>Repeat-customer mix:</b> ${miEsc(repeat.name)} moved from ${fmtFull(x.ap)} to ${fmtFull(x.ac)} while ${miEsc(customers.name)} moved from ${fmtFull(x.bp)} to ${fmtFull(x.bc)}. Review the repeat-customer share and acquisition mix rather than treating repeat-customer volume alone as proof of stronger retention.`);
+      }
+    }
+
+    // Orders delivered + revenue + purchase amount: identify commercial
+    // scale/efficiency signals without assuming that lower purchasing spend is good.
+    const delivered=findCol(/orders?\\s*delivered|delivered\\s*orders?/i);
+    const purchase=findCol(/purchase\\s*amount|purchase\\s*value|purchases?\\s*amount/i);
+    if(delivered && revenue){
+      const x=pair(delivered,revenue);
+      if(x){
+        items.relationships.push(`<b>Delivery activity versus revenue:</b> ${miEsc(delivered.name)} moved ${miPct(x.ach.pct)} while ${miEsc(revenue.name)} moved ${miPct(x.bch.pct)}. Review revenue per delivered order, pricing and mix to determine whether the change reflects higher volume or higher value per order.`);
+      }
+    }
+    if(purchase && delivered){
+      const x=pair(purchase,delivered);
+      if(x){
+        const prevUnit=x.ap/x.bp, curUnit=x.ac/x.bc, u=miChange(prevUnit,curUnit);
+        items.relationships.push(`<b>Purchase amount versus delivered orders:</b> purchase amount moved ${miPct(x.ach.pct)} while delivered orders moved ${miPct(x.bch.pct)}. Derived purchase amount per delivered order changed from ${fmtFull(prevUnit)} to ${fmtFull(curUnit)} (${miPct(u.pct)}); review procurement/customer-spend definition and unit economics before interpreting the movement.`);
+      }
+    }
+
+    // Manufacturing/quality: inspect volume against defects/rejections and
+    // downtime. This is much more informative than calling each activity KPI good/bad.
+    const inspected=findCol(/units?\\s*inspected|inspected\\s*units?/i);
+    const defective=findCol(/defective\\s*units?|defect(s)?\\s*units?/i);
+    const rejected=findCol(/rejected\\s*units?|reject(s|ed)?\\s*units?/i);
+    const downtime=findCol(/downtime\\s*hours?|down[-\\s]?time/i);
+    const machine=findCol(/machine\\s*hours?/i);
+    if(inspected&&defective){
+      const x=pair(defective,inspected);
+      if(x){
+        const prevRate=x.ap/x.bp, curRate=x.ac/x.bc, z=miChange(prevRate,curRate);
+        items.relationships.push(`<b>Defect intensity:</b> defective units changed from ${fmtFull(x.ap)} to ${fmtFull(x.ac)} while inspected units changed from ${fmtFull(x.bp)} to ${fmtFull(x.bc)}. Defects per inspected unit moved from ${miPct(prevRate)} to ${miPct(curRate)} (${miPct(z.pct)}); use the rate, not defect count alone, to assess quality.`);
+      }
+    }
+    if(inspected&&rejected){
+      const x=pair(rejected,inspected);
+      if(x){
+        const prevRate=x.ap/x.bp, curRate=x.ac/x.bc, z=miChange(prevRate,curRate);
+        items.relationships.push(`<b>Rejection intensity:</b> rejected units changed from ${fmtFull(x.ap)} to ${fmtFull(x.ac)} while inspected units changed from ${fmtFull(x.bp)} to ${fmtFull(x.bc)}. Rejections per inspected unit moved from ${miPct(prevRate)} to ${miPct(curRate)} (${miPct(z.pct)}); review product mix and inspection coverage before concluding quality improvement.`);
+      }
+    }
+    if(downtime&&machine){
+      const x=pair(downtime,machine);
+      if(x){
+        const prevRate=x.ap/x.bp, curRate=x.ac/x.bc, z=miChange(prevRate,curRate);
+        items.relationships.push(`<b>Downtime intensity:</b> downtime changed from ${fmtFull(x.ap)} to ${fmtFull(x.ac)} while machine hours changed from ${fmtFull(x.bp)} to ${fmtFull(x.bc)}. Downtime per machine hour moved from ${miPct(prevRate)} to ${miPct(curRate)} (${miPct(z.pct)}); this is more informative than absolute downtime alone.`);
+      }
+    }
+
+    // Financial relationship: sales, cost of sales and profit should be read
+    // together. Derive gross margin where the definitions support it.
+    const sales=findCol(/^net\\s*sales$|^sales$|revenue/i);
+    const cos=findCol(/cost\\s*of\\s*sales|cost\\s*of\\s*goods\\s*sold|cogs/i);
+    const profit=findCol(/enterprise\\s*profit|net\\s*profit|profit$/i);
+    if(sales&&cos){
+      const x=pair(sales,cos);
+      if(x){
+        const prevMargin=(x.ap-x.bp)/x.ap, curMargin=(x.ac-x.bc)/x.ac, m=miChange(prevMargin,curMargin);
+        items.relationships.push(`<b>Sales versus cost of sales:</b> ${miEsc(sales.name)} moved ${miPct(x.ach.pct)} while ${miEsc(cos.name)} moved ${miPct(x.bch.pct)}. The derived gross margin moved from ${miPct(prevMargin)} to ${miPct(curMargin)} (${miPct(m.pct)}); review pricing, product mix and input costs.`);
+      }
+    }
+    if(sales&&profit){
+      const x=pair(sales,profit);
+      if(x){
+        const prevMargin=x.bp/x.ap, curMargin=x.bc/x.ac, m=miChange(prevMargin,curMargin);
+        items.relationships.push(`<b>Profitability conversion:</b> ${miEsc(sales.name)} moved ${miPct(x.ach.pct)} while ${miEsc(profit.name)} moved ${miPct(x.bch.pct)}. Profit as a share of sales moved from ${miPct(prevMargin)} to ${miPct(curMargin)} (${miPct(m.pct)}); review operating leverage, pricing, mix and cost structure.`);
+      }
+    }
+  }
+
   /* Cyber/security relationship: compare threat detection with blocking.
      This is deliberately framed as protection coverage, not causation. */
   if(lr){
@@ -3446,7 +3560,7 @@ function wireChartBuilder(){
    ===================================================================== */
 
 /* =====================================================================
-   InstantDash v1.8.2 — Executive Management Cockpit
+   InstantDash v1.8.4 — Executive Management Cockpit
    Generic: uses only detected runtime column roles and statistics.
    ===================================================================== */
 function buildExecutiveCockpit(){
