@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>InstantDash — Excel / CSV / PDF → Dashboard · v1.10.3</title>
+<title>InstantDash — Excel / CSV / PDF → Dashboard · v1.10.4</title>
 
 <!-- ============================================================
      LIBRARIES (loaded from CDN, no build step required)
@@ -51,7 +51,7 @@ body.dark{
   --shadow-h:0 2px 6px rgba(0,0,0,.5), 0 16px 40px rgba(0,0,0,.45);
 }
 
-/* v1.10.3 — reliable manual Light/Night theme switching */
+/* v1.10.4 — reliable manual Light/Night theme switching */
 html.theme-dark{color-scheme:dark}
 html.theme-light{color-scheme:light}
 body.dark select,body.dark input,body.dark textarea{background:var(--card);color:var(--text);border-color:var(--border)}
@@ -142,12 +142,12 @@ main{max-width:1360px;margin:0 auto;padding:24px}
 
 /* ---------- premium landing experience v1.4.8 ---------- */
 
-/* v1.10.3 — live executive preview clarity */
+/* v1.10.4 — live executive preview clarity */
 .live-pill{display:inline-flex;align-items:center;margin-left:8px;padding:4px 9px;border-radius:999px;font-size:.58em;letter-spacing:.08em;font-weight:800;background:rgba(34,197,94,.14);color:#31b66b;vertical-align:middle}
 .exec-live-note{margin-top:10px;font-size:11px;color:var(--muted);line-height:1.45}
 @media(max-width:700px){.live-pill{font-size:.55em}.exec-live-note{font-size:10.5px}}
 
-/* v1.10.3 — clickable movement summary */
+/* v1.10.4 — clickable movement summary */
 #execStatusBadge.movement-link{cursor:pointer;user-select:none;transition:transform .15s ease,box-shadow .15s ease}
 #execStatusBadge.movement-link:hover{transform:translateY(-1px);box-shadow:0 3px 10px rgba(0,0,0,.10)}
 #execStatusBadge.movement-link:focus{outline:3px solid rgba(245,179,1,.35);outline-offset:2px}
@@ -325,7 +325,7 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
 .modal-back{position:fixed;inset:0;background:rgba(14,14,16,.45);display:none;place-items:center;z-index:150;padding:20px}
 .modal-back.on{display:grid}
 .modal{background:var(--card);border-radius:16px;box-shadow:var(--shadow-h);width:100%;max-width:460px;padding:20px;border:1px solid var(--border)}
-/* InstantDash v1.10.3 — clickable movement evidence drawer */
+/* InstantDash v1.10.4 — clickable movement evidence drawer */
 .mi-count-btn{appearance:none;border:1px solid var(--border);cursor:pointer;background:var(--card-2);color:var(--muted);font:700 9.5px/1 system-ui,-apple-system,sans-serif}
 .mi-count-btn:hover{border-color:var(--accent);color:var(--text);transform:translateY(-1px)}
 .mi-evidence-back{position:fixed;inset:0;background:rgba(14,14,16,.55);display:none;place-items:center;z-index:400;padding:16px;backdrop-filter:blur(5px)}
@@ -353,7 +353,7 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
 @media (prefers-reduced-motion: reduce){ *{animation-duration:.01ms !important;transition-duration:.01ms !important} }
 
 
-/* ---------- desktop / laptop workspace refinement v1.10.3 ---------- */
+/* ---------- desktop / laptop workspace refinement v1.10.4 ---------- */
 html{overflow-x:hidden}
 body{overflow-x:hidden}
 .tbl-wrap{width:100%;max-width:100%;overflow-x:auto;overflow-y:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
@@ -483,7 +483,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v155-sticky-nav">
-/* InstantDash v1.10.3 — desktop/mobile persistent navigation */
+/* InstantDash v1.10.4 — desktop/mobile persistent navigation */
 .id-sticky-nav{
   position:fixed;
   left:50%;
@@ -530,7 +530,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v169-ui-fixes">
-/* v1.10.3 — cleaner Share access + wider Pivot Rows selector */
+/* v1.10.4 — cleaner Share access + wider Pivot Rows selector */
 .pivot-controls .frow:first-child{min-width:260px}
 .pivot-controls .frow:first-child select{min-width:260px}
 @media (max-width:700px){
@@ -545,7 +545,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v160-executive-css">
-/* InstantDash v1.10.3 — Executive Management Cockpit */
+/* InstantDash v1.10.4 — Executive Management Cockpit */
 .executive-cockpit{margin-top:22px}
 .exec-head{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:12px}
 .exec-head h2{font-size:18px}
@@ -595,7 +595,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v161-theme-hardening">
-/* InstantDash v1.10.3 — theme hardening */
+/* InstantDash v1.10.4 — theme hardening */
 html.theme-dark body{background:var(--bg);color:var(--text)}
 html.theme-light body{background:var(--bg);color:var(--text)}
 body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var(--text)}
@@ -621,7 +621,7 @@ body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var
 
 
 <style id="instantdash-v170-responsive-final">
-/* InstantDash v1.10.3 — responsive laptop + mobile polish */
+/* InstantDash v1.10.4 — responsive laptop + mobile polish */
 .section-head{gap:12px;align-items:center}
 .section-head h2{min-width:0}
 .insight-box{white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word}
@@ -675,6 +675,21 @@ body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var
   }
 }
 
+/* v1.10.4 — management summary cards */
+.management-summary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:0 0 14px}
+.management-summary-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:15px;min-width:0;box-shadow:0 5px 18px rgba(14,14,16,.04)}
+.management-summary-card .msc-label{font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:800;color:var(--muted);margin-bottom:7px}
+.management-summary-card .msc-value{font:800 22px/1.15 Poppins,sans-serif;color:var(--text);overflow-wrap:anywhere}
+.management-summary-card .msc-sub{margin-top:6px;font-size:11px;line-height:1.45;color:var(--muted);overflow-wrap:anywhere}
+.management-summary-card.highlight{border-top:3px solid var(--accent)}
+.management-summary-card.good{border-top:3px solid var(--ok)}
+.management-summary-card.warn{border-top:3px solid var(--warn)}
+.summary-detail{margin-top:0}
+.summary-detail summary{font-weight:700}
+@media(max-width:1000px){.management-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.management-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.management-summary-card{padding:12px}.management-summary-card .msc-value{font-size:18px}.management-summary-card .msc-sub{font-size:10px}}
+@media(max-width:430px){.management-summary-grid{grid-template-columns:1fr}.management-summary-card .msc-value{font-size:20px}}
+
 /* Evidence drawer: wider on laptop, touch-friendly on phones. */
 .mi-evidence-modal{padding:24px}
 .mi-evidence-modal .mi-evidence-dialog{width:min(920px,96vw);max-height:min(88vh,900px)}
@@ -702,7 +717,7 @@ body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"/><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"/><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"/></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.10.3</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.10.4</span>
   </div>
   <span id="share"></span><button type="button" class="v154-share-tab" id="v154ShareTab" title="Share dashboard">📤 Share</button>
   <div class="spacer"></div>
@@ -896,12 +911,16 @@ body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var
 
     <div class="section">
       <div class="section-head">
-        <span id="summary"></span><h2>Summary</h2>
+        <span id="summary"></span><h2>Management Summary</h2>
         <div class="spacer"></div>
         <button class="btn sm no-print" id="copyInsightsBtn">Copy summary</button>
         <button class="btn sm no-print" id="printBtn">Print / Save as PDF</button>
       </div>
-      <div class="card"><pre class="insight-box" id="insightBox"></pre></div>
+      <div class="management-summary-grid" id="managementSummaryGrid"></div>
+      <details class="panel summary-detail">
+        <summary>Detailed data summary</summary>
+        <div class="card"><pre class="insight-box" id="insightBox"></pre></div>
+      </details>
     </div>
 
     <div class="section management-insights" id="managementInsightsSection">
@@ -961,7 +980,7 @@ body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var
    --------------------------------------------------------------------- */
 const CONFIG = {
   APP_NAME: 'InstantDash',
-  VERSION: 'v1.10.3',
+  VERSION: 'v1.10.4',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -2807,6 +2826,45 @@ function exportCSV(){
   toast(rows.length.toLocaleString() + ' rows exported');
 }
 
+function buildManagementSummaryCards(){
+  const grid=$('managementSummaryGrid');
+  if(!grid) return;
+  const rows=APP.filtered||[];
+  const measures=rankMeasures().slice(0,4);
+  const missing=APP.columns.reduce((sum,c)=>sum+(c.missing||0),0);
+  const cells=Math.max(1,rows.length*Math.max(1,APP.columns.length));
+  const completeness=Math.max(0,Math.min(100,(1-missing/cells)*100));
+  const perf=(window.__miItems&&Array.isArray(window.__miItems.performance))?window.__miItems.performance.length:0;
+  const att=(window.__miItems&&Array.isArray(window.__miItems.attention))?window.__miItems.attention.length:0;
+  const t=timeCols()[0];
+  const cards=[];
+  cards.push(`<div class="management-summary-card highlight"><div class="msc-label">Records</div><div class="msc-value">${rows.length.toLocaleString()}</div><div class="msc-sub">${APP.columns.length} columns loaded</div></div>`);
+  cards.push(`<div class="management-summary-card ${completeness>=95?'good':completeness>=80?'highlight':'warn'}"><div class="msc-label">Data completeness</div><div class="msc-value">${completeness.toFixed(completeness===100?0:1)}%</div><div class="msc-sub">${missing.toLocaleString()} missing cells</div></div>`);
+  if(t && t.dateMin){
+    cards.push(`<div class="management-summary-card"><div class="msc-label">Period covered</div><div class="msc-value" style="font-size:16px">${esc(fmtDate(t.dateMin))} – ${esc(fmtDate(t.dateMax))}</div><div class="msc-sub">Based on ${esc(t.name)}</div></div>`);
+  } else {
+    cards.push(`<div class="management-summary-card"><div class="msc-label">Measures</div><div class="msc-value">${measures.length || measuresCount()}</div><div class="msc-sub">Numeric fields available for analysis</div></div>`);
+  }
+  if(perf||att){
+    cards.push(`<div class="management-summary-card ${att?'warn':'good'}"><div class="msc-label">Material movements</div><div class="msc-value">${perf+att}</div><div class="msc-sub">${perf} favourable · ${att} attention · <button type="button" class="btn sm" style="margin-top:7px" id="summaryMovementBtn">View details →</button></div></div>`);
+  }
+  measures.forEach((c)=>{
+    let sum=0,n=0,mn=Infinity,mx=-Infinity;
+    for(const r of rows){const v=r[c.name];if(typeof v==='number'&&isFinite(v)){sum+=v;n++;mn=Math.min(mn,v);mx=Math.max(mx,v);}}
+    if(!n)return;
+    cards.push(`<div class="management-summary-card"><div class="msc-label">${esc(c.name)}</div><div class="msc-value">${fmtNum(sum)}</div><div class="msc-sub">Total · avg ${fmtFull(sum/n)} · range ${fmtFull(mn)}–${fmtFull(mx)}</div></div>`);
+  });
+  grid.innerHTML=cards.join('');
+  const mb=$('summaryMovementBtn');
+  if(mb) mb.onclick=()=>{
+    const badge=$('execStatusBadge');
+    if(badge && badge.classList.contains('movement-link')) badge.click();
+    else { const btn=document.querySelector('#managementInsightsGrid .mi-count-btn'); if(btn)btn.click(); }
+  };
+}
+
+function measuresCount(){ return measures().length; }
+
 /* Plain-English summary of what the dashboard shows. */
 function buildInsights(){
   const rows = APP.filtered, lines = [];
@@ -2842,6 +2900,7 @@ function buildInsights(){
   lines.push(`Charts on screen: ${APP.charts.map(chartTitle).join('; ')}.`);
   $('insightBox').textContent = lines.join('\n');
   buildManagementInsights();
+  buildManagementSummaryCards();
 
   /*
    * Rebuild the executive layer after management insights are calculated.
@@ -2884,7 +2943,7 @@ function miLatestPeriodRows(rows,dateCol){
 }
 function miSum(rows,col){ return rows.reduce((s,r)=>s+(miNum(r[col])??0),0); }
 function miChange(a,b){ return {abs:b-a,pct:a!==0?(b-a)/Math.abs(a):null}; }
-/* v1.10.3 — domain-aware interpretation layer.
+/* v1.10.4 — domain-aware interpretation layer.
    The dashboard must distinguish a true performance KPI from a contextual
    activity/capacity measure. It must also recognise common ESG and healthcare
    measures without pretending that the data proves causation. */
@@ -3362,7 +3421,7 @@ function buildManagementInsights(){
   const lr=miLatestPeriodRows(rows,dateCol);
   const numeric=APP.columns.filter(c=>c.type==='number');
 
-  /* v1.10.3: calculate operational intensity/relationship signals before
+  /* v1.10.4: calculate operational intensity/relationship signals before
      classifying isolated movements. */
   miAddOperationalRelationships(rows,lr,items);
 
@@ -3702,7 +3761,7 @@ function buildManagementInsights(){
   wireMovementSummaryLinks();
 }
 
-/* v1.10.3 — clickable movement evidence details */
+/* v1.10.4 — clickable movement evidence details */
 function wireMovementSummaryLinks(){
   const modal=$('miEvidenceModal'), list=$('miEvidenceList'), tabs=$('miEvidenceTabs'), close=$('miEvidenceClose');
   if(!modal||!list||!tabs)return;
@@ -3858,7 +3917,7 @@ function wireChartBuilder(){
    ===================================================================== */
 
 /* =====================================================================
-   InstantDash v1.10.3 — Executive Management Cockpit
+   InstantDash v1.10.4 — Executive Management Cockpit
    Generic: uses only detected runtime column roles and statistics.
    ===================================================================== */
 function buildExecutiveCockpit(){
@@ -3915,7 +3974,7 @@ function buildExecutiveCockpit(){
 
     if (reviewStatus === 'Mixed') {
       sub.textContent = `${att} material attention movement${att===1?'':'s'} and ${perf} favourable movement${perf===1?'':'s'} identified. Review before drawing conclusions.`;
-      badge.textContent = `● ${perf} favourable · ${att} attention`;
+      badge.textContent = `● ${perf} favourable · ${att} attention · View details →`;
       badge.classList.add('movement-link');
       badge.setAttribute('role','button');
       badge.setAttribute('tabindex','0');
@@ -3925,11 +3984,11 @@ function buildExecutiveCockpit(){
       sub.textContent = att
         ? `${att} material adverse/attention movement${att===1?'':'s'} identified. Review before relying on conclusions.`
         : `${warnCount || 1} field${warnCount===1?'':'s'} ${warnCount===1?'has':'have'} material missing data. Review before relying on conclusions.`;
-      badge.textContent = att ? `● ${att} attention` : '● Review data quality';
+      badge.textContent = att ? `● ${att} attention · View details →` : '● Review data quality';
       if(att){ badge.classList.add('movement-link'); badge.setAttribute('role','button'); badge.setAttribute('tabindex','0'); badge.setAttribute('aria-label',`${att} attention movements — click for details`); badge.title='Click to view attention details'; }
     } else if (reviewStatus === 'Favourable') {
       sub.textContent = `${perf} favourable movement${perf===1?'':'s'} identified. Confirm that the improvement is sustained.`;
-      badge.textContent = `● ${perf} favourable`;
+      badge.textContent = `● ${perf} favourable · View details →`;
       badge.classList.add('movement-link');
       badge.setAttribute('role','button');
       badge.setAttribute('tabindex','0');
@@ -4278,7 +4337,7 @@ function wireRest(){
       .forEach(el=>el.remove());
 
     const html='<!doctype html>\n'+clone.outerHTML;
-    return new File([html],'InstantDash_Dashboard_v1.10.3.html',{type:'text/html'});
+    return new File([html],'InstantDash_Dashboard_v1.10.4.html',{type:'text/html'});
   }
   function open(){panel.style.display='flex';note.textContent='';}
   function hide(){panel.style.display='none';}
@@ -4292,7 +4351,7 @@ function wireRest(){
   // is unavailable, save the file and open a Mail compose window with clear instructions.
   mailBtn && mailBtn.addEventListener('click',async()=>{
     const f=dashboardFile();
-    const title='InstantDash Dashboard v1.10.3';
+    const title='InstantDash Dashboard v1.10.4';
     const text='Please find the attached InstantDash interactive dashboard.\n\nOpen the HTML file in a modern browser to view the dashboard.';
     try{
       if(navigator.share && (!navigator.canShare || navigator.canShare({files:[f]}))){
@@ -4328,14 +4387,14 @@ function wireRest(){
     try{
       if(navigator.share && (!navigator.canShare || navigator.canShare({files:[f]}))){
         await navigator.share({
-          title:'InstantDash Dashboard v1.10.3',
+          title:'InstantDash Dashboard v1.10.4',
           text:'Interactive InstantDash dashboard',
           files:[f]
         });
         note.textContent='Share completed.';
       }else if(navigator.share){
         await navigator.share({
-          title:'InstantDash Dashboard v1.10.3',
+          title:'InstantDash Dashboard v1.10.4',
           text:'Interactive InstantDash dashboard'
         });
       }else{
@@ -4348,7 +4407,7 @@ function wireRest(){
   });
 
   copyBtn && copyBtn.addEventListener('click',async()=>{
-    const text='InstantDash Dashboard v1.10.3 — interactive management dashboard.';
+    const text='InstantDash Dashboard v1.10.4 — interactive management dashboard.';
     try{
       await navigator.clipboard.writeText(text);
       note.textContent='Share text copied to clipboard.';
