@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>InstantDash — Excel / CSV / PDF → Dashboard · v1.9.2</title>
+<title>InstantDash — Excel / CSV / PDF → Dashboard · v1.9.3</title>
 
 <!-- ============================================================
      LIBRARIES (loaded from CDN, no build step required)
@@ -51,7 +51,7 @@ body.dark{
   --shadow-h:0 2px 6px rgba(0,0,0,.5), 0 16px 40px rgba(0,0,0,.45);
 }
 
-/* v1.9.2 — reliable manual Light/Night theme switching */
+/* v1.9.3 — reliable manual Light/Night theme switching */
 html.theme-dark{color-scheme:dark}
 html.theme-light{color-scheme:light}
 body.dark select,body.dark input,body.dark textarea{background:var(--card);color:var(--text);border-color:var(--border)}
@@ -142,7 +142,7 @@ main{max-width:1360px;margin:0 auto;padding:24px}
 
 /* ---------- premium landing experience v1.4.8 ---------- */
 
-/* v1.9.2 — live executive preview clarity */
+/* v1.9.3 — live executive preview clarity */
 .live-pill{display:inline-flex;align-items:center;margin-left:8px;padding:4px 9px;border-radius:999px;font-size:.58em;letter-spacing:.08em;font-weight:800;background:rgba(34,197,94,.14);color:#31b66b;vertical-align:middle}
 .exec-live-note{margin-top:10px;font-size:11px;color:var(--muted);line-height:1.45}
 @media(max-width:700px){.live-pill{font-size:.55em}.exec-live-note{font-size:10.5px}}
@@ -334,7 +334,7 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
 @media (prefers-reduced-motion: reduce){ *{animation-duration:.01ms !important;transition-duration:.01ms !important} }
 
 
-/* ---------- desktop / laptop workspace refinement v1.9.2 ---------- */
+/* ---------- desktop / laptop workspace refinement v1.9.3 ---------- */
 html{overflow-x:hidden}
 body{overflow-x:hidden}
 .tbl-wrap{width:100%;max-width:100%;overflow-x:auto;overflow-y:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
@@ -375,8 +375,15 @@ body{overflow-x:hidden}
 }
 
 @media (max-width:560px){
-  main{padding-left:10px;padding-right:10px}
-  .topbar{gap:10px}
+  main{padding-left:10px;padding-right:10px;padding-bottom:max(44px,calc(44px + env(safe-area-inset-bottom)))}
+  .topbar{gap:10px;padding-top:max(10px,env(safe-area-inset-top));min-height:calc(52px + env(safe-area-inset-top))}
+  .author-line{padding-top:max(6px,env(safe-area-inset-top));}
+}
+
+/* iPhone/iPad safe-area protection for in-app browser/file previews. */
+@supports(padding:max(0px)){
+  .topbar{padding-top:max(8px,env(safe-area-inset-top))}
+  main{scroll-margin-top:calc(12px + env(safe-area-inset-top))}
 }
 
 /* ---------- print / save as PDF ---------- */
@@ -457,7 +464,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v155-sticky-nav">
-/* InstantDash v1.9.2 — desktop/mobile persistent navigation */
+/* InstantDash v1.9.3 — desktop/mobile persistent navigation */
 .id-sticky-nav{
   position:fixed;
   left:50%;
@@ -504,7 +511,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v169-ui-fixes">
-/* v1.9.2 — cleaner Share access + wider Pivot Rows selector */
+/* v1.9.3 — cleaner Share access + wider Pivot Rows selector */
 .pivot-controls .frow:first-child{min-width:260px}
 .pivot-controls .frow:first-child select{min-width:260px}
 @media (max-width:700px){
@@ -519,7 +526,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v160-executive-css">
-/* InstantDash v1.9.2 — Executive Management Cockpit */
+/* InstantDash v1.9.3 — Executive Management Cockpit */
 .executive-cockpit{margin-top:22px}
 .exec-head{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:12px}
 .exec-head h2{font-size:18px}
@@ -569,7 +576,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v161-theme-hardening">
-/* InstantDash v1.9.2 — theme hardening */
+/* InstantDash v1.9.3 — theme hardening */
 html.theme-dark body{background:var(--bg);color:var(--text)}
 html.theme-light body{background:var(--bg);color:var(--text)}
 body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var(--text)}
@@ -603,7 +610,7 @@ body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"/><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"/><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"/></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.9.2</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.9.3</span>
   </div>
   <span id="share"></span><button type="button" class="v154-share-tab" id="v154ShareTab" title="Share dashboard">📤 Share</button>
   <div class="spacer"></div>
@@ -679,9 +686,9 @@ body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var
       <div class="exec-grid">
         <div class="exec-card primary">
           <div class="exec-label">Overall review status</div>
-          <div class="exec-value" id="execStatusValue">Ready</div>
-          <div class="exec-sub" id="execStatusSub">Dashboard is ready for management review.</div>
-          <span class="exec-status good" id="execStatusBadge">● Good to review</span>
+          <div class="exec-value" id="execStatusValue">Ready for Data Review</div>
+          <div class="exec-sub" id="execStatusSub">Data quality is ready for review; comparative performance evidence is assessed separately.</div>
+          <span class="exec-status good" id="execStatusBadge">● Data review ready</span>
           <div class="exec-live-note">Live values update when you upload a file or change filters.</div>
         </div>
         <div class="exec-card">
@@ -851,7 +858,7 @@ body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var
    --------------------------------------------------------------------- */
 const CONFIG = {
   APP_NAME: 'InstantDash',
-  VERSION: 'v1.9.2',
+  VERSION: 'v1.9.3',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -2774,7 +2781,7 @@ function miLatestPeriodRows(rows,dateCol){
 }
 function miSum(rows,col){ return rows.reduce((s,r)=>s+(miNum(r[col])??0),0); }
 function miChange(a,b){ return {abs:b-a,pct:a!==0?(b-a)/Math.abs(a):null}; }
-/* v1.9.2 — domain-aware interpretation layer.
+/* v1.9.3 — domain-aware interpretation layer.
    The dashboard must distinguish a true performance KPI from a contextual
    activity/capacity measure. It must also recognise common ESG and healthcare
    measures without pretending that the data proves causation. */
@@ -3079,8 +3086,8 @@ function miCard(title,items,cls='neutral',open=false,maxItems=null){
   const arr=(Array.isArray(items)?items:[]).filter(x=>miStrip(x));
   const limit=maxItems==null?(cls==='executive'?3:(cls==='good'||cls==='warn'?5:4)):maxItems;
   const fallback={
-    good:'No material favourable movement can be established from the available comparable data.',
-    warn:'No material adverse movement can be established from the available comparable data.',
+    good:'Cannot be established from the available data. Add a comparable period, target or linked KPI.',
+    warn:'Cannot be assessed from the available data. Add a comparable period, target or numeric KPI.',
     neutral:'The available data does not establish a material relationship; add a comparable period, target or linked KPI for stronger management interpretation.',
     executive:'Evidence is limited. A comparable period, target or linked KPI is needed before drawing a strong management conclusion.'
   };
@@ -3167,10 +3174,13 @@ function buildManagementSnapshot(items){
     const label=concernCard.querySelector('b');
     if(label) label.textContent=concern?'Priority concern':'Adverse movement';
   }
-  set('snapConcern',clean(concern,'No material adverse movement identified in the available comparable data.'));
-  set('snapConcernSub',concern?'Review with the responsible business owner.':'No material adverse KPI requiring attention was detected.');
-  set('snapPositive',clean(positive,'No material favourable movement established from the available data.'));
-  set('snapPositiveSub',positive?'Confirm that the improvement is sustained.':'Add a comparable period, target or linked KPI.');
+  const hasComparativeEvidence = !!(timeCols()[0] && miLatestPeriodRows(APP.filtered||[], timeCols()[0]));
+  const hasTargetStructure = !!(miFindCol(/target/i) && miFindCol(/actual/i));
+  const evidence = hasComparativeEvidence || hasTargetStructure;
+  set('snapConcern',clean(concern,evidence?'No material adverse movement established from the available evidence.':'Cannot be assessed from the available data.'));
+  set('snapConcernSub',concern?'Review with the responsible business owner.':evidence?'No material adverse KPI requiring attention was detected.':'No comparable period, target or numeric KPI is available.');
+  set('snapPositive',clean(positive,evidence?'No material favourable movement established from the available evidence.':'Cannot be established from the available data.'));
+  set('snapPositiveSub',positive?'Confirm that the improvement is sustained.':evidence?'No material favourable KPI movement was established.':'Add a comparable period, target or linked KPI.');
   set('snapContext',clean(context,'Review the principal KPIs together.'));
   set('snapContextSub',context?'Context only — not proof of causation.':'Use target, comparable period or supporting drivers where available.');
   set('snapAction',clean(action,'Validate the most material movement.'));
@@ -3249,7 +3259,7 @@ function buildManagementInsights(){
   const lr=miLatestPeriodRows(rows,dateCol);
   const numeric=APP.columns.filter(c=>c.type==='number');
 
-  /* v1.9.2: calculate operational intensity/relationship signals before
+  /* v1.9.3: calculate operational intensity/relationship signals before
      classifying isolated movements. */
   miAddOperationalRelationships(rows,lr,items);
 
@@ -3641,7 +3651,7 @@ function wireChartBuilder(){
    ===================================================================== */
 
 /* =====================================================================
-   InstantDash v1.9.2 — Executive Management Cockpit
+   InstantDash v1.9.3 — Executive Management Cockpit
    Generic: uses only detected runtime column roles and statistics.
    ===================================================================== */
 function buildExecutiveCockpit(){
@@ -3672,14 +3682,20 @@ function buildExecutiveCockpit(){
   const perf = Array.isArray(mi.performance) ? mi.performance.length : 0;
   const dataQualityIssue = warnCount > 0 || missingPct >= CONFIG.MISSING_WARN_PCT;
 
-  let reviewStatus = 'Ready';
+  const dateCol = timeCols()[0];
+  const hasComparablePeriod = !!(dateCol && miLatestPeriodRows(rows,dateCol));
+  const hasTargetActual = !!(miFindCol(/target/i) && miFindCol(/actual/i));
+  const hasComparativeEvidence = hasComparablePeriod || hasTargetActual;
+
+  let reviewStatus = 'Ready for Data Review';
   if (att && perf) reviewStatus = 'Mixed';
   else if (att) reviewStatus = 'Needs attention';
   else if (perf) reviewStatus = 'Favourable';
 
-  /* A data-quality exception takes precedence only when there is no
-     stronger movement status to report. */
-  if (dataQualityIssue && !att && !perf) reviewStatus = 'Needs attention';
+  /* Data quality and comparative evidence are separate dimensions.
+     A complete file without a comparison basis must not be presented as
+     evidence that performance is favourable or that no adverse movement exists. */
+  if (dataQualityIssue && !att && !perf) reviewStatus = 'Review data quality';
 
   const status = $('execStatusValue'), sub=$('execStatusSub'), badge=$('execStatusBadge');
   if(status && sub && badge){
@@ -3696,12 +3712,17 @@ function buildExecutiveCockpit(){
     } else if (reviewStatus === 'Favourable') {
       sub.textContent = `${perf} favourable movement${perf===1?'':'s'} identified. Confirm that the improvement is sustained.`;
       badge.textContent = `● ${perf} favourable`;
+    } else if (reviewStatus === 'Review data quality') {
+      sub.textContent = 'Data-quality exceptions require review before management interpretation.';
+      badge.textContent = '● Review data quality';
     } else {
-      sub.textContent = 'The loaded data is ready for management review.';
-      badge.textContent = '● Good to review';
+      sub.textContent = hasComparativeEvidence
+        ? 'The loaded data is ready for management review; no material movement has been established.'
+        : 'Data quality is ready for review, but comparative performance cannot be assessed from the available fields.';
+      badge.textContent = hasComparativeEvidence ? '● Data review ready' : '● Limited comparative evidence';
     }
 
-    const isGood = reviewStatus === 'Ready' || reviewStatus === 'Favourable';
+    const isGood = reviewStatus === 'Ready for Data Review' || reviewStatus === 'Favourable';
     badge.classList.toggle('warn', !isGood);
     badge.classList.toggle('good', isGood);
   }
@@ -3786,7 +3807,11 @@ function updateLivePreview(){
   const perf = Array.isArray(window.__miItems?.performance) ? window.__miItems.performance.length : 0;
 
   // Keep the preview aligned with the Executive Dashboard's language.
-  const status = att && perf ? 'Mixed' : att ? 'Needs attention' : perf ? 'Favourable' : 'Ready';
+  const dateCol = timeCols()[0];
+  const hasComparablePeriod = !!(dateCol && miLatestPeriodRows(rows,dateCol));
+  const hasTargetActual = !!(miFindCol(/target/i) && miFindCol(/actual/i));
+  const hasComparativeEvidence = hasComparablePeriod || hasTargetActual;
+  const status = att && perf ? 'Mixed' : att ? 'Needs attention' : perf ? 'Favourable' : 'Ready for Data Review';
 
   // Quality is the base score. Attention items reduce confidence; favourable
   // items provide only a modest offset so the preview never overstates results.
@@ -3811,8 +3836,8 @@ function updateLivePreview(){
     movementSub.textContent='Favourable movements detected';
     movementEl.classList.add('preview-positive');
   } else {
-    movementEl.textContent='No material movement';
-    movementSub.textContent='No comparable movement identified';
+    movementEl.textContent='No comparable movement';
+    movementSub.textContent=hasComparativeEvidence ? 'No material movement established' : 'Comparative evidence not available';
     movementEl.classList.add('preview-neutral');
   }
 
@@ -3845,7 +3870,9 @@ function updateLivePreview(){
   }
 
   if(insight){
-    let summary='Dashboard calculated from the currently loaded and filtered data.';
+    let summary=hasComparativeEvidence
+      ? 'Dashboard calculated from the currently loaded and filtered data; no material movement has been established.'
+      : 'Dashboard calculated from the currently loaded and filtered data. Comparative performance cannot be assessed without a comparable period, target or linked KPI.';
     if(att){
       summary = `${att} material attention item${att===1?'':'s'} detected. Review the underlying data and supporting KPIs before drawing conclusions.`;
     } else if(perf){
@@ -3855,7 +3882,7 @@ function updateLivePreview(){
   }
 
   ring.title='Review-readiness indicator: based on data completeness and material attention items; not a performance score.'; ring.classList.remove('preview-empty-ring','preview-ready-ring');
-  if(status==='Ready') {
+  if(status==='Ready for Data Review') {
     ring.classList.add('preview-ready-ring');
     ring.style.background=`conic-gradient(var(--ok) ${score}%,var(--border) 0)`;
   } else {
@@ -4009,7 +4036,7 @@ function wireRest(){
 
   function dashboardFile(){
     const html='<!doctype html>\n'+document.documentElement.outerHTML;
-    return new File([html],'InstantDash_Dashboard_v1.9.2.html',{type:'text/html'});
+    return new File([html],'InstantDash_Dashboard_v1.9.3.html',{type:'text/html'});
   }
   function open(){panel.style.display='flex';note.textContent='';}
   function hide(){panel.style.display='none';}
@@ -4023,7 +4050,7 @@ function wireRest(){
   // is unavailable, save the file and open a Mail compose window with clear instructions.
   mailBtn && mailBtn.addEventListener('click',async()=>{
     const f=dashboardFile();
-    const title='InstantDash Dashboard v1.9.2';
+    const title='InstantDash Dashboard v1.9.3';
     const text='Please find the attached InstantDash interactive dashboard.\n\nOpen the HTML file in a modern browser to view the dashboard.';
     try{
       if(navigator.share && (!navigator.canShare || navigator.canShare({files:[f]}))){
@@ -4059,14 +4086,14 @@ function wireRest(){
     try{
       if(navigator.share && (!navigator.canShare || navigator.canShare({files:[f]}))){
         await navigator.share({
-          title:'InstantDash Dashboard v1.9.2',
+          title:'InstantDash Dashboard v1.9.3',
           text:'Interactive InstantDash dashboard',
           files:[f]
         });
         note.textContent='Share completed.';
       }else if(navigator.share){
         await navigator.share({
-          title:'InstantDash Dashboard v1.9.2',
+          title:'InstantDash Dashboard v1.9.3',
           text:'Interactive InstantDash dashboard'
         });
       }else{
@@ -4079,7 +4106,7 @@ function wireRest(){
   });
 
   copyBtn && copyBtn.addEventListener('click',async()=>{
-    const text='InstantDash Dashboard v1.9.2 — interactive management dashboard.';
+    const text='InstantDash Dashboard v1.9.3 — interactive management dashboard.';
     try{
       await navigator.clipboard.writeText(text);
       note.textContent='Share text copied to clipboard.';
