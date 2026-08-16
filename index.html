@@ -972,7 +972,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 
 
 <style id="instantdash-v171-health-check-prominent-css">
-/* InstantDash v1.10.71 — prominent Health Check access */
+/* InstantDash v1.10.73 — prominent Health Check access */
 .id-health-launch{
   margin-top:14px;
   display:grid;
@@ -1041,7 +1041,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.10.71</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.10.73</span>
   </div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -1209,7 +1209,48 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
       <button class="id-health-launch-btn" type="button" id="healthCheckLaunchBtn" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-launch-wired="1">RUN HEALTH CHECK →</button>
     </section>
 
-    <div class="section no-print">
+    
+<section class="id-ai-diagnosis no-print" id="aiDiagnosisPanel" aria-label="AI Data Diagnosis">
+  <div class="id-ai-head">
+    <div>
+      <div class="id-ai-title">🧠 AI Data Diagnosis</div>
+      <div class="id-ai-sub">Automatic explanation of detected data-quality issues and the action required. No separate ChatGPT question is required.</div>
+    </div>
+    <button type="button" class="id-ai-run" id="aiDiagnosisRun">RUN DIAGNOSIS →</button>
+  </div>
+  <div class="id-ai-status" id="aiDiagnosisStatus">Upload a file and run Health Check first.</div>
+  <div class="id-ai-summary" id="aiDiagnosisSummary"></div>
+  <div class="id-ai-list" id="aiDiagnosisList"></div>
+  <div class="id-ai-note">Advice is diagnostic. InstantDash does not delete records, replace blanks with zero, or alter source data automatically.</div>
+</section>
+<style id="instantdash-v173-ai-diagnosis">
+.id-ai-diagnosis{margin:14px 0 22px;border:1px solid var(--border);border-radius:16px;background:var(--card);box-shadow:var(--shadow);padding:16px}
+.id-ai-head{display:flex;align-items:center;justify-content:space-between;gap:14px}
+.id-ai-title{font-size:18px;font-weight:900}
+.id-ai-sub{margin-top:4px;color:var(--muted);font-size:12px;line-height:1.5}
+.id-ai-run{border:0;border-radius:12px;padding:11px 15px;background:var(--accent);color:#fff;font-weight:900;cursor:pointer;touch-action:manipulation}
+.id-ai-status{margin-top:12px;padding:9px 11px;border-radius:10px;background:var(--card-2);color:var(--muted);font-size:12px}
+.id-ai-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.id-ai-summary>div{padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--card-2)}
+.id-ai-summary b{display:block;font-size:17px}
+.id-ai-summary span{font-size:10px;color:var(--muted)}
+.id-ai-list{display:grid;gap:9px;margin-top:10px}
+.id-ai-item{border:1px solid var(--border);border-left:4px solid var(--muted);border-radius:11px;padding:11px;background:var(--card-2)}
+.id-ai-item.high{border-left-color:var(--warn)}
+.id-ai-item.medium{border-left-color:var(--accent)}
+.id-ai-item.low{border-left-color:var(--ok)}
+.id-ai-item .ai-title{font-weight:900;font-size:13px}
+.id-ai-item .ai-row{margin-top:5px;font-size:11px;line-height:1.45}
+.id-ai-item .ai-label{font-weight:800}
+.id-ai-note{margin-top:10px;font-size:10px;color:var(--muted);line-height:1.4}
+@media(max-width:600px){
+  .id-ai-head{align-items:stretch;flex-direction:column}
+  .id-ai-run{width:100%}
+  .id-ai-summary{grid-template-columns:1fr 1fr}
+}
+</style>
+
+<div class="section no-print">
       <div class="card filters" id="filterBar"><span><span style="font-size:12px;color:var(--muted);font-weight:500">Filters</span></span><div class="filter"><button class="">Central Bank of India – Q1FY27 <span class="pop-count">All</span> <span class="caret">▾</span></button><div class="filter-pop"><input type="search" placeholder="Find a value…">
     <div class="row"><button class="btn sm" data-all="">Select all</button><button class="btn sm" data-none="">Clear</button></div>
     <div class="opts"></div></div></div></div>
@@ -1352,7 +1393,7 @@ Charts on screen: Row count by Central Bank of India – Q1FY27.</pre></div>
    --------------------------------------------------------------------- */
 const CONFIG = {
   APP_NAME: 'InstantDash',
-  VERSION: 'v1.10.71',
+  VERSION: 'v1.10.73',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -6075,9 +6116,32 @@ function wireRest(){
     <div class="id-health-grid" id="healthCheckGrid"><div class="id-health-group-title">🟢 Data Health</div><div class="id-health-item ok"><div class="row"><span>✓</span><span>Data loaded</span></div><div class="detail">Health Check will assess the currently loaded dataset.</div></div><div class="id-health-group-title">🔵 Analysis Readiness</div><div class="id-health-item warn"><div class="row"><span>⚠</span><span>Analysis readiness</span></div><div class="detail">Quantitative and period-comparison capabilities depend on the fields present in the uploaded data.</div></div>
     
     <div class="id-health-foot" id="healthCheckFoot">Health Check is an analytical diagnostic, not an audit certificate. A warning does not automatically mean that the underlying business data is wrong.</div>
-    <div class="id-health-actions"><button type="button" id="healthCheckRefresh" data-v171="1" data-health-wired="1">↻ Recheck</button><button type="button" class="primary" id="healthCheckOpenQuality" data-v171="1" data-health-wired="1">Open Data Quality</button></div>
+    <div class="id-health-actions"><button type="button" id="healthCheckRefresh" data-v171="1" data-health-wired="1">↻ Recheck</button><button type="button" class="primary" id="healthCheckOpenQuality" data-v171="1" data-health-wired="1">Open Data Quality</button><button type="button" class="ai" id="healthCheckAskAI">🧠 Ask ChatGPT — Diagnose &amp; Rectify</button></div><div id="healthAIBox" class="id-health-ai" hidden><div class="id-health-ai-head"><div><strong>🧠 Data Rectification Assistant</strong><span>Creates a structured diagnosis from the current dataset. It never changes your data.</span></div><button type="button" id="healthAIClose" aria-label="Close AI diagnosis">×</button></div><div id="healthAIContent"></div><div class="id-health-ai-actions"><button type="button" id="healthAICopy">📋 Copy AI diagnostic brief</button><button type="button" id="healthAIOpen">Open ChatGPT</button></div><div class="id-health-ai-note">Review every recommendation before changing source data. Blank values are not automatically zero, and duplicate rows are not automatically errors.</div></div>
   </section>
 </div>
+<style id="instantdash-v172-health-ai">
+/* InstantDash v1.10.73 — Data Rectification Assistant */
+#healthCheckAskAI{background:linear-gradient(135deg,#ffb300,#ff7a00)!important;color:#111!important;font-weight:900!important;border:2px solid #ffd45a!important;box-shadow:0 8px 22px rgba(255,145,0,.28)!important;}
+#healthCheckAskAI:hover{transform:translateY(-1px);}
+.id-health-actions{display:flex;flex-wrap:wrap;gap:10px;}
+.id-health-ai{margin-top:14px;padding:16px;border:2px solid #f0b323;border-radius:18px;background:linear-gradient(145deg,#fffdf6,#fff7df);color:#171717;}
+.id-health-ai[hidden]{display:none!important;}
+.id-health-ai-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:12px;}
+.id-health-ai-head strong{display:block;font-size:18px;line-height:1.2;}
+.id-health-ai-head span{display:block;margin-top:4px;color:#666;font-size:13px;line-height:1.35;}
+#healthAIClose{border:1px solid #ddd;border-radius:10px;background:#fff;padding:5px 10px;font-size:20px;}
+.id-health-ai-section{margin-top:10px;padding:12px;border-radius:14px;background:#fff;border:1px solid #eadfc6;}
+.id-health-ai-section h4{margin:0 0 8px;font-size:15px;}
+.id-health-ai-issue{padding:10px 0;border-top:1px solid #eee;}
+.id-health-ai-issue:first-child{border-top:0;padding-top:0;}
+.id-health-ai-issue b{font-size:14px;}
+.id-health-ai-issue div{font-size:13px;line-height:1.45;margin-top:4px;color:#555;}
+.id-health-ai-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:12px;}
+.id-health-ai-actions button{border:1px solid #d6c79e;border-radius:12px;padding:10px 13px;background:#fff;font-weight:800;}
+.id-health-ai-actions button:first-child{background:#111;color:#fff;border-color:#111;}
+.id-health-ai-note{margin-top:10px;font-size:11px;line-height:1.4;color:#666;}
+@media(max-width:600px){#healthCheckAskAI{width:100%;}.id-health-ai-actions button{flex:1 1 100%;}.id-health-ai{padding:13px;}}
+</style>
 <style id="instantdash-v167-movement-modal-mobile">
 /* InstantDash v1.10.70 — mobile Movement Details modal polish
    Goal: keep more movement evidence visible on iPhone without removing
@@ -6204,7 +6268,7 @@ function wireRest(){
 
 <style id="instantdash-v168-health-hardening">
 /* v1.10.70 — Health Check control hardening */
-#healthCheckLaunchBtn,#healthCheckBtn,#healthCheckRefresh,#healthCheckClose,#healthCheckOpenQuality{
+#healthCheckLaunchBtn,#healthCheckBtn,#healthCheckRefresh,#healthCheckClose,#healthCheckOpenQuality,#healthCheckAskAI,#healthAIClose,#healthAICopy,#healthAIOpen{
   touch-action:manipulation;
   -webkit-tap-highlight-color:transparent;
 }
@@ -6351,6 +6415,57 @@ function wireRest(){
     return checks;
   }
 
+  function buildAIPlan(checks){
+    var d=dataArrays(), rows=d.rows, cols=d.cols;
+    var issues=[];
+    var addIssue=function(priority,field,problem,action){issues.push({priority:priority,field:field,problem:problem,action:action});};
+    if(!rows.length || !cols.length){
+      addIssue('HIGH','Dataset','No usable rows/columns are currently loaded.','Upload or select a valid dataset, then run Health Check again.');
+      return issues;
+    }
+    var missingCols=cols.filter(function(c){return Number(c.missing||0)>0;});
+    missingCols.forEach(function(c){
+      var pct=Number(c.missingPct); if(!isFinite(pct)) pct=rows.length?Number(c.missing||0)/rows.length*100:0;
+      var p=pct>=20?'HIGH':(pct>=10?'MEDIUM':'LOW');
+      addIssue(p,c.name,'Missing '+Number(c.missing||0).toLocaleString()+' of '+rows.length.toLocaleString()+' filtered values ('+pct.toFixed(1)+'%).','Check the source system first. Determine whether blank means unknown, not applicable, or genuinely zero; restore source values where required. Do not fill blanks automatically with zero.');
+    });
+    var dupes=duplicateRowCount(rows,cols);
+    if(dupes) addIssue('HIGH','Duplicate rows',dupes.toLocaleString()+' fully duplicate filtered row'+(dupes===1?'':'s')+' detected.','Verify whether these are repeated transactions or accidental duplicates. Remove only confirmed duplicates in the source data and preserve legitimate repeated transactions.');
+    cols.filter(function(c){return c.mixed;}).forEach(function(c){
+      addIssue('HIGH',c.name,'Values use mixed numeric/text data types.','Standardise the field to one valid data type. Convert legitimate numeric text to numbers and investigate non-numeric entries before recalculating totals or averages.');
+    });
+    cols.filter(function(c){return c.unique===1 && Number(c.missing||0)<rows.length;}).forEach(function(c){
+      addIssue('LOW',c.name,'The same value appears in every row.','Confirm that the field is intentionally constant. If variation was expected, check the source extract or mapping.');
+    });
+    var ms=cols.filter(function(c){return c.role==='measure'}), tc=cols.filter(function(c){return c.role==='time'});
+    if(!ms.length) addIssue('INFO','Numeric measures','No numeric measure is available.','If quantitative analysis is required, add or correctly classify a numeric field such as amount, quantity, cost, revenue or balance.');
+    if(!tc.length) addIssue('INFO','Date/time basis','No date/time field is available for period comparison.','If trend or period-to-period analysis is required, add a valid transaction/reporting date or time field.');
+    var movement=window.__miItems||{}, mc=(movement.performance||[]).length+(movement.attention||[]).length+(movement.contextual||[]).length;
+    if(!mc) addIssue('INFO','Movement analysis','No material movement is currently available or comparison evidence is insufficient.','Provide comparable periods and the relevant KPI/time field before relying on movement conclusions.');
+    return issues;
+  }
+
+  function buildAIBrief(checks,issues){
+    var d=dataArrays(), rows=d.rows, cols=d.cols;
+    var lines=['InstantDash — Data Quality & Rectification Brief','Dataset: '+rows.length+' filtered rows / '+cols.length+' columns','', 'Please diagnose the following data-quality and analysis-readiness observations. Do not invent missing values. For each issue, explain the evidence, business impact, safest rectification action, priority, and what should be rechecked after correction.'];
+    if(!issues.length) lines.push('','No material data-quality or analysis-readiness issue was detected by InstantDash Health Check.');
+    else issues.forEach(function(x,i){lines.push('',(i+1)+'. ['+x.priority+'] '+x.field,'Problem: '+x.problem,'Recommended action: '+x.action);});
+    lines.push('','Important: distinguish genuine data errors from fields that are simply not applicable to this dataset. Do not delete duplicates or convert blanks to zero without business/source validation.');
+    return lines.join('\n');
+  }
+
+  function renderAI(){
+    var box=byId('healthAIBox'), content=byId('healthAIContent'); if(!box||!content)return;
+    var checks; try{checks=calculate();}catch(e){checks=[];}
+    var issues=buildAIPlan(checks);
+    var dataIssues=issues.filter(function(x){return x.priority!=='INFO';});
+    var html='<div class="id-health-ai-section"><h4>'+ (dataIssues.length?'⚠ Issues requiring review':'✓ No material data-quality issue detected') +'</h4>';
+    if(!issues.length) html+='<div class="id-health-ai-issue"><div>Your current dataset is not showing a rectification issue.</div></div>';
+    else issues.forEach(function(x){html+='<div class="id-health-ai-issue"><b>'+esc(x.priority)+' · '+esc(x.field)+'</b><div><strong>Finding:</strong> '+esc(x.problem)+'</div><div><strong>Action:</strong> '+esc(x.action)+'</div></div>';});
+    html+='</div>'; content.innerHTML=html;
+    box.dataset.brief=buildAIBrief(checks,issues); box.hidden=false;
+  }
+
   function render(){
     var modal=byId('healthCheckModal');
     if(!modal) return;
@@ -6409,6 +6524,7 @@ function wireRest(){
     modal.classList.add('open');
     modal.setAttribute('aria-hidden','false');
     render();
+    var ai=byId('healthAIBox'); if(ai) ai.hidden=true;
   };
 
   window.__instantDashHealthClose=function(){
@@ -6420,12 +6536,29 @@ function wireRest(){
 
   window.__instantDashHealthRecheck=function(){
     render();
+    var ai=byId('healthAIBox'); if(ai && !ai.hidden) renderAI();
   };
+
+  function copyAIBrief(){
+    var box=byId('healthAIBox'), text=box&&box.dataset.brief||'';
+    if(!text){renderAI(); box=byId('healthAIBox'); text=box&&box.dataset.brief||'';}
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(function(){var b=byId('healthAICopy');if(b){b.textContent='✓ Copied — paste into ChatGPT';setTimeout(function(){b.textContent='📋 Copy AI diagnostic brief';},2200);}}).catch(function(){fallbackCopy(text);});
+    }else fallbackCopy(text);
+  }
+  function fallbackCopy(text){var ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);}
+
+  function openChatGPT(){
+    var box=byId('healthAIBox'), text=box&&box.dataset.brief||'';
+    if(!text){renderAI(); box=byId('healthAIBox'); text=box&&box.dataset.brief||'';}
+    copyAIBrief();
+    window.open('https://chatgpt.com/','_blank','noopener');
+  }
 
   // Capture-phase delegation gives the controls a second independent route.
   document.addEventListener('click',function(e){
     var t=e.target && e.target.closest ? e.target.closest(
-      '#healthCheckBtn,#healthCheckLaunchBtn,#healthCheckClose,#healthCheckRefresh,#healthCheckOpenQuality,#healthCheckModal'
+      '#healthCheckBtn,#healthCheckLaunchBtn,#healthCheckClose,#healthCheckRefresh,#healthCheckOpenQuality,#healthCheckAskAI,#healthAIClose,#healthAICopy,#healthAIOpen,#healthCheckModal'
     ):null;
     if(!t) return;
 
@@ -6462,6 +6595,19 @@ function wireRest(){
       return;
     }
 
+    if(t.id==='healthCheckAskAI'){
+      e.preventDefault(); e.stopPropagation(); renderAI(); return;
+    }
+    if(t.id==='healthAIClose'){
+      e.preventDefault(); e.stopPropagation(); var ab=byId('healthAIBox'); if(ab) ab.hidden=true; return;
+    }
+    if(t.id==='healthAICopy'){
+      e.preventDefault(); e.stopPropagation(); copyAIBrief(); return;
+    }
+    if(t.id==='healthAIOpen'){
+      e.preventDefault(); e.stopPropagation(); openChatGPT(); return;
+    }
+
     if(t.id==='healthCheckModal' && e.target===t){
       window.__instantDashHealthClose();
     }
@@ -6471,6 +6617,148 @@ function wireRest(){
     if(e.key==='Escape') window.__instantDashHealthClose();
   });
 
+})();
+</script>
+
+
+<script id="instantdash-v173-ai-diagnosis-js">
+(function(){
+  'use strict';
+  function $(id){return document.getElementById(id)}
+  function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){
+    return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]
+  })}
+
+  function app(){
+    return window.__INSTANTDASH_APP__ || window.APP || null;
+  }
+
+  function diagnosis(){
+    var A=app();
+    if(!A || !Array.isArray(A.rows) || !Array.isArray(A.columns) || !A.rows.length){
+      return {ready:false,items:[],high:0,medium:0,low:0};
+    }
+
+    var rows=A.filtered && A.filtered.length ? A.filtered : A.rows;
+    var cols=A.columns, items=[], high=0, medium=0, low=0;
+
+    function add(priority,title,what,impact,action,safe){
+      items.push({priority:priority,title:title,what:what,impact:impact,action:action,safe:safe});
+      if(priority==='HIGH') high++; else if(priority==='MEDIUM') medium++; else low++;
+    }
+
+    cols.filter(function(c){return Number(c.missing||0)>0}).forEach(function(c){
+      var pct=Number(c.missingPct||0);
+      add(pct>=10?'HIGH':(pct>=5?'MEDIUM':'LOW'),
+        'Missing values — '+c.name,
+        c.missing.toLocaleString()+' values are missing ('+pct.toFixed(1)+'%).',
+        'Missing values can affect totals, averages, filtering or period comparisons.',
+        'Check the source record and determine whether the value should be supplied, marked not applicable, or deliberately left blank. Do not replace blanks with zero unless the business rule confirms that blank means zero.',
+        'Requires review');
+    });
+
+    // Duplicate detection on the current dataset.
+    var seen=Object.create(null), dupes=0;
+    var names=cols.map(function(c){return c.name});
+    rows.forEach(function(r){
+      var key=names.map(function(n){
+        var v=r[n];
+        return v instanceof Date?'D:'+v.getTime():(v==null?'N:':'V:'+typeof v+':'+String(v));
+      }).join('\u001f');
+      if(seen[key]) dupes++; else seen[key]=1;
+    });
+    if(dupes){
+      add('HIGH','Duplicate rows',
+        dupes.toLocaleString()+' fully duplicate row'+(dupes===1?'':'s')+' detected.',
+        'Duplicates can overstate totals and distort counts and averages.',
+        'Compare the duplicate records with the source system. Keep genuine separate transactions; remove or merge only confirmed accidental duplicates.',
+        'Requires review');
+    }
+
+    cols.filter(function(c){return c.mixed}).forEach(function(c){
+      add('HIGH','Mixed data types — '+c.name,
+        'The field contains a mixture of numeric and text values.',
+        'Numeric calculations may exclude or misinterpret text entries.',
+        'Convert valid numeric text to numbers and separately investigate non-numeric entries. Do not silently discard exceptions.',
+        'Safe only after validation');
+    });
+
+    var measures=cols.filter(function(c){return c.role==='measure'});
+    if(!measures.length){
+      add('LOW','No numeric measures',
+        'No numeric field is currently classified as a measure.',
+        'Totals, averages and quantitative KPI analysis are limited.',
+        'If quantitative analysis is required, provide a correctly formatted numeric field such as amount, quantity, cost or score.',
+        'No correction required if intentional');
+    }
+
+    var times=cols.filter(function(c){return c.role==='time'});
+    if(!times.length){
+      add('LOW','No date/time field',
+        'No date or time field is available for period comparison.',
+        'Trend and period-to-period movement analysis may be unavailable.',
+        'If trend analysis is required, add a reliable transaction/reporting date or period field.',
+        'No correction required if intentional');
+    }
+
+    cols.filter(function(c){return c.unique===1 && Number(c.missing||0)<rows.length}).forEach(function(c){
+      add('LOW','Constant field — '+c.name,
+        'Every populated record has the same value.',
+        'The field provides little analytical separation between records.',
+        'Confirm that the field is genuinely intended to be constant. If it should vary, check the source extraction.',
+        'Requires review');
+    });
+
+    return {ready:true,items:items,high:high,medium:medium,low:low};
+  }
+
+  function render(){
+    var status=$('aiDiagnosisStatus'), summary=$('aiDiagnosisSummary'), list=$('aiDiagnosisList');
+    if(!status||!summary||!list) return;
+    var d=diagnosis();
+
+    if(!d.ready){
+      status.textContent='Upload a file and run Health Check first.';
+      summary.innerHTML=''; list.innerHTML='';
+      return;
+    }
+
+    status.textContent=d.items.length
+      ? 'Diagnosis complete — '+d.items.length+' item'+(d.items.length===1?'':'s')+' identified. Review the recommended actions below.'
+      : 'Diagnosis complete — no material data-quality issues detected.';
+
+    summary.innerHTML=
+      '<div><b>'+d.high+'</b><span>HIGH PRIORITY</span></div>'+
+      '<div><b>'+d.medium+'</b><span>MEDIUM PRIORITY</span></div>'+
+      '<div><b>'+d.low+'</b><span>LOW / LIMITATION</span></div>';
+
+    list.innerHTML=d.items.length?d.items.map(function(x){
+      var cls=x.priority==='HIGH'?'high':(x.priority==='MEDIUM'?'medium':'low');
+      return '<article class="id-ai-item '+cls+'">'+
+        '<div class="ai-title">'+esc(x.priority)+' · '+esc(x.title)+'</div>'+
+        '<div class="ai-row"><span class="ai-label">What is wrong:</span> '+esc(x.what)+'</div>'+
+        '<div class="ai-row"><span class="ai-label">Why it matters:</span> '+esc(x.impact)+'</div>'+
+        '<div class="ai-row"><span class="ai-label">Recommended action:</span> '+esc(x.action)+'</div>'+
+        '<div class="ai-row"><span class="ai-label">Correction:</span> '+esc(x.safe)+'</div>'+
+        '</article>';
+    }).join(''):'<div class="id-ai-item low"><div class="ai-title">✓ No material issue detected</div><div class="ai-row">The current dataset passed the available automatic data-quality checks.</div></div>';
+  }
+
+  window.__instantDashRunAIDiagnosis=render;
+
+  function bind(){
+    var b=$('aiDiagnosisRun');
+    if(b && b.dataset.wired!=='1'){
+      b.dataset.wired='1';
+      b.addEventListener('click',function(e){e.preventDefault();render()});
+    }
+    // Automatically refresh after data is loaded/buildEverything completes.
+    render();
+  }
+
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',bind);
+  else bind();
+  [500,1200,2500].forEach(function(ms){setTimeout(render,ms)});
 })();
 </script>
 
