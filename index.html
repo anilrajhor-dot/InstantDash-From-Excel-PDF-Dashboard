@@ -815,7 +815,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 </style>
 
 <style id="instantdash-v155-movement-buttons">
-/* v1.10.60 — prominent, selected-state Favourable / Attention / Contextual controls */
+/* v1.10.61 — prominent, selected-state Favourable / Attention / Contextual controls */
 #execStatusBadge{display:none!important}
 #movementActionBar{
   display:flex!important;gap:10px!important;align-items:stretch!important;flex-wrap:wrap!important;
@@ -868,7 +868,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 }
 </style>
 <style id="instantdash-v160-selected-movement">
-/* v1.10.60 — keep the selected movement category visually obvious. */
+/* v1.10.61 — keep the selected movement category visually obvious. */
 #movementActionBar .movement-action.selected{outline:3px solid var(--accent,#f5b301)!important;outline-offset:2px!important;}
 </style>
 <script>
@@ -926,7 +926,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.10.60</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.10.61</span>
   </div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
   <div class="spacer"></div>
@@ -2084,7 +2084,7 @@ function detectAndExcludeSummaryRows(rows, names, srcIndex){
   return {rows:keptRows, srcIndex:keptSrc, excluded:exclude.size};
 }
 
-/* v1.10.60 — stability/accuracy guards.
+/* v1.10.61 — stability/accuracy guards.
    These checks are read-only: they never alter APP.rows, APP.filtered or KPI values.
    They protect against stale comparison caches and accidental filtered-data drift. */
 function invalidateAnalysisCaches(){
@@ -2098,11 +2098,11 @@ function auditDashboardState(stage){
     const numeric=cols.filter(c=>c && c.type==='number').length;
     const badSubset=filtered.some(r=>all.indexOf(r)<0);
     const ok=filtered.length<=all.length && !badSubset;
-    if(!ok) console.warn('[InstantDash v1.10.60] data-state audit failed at',stage,{rows:all.length,filtered:filtered.length});
+    if(!ok) console.warn('[InstantDash v1.10.61] data-state audit failed at',stage,{rows:all.length,filtered:filtered.length});
     window.__instantDashDataAudit={stage,ok,rows:all.length,filtered:filtered.length,columns:cols.length,numeric};
     return ok;
   }catch(err){
-    console.warn('[InstantDash v1.10.60] data-state audit unavailable',err);
+    console.warn('[InstantDash v1.10.61] data-state audit unavailable',err);
     return true;
   }
 }
@@ -5987,5 +5987,74 @@ function wireRest(){
 })();
 </script>
 
-<!-- v1.10.60 — stability release: deterministic cache invalidation + read-only data-state audits. -->
+<!-- v1.10.61 — stability release: deterministic cache invalidation + read-only data-state audits. -->
+
+<style id="instantdash-v161-category-filter">
+/* v1.10.61 — movement category filter synchronisation; calculation-neutral. */
+#movementActionBar .movement-action:not(.selected){opacity:.92!important}
+#movementActionBar .movement-action.selected{position:relative!important;z-index:2!important}
+#movementActionBar .movement-action.selected::after{
+  content:'SELECTED';position:absolute;right:8px;top:5px;font:900 8px/1 Poppins,sans-serif;
+  letter-spacing:.08em;opacity:.9;pointer-events:none;
+}
+#miEvidenceModal .mi-evidence-tab.active{font-weight:900!important;transform:translateY(-1px);box-shadow:0 5px 14px rgba(0,0,0,.18)!important}
+</style>
+<script id="instantdash-v161-category-filter-js">
+(function(){
+  'use strict';
+  if(window.__v161CategoryFilter) return;
+  window.__v161CategoryFilter=true;
+  const valid=['performance','attention','contextual'];
+  function select(bucket){
+    if(!valid.includes(bucket)) return;
+    const bar=document.getElementById('movementActionBar');
+    if(!bar) return;
+    bar.querySelectorAll('.movement-action').forEach(function(b){
+      const on=b.getAttribute('data-movement-action')===bucket;
+      b.classList.toggle('selected',on);
+      b.setAttribute('aria-pressed',on?'true':'false');
+    });
+  }
+  function syncFromModal(bucket){ select(bucket); }
+  function wireModal(){
+    const tabs=document.querySelectorAll('#miEvidenceModal .mi-evidence-tab');
+    tabs.forEach(function(tab){
+      if(tab.dataset.v161==='1') return;
+      tab.dataset.v161='1';
+      tab.addEventListener('click',function(){ syncFromModal(tab.dataset.bucket); },false);
+      tab.addEventListener('touchend',function(){ syncFromModal(tab.dataset.bucket); },{passive:true});
+    });
+  }
+  function wireBar(){
+    const bar=document.getElementById('movementActionBar');
+    if(!bar) return;
+    bar.querySelectorAll('.movement-action').forEach(function(btn){
+      if(btn.dataset.v161==='1') return;
+      btn.dataset.v161='1';
+      const bucket=btn.getAttribute('data-movement-action');
+      if(valid.includes(bucket)){
+        btn.addEventListener('click',function(){
+          select(bucket);
+          setTimeout(wireModal,30);
+        },false);
+        btn.addEventListener('touchend',function(){
+          select(bucket);
+          setTimeout(wireModal,30);
+        },{passive:true});
+      }
+    });
+  }
+  function observe(){
+    wireBar(); wireModal();
+    if(window.MutationObserver && !window.__v161Observer){
+      window.__v161Observer=true;
+      new MutationObserver(function(){wireBar();wireModal();}).observe(document.body,{childList:true,subtree:true});
+    }
+  }
+  observe();
+  [100,300,700,1200,2000].forEach(function(ms){setTimeout(observe,ms);});
+  window.__selectMovementCategory=select;
+})();
+</script>
+
 </body></html>
