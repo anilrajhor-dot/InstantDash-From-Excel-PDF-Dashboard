@@ -1042,7 +1042,6 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 <!-- InstantDash v1.10.84 — diagnosis rendered inline; no click dependency -->
 <!-- InstantDash v1.10.84 — recommended action summary added -->
 <!-- InstantDash v1.10.84 — diagnosis summary no longer double-counts constant fields; verification styling corrected -->
-<!-- InstantDash v1.10.84 — diagnosis summary uses one consistent finding hierarchy -->
 </head>
 <body class="" style="overflow: hidden;">
 <div id="pageScroll">
@@ -6574,18 +6573,33 @@ function wireRest(){
       });
 
       var title=dataIssues.length
-        ? '⚠ '+dataIssues.length+' finding'+(dataIssues.length===1?'':'s')+' require review'
+        ? '⚠ '+dataIssues.length+' distinct finding'+(dataIssues.length===1?'':'s')+' require review'
         : '✓ No material data-quality issue detected';
 
       var summary=byId('diagnosisActionSummaryText');
       if(summary){
+        /*
+          v1.10.84 — mutually exclusive headline counting.
+          The constant-field findings are already included in reviewIssues;
+          they are a subset of verification findings, not additional findings.
+          Therefore:
+            total distinct findings = corrections + verification findings
+            constant fields = subset of verification findings
+        */
+        var totalFindings=highIssues.length+reviewIssues.length;
         var parts=[];
-        var totalFindings=dataIssues.length;
-        var additionalVerify=reviewIssues.length+constantIssues.length;
-        if(totalFindings) parts.push('<span class="action-high">🔴 <b>'+totalFindings+' total findings require review</b></span>');
-        if(highIssues.length) parts.push('<span class="action-high">🔴 <b>'+highIssues.length+' require correction</b></span>');
-        if(additionalVerify) parts.push('<span class="action-review">🟡 <b>'+additionalVerify+' require verification</b></span>');
-        if(constantIssues.length) parts.push('<span class="action-review detail">↳ '+constantIssues.length+' of the verification findings '+(constantIssues.length===1?'is a constant field':'are constant fields')+'</span>');
+        if(totalFindings){
+          parts.push('<span class="action-high">🔴 <b>'+totalFindings+' distinct finding'+(totalFindings===1?'':'s')+' require review</b></span>');
+        }
+        if(highIssues.length){
+          parts.push('<span class="action-high">🔴 <b>'+highIssues.length+' correction'+(highIssues.length===1?'':'s')+' required</b></span>');
+        }
+        if(reviewIssues.length){
+          parts.push('<span class="action-review">🟡 <b>'+reviewIssues.length+' verification finding'+(reviewIssues.length===1?'':'s')+'</b></span>');
+        }
+        if(constantIssues.length){
+          parts.push('<span class="action-review detail">↳ '+constantIssues.length+' of these verification findings '+(constantIssues.length===1?'is a constant field':'are constant fields')+'</span>');
+        }
         if(!parts.length) parts.push('<span class="action-good">🟢 <b>No material data-quality correction required</b></span>');
         summary.innerHTML=parts.join('<br>');
       }
