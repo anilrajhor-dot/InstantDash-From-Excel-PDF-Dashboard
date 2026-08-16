@@ -871,7 +871,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.10.58</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.10.59</span>
   </div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
   <div class="spacer"></div>
@@ -2029,8 +2029,32 @@ function detectAndExcludeSummaryRows(rows, names, srcIndex){
   return {rows:keptRows, srcIndex:keptSrc, excluded:exclude.size};
 }
 
+/* v1.10.59 — stability/accuracy guards.
+   These checks are read-only: they never alter APP.rows, APP.filtered or KPI values.
+   They protect against stale comparison caches and accidental filtered-data drift. */
+function invalidateAnalysisCaches(){
+  try{ if(typeof MI_PERIOD_CACHE!=='undefined' && MI_PERIOD_CACHE && typeof MI_PERIOD_CACHE.clear==='function') MI_PERIOD_CACHE.clear(); }catch(_){ }
+}
+function auditDashboardState(stage){
+  try{
+    const all=Array.isArray(APP.rows)?APP.rows:[];
+    const filtered=Array.isArray(APP.filtered)?APP.filtered:[];
+    const cols=Array.isArray(APP.columns)?APP.columns:[];
+    const numeric=cols.filter(c=>c && c.type==='number').length;
+    const badSubset=filtered.some(r=>all.indexOf(r)<0);
+    const ok=filtered.length<=all.length && !badSubset;
+    if(!ok) console.warn('[InstantDash v1.10.59] data-state audit failed at',stage,{rows:all.length,filtered:filtered.length});
+    window.__instantDashDataAudit={stage,ok,rows:all.length,filtered:filtered.length,columns:cols.length,numeric};
+    return ok;
+  }catch(err){
+    console.warn('[InstantDash v1.10.59] data-state audit unavailable',err);
+    return true;
+  }
+}
+
 /* Turns APP.aoa + APP.headerRow into APP.rows (array of plain objects). */
 async function rebuildFromAoa(){
+  invalidateAnalysisCaches();
   const aoa = APP.aoa, h = Math.min(APP.headerRow, aoa.length - 1);
   const headerCells = aoa[h] || [];
   const dataRows = aoa.slice(h + 1);
@@ -3152,6 +3176,7 @@ function applyFilters(){
 
 function applyFiltersAndRedraw(){
   applyFilters();
+  auditDashboardState('applyFiltersAndRedraw');
   APP.page = 0;
   buildKPIs();
   APP.charts.forEach(spec => drawChart(spec));
@@ -4955,6 +4980,7 @@ function updateLivePreview(){
 }
 
 function buildEverything(){
+  invalidateAnalysisCaches();
   $('emptyState').hidden = true;
   $('app').hidden = false;
   $('fileName').textContent = APP.fileName;
@@ -4971,6 +4997,7 @@ function buildEverything(){
 
   APP.filters = {};
   applyFilters();
+  auditDashboardState('buildEverything');
   APP.charts.forEach(c => { if (c.instance) c.instance.destroy(); });
   APP.charts = autoCharts();
 
@@ -5108,6 +5135,7 @@ function wireRest(){
       });
       buildFilterBar();
       applyFiltersAndRedraw();
+      auditDashboardState('shared-state-restore');
       setTheme(!!shared.dark);
       toast('Shared dashboard loaded — live data and movement analysis restored');
     }catch(err){
@@ -5904,4 +5932,5 @@ function wireRest(){
 })();
 </script>
 
+<!-- v1.10.59 — stability release: deterministic cache invalidation + read-only data-state audits. -->
 </body></html>
