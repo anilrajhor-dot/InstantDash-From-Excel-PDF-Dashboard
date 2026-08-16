@@ -50,7 +50,7 @@ body.dark{
   --shadow-h:0 2px 6px rgba(0,0,0,.5), 0 16px 40px rgba(0,0,0,.45);
 }
 
-/* v1.10.52 — reliable manual Light/Night theme switching */
+/* v1.10.53 — reliable manual Light/Night theme switching */
 html.theme-dark{color-scheme:dark}
 html.theme-light{color-scheme:light}
 body.dark select,body.dark input,body.dark textarea{background:var(--card);color:var(--text);border-color:var(--border)}
@@ -141,17 +141,17 @@ main{max-width:1360px;margin:0 auto;padding:24px}
 
 /* ---------- premium landing experience v1.4.8 ---------- */
 
-/* v1.10.52 — live executive preview clarity */
+/* v1.10.53 — live executive preview clarity */
 .live-pill{display:inline-flex;align-items:center;margin-left:8px;padding:4px 9px;border-radius:999px;font-size:.58em;letter-spacing:.08em;font-weight:800;background:rgba(34,197,94,.14);color:#31b66b;vertical-align:middle}
 .exec-live-note{margin-top:10px;font-size:11px;color:var(--muted);line-height:1.45}
 @media(max-width:700px){.live-pill{font-size:.55em}.exec-live-note{font-size:10.5px}}
 
-/* v1.10.52 — clickable movement summary */
+/* v1.10.53 — clickable movement summary */
 #execStatusBadge.movement-link{cursor:pointer;user-select:none;transition:transform .15s ease,box-shadow .15s ease}
 #execStatusBadge.movement-link:hover{transform:translateY(-1px);box-shadow:0 3px 10px rgba(0,0,0,.10)}
 #execStatusBadge.movement-link:focus{outline:3px solid rgba(245,179,1,.35);outline-offset:2px}
 
-/* v1.10.52 — executive movement fact strip */
+/* v1.10.53 — executive movement fact strip */
 .mi-movement-facts{display:grid;grid-template-columns:1fr auto 1fr auto;gap:8px;align-items:stretch;margin:14px 0 12px;padding:10px;border:1px solid var(--line,#e6dccb);border-radius:16px;background:rgba(255,255,255,.72)}
 .mi-movement-facts>div{min-width:0;padding:7px 9px;border-radius:11px;background:#faf7f0}
 .mi-movement-facts span{display:block;font-size:10px;letter-spacing:.14em;font-weight:800;color:#77736c;margin-bottom:4px}
@@ -163,7 +163,7 @@ main{max-width:1360px;margin:0 auto;padding:24px}
 .mi-movement-facts .mi-change.contextual b{color:#77736c}
 @media(max-width:640px){.mi-movement-facts{grid-template-columns:1fr 24px 1fr}.mi-movement-facts .mi-change{grid-column:1/-1}.mi-movement-facts .mi-change b{font-size:18px}}
 
-/* InstantDash v1.10.52 — Management Action Centre */
+/* InstantDash v1.10.53 — Management Action Centre */
 .management-action-centre{margin-top:12px}
 .mac-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:10px;flex-wrap:wrap}
 .mac-title{font-size:15px;font-weight:800;letter-spacing:-.01em}
@@ -229,7 +229,7 @@ body.dark .landing-hero{box-shadow:0 18px 70px rgba(0,0,0,.42)}
 .preview-insight{display:flex;gap:9px;align-items:flex-start;padding:10px;border:1px solid var(--border);border-radius:11px;background:var(--card-2);font-size:9.5px;color:var(--muted);line-height:1.45}.preview-insight span{color:var(--accent);font-size:11px}.preview-insight p{margin:0}.preview-insight b{color:var(--text)}
 .hero-features{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px;padding-top:22px;border-top:1px solid var(--border);position:relative;z-index:2}.hero-features>div{display:grid;grid-template-columns:auto 1fr;column-gap:9px;align-items:center}.hero-features b{grid-row:1/3;font:700 11px Poppins,sans-serif;color:var(--accent)}.hero-features strong{font-size:12px}.hero-features span{font-size:10.5px;color:var(--muted)}
 @media(max-width:900px){.landing-hero{grid-template-columns:1fr;padding:38px 25px 25px;border-radius:24px;gap:24px}.hero-copy h2{font-size:clamp(32px,9vw,45px)}.hero-lead{font-size:14px}.hero-preview{order:2}.hero-features{order:3}.preview-window{transform:none}.hero-features{grid-template-columns:1fr}.hero-features>div{padding:8px 0}.trust-row{gap:10px 14px}}
-/* v1.10.52 — robust mobile file picker */
+/* v1.10.53 — robust mobile file picker */
 #fileInput{
   position:absolute!important;
   width:1px!important;height:1px!important;
@@ -383,7 +383,7 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
 .modal-back{position:fixed;inset:0;background:rgba(14,14,16,.45);display:none;place-items:center;z-index:150;padding:20px}
 .modal-back.on{display:grid}
 .modal{background:var(--card);border-radius:16px;box-shadow:var(--shadow-h);width:100%;max-width:460px;padding:20px;border:1px solid var(--border)}
-/* InstantDash v1.10.52 — robust movement evidence tabs: direct JS buttons, no radio/CSS dependency */
+/* InstantDash v1.10.53 — robust movement evidence tabs: direct JS buttons, no radio/CSS dependency */
 .mi-evidence-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0;position:relative;z-index:20}
 .mi-evidence-tab{appearance:none;-webkit-appearance:none;border:1px solid var(--border);background:var(--card-2);color:var(--text);border-radius:999px;padding:10px 14px;font:750 15px/1 system-ui,-apple-system,sans-serif;cursor:pointer;pointer-events:auto;touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;position:relative;z-index:21;transition:.15s ease}
 .mi-evidence-tab:hover{transform:translateY(-1px);border-color:var(--accent)}
@@ -413,7 +413,7 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
 @media (prefers-reduced-motion: reduce){ *{animation-duration:.01ms !important;transition-duration:.01ms !important} }
 
 
-/* ---------- desktop / laptop workspace refinement v1.10.52 ---------- */
+/* ---------- desktop / laptop workspace refinement v1.10.53 ---------- */
 html{overflow-x:hidden}
 body{overflow-x:hidden}
 .tbl-wrap{width:100%;max-width:100%;overflow-x:auto;overflow-y:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
@@ -510,6 +510,15 @@ body{overflow-x:hidden}
     background:rgba(0,0,0,.55);backdrop-filter:blur(5px);
     padding:18px;
   }
+  /* v1.10.53 — required open state; without this the panel has display:none */
+  .v154-share-panel.is-open{
+    display:flex!important;
+    pointer-events:auto!important;
+  }
+  .v154-share-panel.is-open .v154-share-card{
+    pointer-events:auto!important;
+    touch-action:manipulation!important;
+  }
   .v154-share-card{
     width:min(560px,100%);border-radius:18px;
     padding:22px;background:var(--panel,#17171b);
@@ -543,7 +552,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v155-sticky-nav">
-/* InstantDash v1.10.52 — desktop/mobile persistent navigation */
+/* InstantDash v1.10.53 — desktop/mobile persistent navigation */
 .id-sticky-nav{
   position:fixed;
   left:50%;
@@ -590,7 +599,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v169-ui-fixes">
-/* v1.10.52 — cleaner Share access + wider Pivot Rows selector */
+/* v1.10.53 — cleaner Share access + wider Pivot Rows selector */
 .pivot-controls .frow:first-child{min-width:260px}
 .pivot-controls .frow:first-child select{min-width:260px}
 @media (max-width:700px){
@@ -605,7 +614,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v160-executive-css">
-/* InstantDash v1.10.52 — Executive Management Cockpit */
+/* InstantDash v1.10.53 — Executive Management Cockpit */
 .executive-cockpit{margin-top:22px}
 .exec-head{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:12px}
 .exec-head h2{font-size:18px}
@@ -655,7 +664,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v161-theme-hardening">
-/* InstantDash v1.10.52 — theme hardening */
+/* InstantDash v1.10.53 — theme hardening */
 html.theme-dark body{background:var(--bg);color:var(--text)}
 html.theme-light body{background:var(--bg);color:var(--text)}
 body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var(--text)}
@@ -681,12 +690,12 @@ body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var
 
 
 <style id="instantdash-v149-accuracy-hardening">
-/* v1.10.52 — accuracy hardening:
+/* v1.10.53 — accuracy hardening:
    numeric identifiers are excluded from management contribution analysis;
    NO_OF_WORKING_DAYS is allowed to behave as a measure. */
 </style>
 <style id="instantdash-v170-responsive-final">
-/* InstantDash v1.10.52 — responsive laptop + mobile polish */
+/* InstantDash v1.10.53 — responsive laptop + mobile polish */
 .section-head{gap:12px;align-items:center}
 .section-head h2{min-width:0}
 .insight-box{white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word}
@@ -740,7 +749,7 @@ body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var
   }
 }
 
-/* v1.10.52 — management summary cards */
+/* v1.10.53 — management summary cards */
 .management-summary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:0 0 14px}
 .management-summary-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:15px;min-width:0;box-shadow:0 5px 18px rgba(14,14,16,.04)}
 .management-summary-card .msc-label{font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:800;color:var(--muted);margin-bottom:7px}
@@ -773,7 +782,7 @@ body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var
 </style>
 
 <style id="instantdash-v11031-scroll-host-fix">
-/* v1.10.52 — dedicated iOS scroll host. The app is deliberately placed in a
+/* v1.10.53 — dedicated iOS scroll host. The app is deliberately placed in a
    single viewport-height vertical scroller so embedded GitHub/iOS webviews
    cannot leave the document itself stuck at the first screen. */
 html,body{margin:0!important;padding:0!important;overflow:hidden!important;height:100%!important;min-height:100%!important;}
@@ -815,7 +824,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.10.52</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.10.53</span>
   </div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
   <div class="spacer"></div>
@@ -992,7 +1001,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
         <div class="spacer"></div>
         <button class="btn sm no-print" id="addChartBtn">+ Add chart</button>
       </div>
-      <div class="charts" id="chartsGrid"><div class="card chart-card" data-id="c9"><div class="chart-head"><h3>Total TOTAL_TRANSACTION_COUNT by day</h3><button class="btn sm no-print" title="Download this chart as a PNG">PNG</button><button class="btn sm no-print" title="Remove this chart">✕</button></div><div class="chart-tools no-print"><select title="Chart type"><option value="bar">Bar</option><option value="hbar">Horizontal bar</option><option value="line" selected="">Line</option><option value="area">Area</option><option value="donut">Donut</option><option value="pie">Pie</option><option value="stacked">Stacked bar</option><option value="histogram">Histogram</option><option value="scatter">Scatter</option></select><select title="Group by"><option value="Region">Region</option><option value="Dist">Dist</option><option value="COMM_MONTH_YEAR" selected="">COMM_MONTH_YEAR</option></select><select title="Value"><option value="__count__">Count of rows</option><option value="eKYC">eKYC</option><option value="ekyc comm">ekyc comm</option><option value="TOTAL_TRANSACTION_COUNT" selected="">TOTAL_TRANSACTION_COUNT</option><option value="TOTAL_TRANSACTION_AMOUNT">TOTAL_TRANSACTION_AMOUNT</option><option value="DEPOSIT_COMMISSION">DEPOSIT_COMMISSION</option><option value="WITHDRAWAL_COMMISSION">WITHDRAWAL_COMMISSION</option><option value="FUNDTRANSFER_COMMISSION">FUNDTRANSFER_COMMISSION</option><option value="AGENT_TXN_COMMISSION_AMOUNT">AGENT_TXN_COMMISSION_AMOUNT</option><option value="TOTAL_COMMISSION_AMOUNT">TOTAL_COMMISSION_AMOUNT</option><option value="CBC_SHARE">CBC_SHARE</option><option value="BCA_SHARE">BCA_SHARE</option><option value="NO_OF_WORKING_DAYS">NO_OF_WORKING_DAYS</option></select><select title="Aggregation"><option value="sum" selected="">Sum</option><option value="avg">Average</option><option value="distinct">Distinct count</option><option value="min">Minimum</option><option value="max">Maximum</option></select><select title="Time grouping"><option value="day" selected="">By day</option><option value="month">By month</option><option value="quarter">By quarter</option><option value="year">By year</option></select></div><div class="chart-body"><canvas id="cv-c9" width="1044" height="750" style="display: block; box-sizing: border-box; height: 250px; width: 348px;"></canvas></div><div class="chart-note">1 group from 776 rows.</div></div><div class="card chart-card" data-id="c10"><div class="chart-head"><h3>Total TOTAL_TRANSACTION_COUNT by Region</h3><button class="btn sm no-print" title="Download this chart as a PNG">PNG</button><button class="btn sm no-print" title="Remove this chart">✕</button></div><div class="chart-tools no-print"><select title="Chart type"><option value="bar" selected="">Bar</option><option value="hbar">Horizontal bar</option><option value="line">Line</option><option value="area">Area</option><option value="donut">Donut</option><option value="pie">Pie</option><option value="stacked">Stacked bar</option><option value="histogram">Histogram</option><option value="scatter">Scatter</option></select><select title="Group by"><option value="Region" selected="">Region</option><option value="Dist">Dist</option><option value="COMM_MONTH_YEAR">COMM_MONTH_YEAR</option></select><select title="Value"><option value="__count__">Count of rows</option><option value="eKYC">eKYC</option><option value="ekyc comm">ekyc comm</option><option value="TOTAL_TRANSACTION_COUNT" selected="">TOTAL_TRANSACTION_COUNT</option><option value="TOTAL_TRANSACTION_AMOUNT">TOTAL_TRANSACTION_AMOUNT</option><option value="DEPOSIT_COMMISSION">DEPOSIT_COMMISSION</option><option value="WITHDRAWAL_COMMISSION">WITHDRAWAL_COMMISSION</option><option value="FUNDTRANSFER_COMMISSION">FUNDTRANSFER_COMMISSION</option><option value="AGENT_TXN_COMMISSION_AMOUNT">AGENT_TXN_COMMISSION_AMOUNT</option><option value="TOTAL_COMMISSION_AMOUNT">TOTAL_COMMISSION_AMOUNT</option><option value="CBC_SHARE">CBC_SHARE</option><option value="BCA_SHARE">BCA_SHARE</option><option value="NO_OF_WORKING_DAYS">NO_OF_WORKING_DAYS</option></select><select title="Aggregation"><option value="sum" selected="">Sum</option><option value="avg">Average</option><option value="distinct">Distinct count</option><option value="min">Minimum</option><option value="max">Maximum</option></select></div><div class="chart-body"><canvas id="cv-c10" width="1044" height="750" style="display: block; box-sizing: border-box; height: 250px; width: 348px;"></canvas></div><div class="chart-note">3 groups from 776 rows.</div></div><div class="card chart-card" data-id="c11"><div class="chart-head"><h3>Share of TOTAL_TRANSACTION_COUNT by Region</h3><button class="btn sm no-print" title="Download this chart as a PNG">PNG</button><button class="btn sm no-print" title="Remove this chart">✕</button></div><div class="chart-tools no-print"><select title="Chart type"><option value="bar">Bar</option><option value="hbar">Horizontal bar</option><option value="line">Line</option><option value="area">Area</option><option value="donut" selected="">Donut</option><option value="pie">Pie</option><option value="stacked">Stacked bar</option><option value="histogram">Histogram</option><option value="scatter">Scatter</option></select><select title="Group by"><option value="Region" selected="">Region</option><option value="Dist">Dist</option><option value="COMM_MONTH_YEAR">COMM_MONTH_YEAR</option></select><select title="Value"><option value="__count__">Count of rows</option><option value="eKYC">eKYC</option><option value="ekyc comm">ekyc comm</option><option value="TOTAL_TRANSACTION_COUNT" selected="">TOTAL_TRANSACTION_COUNT</option><option value="TOTAL_TRANSACTION_AMOUNT">TOTAL_TRANSACTION_AMOUNT</option><option value="DEPOSIT_COMMISSION">DEPOSIT_COMMISSION</option><option value="WITHDRAWAL_COMMISSION">WITHDRAWAL_COMMISSION</option><option value="FUNDTRANSFER_COMMISSION">FUNDTRANSFER_COMMISSION</option><option value="AGENT_TXN_COMMISSION_AMOUNT">AGENT_TXN_COMMISSION_AMOUNT</option><option value="TOTAL_COMMISSION_AMOUNT">TOTAL_COMMISSION_AMOUNT</option><option value="CBC_SHARE">CBC_SHARE</option><option value="BCA_SHARE">BCA_SHARE</option><option value="NO_OF_WORKING_DAYS">NO_OF_WORKING_DAYS</option></select><select title="Aggregation"><option value="sum" selected="">Sum</option><option value="avg">Average</option><option value="distinct">Distinct count</option><option value="min">Minimum</option><option value="max">Maximum</option></select></div><div class="chart-body"><canvas id="cv-c11" width="1044" height="900" style="display: block; box-sizing: border-box; height: 300px; width: 348px;"></canvas></div><div class="chart-note">3 groups from 776 rows.</div></div><div class="card chart-card wide" data-id="c12"><div class="chart-head"><h3>TOTAL_TRANSACTION_AMOUNT vs TOTAL_TRANSACTION_COUNT</h3><button class="btn sm no-print" title="Download this chart as a PNG">PNG</button><button class="btn sm no-print" title="Remove this chart">✕</button></div><div class="chart-tools no-print"><select title="Chart type"><option value="bar">Bar</option><option value="hbar">Horizontal bar</option><option value="line">Line</option><option value="area">Area</option><option value="donut">Donut</option><option value="pie">Pie</option><option value="stacked">Stacked bar</option><option value="histogram">Histogram</option><option value="scatter" selected="">Scatter</option></select><select title="X axis"><option value="eKYC">eKYC</option><option value="ekyc comm">ekyc comm</option><option value="TOTAL_TRANSACTION_COUNT" selected="">TOTAL_TRANSACTION_COUNT</option><option value="TOTAL_TRANSACTION_AMOUNT">TOTAL_TRANSACTION_AMOUNT</option><option value="DEPOSIT_COMMISSION">DEPOSIT_COMMISSION</option><option value="WITHDRAWAL_COMMISSION">WITHDRAWAL_COMMISSION</option><option value="FUNDTRANSFER_COMMISSION">FUNDTRANSFER_COMMISSION</option><option value="AGENT_TXN_COMMISSION_AMOUNT">AGENT_TXN_COMMISSION_AMOUNT</option><option value="TOTAL_COMMISSION_AMOUNT">TOTAL_COMMISSION_AMOUNT</option><option value="CBC_SHARE">CBC_SHARE</option><option value="BCA_SHARE">BCA_SHARE</option><option value="NO_OF_WORKING_DAYS">NO_OF_WORKING_DAYS</option></select><select title="Y axis"><option value="eKYC">eKYC</option><option value="ekyc comm">ekyc comm</option><option value="TOTAL_TRANSACTION_COUNT">TOTAL_TRANSACTION_COUNT</option><option value="TOTAL_TRANSACTION_AMOUNT" selected="">TOTAL_TRANSACTION_AMOUNT</option><option value="DEPOSIT_COMMISSION">DEPOSIT_COMMISSION</option><option value="WITHDRAWAL_COMMISSION">WITHDRAWAL_COMMISSION</option><option value="FUNDTRANSFER_COMMISSION">FUNDTRANSFER_COMMISSION</option><option value="AGENT_TXN_COMMISSION_AMOUNT">AGENT_TXN_COMMISSION_AMOUNT</option><option value="TOTAL_COMMISSION_AMOUNT">TOTAL_COMMISSION_AMOUNT</option><option value="CBC_SHARE">CBC_SHARE</option><option value="BCA_SHARE">BCA_SHARE</option><option value="NO_OF_WORKING_DAYS">NO_OF_WORKING_DAYS</option></select></div><div class="chart-body"><canvas id="cv-c12" width="1044" height="750" style="display: block; box-sizing: border-box; height: 250px; width: 348px;"></canvas></div><div class="chart-note">776 points · correlation r = 0.94.</div></div><div class="card chart-card wide" data-id="c13"><div class="chart-head"><h3>Total TOTAL_TRANSACTION_COUNT by Region, split by Dist</h3><button class="btn sm no-print" title="Download this chart as a PNG">PNG</button><button class="btn sm no-print" title="Remove this chart">✕</button></div><div class="chart-tools no-print"><select title="Chart type"><option value="bar">Bar</option><option value="hbar">Horizontal bar</option><option value="line">Line</option><option value="area">Area</option><option value="donut">Donut</option><option value="pie">Pie</option><option value="stacked" selected="">Stacked bar</option><option value="histogram">Histogram</option><option value="scatter">Scatter</option></select><select title="Group by"><option value="Region" selected="">Region</option><option value="Dist">Dist</option><option value="COMM_MONTH_YEAR">COMM_MONTH_YEAR</option></select><select title="Value"><option value="__count__">Count of rows</option><option value="eKYC">eKYC</option><option value="ekyc comm">ekyc comm</option><option value="TOTAL_TRANSACTION_COUNT" selected="">TOTAL_TRANSACTION_COUNT</option><option value="TOTAL_TRANSACTION_AMOUNT">TOTAL_TRANSACTION_AMOUNT</option><option value="DEPOSIT_COMMISSION">DEPOSIT_COMMISSION</option><option value="WITHDRAWAL_COMMISSION">WITHDRAWAL_COMMISSION</option><option value="FUNDTRANSFER_COMMISSION">FUNDTRANSFER_COMMISSION</option><option value="AGENT_TXN_COMMISSION_AMOUNT">AGENT_TXN_COMMISSION_AMOUNT</option><option value="TOTAL_COMMISSION_AMOUNT">TOTAL_COMMISSION_AMOUNT</option><option value="CBC_SHARE">CBC_SHARE</option><option value="BCA_SHARE">BCA_SHARE</option><option value="NO_OF_WORKING_DAYS">NO_OF_WORKING_DAYS</option></select><select title="Aggregation"><option value="sum" selected="">Sum</option><option value="avg">Average</option><option value="distinct">Distinct count</option><option value="min">Minimum</option><option value="max">Maximum</option></select><select title="Split by"><option value="">No split</option><option value="Dist" selected="">Dist</option></select></div><div class="chart-body"><canvas id="cv-c13" width="1044" height="750" style="display: block; box-sizing: border-box; height: 250px; width: 348px;"></canvas></div><div class="chart-note">3 groups from 776 rows.</div></div><div class="card chart-card" data-id="c14"><div class="chart-head"><h3>Distribution of TOTAL_TRANSACTION_COUNT</h3><button class="btn sm no-print" title="Download this chart as a PNG">PNG</button><button class="btn sm no-print" title="Remove this chart">✕</button></div><div class="chart-tools no-print"><select title="Chart type"><option value="bar">Bar</option><option value="hbar">Horizontal bar</option><option value="line">Line</option><option value="area">Area</option><option value="donut">Donut</option><option value="pie">Pie</option><option value="stacked">Stacked bar</option><option value="histogram" selected="">Histogram</option><option value="scatter">Scatter</option></select><select title="Column"><option value="eKYC">eKYC</option><option value="ekyc comm">ekyc comm</option><option value="TOTAL_TRANSACTION_COUNT" selected="">TOTAL_TRANSACTION_COUNT</option><option value="TOTAL_TRANSACTION_AMOUNT">TOTAL_TRANSACTION_AMOUNT</option><option value="DEPOSIT_COMMISSION">DEPOSIT_COMMISSION</option><option value="WITHDRAWAL_COMMISSION">WITHDRAWAL_COMMISSION</option><option value="FUNDTRANSFER_COMMISSION">FUNDTRANSFER_COMMISSION</option><option value="AGENT_TXN_COMMISSION_AMOUNT">AGENT_TXN_COMMISSION_AMOUNT</option><option value="TOTAL_COMMISSION_AMOUNT">TOTAL_COMMISSION_AMOUNT</option><option value="CBC_SHARE">CBC_SHARE</option><option value="BCA_SHARE">BCA_SHARE</option><option value="NO_OF_WORKING_DAYS">NO_OF_WORKING_DAYS</option></select></div><div class="chart-body"><canvas id="cv-c14" width="1044" height="750" style="display: block; box-sizing: border-box; height: 250px; width: 348px;"></canvas></div><div class="chart-note">10 equal-width bins across TOTAL_TRANSACTION_COUNT.</div></div><div class="card chart-card" data-id="c15"><div class="chart-head"><h3>Total TOTAL_TRANSACTION_AMOUNT by day</h3><button class="btn sm no-print" title="Download this chart as a PNG">PNG</button><button class="btn sm no-print" title="Remove this chart">✕</button></div><div class="chart-tools no-print"><select title="Chart type"><option value="bar">Bar</option><option value="hbar">Horizontal bar</option><option value="line" selected="">Line</option><option value="area">Area</option><option value="donut">Donut</option><option value="pie">Pie</option><option value="stacked">Stacked bar</option><option value="histogram">Histogram</option><option value="scatter">Scatter</option></select><select title="Group by"><option value="Region">Region</option><option value="Dist">Dist</option><option value="COMM_MONTH_YEAR" selected="">COMM_MONTH_YEAR</option></select><select title="Value"><option value="__count__">Count of rows</option><option value="eKYC">eKYC</option><option value="ekyc comm">ekyc comm</option><option value="TOTAL_TRANSACTION_COUNT">TOTAL_TRANSACTION_COUNT</option><option value="TOTAL_TRANSACTION_AMOUNT" selected="">TOTAL_TRANSACTION_AMOUNT</option><option value="DEPOSIT_COMMISSION">DEPOSIT_COMMISSION</option><option value="WITHDRAWAL_COMMISSION">WITHDRAWAL_COMMISSION</option><option value="FUNDTRANSFER_COMMISSION">FUNDTRANSFER_COMMISSION</option><option value="AGENT_TXN_COMMISSION_AMOUNT">AGENT_TXN_COMMISSION_AMOUNT</option><option value="TOTAL_COMMISSION_AMOUNT">TOTAL_COMMISSION_AMOUNT</option><option value="CBC_SHARE">CBC_SHARE</option><option value="BCA_SHARE">BCA_SHARE</option><option value="NO_OF_WORKING_DAYS">NO_OF_WORKING_DAYS</option></select><select title="Aggregation"><option value="sum" selected="">Sum</option><option value="avg">Average</option><option value="distinct">Distinct count</option><option value="min">Minimum</option><option value="max">Maximum</option></select><select title="Time grouping"><option value="day" selected="">By day</option><option value="month">By month</option><option value="quarter">By quarter</option><option value="year">By year</option></select></div><div class="chart-body"><canvas id="cv-c15" width="1044" height="750" style="display: block; box-sizing: border-box; height: 250px; width: 348px;"></canvas></div><div class="chart-note">1 group from 776 rows.</div></div><div class="card chart-card" data-id="c16"><div class="chart-head"><h3>Total TOTAL_TRANSACTION_COUNT by Dist</h3><button class="btn sm no-print" title="Download this chart as a PNG">PNG</button><button class="btn sm no-print" title="Remove this chart">✕</button></div><div class="chart-tools no-print"><select title="Chart type"><option value="bar" selected="">Bar</option><option value="hbar">Horizontal bar</option><option value="line">Line</option><option value="area">Area</option><option value="donut">Donut</option><option value="pie">Pie</option><option value="stacked">Stacked bar</option><option value="histogram">Histogram</option><option value="scatter">Scatter</option></select><select title="Group by"><option value="Region">Region</option><option value="Dist" selected="">Dist</option><option value="COMM_MONTH_YEAR">COMM_MONTH_YEAR</option></select><select title="Value"><option value="__count__">Count of rows</option><option value="eKYC">eKYC</option><option value="ekyc comm">ekyc comm</option><option value="TOTAL_TRANSACTION_COUNT" selected="">TOTAL_TRANSACTION_COUNT</option><option value="TOTAL_TRANSACTION_AMOUNT">TOTAL_TRANSACTION_AMOUNT</option><option value="DEPOSIT_COMMISSION">DEPOSIT_COMMISSION</option><option value="WITHDRAWAL_COMMISSION">WITHDRAWAL_COMMISSION</option><option value="FUNDTRANSFER_COMMISSION">FUNDTRANSFER_COMMISSION</option><option value="AGENT_TXN_COMMISSION_AMOUNT">AGENT_TXN_COMMISSION_AMOUNT</option><option value="TOTAL_COMMISSION_AMOUNT">TOTAL_COMMISSION_AMOUNT</option><option value="CBC_SHARE">CBC_SHARE</option><option value="BCA_SHARE">BCA_SHARE</option><option value="NO_OF_WORKING_DAYS">NO_OF_WORKING_DAYS</option></select><select title="Aggregation"><option value="sum" selected="">Sum</option><option value="avg">Average</option><option value="distinct">Distinct count</option><option value="min">Minimum</option><option value="max">Maximum</option></select></div><div class="chart-body"><canvas id="cv-c16" width="1044" height="750" style="display: block; box-sizing: border-box; height: 250px; width: 348px;"></canvas></div><div class="chart-note">7 groups from 776 rows.</div></div></div>
+      <div class="charts" id="chartsGrid"><div class="card chart-card" data-id="c1"><div class="chart-head"><h3>Total TOTAL_TRANSACTION_COUNT by day</h3><button class="btn sm no-print" title="Download this chart as a PNG">PNG</button><button class="btn sm no-print" title="Remove this chart">✕</button></div><div class="chart-tools no-print"><select title="Chart type"><option value="bar">Bar</option><option value="hbar">Horizontal bar</option><option value="line" selected="">Line</option><option value="area">Area</option><option value="donut">Donut</option><option value="pie">Pie</option><option value="stacked">Stacked bar</option><option value="histogram">Histogram</option><option value="scatter">Scatter</option></select><select title="Group by"><option value="Region">Region</option><option value="Dist">Dist</option><option value="COMM_MONTH_YEAR" selected="">COMM_MONTH_YEAR</option></select><select title="Value"><option value="__count__">Count of rows</option><option value="eKYC">eKYC</option><option value="ekyc comm">ekyc comm</option><option value="TOTAL_TRANSACTION_COUNT" selected="">TOTAL_TRANSACTION_COUNT</option><option value="TOTAL_TRANSACTION_AMOUNT">TOTAL_TRANSACTION_AMOUNT</option><option value="DEPOSIT_COMMISSION">DEPOSIT_COMMISSION</option><option value="WITHDRAWAL_COMMISSION">WITHDRAWAL_COMMISSION</option><option value="FUNDTRANSFER_COMMISSION">FUNDTRANSFER_COMMISSION</option><option value="AGENT_TXN_COMMISSION_AMOUNT">AGENT_TXN_COMMISSION_AMOUNT</option><option value="TOTAL_COMMISSION_AMOUNT">TOTAL_COMMISSION_AMOUNT</option><option value="CBC_SHARE">CBC_SHARE</option><option value="BCA_SHARE">BCA_SHARE</option><option value="NO_OF_WORKING_DAYS">NO_OF_WORKING_DAYS</option></select><select title="Aggregation"><option value="sum" selected="">Sum</option><option value="avg">Average</option><option value="distinct">Distinct count</option><option value="min">Minimum</option><option value="max">Maximum</option></select><select title="Time grouping"><option value="day" selected="">By day</option><option value="month">By month</option><option value="quarter">By quarter</option><option value="year">By year</option></select></div><div class="chart-body"><canvas id="cv-c1" width="1044" height="750" style="display: block; box-sizing: border-box; height: 250px; width: 348px;"></canvas></div><div class="chart-note">1 group from 776 rows.</div></div><div class="card chart-card" data-id="c2"><div class="chart-head"><h3>Total TOTAL_TRANSACTION_COUNT by Region</h3><button class="btn sm no-print" title="Download this chart as a PNG">PNG</button><button class="btn sm no-print" title="Remove this chart">✕</button></div><div class="chart-tools no-print"><select title="Chart type"><option value="bar" selected="">Bar</option><option value="hbar">Horizontal bar</option><option value="line">Line</option><option value="area">Area</option><option value="donut">Donut</option><option value="pie">Pie</option><option value="stacked">Stacked bar</option><option value="histogram">Histogram</option><option value="scatter">Scatter</option></select><select title="Group by"><option value="Region" selected="">Region</option><option value="Dist">Dist</option><option value="COMM_MONTH_YEAR">COMM_MONTH_YEAR</option></select><select title="Value"><option value="__count__">Count of rows</option><option value="eKYC">eKYC</option><option value="ekyc comm">ekyc comm</option><option value="TOTAL_TRANSACTION_COUNT" selected="">TOTAL_TRANSACTION_COUNT</option><option value="TOTAL_TRANSACTION_AMOUNT">TOTAL_TRANSACTION_AMOUNT</option><option value="DEPOSIT_COMMISSION">DEPOSIT_COMMISSION</option><option value="WITHDRAWAL_COMMISSION">WITHDRAWAL_COMMISSION</option><option value="FUNDTRANSFER_COMMISSION">FUNDTRANSFER_COMMISSION</option><option value="AGENT_TXN_COMMISSION_AMOUNT">AGENT_TXN_COMMISSION_AMOUNT</option><option value="TOTAL_COMMISSION_AMOUNT">TOTAL_COMMISSION_AMOUNT</option><option value="CBC_SHARE">CBC_SHARE</option><option value="BCA_SHARE">BCA_SHARE</option><option value="NO_OF_WORKING_DAYS">NO_OF_WORKING_DAYS</option></select><select title="Aggregation"><option value="sum" selected="">Sum</option><option value="avg">Average</option><option value="distinct">Distinct count</option><option value="min">Minimum</option><option value="max">Maximum</option></select></div><div class="chart-body"><canvas id="cv-c2" width="1044" height="750" style="display: block; box-sizing: border-box; height: 250px; width: 348px;"></canvas></div><div class="chart-note">3 groups from 776 rows.</div></div><div class="card chart-card" data-id="c3"><div class="chart-head"><h3>Share of TOTAL_TRANSACTION_COUNT by Region</h3><button class="btn sm no-print" title="Download this chart as a PNG">PNG</button><button class="btn sm no-print" title="Remove this chart">✕</button></div><div class="chart-tools no-print"><select title="Chart type"><option value="bar">Bar</option><option value="hbar">Horizontal bar</option><option value="line">Line</option><option value="area">Area</option><option value="donut" selected="">Donut</option><option value="pie">Pie</option><option value="stacked">Stacked bar</option><option value="histogram">Histogram</option><option value="scatter">Scatter</option></select><select title="Group by"><option value="Region" selected="">Region</option><option value="Dist">Dist</option><option value="COMM_MONTH_YEAR">COMM_MONTH_YEAR</option></select><select title="Value"><option value="__count__">Count of rows</option><option value="eKYC">eKYC</option><option value="ekyc comm">ekyc comm</option><option value="TOTAL_TRANSACTION_COUNT" selected="">TOTAL_TRANSACTION_COUNT</option><option value="TOTAL_TRANSACTION_AMOUNT">TOTAL_TRANSACTION_AMOUNT</option><option value="DEPOSIT_COMMISSION">DEPOSIT_COMMISSION</option><option value="WITHDRAWAL_COMMISSION">WITHDRAWAL_COMMISSION</option><option value="FUNDTRANSFER_COMMISSION">FUNDTRANSFER_COMMISSION</option><option value="AGENT_TXN_COMMISSION_AMOUNT">AGENT_TXN_COMMISSION_AMOUNT</option><option value="TOTAL_COMMISSION_AMOUNT">TOTAL_COMMISSION_AMOUNT</option><option value="CBC_SHARE">CBC_SHARE</option><option value="BCA_SHARE">BCA_SHARE</option><option value="NO_OF_WORKING_DAYS">NO_OF_WORKING_DAYS</option></select><select title="Aggregation"><option value="sum" selected="">Sum</option><option value="avg">Average</option><option value="distinct">Distinct count</option><option value="min">Minimum</option><option value="max">Maximum</option></select></div><div class="chart-body"><canvas id="cv-c3" width="1044" height="900" style="display: block; box-sizing: border-box; height: 300px; width: 348px;"></canvas></div><div class="chart-note">3 groups from 776 rows.</div></div><div class="card chart-card wide" data-id="c4"><div class="chart-head"><h3>TOTAL_TRANSACTION_AMOUNT vs TOTAL_TRANSACTION_COUNT</h3><button class="btn sm no-print" title="Download this chart as a PNG">PNG</button><button class="btn sm no-print" title="Remove this chart">✕</button></div><div class="chart-tools no-print"><select title="Chart type"><option value="bar">Bar</option><option value="hbar">Horizontal bar</option><option value="line">Line</option><option value="area">Area</option><option value="donut">Donut</option><option value="pie">Pie</option><option value="stacked">Stacked bar</option><option value="histogram">Histogram</option><option value="scatter" selected="">Scatter</option></select><select title="X axis"><option value="eKYC">eKYC</option><option value="ekyc comm">ekyc comm</option><option value="TOTAL_TRANSACTION_COUNT" selected="">TOTAL_TRANSACTION_COUNT</option><option value="TOTAL_TRANSACTION_AMOUNT">TOTAL_TRANSACTION_AMOUNT</option><option value="DEPOSIT_COMMISSION">DEPOSIT_COMMISSION</option><option value="WITHDRAWAL_COMMISSION">WITHDRAWAL_COMMISSION</option><option value="FUNDTRANSFER_COMMISSION">FUNDTRANSFER_COMMISSION</option><option value="AGENT_TXN_COMMISSION_AMOUNT">AGENT_TXN_COMMISSION_AMOUNT</option><option value="TOTAL_COMMISSION_AMOUNT">TOTAL_COMMISSION_AMOUNT</option><option value="CBC_SHARE">CBC_SHARE</option><option value="BCA_SHARE">BCA_SHARE</option><option value="NO_OF_WORKING_DAYS">NO_OF_WORKING_DAYS</option></select><select title="Y axis"><option value="eKYC">eKYC</option><option value="ekyc comm">ekyc comm</option><option value="TOTAL_TRANSACTION_COUNT">TOTAL_TRANSACTION_COUNT</option><option value="TOTAL_TRANSACTION_AMOUNT" selected="">TOTAL_TRANSACTION_AMOUNT</option><option value="DEPOSIT_COMMISSION">DEPOSIT_COMMISSION</option><option value="WITHDRAWAL_COMMISSION">WITHDRAWAL_COMMISSION</option><option value="FUNDTRANSFER_COMMISSION">FUNDTRANSFER_COMMISSION</option><option value="AGENT_TXN_COMMISSION_AMOUNT">AGENT_TXN_COMMISSION_AMOUNT</option><option value="TOTAL_COMMISSION_AMOUNT">TOTAL_COMMISSION_AMOUNT</option><option value="CBC_SHARE">CBC_SHARE</option><option value="BCA_SHARE">BCA_SHARE</option><option value="NO_OF_WORKING_DAYS">NO_OF_WORKING_DAYS</option></select></div><div class="chart-body"><canvas id="cv-c4" width="1044" height="750" style="display: block; box-sizing: border-box; height: 250px; width: 348px;"></canvas></div><div class="chart-note">776 points · correlation r = 0.94.</div></div><div class="card chart-card wide" data-id="c5"><div class="chart-head"><h3>Total TOTAL_TRANSACTION_COUNT by Region, split by Dist</h3><button class="btn sm no-print" title="Download this chart as a PNG">PNG</button><button class="btn sm no-print" title="Remove this chart">✕</button></div><div class="chart-tools no-print"><select title="Chart type"><option value="bar">Bar</option><option value="hbar">Horizontal bar</option><option value="line">Line</option><option value="area">Area</option><option value="donut">Donut</option><option value="pie">Pie</option><option value="stacked" selected="">Stacked bar</option><option value="histogram">Histogram</option><option value="scatter">Scatter</option></select><select title="Group by"><option value="Region" selected="">Region</option><option value="Dist">Dist</option><option value="COMM_MONTH_YEAR">COMM_MONTH_YEAR</option></select><select title="Value"><option value="__count__">Count of rows</option><option value="eKYC">eKYC</option><option value="ekyc comm">ekyc comm</option><option value="TOTAL_TRANSACTION_COUNT" selected="">TOTAL_TRANSACTION_COUNT</option><option value="TOTAL_TRANSACTION_AMOUNT">TOTAL_TRANSACTION_AMOUNT</option><option value="DEPOSIT_COMMISSION">DEPOSIT_COMMISSION</option><option value="WITHDRAWAL_COMMISSION">WITHDRAWAL_COMMISSION</option><option value="FUNDTRANSFER_COMMISSION">FUNDTRANSFER_COMMISSION</option><option value="AGENT_TXN_COMMISSION_AMOUNT">AGENT_TXN_COMMISSION_AMOUNT</option><option value="TOTAL_COMMISSION_AMOUNT">TOTAL_COMMISSION_AMOUNT</option><option value="CBC_SHARE">CBC_SHARE</option><option value="BCA_SHARE">BCA_SHARE</option><option value="NO_OF_WORKING_DAYS">NO_OF_WORKING_DAYS</option></select><select title="Aggregation"><option value="sum" selected="">Sum</option><option value="avg">Average</option><option value="distinct">Distinct count</option><option value="min">Minimum</option><option value="max">Maximum</option></select><select title="Split by"><option value="">No split</option><option value="Dist" selected="">Dist</option></select></div><div class="chart-body"><canvas id="cv-c5" width="1044" height="750" style="display: block; box-sizing: border-box; height: 250px; width: 348px;"></canvas></div><div class="chart-note">3 groups from 776 rows.</div></div><div class="card chart-card" data-id="c6"><div class="chart-head"><h3>Distribution of TOTAL_TRANSACTION_COUNT</h3><button class="btn sm no-print" title="Download this chart as a PNG">PNG</button><button class="btn sm no-print" title="Remove this chart">✕</button></div><div class="chart-tools no-print"><select title="Chart type"><option value="bar">Bar</option><option value="hbar">Horizontal bar</option><option value="line">Line</option><option value="area">Area</option><option value="donut">Donut</option><option value="pie">Pie</option><option value="stacked">Stacked bar</option><option value="histogram" selected="">Histogram</option><option value="scatter">Scatter</option></select><select title="Column"><option value="eKYC">eKYC</option><option value="ekyc comm">ekyc comm</option><option value="TOTAL_TRANSACTION_COUNT" selected="">TOTAL_TRANSACTION_COUNT</option><option value="TOTAL_TRANSACTION_AMOUNT">TOTAL_TRANSACTION_AMOUNT</option><option value="DEPOSIT_COMMISSION">DEPOSIT_COMMISSION</option><option value="WITHDRAWAL_COMMISSION">WITHDRAWAL_COMMISSION</option><option value="FUNDTRANSFER_COMMISSION">FUNDTRANSFER_COMMISSION</option><option value="AGENT_TXN_COMMISSION_AMOUNT">AGENT_TXN_COMMISSION_AMOUNT</option><option value="TOTAL_COMMISSION_AMOUNT">TOTAL_COMMISSION_AMOUNT</option><option value="CBC_SHARE">CBC_SHARE</option><option value="BCA_SHARE">BCA_SHARE</option><option value="NO_OF_WORKING_DAYS">NO_OF_WORKING_DAYS</option></select></div><div class="chart-body"><canvas id="cv-c6" width="1044" height="750" style="display: block; box-sizing: border-box; height: 250px; width: 348px;"></canvas></div><div class="chart-note">10 equal-width bins across TOTAL_TRANSACTION_COUNT.</div></div><div class="card chart-card" data-id="c7"><div class="chart-head"><h3>Total TOTAL_TRANSACTION_AMOUNT by day</h3><button class="btn sm no-print" title="Download this chart as a PNG">PNG</button><button class="btn sm no-print" title="Remove this chart">✕</button></div><div class="chart-tools no-print"><select title="Chart type"><option value="bar">Bar</option><option value="hbar">Horizontal bar</option><option value="line" selected="">Line</option><option value="area">Area</option><option value="donut">Donut</option><option value="pie">Pie</option><option value="stacked">Stacked bar</option><option value="histogram">Histogram</option><option value="scatter">Scatter</option></select><select title="Group by"><option value="Region">Region</option><option value="Dist">Dist</option><option value="COMM_MONTH_YEAR" selected="">COMM_MONTH_YEAR</option></select><select title="Value"><option value="__count__">Count of rows</option><option value="eKYC">eKYC</option><option value="ekyc comm">ekyc comm</option><option value="TOTAL_TRANSACTION_COUNT">TOTAL_TRANSACTION_COUNT</option><option value="TOTAL_TRANSACTION_AMOUNT" selected="">TOTAL_TRANSACTION_AMOUNT</option><option value="DEPOSIT_COMMISSION">DEPOSIT_COMMISSION</option><option value="WITHDRAWAL_COMMISSION">WITHDRAWAL_COMMISSION</option><option value="FUNDTRANSFER_COMMISSION">FUNDTRANSFER_COMMISSION</option><option value="AGENT_TXN_COMMISSION_AMOUNT">AGENT_TXN_COMMISSION_AMOUNT</option><option value="TOTAL_COMMISSION_AMOUNT">TOTAL_COMMISSION_AMOUNT</option><option value="CBC_SHARE">CBC_SHARE</option><option value="BCA_SHARE">BCA_SHARE</option><option value="NO_OF_WORKING_DAYS">NO_OF_WORKING_DAYS</option></select><select title="Aggregation"><option value="sum" selected="">Sum</option><option value="avg">Average</option><option value="distinct">Distinct count</option><option value="min">Minimum</option><option value="max">Maximum</option></select><select title="Time grouping"><option value="day" selected="">By day</option><option value="month">By month</option><option value="quarter">By quarter</option><option value="year">By year</option></select></div><div class="chart-body"><canvas id="cv-c7" width="1044" height="750" style="display: block; box-sizing: border-box; height: 250px; width: 348px;"></canvas></div><div class="chart-note">1 group from 776 rows.</div></div><div class="card chart-card" data-id="c8"><div class="chart-head"><h3>Total TOTAL_TRANSACTION_COUNT by Dist</h3><button class="btn sm no-print" title="Download this chart as a PNG">PNG</button><button class="btn sm no-print" title="Remove this chart">✕</button></div><div class="chart-tools no-print"><select title="Chart type"><option value="bar" selected="">Bar</option><option value="hbar">Horizontal bar</option><option value="line">Line</option><option value="area">Area</option><option value="donut">Donut</option><option value="pie">Pie</option><option value="stacked">Stacked bar</option><option value="histogram">Histogram</option><option value="scatter">Scatter</option></select><select title="Group by"><option value="Region">Region</option><option value="Dist" selected="">Dist</option><option value="COMM_MONTH_YEAR">COMM_MONTH_YEAR</option></select><select title="Value"><option value="__count__">Count of rows</option><option value="eKYC">eKYC</option><option value="ekyc comm">ekyc comm</option><option value="TOTAL_TRANSACTION_COUNT" selected="">TOTAL_TRANSACTION_COUNT</option><option value="TOTAL_TRANSACTION_AMOUNT">TOTAL_TRANSACTION_AMOUNT</option><option value="DEPOSIT_COMMISSION">DEPOSIT_COMMISSION</option><option value="WITHDRAWAL_COMMISSION">WITHDRAWAL_COMMISSION</option><option value="FUNDTRANSFER_COMMISSION">FUNDTRANSFER_COMMISSION</option><option value="AGENT_TXN_COMMISSION_AMOUNT">AGENT_TXN_COMMISSION_AMOUNT</option><option value="TOTAL_COMMISSION_AMOUNT">TOTAL_COMMISSION_AMOUNT</option><option value="CBC_SHARE">CBC_SHARE</option><option value="BCA_SHARE">BCA_SHARE</option><option value="NO_OF_WORKING_DAYS">NO_OF_WORKING_DAYS</option></select><select title="Aggregation"><option value="sum" selected="">Sum</option><option value="avg">Average</option><option value="distinct">Distinct count</option><option value="min">Minimum</option><option value="max">Maximum</option></select></div><div class="chart-body"><canvas id="cv-c8" width="1044" height="750" style="display: block; box-sizing: border-box; height: 250px; width: 348px;"></canvas></div><div class="chart-note">7 groups from 776 rows.</div></div></div>
     </div>
 
     <div class="section">
@@ -1299,7 +1308,7 @@ Charts on screen: Total TOTAL_TRANSACTION_COUNT by day; Total TOTAL_TRANSACTION_
    --------------------------------------------------------------------- */
 const CONFIG = {
   APP_NAME: 'InstantDash',
-  VERSION: 'v1.10.52',
+  VERSION: 'v1.10.53',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -3360,7 +3369,7 @@ function miDirectoryDirection(kpiName){
   }catch(_){ }
   return null;
 }
-/* v1.10.52 — deterministic period comparison.
+/* v1.10.53 — deterministic period comparison.
    Compare the latest two CALENDAR PERIODS rather than the latest two raw
    dates. This prevents results changing when a file contains multiple rows
    within a month/day or when row order changes. The period is selected from
@@ -3420,7 +3429,7 @@ function miLatestPeriodRows(rows,dateCol){
   MI_PERIOD_CACHE.set(cacheKey,result);
   return result;
 }
-/* v1.10.52 — deterministic KPI aggregation.
+/* v1.10.53 — deterministic KPI aggregation.
    Additive measures are summed; rates, percentages, ratios, averages and
    per-unit measures are averaged across the selected period rows. This keeps
    management comparisons stable and prevents percentages such as occupancy
@@ -3439,7 +3448,7 @@ function miMetricValue(rows,col){
 function miSum(rows,col){ return miMetricValue(rows,col) ?? 0; }
 function miChange(a,b){ return {abs:b-a,pct:a!==0?(b-a)/Math.abs(a):null}; }
 function miAggregationLabel(name){ return miAggMode(name)==='avg'?'Average across comparable records':'Total across comparable records'; }
-/* v1.10.52 — domain-aware interpretation layer.
+/* v1.10.53 — domain-aware interpretation layer.
    The dashboard must distinguish a true performance KPI from a contextual
    activity/capacity measure. It must also recognise common ESG and healthcare
    measures without pretending that the data proves causation. */
@@ -4055,7 +4064,7 @@ function buildManagementInsights(){
   const lr=miLatestPeriodRows(rows,dateCol);
   const numeric=APP.columns.filter(c=>c.type==='number' && c.role==='measure');
 
-  /* v1.10.52: calculate operational intensity/relationship signals before
+  /* v1.10.53: calculate operational intensity/relationship signals before
      classifying isolated movements. */
   miAddOperationalRelationships(rows,lr,items);
 
@@ -4396,7 +4405,7 @@ function buildManagementInsights(){
   wireMovementSummaryLinks();
 }
 
-/* v1.10.52 — direct movement-detail routing; summary/status buttons open the requested bucket without indirection */
+/* v1.10.53 — direct movement-detail routing; summary/status buttons open the requested bucket without indirection */
 function wireMovementSummaryLinks(){
   const modal=$('miEvidenceModal'), list=$('miEvidenceList'), tabs=$('miEvidenceTabs'), close=$('miEvidenceClose');
   if(!modal||!list||!tabs)return;
@@ -4413,7 +4422,7 @@ function wireMovementSummaryLinks(){
   };
   const movementFacts=plain=>{
     /*
-      v1.10.52 — robust movement fact extraction.
+      v1.10.53 — robust movement fact extraction.
       Never render an empty FROM/TO strip when the finding contains a valid
       movement. Tolerates commas, decimals, percentages and "changed/went from".
     */
@@ -4528,7 +4537,7 @@ function wireMovementSummaryLinks(){
     const dc=timeCols()[0];
     const dateBasis=(()=>{try{const lr0=dc&&miLatestPeriodRows(APP.filtered||[],dc);return lr0?`Comparison basis: ${fmtDate(lr0.prev)} → ${fmtDate(lr0.latest)} · current filters applied.`:'Comparison basis: latest two comparable periods in the current filtered dataset.';}catch(_){return 'Comparison basis: latest two comparable periods in the current filtered dataset.';}})();
     $('miEvidenceSubtitle').textContent=`${total} material movement${total===1?'':'s'}: ${perf.length} favourable, ${att.length} attention and ${ctx.length} contextual, from the current loaded and filtered dataset. ${dateBasis}`;
-    /* v1.10.52: explicit button switching. Every tab remains clickable,
+    /* v1.10.53: explicit button switching. Every tab remains clickable,
        including zero-count tabs, and the selected panel is changed directly. */
     const specs=[['performance','✓ Favourable',perf.length],['attention','⚠ Attention',att.length],['contextual','◐ Contextual',ctx.length]];
     tabs.innerHTML=specs.map(([b,label,count])=>`<button type="button" class="mi-evidence-tab" data-bucket="${b}" aria-selected="${initial===b?'true':'false'}">${label} · ${count}</button>`).join('');
@@ -4633,7 +4642,7 @@ function wireChartBuilder(){
    ===================================================================== */
 
 /* =====================================================================
-   InstantDash v1.10.52 — Executive Management Cockpit
+   InstantDash v1.10.53 — Executive Management Cockpit
    Generic: uses only detected runtime column roles and statistics.
    ===================================================================== */
 function buildExecutiveCockpit(){
@@ -5023,7 +5032,7 @@ function wireRest(){
 </div><!-- /#pageScroll -->
 
 <style id="v133-movement-hardening">
-/* v1.10.52 — iPhone movement tabs: direct inline display + touch-safe modal */
+/* v1.10.53 — iPhone movement tabs: direct inline display + touch-safe modal */
 #miEvidenceModal{position:fixed!important;inset:0!important;display:none!important;z-index:9999!important;background:rgba(14,14,16,.48)!important;place-items:center!important;padding:8px!important;pointer-events:none!important}
 #miEvidenceModal.on{display:grid!important;pointer-events:auto!important}
 #miEvidenceModal .mi-evidence-modal{width:min(920px,96vw)!important;max-width:920px!important;max-height:94dvh!important;height:auto!important;overflow:hidden!important;background:var(--card,#fff)!important;border:1px solid var(--border,#e6dccb)!important;border-radius:20px!important;box-shadow:0 20px 60px rgba(0,0,0,.25)!important;display:flex!important;flex-direction:column!important;padding:14px!important}
@@ -5037,7 +5046,7 @@ function wireRest(){
 @media(max-width:600px){#miEvidenceModal .mi-evidence-modal{width:96vw!important;max-width:96vw!important;max-height:94dvh!important;border-radius:18px!important;padding:14px!important}}
 </style>
 <style id="v135-movement-facts-polish">
-/* v1.10.52 — ratio endpoints and predictable mobile panel position */
+/* v1.10.53 — ratio endpoints and predictable mobile panel position */
 #miEvidenceModal .mi-movement-facts .mi-change b{white-space:nowrap}
 @media(max-width:600px){
   #miEvidenceModal .mi-evidence-tabs{margin:10px 0 12px}
@@ -5052,7 +5061,7 @@ function wireRest(){
 #miEvidenceModal .mi-native-panel.active{display:block!important}
 </style>
 <script>
-/* v1.10.52 — delegated movement controls. This survives dashboard redraws and
+/* v1.10.53 — delegated movement controls. This survives dashboard redraws and
    does not depend on a dynamically replaced element retaining its handler. */
 (function(){
   if(window.__v132MovementBridge) return;
@@ -5100,7 +5109,7 @@ function wireRest(){
     el.click();
   },true);
 
-  /* v1.10.52 — tab switching is deliberately inline-style based. This avoids
+  /* v1.10.53 — tab switching is deliberately inline-style based. This avoids
      any dependency on CSS class precedence and is reliable in iOS WebViews,
      GitHub Pages and after dynamic redraws. */
   function switchMovementTab(tab){
@@ -5151,7 +5160,7 @@ function wireRest(){
 
 <style id="v143-movement-facts-contrast">
 
-/* v1.10.52 — high-contrast FROM/TO values in movement cards */
+/* v1.10.53 — high-contrast FROM/TO values in movement cards */
 #miEvidenceModal .mi-movement-facts>div{
   color:#171717!important;
 }
@@ -5171,7 +5180,7 @@ function wireRest(){
 
 
 <style id="v144-movement-compact">
-/* v1.10.52 — compact Movement Details layout; calculation/classification unchanged */
+/* v1.10.53 — compact Movement Details layout; calculation/classification unchanged */
 
 /* Header and tabs stay outside the scrolling list, so they remain visible. */
 #miEvidenceModal .mi-evidence-head{
@@ -5251,7 +5260,7 @@ function wireRest(){
 
 
 <style id="v145-movement-overlap-fix">
-/* v1.10.52 — prevent Movement Details content from sliding underneath tabs */
+/* v1.10.53 — prevent Movement Details content from sliding underneath tabs */
 
 /* Never allow the explanatory note to start underneath the filter tabs. */
 #miEvidenceModal .mi-evidence-tabs{
@@ -5301,7 +5310,7 @@ function wireRest(){
 </style>
 
 <style id="v146-movement-flow-fix">
-/* v1.10.52 — eliminate iPhone overlap by using normal block flow for the
+/* v1.10.53 — eliminate iPhone overlap by using normal block flow for the
    Movement Details content. The previous grid/flex combination could give
    the priority note a compressed row while its text remained visible. */
 #miEvidenceModal .mi-evidence-list{
@@ -5361,7 +5370,7 @@ function wireRest(){
 }
 </style>
 
-<!-- InstantDash v1.10.52 — robust iPhone/iPad sharing -->
+<!-- InstantDash v1.10.53 — robust iPhone/iPad sharing -->
 <style id="instantdash-v152-share-fix">
   #v154SharePanel{
     position:fixed!important;
@@ -5412,98 +5421,99 @@ function wireRest(){
   const panel=document.getElementById('v154SharePanel');
   if(!panel) return;
   const note=document.getElementById('v154ShareNote');
-  const setNote=(t)=>{if(note) note.textContent=t||'';};
+  const closeBtn=document.getElementById('v154ShareClose');
+  const nativeBtn=document.getElementById('v154NativeShare');
+  const saveBtn=document.getElementById('v154SaveShare');
+  const copyBtn=document.getElementById('v154CopyShare');
+  const mailBtn=document.getElementById('v154MailShare');
+  const setNote=(t)=>{if(note) note.textContent=t||''};
 
-  function openShare(){
+  function openShare(e){
+    if(e){e.preventDefault();e.stopPropagation();}
     panel.classList.add('is-open');
     panel.setAttribute('aria-hidden','false');
     setNote('');
+    document.body.style.overflow='hidden';
   }
-  function closeShare(){
+  function closeShare(e){
+    if(e){e.preventDefault();e.stopPropagation();}
     panel.classList.remove('is-open');
     panel.setAttribute('aria-hidden','true');
+    document.body.style.overflow='';
   }
-
-  // Create a clean, shareable copy. Do not include an open Share dialog in the file.
   function dashboardFile(){
     const wasOpen=panel.classList.contains('is-open');
     panel.classList.remove('is-open');
     panel.setAttribute('aria-hidden','true');
     const html='<!doctype html>\n'+document.documentElement.outerHTML;
-    if(wasOpen){ panel.classList.add('is-open'); panel.setAttribute('aria-hidden','false'); }
-    return new File([html],'InstantDash_Dashboard_v1.10.52.html',{type:'text/html'});
-  }
-
-  function saveDashboardFile(){
-    const f=dashboardFile();
-    const url=URL.createObjectURL(f);
-    const a=document.createElement('a');
-    a.href=url; a.download=f.name; a.rel='noopener';
-    document.body.appendChild(a); a.click(); a.remove();
-    setTimeout(()=>URL.revokeObjectURL(url),5000);
-    setNote('Dashboard HTML saved as '+f.name+'. Open Files and share that file.');
-  }
-
-  async function shareDashboardFile(){
-    const f=dashboardFile();
-    if(!navigator.share){
-      setNote('File sharing is unavailable here. Tap “Save dashboard HTML”, then share the saved file from Files.');
-      return;
+    const f=new File([html],'InstantDash_Dashboard_v1.10.53.html',{type:'text/html'});
+    if(wasOpen){
+      panel.classList.add('is-open');
+      panel.setAttribute('aria-hidden','false');
     }
+    return f;
+  }
+  function saveDashboardFile(e){
+    if(e){e.preventDefault();e.stopPropagation();}
     try{
-      if(navigator.canShare && !navigator.canShare({files:[f]})){
-        setNote('This browser cannot attach the HTML file directly. Tap “Save dashboard HTML”, then share the saved file from Files.');
+      const f=dashboardFile();
+      const url=URL.createObjectURL(f);
+      const a=document.createElement('a');
+      a.href=url;a.download=f.name;a.rel='noopener';a.style.display='none';
+      document.body.appendChild(a);a.click();a.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),5000);
+      setNote('Dashboard HTML saved as '+f.name+'. Open Files and share that file.');
+    }catch(err){
+      setNote('Could not create the dashboard file. Please try again.');
+    }
+  }
+  async function shareDashboardFile(e){
+    if(e){e.preventDefault();e.stopPropagation();}
+    try{
+      const f=dashboardFile();
+      if(typeof navigator.share!=='function'){
+        setNote('Native file sharing is unavailable here. Tap “Save dashboard HTML”, then share the saved file from Files.');
         return;
       }
-      await navigator.share({
-        title:'InstantDash Dashboard v1.10.52',
-        text:'InstantDash interactive dashboard — HTML attachment',
-        files:[f]
-      });
+      if(typeof navigator.canShare==='function'){
+        let supported=false;
+        try{supported=navigator.canShare({files:[f]});}catch(_){}
+        if(!supported){
+          setNote('This browser cannot attach the HTML file directly. Tap “Save dashboard HTML”, then share the saved file from Files.');
+          return;
+        }
+      }
+      await navigator.share({title:'InstantDash Dashboard v1.10.53',files:[f]});
       setNote('Dashboard file shared successfully.');
-    }catch(e){
-      if(e && e.name==='AbortError') return;
+    }catch(err){
+      if(err&&err.name==='AbortError') return;
       setNote('File sharing was not completed. Tap “Save dashboard HTML”, then share the saved file from Files.');
     }
   }
-
-  async function copyShare(){
-    const text='InstantDash Dashboard v1.10.52 — interactive management dashboard.';
+  async function copyShare(e){
+    if(e){e.preventDefault();e.stopPropagation();}
+    const text='InstantDash Dashboard v1.10.53 — interactive management dashboard.';
     try{
-      await navigator.clipboard.writeText(text);
-      setNote('Share text copied to clipboard.');
-    }catch(e){ setNote(text); }
+      if(navigator.clipboard&&navigator.clipboard.writeText){
+        await navigator.clipboard.writeText(text);
+        setNote('Share text copied to clipboard.');
+      }else setNote(text);
+    }catch(_){setNote(text);}
   }
-
-  // Single delegated click handler: robust against other app listeners and mobile touch handling.
-  document.addEventListener('click',function(e){
-    const el=e.target && e.target.closest ? e.target.closest('button,[data-action]') : null;
-    if(!el) return;
-    const id=el.id;
-    if(id==='topShareBtn' || id==='execShareBtn'){
-      e.preventDefault(); e.stopPropagation(); openShare(); return;
-    }
-    if(id==='v154ShareClose'){
-      e.preventDefault(); e.stopPropagation(); closeShare(); return;
-    }
-    if(id==='v154SaveShare'){
-      e.preventDefault(); e.stopPropagation(); saveDashboardFile(); return;
-    }
-    if(id==='v154NativeShare'){
-      e.preventDefault(); e.stopPropagation(); shareDashboardFile(); return;
-    }
-    if(id==='v154CopyShare'){
-      e.preventDefault(); e.stopPropagation(); copyShare(); return;
-    }
-    if(id==='v154MailShare'){
-      e.preventDefault(); e.stopPropagation(); shareDashboardFile(); return;
-    }
-  },true);
-
+  const bind=(el,fn)=>{if(el) el.addEventListener('click',fn,{passive:false});};
+  bind(document.getElementById('topShareBtn'),openShare);
+  bind(document.getElementById('execShareBtn'),openShare);
+  bind(closeBtn,closeShare);
+  bind(saveBtn,saveDashboardFile);
+  bind(nativeBtn,shareDashboardFile);
+  bind(copyBtn,copyShare);
+  bind(mailBtn,shareDashboardFile);
   panel.addEventListener('click',function(e){
-    if(e.target===panel) closeShare();
+    if(e.target===panel) closeShare(e);
+  },{passive:false});
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape'&&panel.classList.contains('is-open')) closeShare(e);
   });
-  document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeShare(); });
 })();
 </script>
 </body></html>
