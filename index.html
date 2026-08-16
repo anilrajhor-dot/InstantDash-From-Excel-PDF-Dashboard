@@ -917,7 +917,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 </script>
 
 <style id="instantdash-v162-movement-fix">
-/* v1.10.62 — definitive movement-category action wiring for iPhone/iPad Safari. */
+/* v1.10.63 — definitive movement-category action wiring for iPhone/iPad Safari. */
 #movementActionBar .movement-action.selected{outline:4px solid var(--accent,#f5b301)!important;outline-offset:2px!important;box-shadow:0 0 0 5px rgba(245,179,1,.20),0 14px 30px rgba(0,0,0,.28)!important;}
 #movementActionBar .movement-action:active{transform:scale(.985)!important;}
 #movementActionBar .movement-action.disabled{opacity:.55!important;}
@@ -981,7 +981,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.10.62</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.10.63</span>
   </div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
   <div class="spacer"></div>
@@ -4712,7 +4712,7 @@ function wireMovementSummaryLinks(){
   const open=(bucket='performance')=>{
     const mi=window.__miItems||{};
     const perf=Array.isArray(mi.performance)?mi.performance:[], att=Array.isArray(mi.attention)?mi.attention:[], ctx=Array.isArray(mi.contextual)?mi.contextual:[];
-    const initial=(bucket==='attention'&&att.length)?'attention':(bucket==='contextual'&&ctx.length)?'contextual':(perf.length?'performance':(att.length?'attention':'contextual'));
+    const initial=(bucket==='attention')?'attention':(bucket==='contextual')?'contextual':(perf.length?'performance':(att.length?'attention':'contextual'));
     const [level,basis]=confidence();
     const total=perf.length+att.length+ctx.length;
     $('miEvidenceTitle').textContent='Movement Details';
@@ -4736,6 +4736,8 @@ function wireMovementSummaryLinks(){
         panel.classList.toggle('active',panel.id===`miPanel_${b}`);
       });
       list.scrollTop=0;
+      /* v1.10.63 — keep dashboard category selection synchronised with the modal. */
+      if(typeof window.__selectMovementCategory==='function') window.__selectMovementCategory(b);
     };
     tabs.querySelectorAll('.mi-evidence-tab').forEach(btn=>{
       btn.onclick=e=>{e.preventDefault();e.stopPropagation();showBucket(btn.dataset.bucket);};
@@ -6112,4 +6114,30 @@ function wireRest(){
 })();
 </script>
 
+<!-- v1.10.63 — final movement selection synchronisation.
+     Zero-count categories remain selectable and the dashboard highlight always
+     follows the category currently displayed in Movement Details. -->
+<style id="instantdash-v163-movement-selection">
+#movementActionBar .movement-action.selected{outline:4px solid var(--accent,#f5b301)!important;outline-offset:3px!important;box-shadow:0 0 0 6px rgba(245,179,1,.18),0 14px 30px rgba(0,0,0,.22)!important;}
+</style>
+<script>
+(function(){
+  if(window.__v163MovementSelection) return; window.__v163MovementSelection=true;
+  function syncFromModal(){
+    var tab=document.querySelector('#miEvidenceTabs .mi-evidence-tab.active');
+    var b=tab&&tab.getAttribute('data-bucket');
+    if((b==='performance'||b==='attention'||b==='contextual') && typeof window.__selectMovementCategory==='function') window.__selectMovementCategory(b);
+  }
+  function wire(){
+    var host=document.getElementById('miEvidenceTabs'); if(!host)return;
+    host.querySelectorAll('.mi-evidence-tab').forEach(function(t){
+      if(t.dataset.v163==='1')return; t.dataset.v163='1';
+      ['click','touchend'].forEach(function(ev){t.addEventListener(ev,function(){setTimeout(syncFromModal,0);},{passive:ev==='touchend'});});
+    });
+    syncFromModal();
+  }
+  wire(); [50,150,400,800,1500].forEach(function(ms){setTimeout(wire,ms);});
+  if(window.MutationObserver)new MutationObserver(wire).observe(document.body,{childList:true,subtree:true});
+})();
+</script>
 </body></html>
