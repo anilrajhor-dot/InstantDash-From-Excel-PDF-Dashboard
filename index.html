@@ -977,7 +977,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 
 
 <style id="instantdash-v171-health-check-prominent-css">
-/* InstantDash v1.10.91 — prominent Health Check access */
+/* InstantDash v1.10.92 — prominent Health Check access */
 .id-health-launch{
   margin-top:14px;
   display:grid;
@@ -1086,6 +1086,18 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 }
 @media(min-width:901px){.chart-menu-mobile-toggle,.chart-menu-overlay{display:none!important}}
 @media print{.chart-menu{display:none!important}.chart-workspace{display:block!important}.chart-stage .chart-card{min-height:0}}
+.chart-detail-back{position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:1500;display:none;align-items:flex-end;justify-content:center;padding:12px}
+.chart-detail-back.on{display:flex}
+.chart-detail{width:min(560px,100%);max-height:min(72dvh,620px);overflow:auto;background:var(--card);border:1px solid var(--border);border-radius:18px 18px 12px 12px;box-shadow:0 20px 60px rgba(0,0,0,.25);padding:18px}
+.chart-detail-head{display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid var(--border);padding-bottom:10px;margin-bottom:12px}
+.chart-detail-head strong{font:800 16px Poppins,-apple-system,sans-serif}
+.chart-detail-sub{font-size:11px;color:var(--muted);margin-top:3px}
+.chart-detail-grid{display:grid;gap:8px}
+.chart-detail-row{display:flex;justify-content:space-between;gap:16px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--card-2)}
+.chart-detail-row b:last-child{font-variant-numeric:tabular-nums}
+.chart-tap-hint{font-size:10.5px!important;color:var(--muted)!important}
+@media(max-width:700px){.chart-detail-back{padding:0}.chart-detail{width:100%;max-height:78dvh;border-radius:18px 18px 0 0;padding:16px}.chart-detail-head strong{font-size:15px}}
+
 </style>
 </head>
 <body class="" style="overflow: hidden;">
@@ -1403,6 +1415,17 @@ Charts on screen: Row count by Central Bank of India – Q1FY27.</pre></div>
       <button class="btn" id="ncCancel">Cancel</button>
       <button class="btn primary" id="ncAdd">Add chart</button>
     </div>
+  </div>
+</div>
+
+
+<div class="chart-detail-back no-print" id="chartDetailBack" aria-hidden="true">
+  <div class="chart-detail" role="dialog" aria-modal="true" aria-labelledby="chartDetailTitle">
+    <div class="chart-detail-head">
+      <div><strong id="chartDetailTitle">Chart detail</strong><div class="chart-detail-sub" id="chartDetailSub">Tap a bar, point or segment to see the data.</div></div>
+      <button type="button" class="btn sm" id="chartDetailClose">✕</button>
+    </div>
+    <div class="chart-detail-grid" id="chartDetailGrid"></div>
   </div>
 </div>
 
@@ -2761,6 +2784,12 @@ function autoCharts(){
   };
   const add = mk(specs), later = mk(extra);
 
+  // RULE 0 — combine the strongest related numeric measures into one touch-friendly chart.
+  const multiX = T.length ? T[0].name : (dims[0] || hdims[0] || {}).name;
+  if (M.length >= 2 && multiX){
+    add({type:'multi', x:multiX, ys:M.slice(0,3).map(m=>m.name), agg:'sum'});
+  }
+
   // RULE 1 — a date column plus a measure → trend over time
   if (T.length && M.length){
     add({type:'line', x:T[0].name, y:M[0].name, agg:'sum'});
@@ -2830,6 +2859,7 @@ function autoCharts(){
 /* Writes a plain-English chart title, e.g. "Total Revenue by Region". */
 function chartTitle(spec){
   const x = spec.x, y = spec.y;
+  if (spec.type === 'multi') return `Key measures by ${x}`;
   if (spec.type === 'histogram') return `Distribution of ${x}`;
   if (spec.type === 'scatter')   return `${y} vs ${x}`;
   if (spec.type === 'donut' || spec.type === 'pie')
@@ -2857,7 +2887,7 @@ function themeColors(){
 }
 
 function chartTypeLabel(type){
-  return ({bar:'Bar',hbar:'Horizontal bar',line:'Line',area:'Area',donut:'Donut',pie:'Pie',stacked:'Stacked bar',histogram:'Histogram',scatter:'Scatter'}[type] || 'Chart');
+  return ({bar:'Bar',hbar:'Horizontal bar',line:'Line',area:'Area',donut:'Donut',pie:'Pie',stacked:'Stacked bar',histogram:'Histogram',scatter:'Scatter',multi:'Multi-metric'}[type] || 'Chart');
 }
 
 function wireChartMenuMobile(){
@@ -2921,10 +2951,27 @@ function buildChartCard(spec){
 
   // Per-chart controls: chart type, measure, grouping column.
   const tools = el('div','chart-tools no-print');
-  const typeOpts = [['bar','Bar'],['hbar','Horizontal bar'],['line','Line'],['area','Area'],['donut','Donut'],['pie','Pie'],['stacked','Stacked bar'],['histogram','Histogram'],['scatter','Scatter']];
+  const typeOpts = [['bar','Bar'],['hbar','Horizontal bar'],['line','Line'],['area','Area'],['multi','Multi-metric'],['donut','Donut'],['pie','Pie'],['stacked','Stacked bar'],['histogram','Histogram'],['scatter','Scatter']];
   tools.appendChild(mkSelect(typeOpts, spec.type, v => { spec.type = v; if (v === 'stacked' && !spec.series){ const d = rankDimensions()[1] || rankDimensions()[0]; spec.series = d && d.name !== spec.x ? d.name : null; } refreshChart(spec, true); }, 'Chart type'));
 
-  if (spec.type !== 'histogram' && spec.type !== 'scatter'){
+  if (spec.type === 'multi'){
+    const groupOpts = APP.columns.filter(c => ['dimension','highdim','time'].includes(c.role)).map(c => [c.name, c.name]);
+    if (groupOpts.length) tools.appendChild(mkSelect(groupOpts, spec.x, v => { spec.x = v; spec.granularity = null; refreshChart(spec, true); }, 'Group by'));
+    const ms = measures();
+    const ys = Array.isArray(spec.ys) && spec.ys.length ? spec.ys : ms.slice(0,3).map(c=>c.name);
+    for(let mi=0; mi<3; mi++){
+      const opts=[['','(none)'], ...ms.map(c=>[c.name,c.name])];
+      const current=ys[mi] || '';
+      tools.appendChild(mkSelect(opts, current, v => {
+        const next=[...ys];
+        next[mi]=v;
+        spec.ys=next.filter(Boolean).filter((v,i,a)=>a.indexOf(v)===i).slice(0,3);
+        refreshChart(spec, true);
+      }, `Measure ${mi+1}`));
+    }
+    const xc = colByName(spec.x);
+    if (xc && xc.type === 'date') tools.appendChild(mkSelect([['day','By day'],['month','By month'],['quarter','By quarter'],['year','By year']], spec.granularity || pickGranularity(xc), v => { spec.granularity = v; refreshChart(spec, true); }, 'Time grouping'));
+  } else if (spec.type !== 'histogram' && spec.type !== 'scatter'){
     const groupOpts = APP.columns.filter(c => ['dimension','highdim','time'].includes(c.role)).map(c => [c.name, c.name]);
     if (groupOpts.length) tools.appendChild(mkSelect(groupOpts, spec.x, v => { spec.x = v; spec.granularity = null; refreshChart(spec, true); }, 'Group by'));
     const measOpts = [['__count__','Count of rows']].concat(measures().map(c => [c.name, c.name]));
@@ -2975,6 +3022,43 @@ function refreshChart(spec, rebuildCard){
   drawChart(spec);
 }
 
+function aggregateMulti(rows, spec){
+  const ys = (Array.isArray(spec.ys) && spec.ys.length ? spec.ys : rankMeasures().slice(0,3).map(c=>c.name)).filter(Boolean).slice(0,3);
+  if (!ys.length) return {labels:[], series:[]};
+  const results = ys.map(y => aggregate(rows, {x:spec.x, y, agg:spec.agg || 'sum', granularity:spec.granularity || null, topN:0}));
+  const labels = results[0]?.labels || [];
+  const maps = results.map(r => new Map(r.labels.map((l,i)=>[l,r.series[0]?.data[i] ?? null])));
+  return {labels, series:ys.map((y,j)=>({label:y,data:labels.map(l=>maps[j].get(l) ?? null)}))};
+}
+
+function showChartPointDetails(spec, chart, element){
+  const back=$('chartDetailBack'), grid=$('chartDetailGrid'), title=$('chartDetailTitle'), sub=$('chartDetailSub');
+  if(!back||!grid||!element) return;
+  const i=element.index, ds=element.datasetIndex ?? 0;
+  const label=chart.data.labels?.[i] ?? 'Selected point';
+  title.textContent=label;
+  grid.innerHTML='';
+  const datasets=chart.data.datasets || [];
+  const selected = spec.type==='multi' ? datasets : [datasets[ds] || datasets[0]];
+  selected.forEach(d=>{
+    const raw=d?.data?.[i];
+    const row=document.createElement('div'); row.className='chart-detail-row';
+    const name=document.createElement('span'); name.textContent=d?.label || chartTitle(spec);
+    const val=document.createElement('b'); val.textContent=typeof raw==='number' ? fmtFull(raw) : (raw ?? '—');
+    row.appendChild(name); row.appendChild(val); grid.appendChild(row);
+  });
+  sub.textContent = spec.type==='multi' ? 'Related measures for the selected period/category.' : 'Exact value for the selected chart item.';
+  back.classList.add('on'); back.setAttribute('aria-hidden','false');
+}
+
+function wireChartDetail(){
+  const back=$('chartDetailBack'), close=$('chartDetailClose');
+  if(!back) return;
+  const hide=()=>{back.classList.remove('on');back.setAttribute('aria-hidden','true');};
+  close?.addEventListener('click',hide); back.addEventListener('click',e=>{if(e.target===back)hide();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')hide();});
+}
+
 function drawChart(spec){
   const cv = $('cv-' + spec.id);
   if (!cv) return;
@@ -3014,7 +3098,13 @@ function drawChart(spec){
   };
 
   try {
-    if (spec.type === 'histogram'){
+    if (spec.type === 'multi'){
+      const res=aggregateMulti(rows,spec);
+      kind='bar';
+      data={labels:res.labels,datasets:res.series.map((sr,i)=>({label:sr.label,data:sr.data,backgroundColor:P[i%P.length],borderRadius:5,borderSkipped:false,barPercentage:.78,categoryPercentage:.72}))};
+      options=deep(common,{plugins:{legend:{display:true,position:'bottom',labels:{color:th.text,font:{size:11},boxWidth:12,padding:10}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmtFull(c.raw)}`}}},scales:{x:{ticks:{color:th.muted,font:{size:10},autoSkip:true,maxTicksLimit:10},grid:{color:th.grid}},y:{ticks:{color:th.muted,font:{size:10},callback:v=>fmtNum(v)},grid:{color:th.grid},beginAtZero:true}}});
+      if(note) note.textContent=`${res.series.length} related measures · ${res.labels.length} groups. Tap any bar for exact data.`;
+    } else if (spec.type === 'histogram'){
       const h = histogram(rows, spec.x, CONFIG.HISTOGRAM_BINS);
       kind = 'bar';
       data = {labels:h.labels, datasets:[{label:'Rows', data:h.series[0].data, backgroundColor:P[0], borderRadius:4, borderSkipped:false}]};
@@ -3083,6 +3173,9 @@ function drawChart(spec){
       }
     }
 
+    options.onClick = (evt, elements, chart) => {
+      if (elements && elements.length) showChartPointDetails(spec, chart, elements[0]);
+    };
     spec.instance = new Chart(cv.getContext('2d'), {type:kind, data, options});
   } catch (err){
     console.error('Chart failed', spec, err);
@@ -5195,6 +5288,7 @@ function wireRest(){
 }
 
 wireChartMenuMobile();
+wireChartDetail();
 
 (function start(){
   if (typeof XLSX === 'undefined' || typeof Chart === 'undefined'){
