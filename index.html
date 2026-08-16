@@ -970,6 +970,23 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 })();
 </script>
 
+
+<style id="instantdash-v165-health-check-css">
+/* v1.10.65 — prominent read-only Health Check */
+.id-health-btn{margin-left:8px;border:1px solid var(--border,#3a3a42);background:linear-gradient(135deg,#fff7dc,#ffd24a);color:#151515;border-radius:12px;padding:9px 13px;font:900 12px/1.1 Poppins,sans-serif;cursor:pointer;box-shadow:0 5px 16px rgba(245,179,1,.18);white-space:nowrap;transition:.16s ease}
+.id-health-btn:hover{transform:translateY(-1px);filter:brightness(1.03);box-shadow:0 8px 22px rgba(245,179,1,.25)}
+.id-health-btn:active{transform:scale(.97)}
+.id-health-overlay{position:fixed;inset:0;background:rgba(0,0,0,.52);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);display:none;align-items:center;justify-content:center;padding:18px;z-index:99999}
+.id-health-overlay.open{display:flex}
+.id-health-card{width:min(720px,100%);max-height:min(88vh,820px);overflow:auto;background:var(--card,#fff);color:var(--text,#111);border:1px solid var(--border,#ddd);border-top:5px solid var(--accent,#f5b301);border-radius:22px;box-shadow:0 25px 70px rgba(0,0,0,.35);padding:22px}
+.id-health-head{display:flex;align-items:flex-start;gap:14px}.id-health-head h3{margin:0;font:900 25px/1.1 Poppins,sans-serif}.id-health-head p{margin:6px 0 0;color:var(--muted);font-size:12.5px;line-height:1.5}.id-health-close{margin-left:auto;border:1px solid var(--border);background:var(--card-2);color:var(--text);border-radius:12px;width:42px;height:42px;font-size:24px;cursor:pointer}
+.id-health-score{margin:18px 0 14px;border-radius:18px;padding:16px 18px;display:flex;align-items:center;gap:15px;border:1px solid var(--border);background:var(--card-2)}
+.id-health-score .big{font:900 34px/1 Poppins,sans-serif}.id-health-score .label{font-weight:900;font-size:16px}.id-health-score .sub{margin-top:3px;color:var(--muted);font-size:11.5px}
+.id-health-score.good{border-color:#55c98a;background:rgba(43,190,110,.10)}.id-health-score.warn{border-color:#f5b301;background:rgba(245,179,1,.10)}.id-health-score.bad{border-color:#ef5535;background:rgba(239,85,53,.10)}
+.id-health-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.id-health-item{border:1px solid var(--border);border-radius:14px;padding:13px;background:var(--card-2)}.id-health-item .row{display:flex;align-items:center;gap:8px;font-weight:850;font-size:12.5px}.id-health-item .detail{margin-top:5px;color:var(--muted);font-size:11.5px;line-height:1.45}.id-health-item.ok{border-left:4px solid #2fbd72}.id-health-item.warn{border-left:4px solid #f5b301}.id-health-item.bad{border-left:4px solid #ef5535}
+.id-health-foot{margin-top:14px;padding:12px 14px;border-radius:12px;background:var(--card-2);color:var(--muted);font-size:11px;line-height:1.5}.id-health-actions{display:flex;gap:9px;margin-top:14px}.id-health-actions button{flex:1;border:1px solid var(--border);background:var(--card-2);color:var(--text);border-radius:11px;padding:10px;font-weight:800;cursor:pointer}.id-health-actions .primary{background:var(--accent);color:#111;border-color:var(--accent)}
+@media(max-width:520px){#share{margin-left:0}.id-health-btn{margin:7px 0 0;padding:9px 11px;font-size:11px}.topbar{flex-wrap:wrap}.id-health-overlay{padding:10px}.id-health-card{padding:16px;border-radius:18px}.id-health-grid{grid-template-columns:1fr}.id-health-head h3{font-size:22px}.id-health-score .big{font-size:29px}}
+</style>
 </head>
 <body class="dark">
 <div id="pageScroll">
@@ -981,9 +998,10 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.10.64</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.10.65</span>
   </div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
+      <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check">🩺 Health Check</button>
   <div class="spacer"></div>
   <span class="privacy">🔒 Your data never leaves your computer.</span>
   <button class="icon-btn no-print" id="themeToggle" title="Switch to day mode" aria-label="Switch to day mode" data-v160-bound="1">☀️</button>
@@ -6148,4 +6166,72 @@ function wireRest(){
   if(window.MutationObserver)new MutationObserver(wire).observe(document.body,{childList:true,subtree:true});
 })();
 </script>
+
+<div class="id-health-overlay" id="healthCheckModal" aria-hidden="true">
+  <section class="id-health-card" role="dialog" aria-modal="true" aria-labelledby="healthCheckTitle">
+    <div class="id-health-head">
+      <div><h3 id="healthCheckTitle">🩺 InstantDash Health Check</h3><p>Read-only diagnostic of the currently loaded and filtered dataset. It does not change your data or dashboard calculations.</p></div>
+      <button class="id-health-close" id="healthCheckClose" type="button" aria-label="Close Health Check">×</button>
+    </div>
+    <div class="id-health-score good" id="healthCheckScore"><div class="big" id="healthCheckScoreValue">—</div><div><div class="label" id="healthCheckStatus">Checking…</div><div class="sub" id="healthCheckStatusSub">Running diagnostic checks</div></div></div>
+    <div class="id-health-grid" id="healthCheckGrid"></div>
+    <div class="id-health-foot" id="healthCheckFoot">Health Check is an analytical diagnostic, not an audit certificate. A warning does not automatically mean that the underlying business data is wrong.</div>
+    <div class="id-health-actions"><button type="button" id="healthCheckRefresh">↻ Recheck</button><button type="button" class="primary" id="healthCheckOpenQuality">Open Data Quality</button></div>
+  </section>
+</div>
+<script id="instantdash-v165-health-check-js">
+(function(){
+  'use strict';
+  function $(id){return document.getElementById(id)}
+  function escH(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]})}
+  function runHealthCheck(){
+    var rows=Array.isArray(window.APP&&APP.filtered)?APP.filtered:[];
+    var all=Array.isArray(window.APP&&APP.rows)?APP.rows:[];
+    var cols=Array.isArray(window.APP&&APP.columns)?APP.columns:[];
+    var checks=[];
+    if(!rows.length){
+      checks.push({s:'bad',i:'⛔',t:'Data loaded',d:'No rows are currently available for analysis.'});
+    }else checks.push({s:'ok',i:'✓',t:'Data loaded',d:rows.length.toLocaleString()+' filtered rows available; '+all.length.toLocaleString()+' total rows loaded.'});
+    if(!cols.length) checks.push({s:'bad',i:'⛔',t:'Columns detected',d:'No columns are available.'});
+    else checks.push({s:'ok',i:'✓',t:'Columns detected',d:cols.length+' columns loaded.'});
+    var missing=cols.reduce(function(a,c){return a+(c.missing||0)},0), cells=rows.length*cols.length, mp=cells?missing/cells*100:0;
+    checks.push({s:mp>=20?'bad':(mp>=10?'warn':'ok'),i:mp>=10?'⚠':'✓',t:'Data completeness',d:(100-mp).toFixed(mp===0?0:1)+'% complete · '+missing.toLocaleString()+' missing cells.'});
+    var warnCols=cols.filter(function(c){return (c.missingPct||0)>=10});
+    checks.push({s:warnCols.length?'warn':'ok',i:warnCols.length?'⚠':'✓',t:'Material missing fields',d:warnCols.length?warnCols.length+' field'+(warnCols.length>1?'s':'')+' have 10% or more missing values: '+warnCols.slice(0,3).map(function(c){return c.name}).join(', ')+(warnCols.length>3?'…':''):'No field reaches the 10% missing-data warning threshold.'});
+    var dupes=Number(window.APP&&APP.dupeRows||0);
+    checks.push({s:dupes?'warn':'ok',i:dupes?'⚠':'✓',t:'Duplicate rows',d:dupes?dupes.toLocaleString()+' duplicate rows detected.':'No fully duplicate rows detected.'});
+    var mixed=cols.filter(function(c){return c.mixed});
+    checks.push({s:mixed.length?'warn':'ok',i:mixed.length?'⚠':'✓',t:'Mixed data types',d:mixed.length?mixed.length+' field'+(mixed.length>1?'s':'')+' mix numeric/text values: '+mixed.slice(0,3).map(function(c){return c.name}).join(', ')+(mixed.length>3?'…':''):'No mixed-type fields detected.'});
+    var ms=cols.filter(function(c){return c.role==='measure'}), tc=cols.filter(function(c){return c.role==='time'});
+    checks.push({s:ms.length?'ok':'bad',i:ms.length?'✓':'⛔',t:'Measures available',d:ms.length?ms.length+' numeric measures available for analysis.':'No usable numeric measures were detected.'});
+    checks.push({s:tc.length?'ok':'warn',i:tc.length?'✓':'⚠',t:'Time/comparison basis',d:tc.length?'Time field detected: '+tc[0].name+'.':'No date/time field detected; period-to-period movement analysis may be limited.'});
+    var constants=cols.filter(function(c){return c.unique===1&&c.missing<rows.length});
+    checks.push({s:constants.length?'warn':'ok',i:constants.length?'⚠':'✓',t:'Constant fields',d:constants.length?constants.length+' field'+(constants.length>1?'s':'')+' contain the same value in every row: '+constants.slice(0,3).map(function(c){return c.name}).join(', ')+(constants.length>3?'…':''):'No constant fields detected.'});
+    var movement=(window.__miItems||{}), mc=(movement.performance||[]).length+(movement.attention||[]).length+(movement.contextual||[]).length;
+    checks.push({s:mc?'ok':'warn',i:mc?'✓':'⚠',t:'Movement analysis',d:mc?mc+' material movement'+(mc===1?'':'s')+' currently identified.':'No material movements currently identified or comparison evidence is insufficient.'});
+    var bad=checks.filter(function(x){return x.s==='bad'}).length, warn=checks.filter(function(x){return x.s==='warn'}).length;
+    var score=Math.max(0,Math.min(100,100-bad*25-warn*8));
+    $('healthCheckScoreValue').textContent=score;
+    var status=bad?'Needs attention':(warn?'Review recommended':'Healthy');
+    $('healthCheckStatus').textContent=status;
+    $('healthCheckStatusSub').textContent=checks.length+' diagnostic checks · '+warn+' warning'+(warn===1?'':'s')+(bad?' · '+bad+' critical':'');
+    var sc=$('healthCheckScore'); sc.className='id-health-score '+(bad?'bad':(warn?'warn':'good'));
+    $('healthCheckGrid').innerHTML=checks.map(function(x){return '<div class="id-health-item '+x.s+'"><div class="row"><span>'+x.i+'</span><span>'+escH(x.t)+'</span></div><div class="detail">'+escH(x.d)+'</div></div>'}).join('');
+  }
+  function open(){var m=$('healthCheckModal');if(!m)return;m.classList.add('open');m.setAttribute('aria-hidden','false');runHealthCheck()}
+  function close(){var m=$('healthCheckModal');if(!m)return;m.classList.remove('open');m.setAttribute('aria-hidden','true')}
+  function wire(){
+    var b=$('healthCheckBtn'),c=$('healthCheckClose'),r=$('healthCheckRefresh'),q=$('healthCheckOpenQuality'),m=$('healthCheckModal');
+    if(b&&!b.dataset.v165){b.dataset.v165='1';b.addEventListener('click',open)}
+    if(c&&!c.dataset.v165){c.dataset.v165='1';c.addEventListener('click',close)}
+    if(r&&!r.dataset.v165){r.dataset.v165='1';r.addEventListener('click',runHealthCheck)}
+    if(q&&!q.dataset.v165){q.dataset.v165='1';q.addEventListener('click',function(){close();var p=$('qualityPanel');if(p){p.open=true;p.scrollIntoView({behavior:'smooth',block:'start'})}})}
+    if(m&&!m.dataset.v165){m.dataset.v165='1';m.addEventListener('click',function(e){if(e.target===m)close()})}
+    document.addEventListener('keydown',function(e){if(e.key==='Escape')close()},{once:false});
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',wire);else wire();
+  window.__instantDashHealthCheck=runHealthCheck;
+})();
+</script>
+
 </body></html>
