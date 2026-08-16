@@ -900,7 +900,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
       b.setAttribute('aria-pressed','false');
       var choose=function(){
         var x=bucket;
-        if(x==='auto'){var c=window.__miItems||{};x=(c.attention&&c.attention.length)?'attention':(c.performance&&c.performance.length)?'performance':'contextual';}
+        if(x==='auto'){x='all';}
         select(x);
       };
       b.addEventListener('touchend',choose,{passive:true});
@@ -917,7 +917,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 </script>
 
 <style id="instantdash-v162-movement-fix">
-/* v1.10.63 — definitive movement-category action wiring for iPhone/iPad Safari. */
+/* v1.10.64 — definitive movement-category action wiring for iPhone/iPad Safari. */
 #movementActionBar .movement-action.selected{outline:4px solid var(--accent,#f5b301)!important;outline-offset:2px!important;box-shadow:0 0 0 5px rgba(245,179,1,.20),0 14px 30px rgba(0,0,0,.28)!important;}
 #movementActionBar .movement-action:active{transform:scale(.985)!important;}
 #movementActionBar .movement-action.disabled{opacity:.55!important;}
@@ -981,7 +981,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.10.63</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.10.64</span>
   </div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
   <div class="spacer"></div>
@@ -4712,32 +4712,36 @@ function wireMovementSummaryLinks(){
   const open=(bucket='performance')=>{
     const mi=window.__miItems||{};
     const perf=Array.isArray(mi.performance)?mi.performance:[], att=Array.isArray(mi.attention)?mi.attention:[], ctx=Array.isArray(mi.contextual)?mi.contextual:[];
-    const initial=(bucket==='attention')?'attention':(bucket==='contextual')?'contextual':(perf.length?'performance':(att.length?'attention':'contextual'));
+    const initial=(bucket==='all')?'all':(bucket==='attention')?'attention':(bucket==='contextual')?'contextual':(perf.length?'performance':(att.length?'attention':'contextual'));
     const [level,basis]=confidence();
     const total=perf.length+att.length+ctx.length;
-    $('miEvidenceTitle').textContent='Movement Details';
+    const initialLabel=initial==='performance'?'Favourable Movements':initial==='attention'?'Attention Movements':initial==='contextual'?'Contextual Movements':'All Movement Details';
+    $('miEvidenceTitle').textContent=initialLabel;
     const dc=timeCols()[0];
     const dateBasis=(()=>{try{const lr0=dc&&miLatestPeriodRows(APP.filtered||[],dc);return lr0?`Comparison basis: ${fmtDate(lr0.prev)} → ${fmtDate(lr0.latest)} · current filters applied.`:'Comparison basis: latest two comparable periods in the current filtered dataset.';}catch(_){return 'Comparison basis: latest two comparable periods in the current filtered dataset.';}})();
     $('miEvidenceSubtitle').textContent=`${total} material movement${total===1?'':'s'}: ${perf.length} favourable, ${att.length} attention and ${ctx.length} contextual, from the current loaded and filtered dataset. ${dateBasis}`;
     /* v1.10.57: explicit button switching. Every tab remains clickable,
        including zero-count tabs, and the selected panel is changed directly. */
-    const specs=[['performance','✓ Favourable',perf.length],['attention','⚠ Attention',att.length],['contextual','◐ Contextual',ctx.length]];
+    const specs=[['all','● All',total],['performance','✓ Favourable',perf.length],['attention','⚠ Attention',att.length],['contextual','◐ Contextual',ctx.length]];
     tabs.innerHTML=specs.map(([b,label,count])=>`<button type="button" class="mi-evidence-tab" data-bucket="${b}" aria-selected="${initial===b?'true':'false'}">${label} · ${count}</button>`).join('');
     const summary=`<div class="mi-evidence-summary"><b>Material movements:</b> ${total}<span>• Favourable: ${perf.length} · Attention: ${att.length} · Contextual: ${ctx.length}</span></div><div class="mi-priority-note"><b>Priority ranking:</b> Top movements are ranked by the magnitude of the reported change. This is a review aid, not a standalone risk or performance score.<br><b>Calculation:</b> additive measures use totals; rates, percentages, ratios and per-unit/average measures use averages across comparable records.</div>`;
     list.innerHTML=summary+renderPanel('performance',perf,level,basis,APP.filtered||[])+renderPanel('attention',att,level,basis,APP.filtered||[])+renderPanel('contextual',ctx,level,basis,APP.filtered||[]);
     const showBucket=bucketName=>{
-      const b=(bucketName==='attention'||bucketName==='contextual')?bucketName:'performance';
+      const b=(bucketName==='all'||bucketName==='attention'||bucketName==='contextual')?bucketName:'performance';
       tabs.querySelectorAll('.mi-evidence-tab').forEach(btn=>{
         const active=btn.dataset.bucket===b;
         btn.classList.toggle('active',active);
         btn.setAttribute('aria-selected',active?'true':'false');
       });
       list.querySelectorAll('.mi-native-panel').forEach(panel=>{
-        panel.classList.toggle('active',panel.id===`miPanel_${b}`);
+        panel.classList.toggle('active',b==='all' || panel.id===`miPanel_${b}`);
       });
+      const titleMap={all:'All Movement Details',performance:'Favourable Movements',attention:'Attention Movements',contextual:'Contextual Movements'};
+      $('miEvidenceTitle').textContent=titleMap[b]||'Movement Details';
       list.scrollTop=0;
-      /* v1.10.63 — keep dashboard category selection synchronised with the modal. */
-      if(typeof window.__selectMovementCategory==='function') window.__selectMovementCategory(b);
+      /* v1.10.64 — keep dashboard category selection synchronised with the modal. */
+      if(b==='all'){ if(typeof window.__clearMovementCategory==='function') window.__clearMovementCategory(); }
+      else if(typeof window.__selectMovementCategory==='function') window.__selectMovementCategory(b);
     };
     tabs.querySelectorAll('.mi-evidence-tab').forEach(btn=>{
       btn.onclick=e=>{e.preventDefault();e.stopPropagation();showBucket(btn.dataset.bucket);};
@@ -5297,6 +5301,7 @@ function wireRest(){
 }
 </style>
 <style id="v134-movement-initial-state">
+#miEvidenceModal .mi-evidence-tab.active[data-bucket="all"]{background:var(--accent)!important;border-color:var(--accent)!important;color:#111!important}
 #miEvidenceModal .mi-evidence-tab.active[data-bucket="performance"]{background:var(--ok)!important;border-color:var(--ok)!important;color:#111!important}
 #miEvidenceModal .mi-evidence-tab.active[data-bucket="attention"]{background:var(--warn)!important;border-color:var(--warn)!important;color:#111!important}
 #miEvidenceModal .mi-evidence-tab.active[data-bucket="contextual"]{background:var(--card-2)!important;border-color:var(--border)!important;color:var(--text)!important}
@@ -5361,17 +5366,20 @@ function wireRest(){
     const list=document.getElementById('miEvidenceList');
     if(!host || !list) return;
     const bucket=tab.getAttribute('data-bucket');
-    if(bucket!=='performance' && bucket!=='attention' && bucket!=='contextual') return;
+    if(bucket!=='all' && bucket!=='performance' && bucket!=='attention' && bucket!=='contextual') return;
+    const titleMap={all:'All Movement Details',performance:'Favourable Movements',attention:'Attention Movements',contextual:'Contextual Movements'};
+    const titleEl=document.getElementById('miEvidenceTitle');
+    if(titleEl) titleEl.textContent=titleMap[bucket]||'Movement Details';
     host.querySelectorAll('.mi-evidence-tab').forEach(function(b){
       const active=b.getAttribute('data-bucket')===bucket;
       b.classList.toggle('active',active);
       b.setAttribute('aria-selected',active?'true':'false');
-      b.style.setProperty('background', active ? (bucket==='performance' ? 'var(--ok)' : bucket==='attention' ? 'var(--warn)' : 'var(--card-2)') : '', 'important');
-      b.style.setProperty('border-color', active ? (bucket==='performance' ? 'var(--ok)' : bucket==='attention' ? 'var(--warn)' : 'var(--border)') : '', 'important');
-      b.style.setProperty('color', active && bucket!=='contextual' ? '#111' : '', 'important');
+      b.style.setProperty('background', active ? (bucket==='performance' ? 'var(--ok)' : bucket==='attention' ? 'var(--warn)' : bucket==='all' ? 'var(--accent)' : 'var(--card-2)') : '', 'important');
+      b.style.setProperty('border-color', active ? (bucket==='performance' ? 'var(--ok)' : bucket==='attention' ? 'var(--warn)' : bucket==='all' ? 'var(--accent)' : 'var(--border)') : '', 'important');
+      b.style.setProperty('color', active ? '#111' : '', 'important');
     });
     list.querySelectorAll('.mi-native-panel').forEach(function(panel){
-      const active=panel.id==='miPanel_'+bucket;
+      const active=bucket==='all' || panel.id==='miPanel_'+bucket;
       panel.classList.toggle('active',active);
       panel.style.setProperty('display', active?'block':'none', 'important');
     });
@@ -5808,7 +5816,7 @@ function wireRest(){
     };
   }
   function openBucket(bucket){
-    bucket=(bucket==='performance'||bucket==='attention'||bucket==='contextual')?bucket:'contextual';
+    bucket=(bucket==='all'||bucket==='performance'||bucket==='attention'||bucket==='contextual')?bucket:'all';
     if(!window.__miItems && typeof window.buildManagementInsights==='function'){
       try{ window.buildManagementInsights(); }catch(_){ }
     }
@@ -5860,7 +5868,7 @@ function wireRest(){
   }
   function autoBucket(){
     const c=counts();
-    return c.attention?'attention':(c.performance?'performance':'contextual');
+    return 'all';
   }
   function handle(e){
     const btn=e.target&&e.target.closest?e.target.closest('[data-movement-action]'):null;
@@ -6114,7 +6122,7 @@ function wireRest(){
 })();
 </script>
 
-<!-- v1.10.63 — final movement selection synchronisation.
+<!-- v1.10.64 — final movement selection synchronisation + all-movements view.
      Zero-count categories remain selectable and the dashboard highlight always
      follows the category currently displayed in Movement Details. -->
 <style id="instantdash-v163-movement-selection">
