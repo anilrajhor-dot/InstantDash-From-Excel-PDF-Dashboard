@@ -915,6 +915,61 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
   window.__clearMovementCategory=clear;
 })();
 </script>
+
+<style id="instantdash-v162-movement-fix">
+/* v1.10.62 — definitive movement-category action wiring for iPhone/iPad Safari. */
+#movementActionBar .movement-action.selected{outline:4px solid var(--accent,#f5b301)!important;outline-offset:2px!important;box-shadow:0 0 0 5px rgba(245,179,1,.20),0 14px 30px rgba(0,0,0,.28)!important;}
+#movementActionBar .movement-action:active{transform:scale(.985)!important;}
+#movementActionBar .movement-action.disabled{opacity:.55!important;}
+</style>
+<script>
+(function(){
+  if(window.__v162MovementFix) return; window.__v162MovementFix=true;
+  function select(bucket){
+    var bar=document.getElementById('movementActionBar'); if(!bar)return;
+    bar.querySelectorAll('.movement-action').forEach(function(b){
+      var on=b.getAttribute('data-movement-action')===bucket;
+      b.classList.toggle('selected',on); b.setAttribute('aria-pressed',on?'true':'false');
+    });
+  }
+  function clear(){
+    var bar=document.getElementById('movementActionBar'); if(!bar)return;
+    bar.querySelectorAll('.movement-action').forEach(function(b){b.classList.remove('selected');b.setAttribute('aria-pressed','false');});
+  }
+  function open(bucket){
+    var fn=window.__openMovementDetails;
+    if(typeof fn==='function'){try{fn(bucket);return true;}catch(e){}}
+    var tries=0, t=setInterval(function(){
+      tries++; var f=window.__openMovementDetails;
+      if(typeof f==='function'){clearInterval(t);try{f(bucket);}catch(e){}}
+      else if(tries>40)clearInterval(t);
+    },50);
+    return false;
+  }
+  function wire(){
+    var bar=document.getElementById('movementActionBar'); if(!bar)return;
+    bar.querySelectorAll('.movement-action').forEach(function(btn){
+      if(btn.dataset.v162==='1')return; btn.dataset.v162='1';
+      var bucket=btn.getAttribute('data-movement-action');
+      btn.setAttribute('aria-pressed','false');
+      btn.addEventListener('click',function(e){
+        e.preventDefault(); e.stopPropagation();
+        if(bucket==='performance'||bucket==='attention'||bucket==='contextual'){select(bucket);open(bucket);}
+      },true);
+    });
+    var view=bar.querySelector('.movement-view');
+    if(view && view.dataset.v162!=='1'){
+      view.dataset.v162='1';
+      view.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();clear();open('auto');},true);
+    }
+  }
+  wire();
+  [50,150,400,800,1500].forEach(function(ms){setTimeout(wire,ms);});
+  if(window.MutationObserver)new MutationObserver(wire).observe(document.body,{childList:true,subtree:true});
+  window.__selectMovementCategory=select; window.__clearMovementCategory=clear;
+})();
+</script>
+
 </head>
 <body class="dark">
 <div id="pageScroll">
@@ -926,7 +981,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.10.61</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.10.62</span>
   </div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
   <div class="spacer"></div>
