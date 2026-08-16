@@ -972,7 +972,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 
 
 <style id="instantdash-v166-health-check-prominent-css">
-/* InstantDash v1.10.69 — prominent Health Check access */
+/* InstantDash v1.10.70 — prominent Health Check access */
 .id-health-launch{
   margin-top:14px;
   display:grid;
@@ -1041,7 +1041,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.10.69</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.10.70</span>
   </div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v165="1" onclick="window.__instantDashHealthOpen && window.__instantDashHealthOpen();return false;">🩺 Health Check</button>
@@ -1513,6 +1513,10 @@ const APP = {
   dark: false,
   excludedSummaryRows: 0
 };
+
+// v1.10.70: make the live application state available to diagnostic modules.
+// APP remains the single source of truth used by the dashboard.
+window.__INSTANTDASH_APP__ = APP;
 
 /* ---------------------------------------------------------------------
    Small helpers
@@ -6178,7 +6182,7 @@ function wireRest(){
 <div class="id-health-overlay" id="healthCheckModal" aria-hidden="true" data-v165="1">
   <section class="id-health-card" role="dialog" aria-modal="true" aria-labelledby="healthCheckTitle">
     <div class="id-health-head">
-      <div><h3 id="healthCheckTitle">🩺 InstantDash Health Check</h3><p>Read-only diagnostic of the currently loaded and filtered dataset. It does not change your data or dashboard calculations.</p></div>
+      <div><h3 id="healthCheckTitle">🩺 InstantDash Health Check</h3><p>Run this after uploading your file. It checks the currently loaded and filtered dataset for data quality and analysis readiness. It does not change your data or dashboard calculations.</p></div>
       <button class="id-health-close" id="healthCheckClose" type="button" aria-label="Close Health Check" data-v165="1">×</button>
     </div>
     <div class="id-health-score bad" id="healthCheckScore"><div class="big" id="healthCheckScoreValue">17</div><div><div class="label" id="healthCheckStatus">Needs attention</div><div class="sub" id="healthCheckStatusSub">10 diagnostic checks · 1 warning · 3 critical</div></div></div>
@@ -6239,7 +6243,7 @@ function wireRest(){
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',wire);else wire();
   window.__instantDashHealthCheck=runHealthCheck;
-  // v1.10.69: Health Check wiring hardening.
+  // v1.10.70: Health Check wiring hardening.
   // Opens the diagnostic directly; does not depend on another button's listener.
   (function wireProminentLauncher(){
     function bind(){
@@ -6265,7 +6269,7 @@ function wireRest(){
 
 
 <style id="instantdash-v167-movement-modal-mobile">
-/* InstantDash v1.10.69 — mobile Movement Details modal polish
+/* InstantDash v1.10.70 — mobile Movement Details modal polish
    Goal: keep more movement evidence visible on iPhone without removing
    the internal scrolling needed for long evidence. */
 #miEvidenceModal .mi-evidence-modal{
@@ -6389,7 +6393,7 @@ function wireRest(){
 
 
 <style id="instantdash-v168-health-hardening">
-/* v1.10.69 — Health Check control hardening */
+/* v1.10.70 — Health Check control hardening */
 #healthCheckLaunchBtn,#healthCheckBtn,#healthCheckRefresh,#healthCheckClose,#healthCheckOpenQuality{
   touch-action:manipulation;
   -webkit-tap-highlight-color:transparent;
@@ -6398,7 +6402,7 @@ function wireRest(){
 
 
 <style id="instantdash-v169-health-check-final">
-/* v1.10.69 — independent Health Check controller */
+/* v1.10.70 — independent Health Check controller */
 #healthCheckModal{
   z-index:2147483647!important;
   pointer-events:auto!important;
@@ -6432,20 +6436,38 @@ function wireRest(){
   }
 
   function dataArrays(){
-    var A=window.APP||{};
+    var A=window.__INSTANTDASH_APP__||null;
     return {
-      rows:Array.isArray(A.filtered)?A.filtered:[],
-      all:Array.isArray(A.rows)?A.rows:[],
-      cols:Array.isArray(A.columns)?A.columns:[]
+      rows:A && Array.isArray(A.filtered)?A.filtered:[],
+      all:A && Array.isArray(A.rows)?A.rows:[],
+      cols:A && Array.isArray(A.columns)?A.columns:[]
     };
+  }
+
+  function duplicateRowCount(rows, cols){
+    if(!rows.length || !cols.length) return 0;
+    var seen=Object.create(null), dupes=0;
+    rows.forEach(function(r){
+      var key=cols.map(function(c){
+        var v=r[c.name];
+        if(v instanceof Date) return 'date:'+v.getTime();
+        if(v===null || v===undefined) return 'null:';
+        return typeof v+':'+String(v);
+      }).join('\u001f');
+      if(seen[key]) dupes++;
+      else seen[key]=1;
+    });
+    return dupes;
   }
 
   function calculate(){
     var d=dataArrays(), rows=d.rows, all=d.all, cols=d.cols, checks=[];
 
+    var dataLoaded=rows.length>0 && cols.length>0;
+
     if(!rows.length){
       checks.push({s:'bad',i:'⛔',t:'Data loaded',
-        d:'No rows are currently available for analysis.'});
+        d:'No rows are currently available for analysis. Upload a file first.'});
     }else{
       checks.push({s:'ok',i:'✓',t:'Data loaded',
         d:rows.length.toLocaleString()+' filtered rows available; '+
@@ -6454,10 +6476,30 @@ function wireRest(){
 
     if(!cols.length){
       checks.push({s:'bad',i:'⛔',t:'Columns detected',
-        d:'No columns are available.'});
+        d:'No columns are available. Upload a file first.'});
     }else{
       checks.push({s:'ok',i:'✓',t:'Columns detected',
         d:cols.length+' columns loaded.'});
+    }
+
+    if(!dataLoaded){
+      checks.push({s:'warn',i:'⚠',t:'Data completeness',
+        d:'Cannot assess completeness until a dataset is loaded.'});
+      checks.push({s:'warn',i:'⚠',t:'Material missing fields',
+        d:'Cannot assess missing fields until a dataset is loaded.'});
+      checks.push({s:'warn',i:'⚠',t:'Duplicate rows',
+        d:'Cannot assess duplicate rows until a dataset is loaded.'});
+      checks.push({s:'warn',i:'⚠',t:'Mixed data types',
+        d:'Cannot assess data types until a dataset is loaded.'});
+      checks.push({s:'warn',i:'⚠',t:'Measures available',
+        d:'Cannot assess numeric measures until a dataset is loaded.'});
+      checks.push({s:'warn',i:'⚠',t:'Time/comparison basis',
+        d:'Cannot assess the comparison basis until a dataset is loaded.'});
+      checks.push({s:'warn',i:'⚠',t:'Constant fields',
+        d:'Cannot assess constant fields until a dataset is loaded.'});
+      checks.push({s:'warn',i:'⚠',t:'Movement analysis',
+        d:'Cannot assess movements until a dataset is loaded.'});
+      return checks;
     }
 
     var missing=cols.reduce(function(a,c){return a+Number(c.missing||0)},0);
@@ -6484,7 +6526,7 @@ function wireRest(){
         'No field reaches the 10% missing-data warning threshold.'
     });
 
-    var dupes=Number(window.APP&&APP.dupeRows||0);
+    var dupes=duplicateRowCount(rows, cols);
     checks.push({
       s:dupes?'warn':'ok',i:dupes?'⚠':'✓',t:'Duplicate rows',
       d:dupes?dupes.toLocaleString()+' duplicate rows detected.':
