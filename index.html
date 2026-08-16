@@ -815,7 +815,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 </style>
 
 <style id="instantdash-v155-movement-buttons">
-/* v1.10.57 — prominent, reliable Favourable / Attention controls */
+/* v1.10.60 — prominent, selected-state Favourable / Attention / Contextual controls */
 #execStatusBadge{display:none!important}
 #movementActionBar{
   display:flex!important;gap:10px!important;align-items:stretch!important;flex-wrap:wrap!important;
@@ -847,6 +847,13 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 #movementActionBar .movement-action.disabled .ma-count{opacity:.9!important}
 #movementActionBar .movement-action.disabled .ma-text{opacity:.95!important}
 #movementActionBar .movement-action:not(.disabled):hover{filter:brightness(1.08)!important;transform:translateY(-1px)!important;box-shadow:0 10px 22px rgba(0,0,0,.24)!important}
+#movementActionBar .movement-action.selected{
+  transform:translateY(-2px)!important;
+  filter:brightness(1.12)!important;
+  box-shadow:0 0 0 3px rgba(245,179,1,.38),0 12px 28px rgba(0,0,0,.28)!important;
+}
+#movementActionBar .movement-action.selected .ma-count{font-size:21px!important}
+#movementActionBar .movement-action.selected .ma-text{font-weight:900!important}
 #movementActionBar .movement-view{
   flex:1 1 100%!important;min-height:42px!important;border-radius:13px!important;
   background:transparent!important;color:var(--text)!important;border:1px solid var(--border)!important;
@@ -860,6 +867,54 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
   #movementActionBar .movement-action .ma-text{font-size:10px!important}
 }
 </style>
+<style id="instantdash-v160-selected-movement">
+/* v1.10.60 — keep the selected movement category visually obvious. */
+#movementActionBar .movement-action.selected{outline:3px solid var(--accent,#f5b301)!important;outline-offset:2px!important;}
+</style>
+<script>
+(function(){
+  if(window.__v160MovementSelection) return;
+  window.__v160MovementSelection=true;
+  function clear(){
+    var bar=document.getElementById('movementActionBar');
+    if(!bar) return;
+    bar.querySelectorAll('.movement-action').forEach(function(b){b.classList.remove('selected');b.setAttribute('aria-pressed','false');});
+  }
+  function select(bucket){
+    var bar=document.getElementById('movementActionBar');
+    if(!bar) return;
+    var buttons=bar.querySelectorAll('.movement-action');
+    buttons.forEach(function(b){
+      var on=b.getAttribute('data-movement-action')===bucket;
+      b.classList.toggle('selected',on);
+      b.setAttribute('aria-pressed',on?'true':'false');
+    });
+  }
+  function wire(){
+    var bar=document.getElementById('movementActionBar');
+    if(!bar) return;
+    bar.querySelectorAll('.movement-action').forEach(function(b){
+      if(b.dataset.v160==='1') return;
+      b.dataset.v160='1';
+      var bucket=b.getAttribute('data-movement-action');
+      b.setAttribute('aria-pressed','false');
+      var choose=function(){
+        var x=bucket;
+        if(x==='auto'){var c=window.__miItems||{};x=(c.attention&&c.attention.length)?'attention':(c.performance&&c.performance.length)?'performance':'contextual';}
+        select(x);
+      };
+      b.addEventListener('touchend',choose,{passive:true});
+      b.addEventListener('pointerup',choose,{passive:true});
+      b.addEventListener('click',choose,false);
+    });
+  }
+  wire();
+  [100,300,700,1200].forEach(function(ms){setTimeout(wire,ms);});
+  if(window.MutationObserver){new MutationObserver(wire).observe(document.body,{childList:true,subtree:true});}
+  window.__selectMovementCategory=select;
+  window.__clearMovementCategory=clear;
+})();
+</script>
 </head>
 <body class="dark">
 <div id="pageScroll">
@@ -871,7 +926,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.10.59</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.10.60</span>
   </div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
   <div class="spacer"></div>
@@ -2029,7 +2084,7 @@ function detectAndExcludeSummaryRows(rows, names, srcIndex){
   return {rows:keptRows, srcIndex:keptSrc, excluded:exclude.size};
 }
 
-/* v1.10.59 — stability/accuracy guards.
+/* v1.10.60 — stability/accuracy guards.
    These checks are read-only: they never alter APP.rows, APP.filtered or KPI values.
    They protect against stale comparison caches and accidental filtered-data drift. */
 function invalidateAnalysisCaches(){
@@ -2043,11 +2098,11 @@ function auditDashboardState(stage){
     const numeric=cols.filter(c=>c && c.type==='number').length;
     const badSubset=filtered.some(r=>all.indexOf(r)<0);
     const ok=filtered.length<=all.length && !badSubset;
-    if(!ok) console.warn('[InstantDash v1.10.59] data-state audit failed at',stage,{rows:all.length,filtered:filtered.length});
+    if(!ok) console.warn('[InstantDash v1.10.60] data-state audit failed at',stage,{rows:all.length,filtered:filtered.length});
     window.__instantDashDataAudit={stage,ok,rows:all.length,filtered:filtered.length,columns:cols.length,numeric};
     return ok;
   }catch(err){
-    console.warn('[InstantDash v1.10.59] data-state audit unavailable',err);
+    console.warn('[InstantDash v1.10.60] data-state audit unavailable',err);
     return true;
   }
 }
@@ -5932,5 +5987,5 @@ function wireRest(){
 })();
 </script>
 
-<!-- v1.10.59 — stability release: deterministic cache invalidation + read-only data-state audits. -->
+<!-- v1.10.60 — stability release: deterministic cache invalidation + read-only data-state audits. -->
 </body></html>
