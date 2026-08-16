@@ -50,7 +50,7 @@ body.dark{
   --shadow-h:0 2px 6px rgba(0,0,0,.5), 0 16px 40px rgba(0,0,0,.45);
 }
 
-/* v1.10.53 — reliable manual Light/Night theme switching */
+/* v1.10.54 — reliable manual Light/Night theme switching */
 html.theme-dark{color-scheme:dark}
 html.theme-light{color-scheme:light}
 body.dark select,body.dark input,body.dark textarea{background:var(--card);color:var(--text);border-color:var(--border)}
@@ -141,17 +141,17 @@ main{max-width:1360px;margin:0 auto;padding:24px}
 
 /* ---------- premium landing experience v1.4.8 ---------- */
 
-/* v1.10.53 — live executive preview clarity */
+/* v1.10.54 — live executive preview clarity */
 .live-pill{display:inline-flex;align-items:center;margin-left:8px;padding:4px 9px;border-radius:999px;font-size:.58em;letter-spacing:.08em;font-weight:800;background:rgba(34,197,94,.14);color:#31b66b;vertical-align:middle}
 .exec-live-note{margin-top:10px;font-size:11px;color:var(--muted);line-height:1.45}
 @media(max-width:700px){.live-pill{font-size:.55em}.exec-live-note{font-size:10.5px}}
 
-/* v1.10.53 — clickable movement summary */
+/* v1.10.54 — clickable movement summary */
 #execStatusBadge.movement-link{cursor:pointer;user-select:none;transition:transform .15s ease,box-shadow .15s ease}
 #execStatusBadge.movement-link:hover{transform:translateY(-1px);box-shadow:0 3px 10px rgba(0,0,0,.10)}
 #execStatusBadge.movement-link:focus{outline:3px solid rgba(245,179,1,.35);outline-offset:2px}
 
-/* v1.10.53 — executive movement fact strip */
+/* v1.10.54 — executive movement fact strip */
 .mi-movement-facts{display:grid;grid-template-columns:1fr auto 1fr auto;gap:8px;align-items:stretch;margin:14px 0 12px;padding:10px;border:1px solid var(--line,#e6dccb);border-radius:16px;background:rgba(255,255,255,.72)}
 .mi-movement-facts>div{min-width:0;padding:7px 9px;border-radius:11px;background:#faf7f0}
 .mi-movement-facts span{display:block;font-size:10px;letter-spacing:.14em;font-weight:800;color:#77736c;margin-bottom:4px}
@@ -163,7 +163,7 @@ main{max-width:1360px;margin:0 auto;padding:24px}
 .mi-movement-facts .mi-change.contextual b{color:#77736c}
 @media(max-width:640px){.mi-movement-facts{grid-template-columns:1fr 24px 1fr}.mi-movement-facts .mi-change{grid-column:1/-1}.mi-movement-facts .mi-change b{font-size:18px}}
 
-/* InstantDash v1.10.53 — Management Action Centre */
+/* InstantDash v1.10.54 — Management Action Centre */
 .management-action-centre{margin-top:12px}
 .mac-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:10px;flex-wrap:wrap}
 .mac-title{font-size:15px;font-weight:800;letter-spacing:-.01em}
@@ -229,7 +229,7 @@ body.dark .landing-hero{box-shadow:0 18px 70px rgba(0,0,0,.42)}
 .preview-insight{display:flex;gap:9px;align-items:flex-start;padding:10px;border:1px solid var(--border);border-radius:11px;background:var(--card-2);font-size:9.5px;color:var(--muted);line-height:1.45}.preview-insight span{color:var(--accent);font-size:11px}.preview-insight p{margin:0}.preview-insight b{color:var(--text)}
 .hero-features{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px;padding-top:22px;border-top:1px solid var(--border);position:relative;z-index:2}.hero-features>div{display:grid;grid-template-columns:auto 1fr;column-gap:9px;align-items:center}.hero-features b{grid-row:1/3;font:700 11px Poppins,sans-serif;color:var(--accent)}.hero-features strong{font-size:12px}.hero-features span{font-size:10.5px;color:var(--muted)}
 @media(max-width:900px){.landing-hero{grid-template-columns:1fr;padding:38px 25px 25px;border-radius:24px;gap:24px}.hero-copy h2{font-size:clamp(32px,9vw,45px)}.hero-lead{font-size:14px}.hero-preview{order:2}.hero-features{order:3}.preview-window{transform:none}.hero-features{grid-template-columns:1fr}.hero-features>div{padding:8px 0}.trust-row{gap:10px 14px}}
-/* v1.10.53 — robust mobile file picker */
+/* v1.10.54 — robust mobile file picker */
 #fileInput{
   position:absolute!important;
   width:1px!important;height:1px!important;
@@ -383,7 +383,7 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
 .modal-back{position:fixed;inset:0;background:rgba(14,14,16,.45);display:none;place-items:center;z-index:150;padding:20px}
 .modal-back.on{display:grid}
 .modal{background:var(--card);border-radius:16px;box-shadow:var(--shadow-h);width:100%;max-width:460px;padding:20px;border:1px solid var(--border)}
-/* InstantDash v1.10.53 — robust movement evidence tabs: direct JS buttons, no radio/CSS dependency */
+/* InstantDash v1.10.54 — robust movement evidence tabs: direct JS buttons, no radio/CSS dependency */
 .mi-evidence-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0;position:relative;z-index:20}
 .mi-evidence-tab{appearance:none;-webkit-appearance:none;border:1px solid var(--border);background:var(--card-2);color:var(--text);border-radius:999px;padding:10px 14px;font:750 15px/1 system-ui,-apple-system,sans-serif;cursor:pointer;pointer-events:auto;touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;position:relative;z-index:21;transition:.15s ease}
 .mi-evidence-tab:hover{transform:translateY(-1px);border-color:var(--accent)}
@@ -413,7 +413,7 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
 @media (prefers-reduced-motion: reduce){ *{animation-duration:.01ms !important;transition-duration:.01ms !important} }
 
 
-/* ---------- desktop / laptop workspace refinement v1.10.53 ---------- */
+/* ---------- desktop / laptop workspace refinement v1.10.54 ---------- */
 html{overflow-x:hidden}
 body{overflow-x:hidden}
 .tbl-wrap{width:100%;max-width:100%;overflow-x:auto;overflow-y:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
@@ -510,7 +510,7 @@ body{overflow-x:hidden}
     background:rgba(0,0,0,.55);backdrop-filter:blur(5px);
     padding:18px;
   }
-  /* v1.10.53 — required open state; without this the panel has display:none */
+  /* v1.10.54 — required open state; without this the panel has display:none */
   .v154-share-panel.is-open{
     display:flex!important;
     pointer-events:auto!important;
@@ -552,7 +552,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v155-sticky-nav">
-/* InstantDash v1.10.53 — desktop/mobile persistent navigation */
+/* InstantDash v1.10.54 — desktop/mobile persistent navigation */
 .id-sticky-nav{
   position:fixed;
   left:50%;
@@ -599,7 +599,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v169-ui-fixes">
-/* v1.10.53 — cleaner Share access + wider Pivot Rows selector */
+/* v1.10.54 — cleaner Share access + wider Pivot Rows selector */
 .pivot-controls .frow:first-child{min-width:260px}
 .pivot-controls .frow:first-child select{min-width:260px}
 @media (max-width:700px){
@@ -614,7 +614,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v160-executive-css">
-/* InstantDash v1.10.53 — Executive Management Cockpit */
+/* InstantDash v1.10.54 — Executive Management Cockpit */
 .executive-cockpit{margin-top:22px}
 .exec-head{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:12px}
 .exec-head h2{font-size:18px}
@@ -664,7 +664,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v161-theme-hardening">
-/* InstantDash v1.10.53 — theme hardening */
+/* InstantDash v1.10.54 — theme hardening */
 html.theme-dark body{background:var(--bg);color:var(--text)}
 html.theme-light body{background:var(--bg);color:var(--text)}
 body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var(--text)}
@@ -690,12 +690,12 @@ body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var
 
 
 <style id="instantdash-v149-accuracy-hardening">
-/* v1.10.53 — accuracy hardening:
+/* v1.10.54 — accuracy hardening:
    numeric identifiers are excluded from management contribution analysis;
    NO_OF_WORKING_DAYS is allowed to behave as a measure. */
 </style>
 <style id="instantdash-v170-responsive-final">
-/* InstantDash v1.10.53 — responsive laptop + mobile polish */
+/* InstantDash v1.10.54 — responsive laptop + mobile polish */
 .section-head{gap:12px;align-items:center}
 .section-head h2{min-width:0}
 .insight-box{white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word}
@@ -749,7 +749,7 @@ body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var
   }
 }
 
-/* v1.10.53 — management summary cards */
+/* v1.10.54 — management summary cards */
 .management-summary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:0 0 14px}
 .management-summary-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:15px;min-width:0;box-shadow:0 5px 18px rgba(14,14,16,.04)}
 .management-summary-card .msc-label{font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:800;color:var(--muted);margin-bottom:7px}
@@ -782,7 +782,7 @@ body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var
 </style>
 
 <style id="instantdash-v11031-scroll-host-fix">
-/* v1.10.53 — dedicated iOS scroll host. The app is deliberately placed in a
+/* v1.10.54 — dedicated iOS scroll host. The app is deliberately placed in a
    single viewport-height vertical scroller so embedded GitHub/iOS webviews
    cannot leave the document itself stuck at the first screen. */
 html,body{margin:0!important;padding:0!important;overflow:hidden!important;height:100%!important;min-height:100%!important;}
@@ -824,7 +824,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.10.53</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.10.54</span>
   </div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
   <div class="spacer"></div>
@@ -1308,7 +1308,7 @@ Charts on screen: Total TOTAL_TRANSACTION_COUNT by day; Total TOTAL_TRANSACTION_
    --------------------------------------------------------------------- */
 const CONFIG = {
   APP_NAME: 'InstantDash',
-  VERSION: 'v1.10.53',
+  VERSION: 'v1.10.54',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -3369,7 +3369,7 @@ function miDirectoryDirection(kpiName){
   }catch(_){ }
   return null;
 }
-/* v1.10.53 — deterministic period comparison.
+/* v1.10.54 — deterministic period comparison.
    Compare the latest two CALENDAR PERIODS rather than the latest two raw
    dates. This prevents results changing when a file contains multiple rows
    within a month/day or when row order changes. The period is selected from
@@ -3429,7 +3429,7 @@ function miLatestPeriodRows(rows,dateCol){
   MI_PERIOD_CACHE.set(cacheKey,result);
   return result;
 }
-/* v1.10.53 — deterministic KPI aggregation.
+/* v1.10.54 — deterministic KPI aggregation.
    Additive measures are summed; rates, percentages, ratios, averages and
    per-unit measures are averaged across the selected period rows. This keeps
    management comparisons stable and prevents percentages such as occupancy
@@ -3448,7 +3448,7 @@ function miMetricValue(rows,col){
 function miSum(rows,col){ return miMetricValue(rows,col) ?? 0; }
 function miChange(a,b){ return {abs:b-a,pct:a!==0?(b-a)/Math.abs(a):null}; }
 function miAggregationLabel(name){ return miAggMode(name)==='avg'?'Average across comparable records':'Total across comparable records'; }
-/* v1.10.53 — domain-aware interpretation layer.
+/* v1.10.54 — domain-aware interpretation layer.
    The dashboard must distinguish a true performance KPI from a contextual
    activity/capacity measure. It must also recognise common ESG and healthcare
    measures without pretending that the data proves causation. */
@@ -4064,7 +4064,7 @@ function buildManagementInsights(){
   const lr=miLatestPeriodRows(rows,dateCol);
   const numeric=APP.columns.filter(c=>c.type==='number' && c.role==='measure');
 
-  /* v1.10.53: calculate operational intensity/relationship signals before
+  /* v1.10.54: calculate operational intensity/relationship signals before
      classifying isolated movements. */
   miAddOperationalRelationships(rows,lr,items);
 
@@ -4405,7 +4405,7 @@ function buildManagementInsights(){
   wireMovementSummaryLinks();
 }
 
-/* v1.10.53 — direct movement-detail routing; summary/status buttons open the requested bucket without indirection */
+/* v1.10.54 — direct movement-detail routing; summary/status buttons open the requested bucket without indirection */
 function wireMovementSummaryLinks(){
   const modal=$('miEvidenceModal'), list=$('miEvidenceList'), tabs=$('miEvidenceTabs'), close=$('miEvidenceClose');
   if(!modal||!list||!tabs)return;
@@ -4422,7 +4422,7 @@ function wireMovementSummaryLinks(){
   };
   const movementFacts=plain=>{
     /*
-      v1.10.53 — robust movement fact extraction.
+      v1.10.54 — robust movement fact extraction.
       Never render an empty FROM/TO strip when the finding contains a valid
       movement. Tolerates commas, decimals, percentages and "changed/went from".
     */
@@ -4537,7 +4537,7 @@ function wireMovementSummaryLinks(){
     const dc=timeCols()[0];
     const dateBasis=(()=>{try{const lr0=dc&&miLatestPeriodRows(APP.filtered||[],dc);return lr0?`Comparison basis: ${fmtDate(lr0.prev)} → ${fmtDate(lr0.latest)} · current filters applied.`:'Comparison basis: latest two comparable periods in the current filtered dataset.';}catch(_){return 'Comparison basis: latest two comparable periods in the current filtered dataset.';}})();
     $('miEvidenceSubtitle').textContent=`${total} material movement${total===1?'':'s'}: ${perf.length} favourable, ${att.length} attention and ${ctx.length} contextual, from the current loaded and filtered dataset. ${dateBasis}`;
-    /* v1.10.53: explicit button switching. Every tab remains clickable,
+    /* v1.10.54: explicit button switching. Every tab remains clickable,
        including zero-count tabs, and the selected panel is changed directly. */
     const specs=[['performance','✓ Favourable',perf.length],['attention','⚠ Attention',att.length],['contextual','◐ Contextual',ctx.length]];
     tabs.innerHTML=specs.map(([b,label,count])=>`<button type="button" class="mi-evidence-tab" data-bucket="${b}" aria-selected="${initial===b?'true':'false'}">${label} · ${count}</button>`).join('');
@@ -4642,7 +4642,7 @@ function wireChartBuilder(){
    ===================================================================== */
 
 /* =====================================================================
-   InstantDash v1.10.53 — Executive Management Cockpit
+   InstantDash v1.10.54 — Executive Management Cockpit
    Generic: uses only detected runtime column roles and statistics.
    ===================================================================== */
 function buildExecutiveCockpit(){
@@ -5013,6 +5013,62 @@ function wireRest(){
   wireChartBuilder();
   wireExecutiveCockpit();
   wireRest();
+
+  /* v1.10.54 — restore a dashboard exported with Share/Save. */
+  const shared=window.__INSTANTDASH_SHARED_STATE__;
+  if(shared && Array.isArray(shared.rows) && shared.rows.length){
+    try{
+      const revive=(v)=>{
+        if(Array.isArray(v)) return v.map(revive);
+        if(v && typeof v==='object'){
+          if(v.__instantdashDate) return new Date(v.__instantdashDate);
+          const o={}; Object.keys(v).forEach(k=>o[k]=revive(v[k])); return o;
+        }
+        return v;
+      };
+      APP.fileName=shared.fileName||'Shared dashboard';
+      APP.sheetNames=Array.isArray(shared.sheetNames)?shared.sheetNames:[];
+      APP.activeSheet=shared.activeSheet||APP.sheetNames[0]||'';
+      APP.headerRow=Number.isFinite(shared.headerRow)?shared.headerRow:0;
+      APP.excludedSummaryRows=shared.excludedSummaryRows||0;
+      APP.rows=revive(shared.rows);
+      APP.aoa=[Object.keys(APP.rows[0]||{})];
+      APP.srcIndex=APP.rows.map((_r,i)=>i+1);
+      APP.rawColumnNames=Object.keys(APP.rows[0]||{});
+      APP.colSrc={}; APP.rawColumnNames.forEach((n,i)=>APP.colSrc[n]=i);
+      profileColumns(APP.rawColumnNames);
+      if(Array.isArray(shared.columns) && shared.columns.length){
+        const savedCols=revive(shared.columns);
+        const byName=new Map(savedCols.map(c=>[c.name,c]));
+        APP.columns.forEach(c=>{
+          const saved=byName.get(c.name);
+          if(saved){
+            c.type=saved.type||c.type;
+            c.role=saved.role||c.role;
+            c.manual=!!saved.manual;
+          }
+        });
+      }
+      coerceValues();
+      buildEverything();
+
+      const savedFilters=shared.filters||{};
+      APP.filters={};
+      Object.entries(savedFilters).forEach(([name,f])=>{
+        if(!f) return;
+        if(f.kind==='cat') APP.filters[name]={kind:'cat',selected:new Set(f.selected||[])};
+        else if(f.kind==='date') APP.filters[name]={kind:'date',from:f.from?new Date(f.from):null,to:f.to?new Date(f.to):null};
+      });
+      buildFilterBar();
+      applyFiltersAndRedraw();
+      setTheme(!!shared.dark);
+      toast('Shared dashboard loaded — live data and movement analysis restored');
+    }catch(err){
+      console.error('InstantDash shared-state restore failed',err);
+      toast('Shared dashboard could not restore its data. Open the original dashboard and share again.');
+    }
+  }
+
   const themeBtn = $('themeToggle');
   if(themeBtn && !themeBtn.dataset.v160Bound){
     themeBtn.dataset.v160Bound = '1';
@@ -5032,7 +5088,7 @@ function wireRest(){
 </div><!-- /#pageScroll -->
 
 <style id="v133-movement-hardening">
-/* v1.10.53 — iPhone movement tabs: direct inline display + touch-safe modal */
+/* v1.10.54 — iPhone movement tabs: direct inline display + touch-safe modal */
 #miEvidenceModal{position:fixed!important;inset:0!important;display:none!important;z-index:9999!important;background:rgba(14,14,16,.48)!important;place-items:center!important;padding:8px!important;pointer-events:none!important}
 #miEvidenceModal.on{display:grid!important;pointer-events:auto!important}
 #miEvidenceModal .mi-evidence-modal{width:min(920px,96vw)!important;max-width:920px!important;max-height:94dvh!important;height:auto!important;overflow:hidden!important;background:var(--card,#fff)!important;border:1px solid var(--border,#e6dccb)!important;border-radius:20px!important;box-shadow:0 20px 60px rgba(0,0,0,.25)!important;display:flex!important;flex-direction:column!important;padding:14px!important}
@@ -5046,7 +5102,7 @@ function wireRest(){
 @media(max-width:600px){#miEvidenceModal .mi-evidence-modal{width:96vw!important;max-width:96vw!important;max-height:94dvh!important;border-radius:18px!important;padding:14px!important}}
 </style>
 <style id="v135-movement-facts-polish">
-/* v1.10.53 — ratio endpoints and predictable mobile panel position */
+/* v1.10.54 — ratio endpoints and predictable mobile panel position */
 #miEvidenceModal .mi-movement-facts .mi-change b{white-space:nowrap}
 @media(max-width:600px){
   #miEvidenceModal .mi-evidence-tabs{margin:10px 0 12px}
@@ -5061,7 +5117,7 @@ function wireRest(){
 #miEvidenceModal .mi-native-panel.active{display:block!important}
 </style>
 <script>
-/* v1.10.53 — delegated movement controls. This survives dashboard redraws and
+/* v1.10.54 — delegated movement controls. This survives dashboard redraws and
    does not depend on a dynamically replaced element retaining its handler. */
 (function(){
   if(window.__v132MovementBridge) return;
@@ -5109,7 +5165,7 @@ function wireRest(){
     el.click();
   },true);
 
-  /* v1.10.53 — tab switching is deliberately inline-style based. This avoids
+  /* v1.10.54 — tab switching is deliberately inline-style based. This avoids
      any dependency on CSS class precedence and is reliable in iOS WebViews,
      GitHub Pages and after dynamic redraws. */
   function switchMovementTab(tab){
@@ -5160,7 +5216,7 @@ function wireRest(){
 
 <style id="v143-movement-facts-contrast">
 
-/* v1.10.53 — high-contrast FROM/TO values in movement cards */
+/* v1.10.54 — high-contrast FROM/TO values in movement cards */
 #miEvidenceModal .mi-movement-facts>div{
   color:#171717!important;
 }
@@ -5180,7 +5236,7 @@ function wireRest(){
 
 
 <style id="v144-movement-compact">
-/* v1.10.53 — compact Movement Details layout; calculation/classification unchanged */
+/* v1.10.54 — compact Movement Details layout; calculation/classification unchanged */
 
 /* Header and tabs stay outside the scrolling list, so they remain visible. */
 #miEvidenceModal .mi-evidence-head{
@@ -5260,7 +5316,7 @@ function wireRest(){
 
 
 <style id="v145-movement-overlap-fix">
-/* v1.10.53 — prevent Movement Details content from sliding underneath tabs */
+/* v1.10.54 — prevent Movement Details content from sliding underneath tabs */
 
 /* Never allow the explanatory note to start underneath the filter tabs. */
 #miEvidenceModal .mi-evidence-tabs{
@@ -5310,7 +5366,7 @@ function wireRest(){
 </style>
 
 <style id="v146-movement-flow-fix">
-/* v1.10.53 — eliminate iPhone overlap by using normal block flow for the
+/* v1.10.54 — eliminate iPhone overlap by using normal block flow for the
    Movement Details content. The previous grid/flex combination could give
    the priority note a compressed row while its text remained visible. */
 #miEvidenceModal .mi-evidence-list{
@@ -5370,7 +5426,7 @@ function wireRest(){
 }
 </style>
 
-<!-- InstantDash v1.10.53 — robust iPhone/iPad sharing -->
+<!-- InstantDash v1.10.54 — robust iPhone/iPad sharing -->
 <style id="instantdash-v152-share-fix">
   #v154SharePanel{
     position:fixed!important;
@@ -5405,12 +5461,12 @@ function wireRest(){
   <div class="v154-share-card" role="dialog" aria-modal="true" aria-labelledby="v154ShareTitle">
     <button class="v154-share-close" id="v154ShareClose" type="button" aria-label="Close share panel">×</button>
     <h3 id="v154ShareTitle">Share InstantDash</h3>
-    <p>Share the current dashboard. On iPhone/iPad, use the native Share Sheet when available, or save the HTML file and share it from Files.</p>
+    <p>Share the current dashboard with its loaded data and movement analysis. On iPhone/iPad, the Files preview may show only the HTML title; use “Open in Safari” to run the interactive dashboard.</p>
     <div class="v154-share-actions">
       <button class="primary" id="v154NativeShare" type="button">📤 Share current dashboard</button>
       <button id="v154SaveShare" type="button">💾 Save dashboard HTML</button>
       <button id="v154CopyShare" type="button">📋 Copy share text</button>
-      <button class="mail" id="v154MailShare" type="button">✉️ Email</button>
+      <button class="mail" id="v154MailShare" type="button">✉️ Mail / Share</button>
     </div>
     <div id="v154ShareNote" style="margin-top:12px;color:var(--muted,#a0a0a8);font-size:13px;line-height:1.45"></div>
   </div>
@@ -5445,8 +5501,40 @@ function wireRest(){
     const wasOpen=panel.classList.contains('is-open');
     panel.classList.remove('is-open');
     panel.setAttribute('aria-hidden','true');
-    const html='<!doctype html>\n'+document.documentElement.outerHTML;
-    const f=new File([html],'InstantDash_Dashboard_v1.10.53.html',{type:'text/html'});
+
+    /*
+      v1.10.54 — export the LIVE dashboard state, not just the page shell.
+      outerHTML preserves the visual DOM, but APP.rows/filters are JavaScript
+      runtime state and would otherwise be lost when the HTML is opened again.
+      The state is embedded before </head> and restored by start().
+    */
+    const state={
+      version:'1.10.54',
+      fileName:APP.fileName||'Shared dashboard',
+      sheetNames:Array.isArray(APP.sheetNames)?APP.sheetNames:[],
+      activeSheet:APP.activeSheet||'',
+      headerRow:Number.isFinite(APP.headerRow)?APP.headerRow:0,
+      excludedSummaryRows:APP.excludedSummaryRows||0,
+      rows:APP.rows||[],
+      columns:APP.columns||[],
+      filters:Object.fromEntries(Object.entries(APP.filters||{}).map(([name,f])=>{
+        if(!f) return [name,null];
+        if(f.kind==='cat') return [name,{kind:'cat',selected:Array.from(f.selected||[])}];
+        if(f.kind==='date') return [name,{kind:'date',from:f.from instanceof Date?f.from.toISOString():f.from,to:f.to instanceof Date?f.to.toISOString():f.to}];
+        return [name,f];
+      })),
+      dark:!!APP.dark
+    };
+    const replacer=(_k,v)=>{
+      if(v instanceof Date) return {__instantdashDate:v.toISOString()};
+      if(typeof v==='number'&&!Number.isFinite(v)) return null;
+      return v;
+    };
+    const json=JSON.stringify(state,replacer).replace(/</g,'\u003c');
+    const bootstrap='<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__='+json+';<\/script>';
+    let html='<!doctype html>\n'+document.documentElement.outerHTML;
+    html=html.replace('</head>',bootstrap+'</head>');
+    const f=new File([html],'InstantDash_Dashboard_v1.10.54.html',{type:'text/html'});
     if(wasOpen){
       panel.classList.add('is-open');
       panel.setAttribute('aria-hidden','false');
@@ -5472,18 +5560,20 @@ function wireRest(){
     try{
       const f=dashboardFile();
       if(typeof navigator.share!=='function'){
-        setNote('Native file sharing is unavailable here. Tap “Save dashboard HTML”, then share the saved file from Files.');
+        setNote('Native file sharing is unavailable here. Saving the dashboard HTML instead.');
+        saveDashboardFile();
         return;
       }
       if(typeof navigator.canShare==='function'){
         let supported=false;
         try{supported=navigator.canShare({files:[f]});}catch(_){}
         if(!supported){
-          setNote('This browser cannot attach the HTML file directly. Tap “Save dashboard HTML”, then share the saved file from Files.');
+          setNote('This browser cannot attach HTML files directly. Saving the dashboard HTML instead.');
+          saveDashboardFile();
           return;
         }
       }
-      await navigator.share({title:'InstantDash Dashboard v1.10.53',files:[f]});
+      await navigator.share({title:'InstantDash Dashboard v1.10.54',text:'InstantDash interactive dashboard with loaded data and management movement analysis.',files:[f]});
       setNote('Dashboard file shared successfully.');
     }catch(err){
       if(err&&err.name==='AbortError') return;
@@ -5492,7 +5582,7 @@ function wireRest(){
   }
   async function copyShare(e){
     if(e){e.preventDefault();e.stopPropagation();}
-    const text='InstantDash Dashboard v1.10.53 — interactive management dashboard.';
+    const text='InstantDash Dashboard v1.10.54 — interactive management dashboard.';
     try{
       if(navigator.clipboard&&navigator.clipboard.writeText){
         await navigator.clipboard.writeText(text);
