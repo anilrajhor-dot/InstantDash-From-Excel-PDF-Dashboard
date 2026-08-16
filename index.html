@@ -871,7 +871,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.10.57</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.10.58</span>
   </div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
   <div class="spacer"></div>
@@ -5852,4 +5852,56 @@ function wireRest(){
   window.__wireMovementControls157=wire;
 })();
 </script>
+
+<!-- v1.10.58 — restored Movement Details modal DOM (required by the movement controls) -->
+<div id="miEvidenceModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="miEvidenceTitle">
+  <div class="mi-evidence-modal">
+    <div class="mi-evidence-head">
+      <div>
+        <h2 id="miEvidenceTitle">Movement Details</h2>
+        <div id="miEvidenceSubtitle" class="mi-evidence-subtitle"></div>
+      </div>
+      <button type="button" id="miEvidenceClose" class="mi-evidence-close" aria-label="Close movement details">✕</button>
+    </div>
+    <div id="miEvidenceTabs" class="mi-evidence-tabs" role="tablist" aria-label="Movement categories"></div>
+    <div id="miEvidenceList" class="mi-evidence-list"></div>
+  </div>
+</div>
+
+<style id="instantdash-v158-movement-modal">
+/* v1.10.58 — explicit modal DOM + iPhone-safe presentation */
+#miEvidenceModal{position:fixed!important;inset:0!important;display:none!important;z-index:20000!important;background:rgba(14,14,16,.48)!important;place-items:center!important;padding:8px!important;pointer-events:none!important}
+#miEvidenceModal.on{display:grid!important;pointer-events:auto!important}
+#miEvidenceModal .mi-evidence-modal{box-sizing:border-box!important;width:min(920px,96vw)!important;max-width:920px!important;max-height:94dvh!important;height:auto!important;overflow:hidden!important;background:var(--card,#fff)!important;color:var(--text,#171717)!important;border:1px solid var(--border,#e6dccb)!important;border-radius:20px!important;box-shadow:0 20px 60px rgba(0,0,0,.25)!important;display:flex!important;flex-direction:column!important;padding:14px!important;position:relative!important;z-index:20001!important}
+#miEvidenceModal .mi-evidence-head{flex:0 0 auto!important;display:flex!important;align-items:flex-start!important;justify-content:space-between!important;gap:12px!important}
+#miEvidenceModal #miEvidenceTitle{margin:0!important;font-size:22px!important;line-height:1.2!important}
+#miEvidenceModal #miEvidenceSubtitle{margin-top:5px!important;font-size:12px!important;line-height:1.45!important;opacity:.78!important}
+#miEvidenceModal .mi-evidence-close{flex:0 0 auto!important;position:relative!important;z-index:20003!important;pointer-events:auto!important;touch-action:manipulation!important;cursor:pointer!important;border:1px solid var(--border,#ddd)!important;background:var(--card-2,#f7f4ee)!important;color:var(--text,#171717)!important;border-radius:12px!important;min-width:42px!important;min-height:42px!important;font-size:20px!important}
+#miEvidenceModal .mi-evidence-tabs{flex:0 0 auto!important;position:relative!important;z-index:20002!important;display:flex!important;gap:8px!important;flex-wrap:wrap!important;margin:12px 0!important}
+#miEvidenceModal .mi-evidence-tab{position:relative!important;z-index:20003!important;pointer-events:auto!important;cursor:pointer!important;touch-action:manipulation!important;-webkit-user-select:none!important;user-select:none!important;border:1px solid var(--border,#ddd)!important;border-radius:12px!important;padding:10px 12px!important;background:var(--card-2,#f7f4ee)!important;color:var(--text,#171717)!important;font-weight:800!important}
+#miEvidenceModal .mi-evidence-list{overflow-y:auto!important;min-height:0!important;flex:1 1 auto!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior:contain!important;padding:0 2px 18px!important}
+#miEvidenceModal .mi-native-panel{display:none!important}
+#miEvidenceModal .mi-native-panel.active{display:block!important}
+@media(max-width:600px){
+  #miEvidenceModal{padding:8px!important}
+  #miEvidenceModal .mi-evidence-modal{width:96vw!important;max-width:96vw!important;max-height:94dvh!important;border-radius:18px!important;padding:14px!important}
+  #miEvidenceModal #miEvidenceTitle{font-size:20px!important}
+  #miEvidenceModal .mi-evidence-tab{flex:1 1 calc(33.333% - 6px)!important;min-height:46px!important;padding:8px 5px!important;font-size:11px!important}
+}
+</style>
+
+
+<script>
+/* v1.10.58 — keep modal accessibility state in sync with the existing class-based opener */
+(function(){
+  var m=document.getElementById('miEvidenceModal');
+  if(!m) return;
+  var sync=function(){m.setAttribute('aria-hidden',m.classList.contains('on')?'false':'true');};
+  new MutationObserver(sync).observe(m,{attributes:true,attributeFilter:['class']});
+  var c=document.getElementById('miEvidenceClose');
+  if(c) c.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();m.classList.remove('on');sync();},false);
+  sync();
+})();
+</script>
+
 </body></html>
