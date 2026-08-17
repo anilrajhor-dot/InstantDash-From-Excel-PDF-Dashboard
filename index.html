@@ -1109,7 +1109,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.11.17</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.11.18</span>
   </div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -1472,9 +1472,9 @@ Charts on screen: Row count by Central Bank of India – Q1FY27.</pre></div>
    CONFIG — the knobs worth turning. See "How to Customize" in the notes.
    --------------------------------------------------------------------- */
 const CONFIG = {
-  BUILD_VERSION: '1.11.07',
+  BUILD_VERSION: '1.11.18',
   APP_NAME: 'InstantDash',
-  VERSION: 'v1.11.17',
+  VERSION: 'v1.11.18',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -7061,7 +7061,7 @@ function wireRest(){
 (function(){
   'use strict';
   /* InstantDash v1.11.18 — REAL PARAMETER CHART ENGINE. Selected parameters are the sole measure source for the rendered chart.
-  v1.11.17 — Local AI Chart Advisor.
+  v1.11.18 — Local AI Chart Advisor.
      Semantic analysis is performed in-browser from column names, value patterns,
      units, cardinality and relationships. No dataset is sent to an external AI.
      AI recommendations are suggestions only; every numeric parameter remains
@@ -7082,7 +7082,7 @@ function wireRest(){
   function data(){var a=app();return {rows:a&&Array.isArray(a.filtered)&&a.filtered.length?a.filtered:(a&&Array.isArray(a.rows)?a.rows:[]),all:a&&Array.isArray(a.rows)?a.rows:[],cols:a&&Array.isArray(a.columns)?a.columns:[]}}
   function isId(n){return /(^|[^a-z])(id|code|account|acct|sol\s*id|agent\s*id|serial|sno|sr\s*no)([^a-z]|$)/i.test(String(n||''))}
   function isTime(n,c){return c&&(((c.type||'').toLowerCase()==='date')||c.role==='time')||/date|month|period|quarter|year|fy|week|day/i.test(String(n||''))}
-  /* v1.11.17 — parameter discovery is based on the actual row objects first.
+  /* v1.11.18 — parameter discovery is based on the actual row objects first.
      The previous build trusted APP.columns too much. Some sheets can have
      correctly populated APP.rows while the column profile is incomplete or
      temporarily carries text roles. That made the dropdown say 0 parameters
