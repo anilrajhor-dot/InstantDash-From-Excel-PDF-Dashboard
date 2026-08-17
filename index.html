@@ -1095,6 +1095,9 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 @media(max-width:600px){.smart-result-strip{align-items:flex-start;flex-direction:column}.smart-result-actions{width:100%}.smart-result-actions button{flex:1}.smart-detail-grid{grid-template-columns:1fr}.smart-expand-btn{min-width:0}.chart-expand-overlay{padding:0}.chart-expand-card{height:100%;max-height:100vh;border-radius:0;padding:12px}.chart-expand-canvas{min-height:360px}.chart-expand-canvas svg{height:360px}.chart-expand-head h3{font-size:17px}}
 </style>
 
+
+<meta name="instantdash-build" content="v1.11.18-real-parameter-charts">
+<!-- InstantDash v1.11.18: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 </head>
 <body class="" style="overflow: hidden;">
 <div id="pageScroll">
@@ -5745,7 +5748,7 @@ function wireRest(){
     const bootstrap='<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__='+json+';<\/script>';
     let html='<!doctype html>\n'+document.documentElement.outerHTML;
     html=html.replace('</head>',bootstrap+'</head>');
-    const f=new File([html],'InstantDash_Dashboard_v1.11.17.html',{type:'text/html'});
+    const f=new File([html],'InstantDash_Dashboard_v1.11.18.html',{type:'text/html'});
     if(wasOpen){
       panel.classList.add('is-open');
       panel.setAttribute('aria-hidden','false');
@@ -5784,7 +5787,7 @@ function wireRest(){
           return;
         }
       }
-      await navigator.share({title:'InstantDash Dashboard v1.11.17',text:'InstantDash interactive dashboard with loaded data and management movement analysis.',files:[f]});
+      await navigator.share({title:'InstantDash Dashboard v1.11.18',text:'InstantDash interactive dashboard with loaded data and management movement analysis.',files:[f]});
       setNote('Dashboard file shared successfully.');
     }catch(err){
       if(err&&err.name==='AbortError') return;
@@ -5793,7 +5796,7 @@ function wireRest(){
   }
   async function copyShare(e){
     if(e){e.preventDefault();e.stopPropagation();}
-    const text='InstantDash Dashboard v1.11.17 — interactive management dashboard.';
+    const text='InstantDash Dashboard v1.11.18 — interactive management dashboard.';
     try{
       if(navigator.clipboard&&navigator.clipboard.writeText){
         await navigator.clipboard.writeText(text);
@@ -7057,7 +7060,8 @@ function wireRest(){
 <script id="instantdash-v11113-smart-charts-js">
 (function(){
   'use strict';
-  /* InstantDash v1.11.17 — Local AI Chart Advisor.
+  /* InstantDash v1.11.18 — REAL PARAMETER CHART ENGINE. Selected parameters are the sole measure source for the rendered chart.
+  v1.11.17 — Local AI Chart Advisor.
      Semantic analysis is performed in-browser from column names, value patterns,
      units, cardinality and relationships. No dataset is sent to an external AI.
      AI recommendations are suggestions only; every numeric parameter remains
@@ -7293,7 +7297,7 @@ function wireRest(){
     if(!d.series.length){wrap.innerHTML='<div style="padding:30px;color:var(--muted)">Select at least one numeric parameter.</div>';if(detailBox)detailBox.textContent='';return;}
     var title=$('smartChartTitle'),sub=$('smartChartSubtitle');
     if(title)title.textContent=d.series.map(function(s){return s.name}).join(' + ');
-    if(sub)sub.textContent=(state.type==='pie'||state.type==='donut'&&d.series.length>1?'selected parameters':(state.groupBy?'grouped by '+state.groupBy:'overall'))+(state.model.usingDemo?' · AI PREVIEW DATA':' · LIVE DATA');
+    if(sub)sub.textContent=((state.type==='pie'||state.type==='donut')&&d.series.length>1?'selected parameters':(state.groupBy?'grouped by '+state.groupBy:'overall'))+(state.model.usingDemo?' · AI PREVIEW DATA':' · LIVE DATA');
     if(state.type==='pie'||state.type==='donut')drawPie(wrap,d,state.type==='donut');else drawCartesian(wrap,d,state.type);
     if(d.labels.length)detail(state.selected<d.labels.length?state.selected:0,d);
   }
@@ -7301,7 +7305,7 @@ function wireRest(){
   function bind(){['smartChartType','smartParam1','smartParam2','smartParam3','smartGroupBy'].forEach(function(id){var e=$(id);if(!e)return;e.addEventListener('change',function(){if(id==='smartChartType')state.type=e.value;else if(id==='smartGroupBy')state.groupBy=e.value;else{var i=id==='smartParam1'?0:id==='smartParam2'?1:2;state.params[i]=e.value;}state.selected=0;sync();draw();});});var r=$('smartResetBtn');if(r)r.addEventListener('click',function(){state={model:null,type:'bar',groupBy:'',params:[],selected:0};refresh();});}
   bind();
   var lastSig='';
-  function watch(){var a=app(),rows=a&&Array.isArray(a.rows)?a.rows.length:0,filtered=a&&Array.isArray(a.filtered)?a.filtered.length:0,cols=a&&Array.isArray(a.columns)?a.columns.length:0,sheet=a&&a.activeSheet||'',sig=rows+'|'+filtered+'|'+cols+'|'+sheet;if(sig!==lastSig){lastSig=sig;refresh();}}
+  function watch(){var a=app(),rows=a&&Array.isArray(a.rows)?a.rows.length:0,filtered=a&&Array.isArray(a.filtered)?a.filtered.length:0,cols=a&&Array.isArray(a.columns)?a.columns.length:0,sheet=a&&a.activeSheet||'',names=(a&&Array.isArray(a.columns)?a.columns.map(function(c){return String(c.name||'')}).join('¦'):'')+'|'+(a&&a.rows&&a.rows[0]?Object.keys(a.rows[0]).join('¦'):''),sig=rows+'|'+filtered+'|'+cols+'|'+sheet+'|'+names;if(sig!==lastSig){lastSig=sig;refresh();}}
   [50,150,300,600,1000,1600,2500,4000,7000,10000].forEach(function(ms){setTimeout(watch,ms)});setInterval(watch,750);if(window.MutationObserver&&!window.__instantDashSmartChartObserver){window.__instantDashSmartChartObserver=true;new MutationObserver(function(){watch()}).observe(document.body,{childList:true,subtree:true});}window.__instantDashSmartChartsRefresh=refresh;refresh();
 })();
 </script>
