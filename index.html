@@ -55,7 +55,7 @@ body.dark{
   --shadow-h:0 2px 6px rgba(0,0,0,.5), 0 16px 40px rgba(0,0,0,.45);
 }
 
-/* v1.11.03 — reliable manual Light/Night theme switching */
+/* v1.11.04 — reliable manual Light/Night theme switching */
 html.theme-dark{color-scheme:dark}
 html.theme-light{color-scheme:light}
 body.dark select,body.dark input,body.dark textarea{background:var(--card);color:var(--text);border-color:var(--border)}
@@ -146,17 +146,17 @@ main{max-width:1360px;margin:0 auto;padding:24px}
 
 /* ---------- premium landing experience v1.4.8 ---------- */
 
-/* v1.11.03 — live executive preview clarity */
+/* v1.11.04 — live executive preview clarity */
 .live-pill{display:inline-flex;align-items:center;margin-left:8px;padding:4px 9px;border-radius:999px;font-size:.58em;letter-spacing:.08em;font-weight:800;background:rgba(34,197,94,.14);color:#31b66b;vertical-align:middle}
 .exec-live-note{margin-top:10px;font-size:11px;color:var(--muted);line-height:1.45}
 @media(max-width:700px){.live-pill{font-size:.55em}.exec-live-note{font-size:10.5px}}
 
-/* v1.11.03 — clickable movement summary */
+/* v1.11.04 — clickable movement summary */
 #execStatusBadge.movement-link{cursor:pointer;user-select:none;transition:transform .15s ease,box-shadow .15s ease}
 #execStatusBadge.movement-link:hover{transform:translateY(-1px);box-shadow:0 3px 10px rgba(0,0,0,.10)}
 #execStatusBadge.movement-link:focus{outline:3px solid rgba(245,179,1,.35);outline-offset:2px}
 
-/* v1.11.03 — executive movement fact strip */
+/* v1.11.04 — executive movement fact strip */
 .mi-movement-facts{display:grid;grid-template-columns:1fr auto 1fr auto;gap:8px;align-items:stretch;margin:14px 0 12px;padding:10px;border:1px solid var(--line,#e6dccb);border-radius:16px;background:rgba(255,255,255,.72)}
 .mi-movement-facts>div{min-width:0;padding:7px 9px;border-radius:11px;background:#faf7f0}
 .mi-movement-facts span{display:block;font-size:10px;letter-spacing:.14em;font-weight:800;color:#77736c;margin-bottom:4px}
@@ -168,7 +168,7 @@ main{max-width:1360px;margin:0 auto;padding:24px}
 .mi-movement-facts .mi-change.contextual b{color:#77736c}
 @media(max-width:640px){.mi-movement-facts{grid-template-columns:1fr 24px 1fr}.mi-movement-facts .mi-change{grid-column:1/-1}.mi-movement-facts .mi-change b{font-size:18px}}
 
-/* InstantDash v1.11.03 — Management Action Centre */
+/* InstantDash v1.11.04 — Management Action Centre */
 .management-action-centre{margin-top:12px}
 .mac-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:10px;flex-wrap:wrap}
 .mac-title{font-size:15px;font-weight:800;letter-spacing:-.01em}
@@ -234,7 +234,7 @@ body.dark .landing-hero{box-shadow:0 18px 70px rgba(0,0,0,.42)}
 .preview-insight{display:flex;gap:9px;align-items:flex-start;padding:10px;border:1px solid var(--border);border-radius:11px;background:var(--card-2);font-size:9.5px;color:var(--muted);line-height:1.45}.preview-insight span{color:var(--accent);font-size:11px}.preview-insight p{margin:0}.preview-insight b{color:var(--text)}
 .hero-features{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px;padding-top:22px;border-top:1px solid var(--border);position:relative;z-index:2}.hero-features>div{display:grid;grid-template-columns:auto 1fr;column-gap:9px;align-items:center}.hero-features b{grid-row:1/3;font:700 11px Poppins,sans-serif;color:var(--accent)}.hero-features strong{font-size:12px}.hero-features span{font-size:10.5px;color:var(--muted)}
 @media(max-width:900px){.landing-hero{grid-template-columns:1fr;padding:38px 25px 25px;border-radius:24px;gap:24px}.hero-copy h2{font-size:clamp(32px,9vw,45px)}.hero-lead{font-size:14px}.hero-preview{order:2}.hero-features{order:3}.preview-window{transform:none}.hero-features{grid-template-columns:1fr}.hero-features>div{padding:8px 0}.trust-row{gap:10px 14px}}
-/* v1.11.03 — robust mobile file picker */
+/* v1.11.04 — robust mobile file picker */
 #fileInput{
   position:absolute!important;
   width:1px!important;height:1px!important;
@@ -388,7 +388,7 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
 .modal-back{position:fixed;inset:0;background:rgba(14,14,16,.45);display:none;place-items:center;z-index:150;padding:20px}
 .modal-back.on{display:grid}
 .modal{background:var(--card);border-radius:16px;box-shadow:var(--shadow-h);width:100%;max-width:460px;padding:20px;border:1px solid var(--border)}
-/* InstantDash v1.11.03 — robust movement evidence tabs: direct JS buttons, no radio/CSS dependency */
+/* InstantDash v1.11.04 — robust movement evidence tabs: direct JS buttons, no radio/CSS dependency */
 .mi-evidence-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0;position:relative;z-index:20}
 .mi-evidence-tab{appearance:none;-webkit-appearance:none;border:1px solid var(--border);background:var(--card-2);color:var(--text);border-radius:999px;padding:10px 14px;font:750 15px/1 system-ui,-apple-system,sans-serif;cursor:pointer;pointer-events:auto;touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;position:relative;z-index:21;transition:.15s ease}
 .mi-evidence-tab:hover{transform:translateY(-1px);border-color:var(--accent)}
@@ -418,7 +418,7 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
 @media (prefers-reduced-motion: reduce){ *{animation-duration:.01ms !important;transition-duration:.01ms !important} }
 
 
-/* ---------- desktop / laptop workspace refinement v1.11.03 ---------- */
+/* ---------- desktop / laptop workspace refinement v1.11.04 ---------- */
 html{overflow-x:hidden}
 body{overflow-x:hidden}
 .tbl-wrap{width:100%;max-width:100%;overflow-x:auto;overflow-y:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
@@ -515,7 +515,7 @@ body{overflow-x:hidden}
     background:rgba(0,0,0,.55);backdrop-filter:blur(5px);
     padding:18px;
   }
-  /* v1.11.03 — required open state; without this the panel has display:none */
+  /* v1.11.04 — required open state; without this the panel has display:none */
   .v154-share-panel.is-open{
     display:flex!important;
     pointer-events:auto!important;
@@ -557,7 +557,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v155-sticky-nav">
-/* InstantDash v1.11.03 — desktop/mobile persistent navigation */
+/* InstantDash v1.11.04 — desktop/mobile persistent navigation */
 .id-sticky-nav{
   position:fixed;
   left:50%;
@@ -604,7 +604,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v169-ui-fixes">
-/* v1.11.03 — cleaner Share access + wider Pivot Rows selector */
+/* v1.11.04 — cleaner Share access + wider Pivot Rows selector */
 .pivot-controls .frow:first-child{min-width:260px}
 .pivot-controls .frow:first-child select{min-width:260px}
 @media (max-width:700px){
@@ -619,7 +619,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v160-executive-css">
-/* InstantDash v1.11.03 — Executive Management Cockpit */
+/* InstantDash v1.11.04 — Executive Management Cockpit */
 .executive-cockpit{margin-top:22px}
 .exec-head{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:12px}
 .exec-head h2{font-size:18px}
@@ -669,7 +669,7 @@ body{overflow-x:hidden}
 
 
 <style id="instantdash-v161-theme-hardening">
-/* InstantDash v1.11.03 — theme hardening */
+/* InstantDash v1.11.04 — theme hardening */
 html.theme-dark body{background:var(--bg);color:var(--text)}
 html.theme-light body{background:var(--bg);color:var(--text)}
 body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var(--text)}
@@ -695,12 +695,12 @@ body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var
 
 
 <style id="instantdash-v149-accuracy-hardening">
-/* v1.11.03 — accuracy hardening:
+/* v1.11.04 — accuracy hardening:
    numeric identifiers are excluded from management contribution analysis;
    NO_OF_WORKING_DAYS is allowed to behave as a measure. */
 </style>
 <style id="instantdash-v170-responsive-final">
-/* InstantDash v1.11.03 — responsive laptop + mobile polish */
+/* InstantDash v1.11.04 — responsive laptop + mobile polish */
 .section-head{gap:12px;align-items:center}
 .section-head h2{min-width:0}
 .insight-box{white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word}
@@ -754,7 +754,7 @@ body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var
   }
 }
 
-/* v1.11.03 — management summary cards */
+/* v1.11.04 — management summary cards */
 .management-summary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:0 0 14px}
 .management-summary-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:15px;min-width:0;box-shadow:0 5px 18px rgba(14,14,16,.04)}
 .management-summary-card .msc-label{font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:800;color:var(--muted);margin-bottom:7px}
@@ -787,7 +787,7 @@ body.dark .landing-hero,body.dark .preview-window,body.dark .exec-card{color:var
 </style>
 
 <style id="instantdash-v11031-scroll-host-fix">
-/* v1.11.03 — dedicated iOS scroll host. The app is deliberately placed in a
+/* v1.11.04 — dedicated iOS scroll host. The app is deliberately placed in a
    single viewport-height vertical scroller so embedded GitHub/iOS webviews
    cannot leave the document itself stuck at the first screen. */
 html,body{margin:0!important;padding:0!important;overflow:hidden!important;height:100%!important;min-height:100%!important;}
@@ -820,7 +820,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 </style>
 
 <style id="instantdash-v155-movement-buttons">
-/* v1.11.03 — prominent, selected-state Favourable / Attention / Contextual controls */
+/* v1.11.04 — prominent, selected-state Favourable / Attention / Contextual controls */
 #execStatusBadge{display:none!important}
 #movementActionBar{
   display:flex!important;gap:10px!important;align-items:stretch!important;flex-wrap:wrap!important;
@@ -873,7 +873,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 }
 </style>
 <style id="instantdash-v160-selected-movement">
-/* v1.11.03 — keep the selected movement category visually obvious. */
+/* v1.11.04 — keep the selected movement category visually obvious. */
 #movementActionBar .movement-action.selected{outline:3px solid var(--accent,#f5b301)!important;outline-offset:2px!important;}
 </style>
 <script>
@@ -922,7 +922,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 </script>
 
 <style id="instantdash-v162-movement-fix">
-/* v1.11.03 — definitive movement-category action wiring for iPhone/iPad Safari. */
+/* v1.11.04 — definitive movement-category action wiring for iPhone/iPad Safari. */
 #movementActionBar .movement-action.selected{outline:4px solid var(--accent,#f5b301)!important;outline-offset:2px!important;box-shadow:0 0 0 5px rgba(245,179,1,.20),0 14px 30px rgba(0,0,0,.28)!important;}
 #movementActionBar .movement-action:active{transform:scale(.985)!important;}
 #movementActionBar .movement-action.disabled{opacity:.55!important;}
@@ -977,7 +977,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 
 
 <style id="instantdash-v171-health-check-prominent-css">
-/* InstantDash v1.11.03 — prominent Health Check access */
+/* InstantDash v1.11.04 — prominent Health Check access */
 .id-health-launch{
   margin-top:14px;
   display:grid;
@@ -1035,14 +1035,14 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 .id-health-foot{margin-top:14px;padding:12px 14px;border-radius:12px;background:var(--card-2);color:var(--muted);font-size:11px;line-height:1.5}.id-health-actions{display:flex;gap:9px;margin-top:14px}.id-health-actions button{flex:1;border:1px solid var(--border);background:var(--card-2);color:var(--text);border-radius:11px;padding:10px;font-weight:800;cursor:pointer}.id-health-actions .primary{background:var(--accent);color:#111;border-color:var(--accent)}
 @media(max-width:520px){#share{margin-left:0}.id-health-btn{margin:7px 0 0;padding:9px 11px;font-size:11px}.topbar{flex-wrap:wrap}.id-health-overlay{padding:10px}.id-health-card{padding:16px;border-radius:18px}.id-health-grid{grid-template-columns:1fr}.id-health-head h3{font-size:22px}.id-health-score .big{font-size:29px}}
 </style>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"1.10.54","fileName":"Legal_KPIs.xlsx","sheetNames":["Sheet1"],"activeSheet":"Sheet1","headerRow":0,"excludedSummaryRows":0,"rows":[{"Month":"2025-12-31T18:29:50.000Z","Cases Opened":12,"Cases Closed":28,"Pending Cases":40,"Legal Cost":138218,"Settlement Amount":55649,"Average Resolution Days":70,"Compliance Notices":4},{"Month":"2026-01-31T18:29:50.000Z","Cases Opened":27,"Cases Closed":17,"Pending Cases":28,"Legal Cost":64683,"Settlement Amount":195810,"Average Resolution Days":33,"Compliance Notices":1},{"Month":"2026-02-28T18:29:50.000Z","Cases Opened":34,"Cases Closed":5,"Pending Cases":36,"Legal Cost":114052,"Settlement Amount":134981,"Average Resolution Days":35,"Compliance Notices":10},{"Month":"2026-03-31T18:29:50.000Z","Cases Opened":22,"Cases Closed":23,"Pending Cases":21,"Legal Cost":139557,"Settlement Amount":240031,"Average Resolution Days":74,"Compliance Notices":7},{"Month":"2026-04-30T18:29:50.000Z","Cases Opened":20,"Cases Closed":26,"Pending Cases":35,"Legal Cost":225252,"Settlement Amount":237065,"Average Resolution Days":176,"Compliance Notices":11},{"Month":"2026-05-31T18:29:50.000Z","Cases Opened":24,"Cases Closed":20,"Pending Cases":27,"Legal Cost":232516,"Settlement Amount":223214,"Average Resolution Days":72,"Compliance Notices":6},{"Month":"2026-06-30T18:29:50.000Z","Cases Opened":8,"Cases Closed":30,"Pending Cases":20,"Legal Cost":234240,"Settlement Amount":240582,"Average Resolution Days":45,"Compliance Notices":7},{"Month":"2026-07-31T18:29:50.000Z","Cases Opened":18,"Cases Closed":16,"Pending Cases":13,"Legal Cost":128559,"Settlement Amount":159024,"Average Resolution Days":130,"Compliance Notices":7},{"Month":"2026-08-31T18:29:50.000Z","Cases Opened":17,"Cases Closed":26,"Pending Cases":16,"Legal Cost":145002,"Settlement Amount":81577,"Average Resolution Days":38,"Compliance Notices":6},{"Month":"2026-09-30T18:29:50.000Z","Cases Opened":19,"Cases Closed":5,"Pending Cases":41,"Legal Cost":191762,"Settlement Amount":48465,"Average Resolution Days":103,"Compliance Notices":7},{"Month":"2026-10-31T18:29:50.000Z","Cases Opened":28,"Cases Closed":6,"Pending Cases":25,"Legal Cost":201575,"Settlement Amount":35252,"Average Resolution Days":42,"Compliance Notices":7},{"Month":"2026-11-30T18:29:50.000Z","Cases Opened":21,"Cases Closed":26,"Pending Cases":44,"Legal Cost":154142,"Settlement Amount":237294,"Average Resolution Days":43,"Compliance Notices":10}],"columns":[{"name":"Month","type":"date","role":"time","missing":0,"missingPct":0,"unique":12,"uniqueRatio":1,"top":[{"value":"2025-12-31","count":1},{"value":"2026-01-31","count":1},{"value":"2026-02-28","count":1},{"value":"2026-03-31","count":1},{"value":"2026-04-30","count":1},{"value":"2026-05-31","count":1},{"value":"2026-06-30","count":1},{"value":"2026-07-31","count":1}],"mixed":false,"min":null,"max":null,"sum":null,"mean":null,"median":null,"std":null,"dateMin":"2025-12-31T18:29:50.000Z","dateMax":"2026-11-30T18:29:50.000Z","manual":false,"numericRatio":0},{"name":"Cases Opened","type":"number","role":"measure","missing":0,"missingPct":0,"unique":12,"uniqueRatio":1,"top":[{"value":12,"count":1},{"value":27,"count":1},{"value":34,"count":1},{"value":22,"count":1},{"value":20,"count":1},{"value":24,"count":1},{"value":8,"count":1},{"value":18,"count":1}],"mixed":false,"min":8,"max":34,"sum":250,"mean":20.833333333333332,"median":20.5,"std":6.730940168769557,"dateMin":null,"dateMax":null,"manual":false,"numericRatio":1,"allInteger":true},{"name":"Cases Closed","type":"number","role":"measure","missing":0,"missingPct":0,"unique":9,"uniqueRatio":0.75,"top":[{"value":26,"count":3},{"value":5,"count":2},{"value":28,"count":1},{"value":17,"count":1},{"value":23,"count":1},{"value":20,"count":1},{"value":30,"count":1},{"value":16,"count":1}],"mixed":false,"min":5,"max":30,"sum":228,"mean":19,"median":21.5,"std":8.850612031567836,"dateMin":null,"dateMax":null,"manual":false,"numericRatio":1,"allInteger":true},{"name":"Pending Cases","type":"number","role":"measure","missing":0,"missingPct":0,"unique":12,"uniqueRatio":1,"top":[{"value":40,"count":1},{"value":28,"count":1},{"value":36,"count":1},{"value":21,"count":1},{"value":35,"count":1},{"value":27,"count":1},{"value":20,"count":1},{"value":13,"count":1}],"mixed":false,"min":13,"max":44,"sum":346,"mean":28.833333333333332,"median":27.5,"std":9.855906294648346,"dateMin":null,"dateMax":null,"manual":false,"numericRatio":1,"allInteger":true},{"name":"Legal Cost","type":"number","role":"measure","missing":0,"missingPct":0,"unique":12,"uniqueRatio":1,"top":[{"value":138218,"count":1},{"value":64683,"count":1},{"value":114052,"count":1},{"value":139557,"count":1},{"value":225252,"count":1},{"value":232516,"count":1},{"value":234240,"count":1},{"value":128559,"count":1}],"mixed":false,"min":64683,"max":234240,"sum":1969558,"mean":164129.83333333334,"median":149572,"std":50742.260463761595,"dateMin":null,"dateMax":null,"manual":false,"numericRatio":1,"allInteger":true},{"name":"Settlement Amount","type":"number","role":"measure","missing":0,"missingPct":0,"unique":12,"uniqueRatio":1,"top":[{"value":55649,"count":1},{"value":195810,"count":1},{"value":134981,"count":1},{"value":240031,"count":1},{"value":237065,"count":1},{"value":223214,"count":1},{"value":240582,"count":1},{"value":159024,"count":1}],"mixed":false,"min":35252,"max":240582,"sum":1888944,"mean":157412,"median":177417,"std":79413.53269961823,"dateMin":null,"dateMax":null,"manual":false,"numericRatio":1,"allInteger":true},{"name":"Average Resolution Days","type":"number","role":"measure","missing":0,"missingPct":0,"unique":12,"uniqueRatio":1,"top":[{"value":70,"count":1},{"value":33,"count":1},{"value":35,"count":1},{"value":74,"count":1},{"value":176,"count":1},{"value":72,"count":1},{"value":45,"count":1},{"value":130,"count":1}],"mixed":false,"min":33,"max":176,"sum":861,"mean":71.75,"median":57.5,"std":42.489459477224074,"dateMin":null,"dateMax":null,"manual":false,"numericRatio":1,"allInteger":true},{"name":"Compliance Notices","type":"number","role":"measure","missing":0,"missingPct":0,"unique":6,"uniqueRatio":0.5,"top":[{"value":7,"count":5},{"value":10,"count":2},{"value":6,"count":2},{"value":4,"count":1},{"value":1,"count":1},{"value":11,"count":1}],"mixed":false,"min":1,"max":11,"sum":83,"mean":6.916666666666667,"median":7,"std":2.5967394084804805,"dateMin":null,"dateMax":null,"manual":false,"numericRatio":1,"allInteger":true}],"filters":{},"dark":false};</script><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"1.10.54","fileName":"Healthcare_KPIs.xlsx","sheetNames":["Sheet1"],"activeSheet":"Sheet1","headerRow":0,"excludedSummaryRows":0,"rows":[{"Month":"2025-12-31T18:29:50.000Z","Patient Volume":4171,"Bed Occupancy %":87.6,"Average Length of Stay":2.9,"Readmission Rate %":5,"Patient Satisfaction %":93.5,"Claim Denial Rate %":3.3,"Operating Cost":5948119},{"Month":"2026-01-31T18:29:50.000Z","Patient Volume":4131,"Bed Occupancy %":70,"Average Length of Stay":3.7,"Readmission Rate %":5.1,"Patient Satisfaction %":97.3,"Claim Denial Rate %":6.9,"Operating Cost":2649540},{"Month":"2026-02-28T18:29:50.000Z","Patient Volume":5572,"Bed Occupancy %":81.2,"Average Length of Stay":4.5,"Readmission Rate %":7.4,"Patient Satisfaction %":92.1,"Claim Denial Rate %":5.3,"Operating Cost":5255036},{"Month":"2026-03-31T18:29:50.000Z","Patient Volume":6742,"Bed Occupancy %":68.3,"Average Length of Stay":6.3,"Readmission Rate %":4.1,"Patient Satisfaction %":91.4,"Claim Denial Rate %":6.7,"Operating Cost":2581346},{"Month":"2026-04-30T18:29:50.000Z","Patient Volume":3314,"Bed Occupancy %":86.7,"Average Length of Stay":6.4,"Readmission Rate %":3.4,"Patient Satisfaction %":86.5,"Claim Denial Rate %":3,"Operating Cost":2893938},{"Month":"2026-05-31T18:29:50.000Z","Patient Volume":5921,"Bed Occupancy %":82.9,"Average Length of Stay":2.5,"Readmission Rate %":6.5,"Patient Satisfaction %":85.7,"Claim Denial Rate %":8.9,"Operating Cost":5098932},{"Month":"2026-06-30T18:29:50.000Z","Patient Volume":4655,"Bed Occupancy %":82.3,"Average Length of Stay":4.2,"Readmission Rate %":4.5,"Patient Satisfaction %":90.5,"Claim Denial Rate %":4.1,"Operating Cost":4612262},{"Month":"2026-07-31T18:29:50.000Z","Patient Volume":6487,"Bed Occupancy %":90.4,"Average Length of Stay":6.2,"Readmission Rate %":4.9,"Patient Satisfaction %":82.9,"Claim Denial Rate %":5,"Operating Cost":3529822},{"Month":"2026-08-31T18:29:50.000Z","Patient Volume":6118,"Bed Occupancy %":88.1,"Average Length of Stay":5,"Readmission Rate %":7.9,"Patient Satisfaction %":84.7,"Claim Denial Rate %":5.6,"Operating Cost":3072902},{"Month":"2026-09-30T18:29:50.000Z","Patient Volume":3669,"Bed Occupancy %":67.8,"Average Length of Stay":6.3,"Readmission Rate %":6,"Patient Satisfaction %":93.3,"Claim Denial Rate %":6.7,"Operating Cost":5707866},{"Month":"2026-10-31T18:29:50.000Z","Patient Volume":5684,"Bed Occupancy %":87.9,"Average Length of Stay":5,"Readmission Rate %":6,"Patient Satisfaction %":92.9,"Claim Denial Rate %":9.8,"Operating Cost":3852231},{"Month":"2026-11-30T18:29:50.000Z","Patient Volume":6904,"Bed Occupancy %":81.2,"Average Length of Stay":3.1,"Readmission Rate %":7.6,"Patient Satisfaction %":82.5,"Claim Denial Rate %":3.7,"Operating Cost":2266237}],"columns":[{"name":"Month","type":"date","role":"time","missing":0,"missingPct":0,"unique":12,"uniqueRatio":1,"top":[{"value":"2025-12-31","count":1},{"value":"2026-01-31","count":1},{"value":"2026-02-28","count":1},{"value":"2026-03-31","count":1},{"value":"2026-04-30","count":1},{"value":"2026-05-31","count":1},{"value":"2026-06-30","count":1},{"value":"2026-07-31","count":1}],"mixed":false,"min":null,"max":null,"sum":null,"mean":null,"median":null,"std":null,"dateMin":"2025-12-31T18:29:50.000Z","dateMax":"2026-11-30T18:29:50.000Z","manual":false,"numericRatio":0},{"name":"Patient Volume","type":"number","role":"measure","missing":0,"missingPct":0,"unique":12,"uniqueRatio":1,"top":[{"value":4171,"count":1},{"value":4131,"count":1},{"value":5572,"count":1},{"value":6742,"count":1},{"value":3314,"count":1},{"value":5921,"count":1},{"value":4655,"count":1},{"value":6487,"count":1}],"mixed":false,"min":3314,"max":6904,"sum":63368,"mean":5280.666666666667,"median":5628,"std":1190.0438600694047,"dateMin":null,"dateMax":null,"manual":false,"numericRatio":1,"allInteger":true},{"name":"Bed Occupancy %","type":"number","role":"measure","missing":0,"missingPct":0,"unique":11,"uniqueRatio":0.9166666666666666,"top":[{"value":81.2,"count":2},{"value":87.6,"count":1},{"value":70,"count":1},{"value":68.3,"count":1},{"value":86.7,"count":1},{"value":82.9,"count":1},{"value":82.3,"count":1},{"value":90.4,"count":1}],"mixed":false,"min":67.8,"max":90.4,"sum":974.4000000000001,"mean":81.2,"median":82.6,"std":7.766702431963432,"dateMin":null,"dateMax":null,"manual":false,"numericRatio":1,"allInteger":false},{"name":"Average Length of Stay","type":"number","role":"measure","missing":0,"missingPct":0,"unique":10,"uniqueRatio":0.8333333333333334,"top":[{"value":6.3,"count":2},{"value":5,"count":2},{"value":2.9,"count":1},{"value":3.7,"count":1},{"value":4.5,"count":1},{"value":6.4,"count":1},{"value":2.5,"count":1},{"value":4.2,"count":1}],"mixed":false,"min":2.5,"max":6.4,"sum":56.099999999999994,"mean":4.675,"median":4.75,"std":1.365115990187891,"dateMin":null,"dateMax":null,"manual":false,"numericRatio":1,"allInteger":false},{"name":"Readmission Rate %","type":"number","role":"measure","missing":0,"missingPct":0,"unique":11,"uniqueRatio":0.9166666666666666,"top":[{"value":6,"count":2},{"value":5,"count":1},{"value":5.1,"count":1},{"value":7.4,"count":1},{"value":4.1,"count":1},{"value":3.4,"count":1},{"value":6.5,"count":1},{"value":4.5,"count":1}],"mixed":false,"min":3.4,"max":7.9,"sum":68.4,"mean":5.7,"median":5.55,"std":1.3826303434637426,"dateMin":null,"dateMax":null,"manual":false,"numericRatio":1,"allInteger":false},{"name":"Patient Satisfaction %","type":"number","role":"measure","missing":0,"missingPct":0,"unique":12,"uniqueRatio":1,"top":[{"value":93.5,"count":1},{"value":97.3,"count":1},{"value":92.1,"count":1},{"value":91.4,"count":1},{"value":86.5,"count":1},{"value":85.7,"count":1},{"value":90.5,"count":1},{"value":82.9,"count":1}],"mixed":false,"min":82.5,"max":97.3,"sum":1073.3,"mean":89.44166666666666,"median":90.95,"std":4.593556779761069,"dateMin":null,"dateMax":null,"manual":false,"numericRatio":1,"allInteger":false},{"name":"Claim Denial Rate %","type":"number","role":"measure","missing":0,"missingPct":0,"unique":11,"uniqueRatio":0.9166666666666666,"top":[{"value":6.7,"count":2},{"value":3.3,"count":1},{"value":6.9,"count":1},{"value":5.3,"count":1},{"value":3,"count":1},{"value":8.9,"count":1},{"value":4.1,"count":1},{"value":5,"count":1}],"mixed":false,"min":3,"max":9.8,"sum":69,"mean":5.75,"median":5.449999999999999,"std":2.0560885194952094,"dateMin":null,"dateMax":null,"manual":false,"numericRatio":1,"allInteger":false},{"name":"Operating Cost","type":"number","role":"measure","missing":0,"missingPct":0,"unique":12,"uniqueRatio":1,"top":[{"value":5948119,"count":1},{"value":2649540,"count":1},{"value":5255036,"count":1},{"value":2581346,"count":1},{"value":2893938,"count":1},{"value":5098932,"count":1},{"value":4612262,"count":1},{"value":3529822,"count":1}],"mixed":false,"min":2266237,"max":5948119,"sum":47468231,"mean":3955685.9166666665,"median":3691026.5,"std":1258771.991429177,"dateMin":null,"dateMax":null,"manual":false,"numericRatio":1,"allInteger":true}],"filters":{},"dark":false};</script><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"1.10.54","fileName":"IT_Technology_KPIs.xlsx","sheetNames":["Sheet1"],"activeSheet":"Sheet1","headerRow":0,"excludedSummaryRows":0,"rows":[{"Month":"2025-12-31T18:29:50.000Z","IT Incidents":142,"Incidents Resolved":88,"System Uptime %":98.41,"Downtime Hours":19.8,"Average Resolution Hours":9.8,"IT Cost":371454,"SLA Compliance %":89.2,"Users Supported":1245},{"Month":"2026-01-31T18:29:50.000Z","IT Incidents":74,"Incidents Resolved":123,"System Uptime %":99.1,"Downtime Hours":16.9,"Average Resolution Hours":7.9,"IT Cost":596794,"SLA Compliance %":98.1,"Users Supported":2110},{"Month":"2026-02-28T18:29:50.000Z","IT Incidents":159,"Incidents Resolved":110,"System Uptime %":98.52,"Downtime Hours":13.8,"Average Resolution Hours":6.7,"IT Cost":489505,"SLA Compliance %":94.8,"Users Supported":2524},{"Month":"2026-03-31T18:29:50.000Z","IT Incidents":82,"Incidents Resolved":123,"System Uptime %":98.83,"Downtime Hours":10.7,"Average Resolution Hours":12.9,"IT Cost":345812,"SLA Compliance %":96.1,"Users Supported":1001},{"Month":"2026-04-30T18:29:50.000Z","IT Incidents":141,"Incidents Resolved":96,"System Uptime %":98.04,"Downtime Hours":18.1,"Average Resolution Hours":7.9,"IT Cost":801361,"SLA Compliance %":91.9,"Users Supported":2442},{"Month":"2026-05-31T18:29:50.000Z","IT Incidents":132,"Incidents Resolved":44,"System Uptime %":98.56,"Downtime Hours":29.3,"Average Resolution Hours":9,"IT Cost":370627,"SLA Compliance %":98.3,"Users Supported":1787},{"Month":"2026-06-30T18:29:50.000Z","IT Incidents":126,"Incidents Resolved":81,"System Uptime %":98.54,"Downtime Hours":17.5,"Average Resolution Hours":14.4,"IT Cost":438990,"SLA Compliance %":98.7,"Users Supported":1010},{"Month":"2026-07-31T18:29:50.000Z","IT Incidents":118,"Incidents Resolved":59,"System Uptime %":99.83,"Downtime Hours":26.8,"Average Resolution Hours":17.1,"IT Cost":440903,"SLA Compliance %":94.1,"Users Supported":541},{"Month":"2026-08-31T18:29:50.000Z","IT Incidents":42,"Incidents Resolved":134,"System Uptime %":99.17,"Downtime Hours":2.4,"Average Resolution Hours":17.9,"IT Cost":609874,"SLA Compliance %":98.9,"Users Supported":2710},{"Month":"2026-09-30T18:29:50.000Z","IT Incidents":64,"Incidents Resolved":137,"System Uptime %":98.35,"Downtime Hours":7.7,"Average Resolution Hours":9.8,"IT Cost":895195,"SLA Compliance %":93.6,"Users Supported":2689},{"Month":"2026-10-31T18:29:50.000Z","IT Incidents":144,"Incidents Resolved":58,"System Uptime %":98.85,"Downtime Hours":26.2,"Average Resolution Hours":4.2,"IT Cost":316851,"SLA Compliance %":92.8,"Users Supported":657},{"Month":"2026-11-30T18:29:50.000Z","IT Incidents":129,"Incidents Resolved":136,"System Uptime %":98.98,"Downtime Hours":17.9,"Average Resolution Hours":2.4,"IT Cost":397337,"SLA Compliance %":96.6,"Users Supported":1856}],"columns":[{"name":"Month","type":"date","role":"time","missing":0,"missingPct":0,"unique":12,"uniqueRatio":1,"top":[{"value":"2025-12-31","count":1},{"value":"2026-01-31","count":1},{"value":"2026-02-28","count":1},{"value":"2026-03-31","count":1},{"value":"2026-04-30","count":1},{"value":"2026-05-31","count":1},{"value":"2026-06-30","count":1},{"value":"2026-07-31","count":1}],"mixed":false,"min":null,"max":null,"sum":null,"mean":null,"median":null,"std":null,"dateMin":"2025-12-31T18:29:50.000Z","dateMax":"2026-11-30T18:29:50.000Z","manual":false,"numericRatio":0},{"name":"IT Incidents","type":"number","role":"measure","missing":0,"missingPct":0,"unique":12,"uniqueRatio":1,"top":[{"value":142,"count":1},{"value":74,"count":1},{"value":159,"count":1},{"value":82,"count":1},{"value":141,"count":1},{"value":132,"count":1},{"value":126,"count":1},{"value":118,"count":1}],"mixed":false,"min":42,"max":159,"sum":1353,"mean":112.75,"median":127.5,"std":35.865779883709024,"dateMin":null,"dateMax":null,"manual":false,"numericRatio":1,"allInteger":true},{"name":"Incidents Resolved","type":"number","role":"measure","missing":0,"missingPct":0,"unique":11,"uniqueRatio":0.9166666666666666,"top":[{"value":123,"count":2},{"value":88,"count":1},{"value":110,"count":1},{"value":96,"count":1},{"value":44,"count":1},{"value":81,"count":1},{"value":59,"count":1},{"value":134,"count":1}],"mixed":false,"min":44,"max":137,"sum":1189,"mean":99.08333333333333,"median":103,"std":31.716079868455086,"dateMin":null,"dateMax":null,"manual":false,"numericRatio":1,"allInteger":true},{"name":"System Uptime %","type":"number","role":"measure","missing":0,"missingPct":0,"unique":12,"uniqueRatio":1,"top":[{"value":98.41,"count":1},{"value":99.1,"count":1},{"value":98.52,"count":1},{"value":98.83,"count":1},{"value":98.04,"count":1},{"value":98.56,"count":1},{"value":98.54,"count":1},{"value":99.83,"count":1}],"mixed":false,"min":98.04,"max":99.83,"sum":1185.18,"mean":98.765,"median":98.695,"std":0.45135905884339933,"dateMin":null,"dateMax":null,"manual":false,"numericRatio":1,"allInteger":false},{"name":"Downtime Hours","type":"number","role":"measure","missing":0,"missingPct":0,"unique":12,"uniqueRatio":1,"top":[{"value":19.8,"count":1},{"value":16.9,"count":1},{"value":13.8,"count":1},{"value":10.7,"count":1},{"value":18.1,"count":1},{"value":29.3,"count":1},{"value":17.5,"count":1},{"value":26.8,"count":1}],"mixed":false,"min":2.4,"max":29.3,"sum":207.10000000000002,"mean":17.258333333333336,"median":17.7,"std":7.587649870385136,"dateMin":null,"dateMax":null,"manual":false,"numericRatio":1,"allInteger":false},{"name":"Average Resolution Hours","type":"number","role":"measure","missing":0,"missingPct":0,"unique":10,"uniqueRatio":0.8333333333333334,"top":[{"value":9.8,"count":2},{"value":7.9,"count":2},{"value":6.7,"count":1},{"value":12.9,"count":1},{"value":9,"count":1},{"value":14.4,"count":1},{"value":17.1,"count":1},{"value":17.9,"count":1}],"mixed":false,"min":2.4,"max":17.9,"sum":120.00000000000003,"mean":10.000000000000002,"median":9.4,"std":4.589662296945169,"dateMin":null,"dateMax":null,"manual":false,"numericRatio":1,"allInteger":false},{"name":"IT Cost","type":"number","role":"measure","missing":0,"missingPct":0,"unique":12,"uniqueRatio":1,"top":[{"value":371454,"count":1},{"value":596794,"count":1},{"value":489505,"count":1},{"value":345812,"count":1},{"value":801361,"count":1},{"value":370627,"count":1},{"value":438990,"count":1},{"value":440903,"count":1}],"mixed":false,"min":316851,"max":895195,"sum":6074703,"mean":506225.25,"median":439946.5,"std":177110.44687337757,"dateMin":null,"dateMax":null,"manual":false,"numericRatio":1,"allInteger":true},{"name":"SLA Compliance %","type":"number","role":"measure","missing":0,"missingPct":0,"unique":12,"uniqueRatio":1,"top":[{"value":89.2,"count":1},{"value":98.1,"count":1},{"value":94.8,"count":1},{"value":96.1,"count":1},{"value":91.9,"count":1},{"value":98.3,"count":1},{"value":98.7,"count":1},{"value":94.1,"count":1}],"mixed":false,"min":89.2,"max":98.9,"sum":1143.1000000000001,"mean":95.25833333333334,"median":95.44999999999999,"std":2.933558230015025,"dateMin":null,"dateMax":null,"manual":false,"numericRatio":1,"allInteger":false},{"name":"Users Supported","type":"number","role":"measure","missing":0,"missingPct":0,"unique":12,"uniqueRatio":1,"top":[{"value":1245,"count":1},{"value":2110,"count":1},{"value":2524,"count":1},{"value":1001,"count":1},{"value":2442,"count":1},{"value":1787,"count":1},{"value":1010,"count":1},{"value":541,"count":1}],"mixed":false,"min":541,"max":2710,"sum":20572,"mean":1714.3333333333333,"median":1821.5,"std":765.2971463570357,"dateMin":null,"dateMax":null,"manual":false,"numericRatio":1,"allInteger":true}],"filters":{},"dark":false};</script><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"1.10.54","fileName":"Central_Bank_of_India_Q1FY27_Excel.xlsx","sheetNames":["Index","Quarterly Financials 1","Quarterly Financials 2","Cost Ratios","Snapshot 1","Snapshot 2","Price to Book","Source & Notes"],"activeSheet":"Index","headerRow":0,"excludedSummaryRows":0,"rows":[{"Central Bank of India – Q1FY27":"Workbook contents"},{"Central Bank of India – Q1FY27":"Quarterly Financials 1"},{"Central Bank of India – Q1FY27":"Quarterly Financials 2"},{"Central Bank of India – Q1FY27":"Cost Ratios"},{"Central Bank of India – Q1FY27":"Snapshot 1"},{"Central Bank of India – Q1FY27":"Snapshot 2"},{"Central Bank of India – Q1FY27":"Price to Book"},{"Central Bank of India – Q1FY27":"Source & Notes"}],"columns":[{"name":"Central Bank of India – Q1FY27","type":"text","role":"dimension","missing":0,"missingPct":0,"unique":8,"uniqueRatio":1,"top":[{"value":"Workbook contents","count":1},{"value":"Quarterly Financials 1","count":1},{"value":"Quarterly Financials 2","count":1},{"value":"Cost Ratios","count":1},{"value":"Snapshot 1","count":1},{"value":"Snapshot 2","count":1},{"value":"Price to Book","count":1},{"value":"Source & Notes","count":1}],"mixed":false,"min":null,"max":null,"sum":null,"mean":null,"median":null,"std":null,"dateMin":null,"dateMax":null,"manual":false,"numericRatio":0}],"filters":{},"dark":false};</script><!-- InstantDash v1.11.03: direct iPhone-safe Diagnose binding -->
-<!-- InstantDash v1.11.03: inline self-contained Diagnose handler for iOS Safari -->
-<!-- InstantDash v1.11.03: Health Check automatically opens local diagnosis after upload -->
-<!-- InstantDash v1.11.03 — diagnosis is automatic; no button tap required -->
-<!-- InstantDash v1.11.03 — diagnosis rendered inline; no click dependency -->
-<!-- InstantDash v1.11.03 — recommended action summary added -->
-<!-- InstantDash v1.11.03 — diagnosis summary no longer double-counts constant fields; verification styling corrected -->
-<!-- InstantDash v1.11.03 — diagnosis summary uses one consistent finding hierarchy -->
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"1.10.54","fileName":"Legal_KPIs.xlsx","sheetNames":["Sheet1"],"activeSheet":"Sheet1","headerRow":0,"excludedSummaryRows":0,"rows":[{"Month":"2025-12-31T18:29:50.000Z","Cases Opened":12,"Cases Closed":28,"Pending Cases":40,"Legal Cost":138218,"Settlement Amount":55649,"Average Resolution Days":70,"Compliance Notices":4},{"Month":"2026-01-31T18:29:50.000Z","Cases Opened":27,"Cases Closed":17,"Pending Cases":28,"Legal Cost":64683,"Settlement Amount":195810,"Average Resolution Days":33,"Compliance Notices":1},{"Month":"2026-02-28T18:29:50.000Z","Cases Opened":34,"Cases Closed":5,"Pending Cases":36,"Legal Cost":114052,"Settlement Amount":134981,"Average Resolution Days":35,"Compliance Notices":10},{"Month":"2026-03-31T18:29:50.000Z","Cases Opened":22,"Cases Closed":23,"Pending Cases":21,"Legal Cost":139557,"Settlement Amount":240031,"Average Resolution Days":74,"Compliance Notices":7},{"Month":"2026-04-30T18:29:50.000Z","Cases Opened":20,"Cases Closed":26,"Pending Cases":35,"Legal Cost":225252,"Settlement Amount":237065,"Average Resolution Days":176,"Compliance Notices":11},{"Month":"2026-05-31T18:29:50.000Z","Cases Opened":24,"Cases Closed":20,"Pending Cases":27,"Legal Cost":232516,"Settlement Amount":223214,"Average Resolution Days":72,"Compliance Notices":6},{"Month":"2026-06-30T18:29:50.000Z","Cases Opened":8,"Cases Closed":30,"Pending Cases":20,"Legal Cost":234240,"Settlement Amount":240582,"Average Resolution Days":45,"Compliance Notices":7},{"Month":"2026-07-31T18:29:50.000Z","Cases Opened":18,"Cases Closed":16,"Pending Cases":13,"Legal Cost":128559,"Settlement Amount":159024,"Average Resolution Days":130,"Compliance Notices":7},{"Month":"2026-08-31T18:29:50.000Z","Cases Opened":17,"Cases Closed":26,"Pending Cases":16,"Legal Cost":145002,"Settlement Amount":81577,"Average Resolution Days":38,"Compliance Notices":6},{"Month":"2026-09-30T18:29:50.000Z","Cases Opened":19,"Cases Closed":5,"Pending Cases":41,"Legal Cost":191762,"Settlement Amount":48465,"Average Resolution Days":103,"Compliance Notices":7},{"Month":"2026-10-31T18:29:50.000Z","Cases Opened":28,"Cases Closed":6,"Pending Cases":25,"Legal Cost":201575,"Settlement Amount":35252,"Average Resolution Days":42,"Compliance Notices":7},{"Month":"2026-11-30T18:29:50.000Z","Cases Opened":21,"Cases Closed":26,"Pending Cases":44,"Legal Cost":154142,"Settlement Amount":237294,"Average Resolution Days":43,"Compliance Notices":10}],"columns":[{"name":"Month","type":"date","role":"time","missing":0,"missingPct":0,"unique":12,"uniqueRatio":1,"top":[{"value":"2025-12-31","count":1},{"value":"2026-01-31","count":1},{"value":"2026-02-28","count":1},{"value":"2026-03-31","count":1},{"value":"2026-04-30","count":1},{"value":"2026-05-31","count":1},{"value":"2026-06-30","count":1},{"value":"2026-07-31","count":1}],"mixed":false,"min":null,"max":null,"sum":null,"mean":null,"median":null,"std":null,"dateMin":"2025-12-31T18:29:50.000Z","dateMax":"2026-11-30T18:29:50.000Z","manual":false,"numericRatio":0},{"name":"Cases Opened","type":"number","role":"measure","missing":0,"missingPct":0,"unique":12,"uniqueRatio":1,"top":[{"value":12,"count":1},{"value":27,"count":1},{"value":34,"count":1},{"value":22,"count":1},{"value":20,"count":1},{"value":24,"count":1},{"value":8,"count":1},{"value":18,"count":1}],"mixed":false,"min":8,"max":34,"sum":250,"mean":20.833333333333332,"median":20.5,"std":6.730940168769557,"dateMin":null,"dateMax":null,"manual":false,"numericRatio":1,"allInteger":true},{"name":"Cases Closed","type":"number","role":"measure","missing":0,"missingPct":0,"unique":9,"uniqueRatio":0.75,"top":[{"value":26,"count":3},{"value":5,"count":2},{"value":28,"count":1},{"value":17,"count":1},{"value":23,"count":1},{"value":20,"count":1},{"value":30,"count":1},{"value":16,"count":1}],"mixed":false,"min":5,"max":30,"sum":228,"mean":19,"median":21.5,"std":8.850612031567836,"dateMin":null,"dateMax":null,"manual":false,"numericRatio":1,"allInteger":true},{"name":"Pending Cases","type":"number","role":"measure","missing":0,"missingPct":0,"unique":12,"uniqueRatio":1,"top":[{"value":40,"count":1},{"value":28,"count":1},{"value":36,"count":1},{"value":21,"count":1},{"value":35,"count":1},{"value":27,"count":1},{"value":20,"count":1},{"value":13,"count":1}],"mixed":false,"min":13,"max":44,"sum":346,"mean":28.833333333333332,"median":27.5,"std":9.855906294648346,"dateMin":null,"dateMax":null,"manual":false,"numericRatio":1,"allInteger":true},{"name":"Legal Cost","type":"number","role":"measure","missing":0,"missingPct":0,"unique":12,"uniqueRatio":1,"top":[{"value":138218,"count":1},{"value":64683,"count":1},{"value":114052,"count":1},{"value":139557,"count":1},{"value":225252,"count":1},{"value":232516,"count":1},{"value":234240,"count":1},{"value":128559,"count":1}],"mixed":false,"min":64683,"max":234240,"sum":1969558,"mean":164129.83333333334,"median":149572,"std":50742.260463761595,"dateMin":null,"dateMax":null,"manual":false,"numericRatio":1,"allInteger":true},{"name":"Settlement Amount","type":"number","role":"measure","missing":0,"missingPct":0,"unique":12,"uniqueRatio":1,"top":[{"value":55649,"count":1},{"value":195810,"count":1},{"value":134981,"count":1},{"value":240031,"count":1},{"value":237065,"count":1},{"value":223214,"count":1},{"value":240582,"count":1},{"value":159024,"count":1}],"mixed":false,"min":35252,"max":240582,"sum":1888944,"mean":157412,"median":177417,"std":79413.53269961823,"dateMin":null,"dateMax":null,"manual":false,"numericRatio":1,"allInteger":true},{"name":"Average Resolution Days","type":"number","role":"measure","missing":0,"missingPct":0,"unique":12,"uniqueRatio":1,"top":[{"value":70,"count":1},{"value":33,"count":1},{"value":35,"count":1},{"value":74,"count":1},{"value":176,"count":1},{"value":72,"count":1},{"value":45,"count":1},{"value":130,"count":1}],"mixed":false,"min":33,"max":176,"sum":861,"mean":71.75,"median":57.5,"std":42.489459477224074,"dateMin":null,"dateMax":null,"manual":false,"numericRatio":1,"allInteger":true},{"name":"Compliance Notices","type":"number","role":"measure","missing":0,"missingPct":0,"unique":6,"uniqueRatio":0.5,"top":[{"value":7,"count":5},{"value":10,"count":2},{"value":6,"count":2},{"value":4,"count":1},{"value":1,"count":1},{"value":11,"count":1}],"mixed":false,"min":1,"max":11,"sum":83,"mean":6.916666666666667,"median":7,"std":2.5967394084804805,"dateMin":null,"dateMax":null,"manual":false,"numericRatio":1,"allInteger":true}],"filters":{},"dark":false};</script><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"1.10.54","fileName":"Healthcare_KPIs.xlsx","sheetNames":["Sheet1"],"activeSheet":"Sheet1","headerRow":0,"excludedSummaryRows":0,"rows":[{"Month":"2025-12-31T18:29:50.000Z","Patient Volume":4171,"Bed Occupancy %":87.6,"Average Length of Stay":2.9,"Readmission Rate %":5,"Patient Satisfaction %":93.5,"Claim Denial Rate %":3.3,"Operating Cost":5948119},{"Month":"2026-01-31T18:29:50.000Z","Patient Volume":4131,"Bed Occupancy %":70,"Average Length of Stay":3.7,"Readmission Rate %":5.1,"Patient Satisfaction %":97.3,"Claim Denial Rate %":6.9,"Operating Cost":2649540},{"Month":"2026-02-28T18:29:50.000Z","Patient Volume":5572,"Bed Occupancy %":81.2,"Average Length of Stay":4.5,"Readmission Rate %":7.4,"Patient Satisfaction %":92.1,"Claim Denial Rate %":5.3,"Operating Cost":5255036},{"Month":"2026-03-31T18:29:50.000Z","Patient Volume":6742,"Bed Occupancy %":68.3,"Average Length of Stay":6.3,"Readmission Rate %":4.1,"Patient Satisfaction %":91.4,"Claim Denial Rate %":6.7,"Operating Cost":2581346},{"Month":"2026-04-30T18:29:50.000Z","Patient Volume":3314,"Bed Occupancy %":86.7,"Average Length of Stay":6.4,"Readmission Rate %":3.4,"Patient Satisfaction %":86.5,"Claim Denial Rate %":3,"Operating Cost":2893938},{"Month":"2026-05-31T18:29:50.000Z","Patient Volume":5921,"Bed Occupancy %":82.9,"Average Length of Stay":2.5,"Readmission Rate %":6.5,"Patient Satisfaction %":85.7,"Claim Denial Rate %":8.9,"Operating Cost":5098932},{"Month":"2026-06-30T18:29:50.000Z","Patient Volume":4655,"Bed Occupancy %":82.3,"Average Length of Stay":4.2,"Readmission Rate %":4.5,"Patient Satisfaction %":90.5,"Claim Denial Rate %":4.1,"Operating Cost":4612262},{"Month":"2026-07-31T18:29:50.000Z","Patient Volume":6487,"Bed Occupancy %":90.4,"Average Length of Stay":6.2,"Readmission Rate %":4.9,"Patient Satisfaction %":82.9,"Claim Denial Rate %":5,"Operating Cost":3529822},{"Month":"2026-08-31T18:29:50.000Z","Patient Volume":6118,"Bed Occupancy %":88.1,"Average Length of Stay":5,"Readmission Rate %":7.9,"Patient Satisfaction %":84.7,"Claim Denial Rate %":5.6,"Operating Cost":3072902},{"Month":"2026-09-30T18:29:50.000Z","Patient Volume":3669,"Bed Occupancy %":67.8,"Average Length of Stay":6.3,"Readmission Rate %":6,"Patient Satisfaction %":93.3,"Claim Denial Rate %":6.7,"Operating Cost":5707866},{"Month":"2026-10-31T18:29:50.000Z","Patient Volume":5684,"Bed Occupancy %":87.9,"Average Length of Stay":5,"Readmission Rate %":6,"Patient Satisfaction %":92.9,"Claim Denial Rate %":9.8,"Operating Cost":3852231},{"Month":"2026-11-30T18:29:50.000Z","Patient Volume":6904,"Bed Occupancy %":81.2,"Average Length of Stay":3.1,"Readmission Rate %":7.6,"Patient Satisfaction %":82.5,"Claim Denial Rate %":3.7,"Operating Cost":2266237}],"columns":[{"name":"Month","type":"date","role":"time","missing":0,"missingPct":0,"unique":12,"uniqueRatio":1,"top":[{"value":"2025-12-31","count":1},{"value":"2026-01-31","count":1},{"value":"2026-02-28","count":1},{"value":"2026-03-31","count":1},{"value":"2026-04-30","count":1},{"value":"2026-05-31","count":1},{"value":"2026-06-30","count":1},{"value":"2026-07-31","count":1}],"mixed":false,"min":null,"max":null,"sum":null,"mean":null,"median":null,"std":null,"dateMin":"2025-12-31T18:29:50.000Z","dateMax":"2026-11-30T18:29:50.000Z","manual":false,"numericRatio":0},{"name":"Patient Volume","type":"number","role":"measure","missing":0,"missingPct":0,"unique":12,"uniqueRatio":1,"top":[{"value":4171,"count":1},{"value":4131,"count":1},{"value":5572,"count":1},{"value":6742,"count":1},{"value":3314,"count":1},{"value":5921,"count":1},{"value":4655,"count":1},{"value":6487,"count":1}],"mixed":false,"min":3314,"max":6904,"sum":63368,"mean":5280.666666666667,"median":5628,"std":1190.0438600694047,"dateMin":null,"dateMax":null,"manual":false,"numericRatio":1,"allInteger":true},{"name":"Bed Occupancy %","type":"number","role":"measure","missing":0,"missingPct":0,"unique":11,"uniqueRatio":0.9166666666666666,"top":[{"value":81.2,"count":2},{"value":87.6,"count":1},{"value":70,"count":1},{"value":68.3,"count":1},{"value":86.7,"count":1},{"value":82.9,"count":1},{"value":82.3,"count":1},{"value":90.4,"count":1}],"mixed":false,"min":67.8,"max":90.4,"sum":974.4000000000001,"mean":81.2,"median":82.6,"std":7.766702431963432,"dateMin":null,"dateMax":null,"manual":false,"numericRatio":1,"allInteger":false},{"name":"Average Length of Stay","type":"number","role":"measure","missing":0,"missingPct":0,"unique":10,"uniqueRatio":0.8333333333333334,"top":[{"value":6.3,"count":2},{"value":5,"count":2},{"value":2.9,"count":1},{"value":3.7,"count":1},{"value":4.5,"count":1},{"value":6.4,"count":1},{"value":2.5,"count":1},{"value":4.2,"count":1}],"mixed":false,"min":2.5,"max":6.4,"sum":56.099999999999994,"mean":4.675,"median":4.75,"std":1.365115990187891,"dateMin":null,"dateMax":null,"manual":false,"numericRatio":1,"allInteger":false},{"name":"Readmission Rate %","type":"number","role":"measure","missing":0,"missingPct":0,"unique":11,"uniqueRatio":0.9166666666666666,"top":[{"value":6,"count":2},{"value":5,"count":1},{"value":5.1,"count":1},{"value":7.4,"count":1},{"value":4.1,"count":1},{"value":3.4,"count":1},{"value":6.5,"count":1},{"value":4.5,"count":1}],"mixed":false,"min":3.4,"max":7.9,"sum":68.4,"mean":5.7,"median":5.55,"std":1.3826303434637426,"dateMin":null,"dateMax":null,"manual":false,"numericRatio":1,"allInteger":false},{"name":"Patient Satisfaction %","type":"number","role":"measure","missing":0,"missingPct":0,"unique":12,"uniqueRatio":1,"top":[{"value":93.5,"count":1},{"value":97.3,"count":1},{"value":92.1,"count":1},{"value":91.4,"count":1},{"value":86.5,"count":1},{"value":85.7,"count":1},{"value":90.5,"count":1},{"value":82.9,"count":1}],"mixed":false,"min":82.5,"max":97.3,"sum":1073.3,"mean":89.44166666666666,"median":90.95,"std":4.593556779761069,"dateMin":null,"dateMax":null,"manual":false,"numericRatio":1,"allInteger":false},{"name":"Claim Denial Rate %","type":"number","role":"measure","missing":0,"missingPct":0,"unique":11,"uniqueRatio":0.9166666666666666,"top":[{"value":6.7,"count":2},{"value":3.3,"count":1},{"value":6.9,"count":1},{"value":5.3,"count":1},{"value":3,"count":1},{"value":8.9,"count":1},{"value":4.1,"count":1},{"value":5,"count":1}],"mixed":false,"min":3,"max":9.8,"sum":69,"mean":5.75,"median":5.449999999999999,"std":2.0560885194952094,"dateMin":null,"dateMax":null,"manual":false,"numericRatio":1,"allInteger":false},{"name":"Operating Cost","type":"number","role":"measure","missing":0,"missingPct":0,"unique":12,"uniqueRatio":1,"top":[{"value":5948119,"count":1},{"value":2649540,"count":1},{"value":5255036,"count":1},{"value":2581346,"count":1},{"value":2893938,"count":1},{"value":5098932,"count":1},{"value":4612262,"count":1},{"value":3529822,"count":1}],"mixed":false,"min":2266237,"max":5948119,"sum":47468231,"mean":3955685.9166666665,"median":3691026.5,"std":1258771.991429177,"dateMin":null,"dateMax":null,"manual":false,"numericRatio":1,"allInteger":true}],"filters":{},"dark":false};</script><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"1.10.54","fileName":"IT_Technology_KPIs.xlsx","sheetNames":["Sheet1"],"activeSheet":"Sheet1","headerRow":0,"excludedSummaryRows":0,"rows":[{"Month":"2025-12-31T18:29:50.000Z","IT Incidents":142,"Incidents Resolved":88,"System Uptime %":98.41,"Downtime Hours":19.8,"Average Resolution Hours":9.8,"IT Cost":371454,"SLA Compliance %":89.2,"Users Supported":1245},{"Month":"2026-01-31T18:29:50.000Z","IT Incidents":74,"Incidents Resolved":123,"System Uptime %":99.1,"Downtime Hours":16.9,"Average Resolution Hours":7.9,"IT Cost":596794,"SLA Compliance %":98.1,"Users Supported":2110},{"Month":"2026-02-28T18:29:50.000Z","IT Incidents":159,"Incidents Resolved":110,"System Uptime %":98.52,"Downtime Hours":13.8,"Average Resolution Hours":6.7,"IT Cost":489505,"SLA Compliance %":94.8,"Users Supported":2524},{"Month":"2026-03-31T18:29:50.000Z","IT Incidents":82,"Incidents Resolved":123,"System Uptime %":98.83,"Downtime Hours":10.7,"Average Resolution Hours":12.9,"IT Cost":345812,"SLA Compliance %":96.1,"Users Supported":1001},{"Month":"2026-04-30T18:29:50.000Z","IT Incidents":141,"Incidents Resolved":96,"System Uptime %":98.04,"Downtime Hours":18.1,"Average Resolution Hours":7.9,"IT Cost":801361,"SLA Compliance %":91.9,"Users Supported":2442},{"Month":"2026-05-31T18:29:50.000Z","IT Incidents":132,"Incidents Resolved":44,"System Uptime %":98.56,"Downtime Hours":29.3,"Average Resolution Hours":9,"IT Cost":370627,"SLA Compliance %":98.3,"Users Supported":1787},{"Month":"2026-06-30T18:29:50.000Z","IT Incidents":126,"Incidents Resolved":81,"System Uptime %":98.54,"Downtime Hours":17.5,"Average Resolution Hours":14.4,"IT Cost":438990,"SLA Compliance %":98.7,"Users Supported":1010},{"Month":"2026-07-31T18:29:50.000Z","IT Incidents":118,"Incidents Resolved":59,"System Uptime %":99.83,"Downtime Hours":26.8,"Average Resolution Hours":17.1,"IT Cost":440903,"SLA Compliance %":94.1,"Users Supported":541},{"Month":"2026-08-31T18:29:50.000Z","IT Incidents":42,"Incidents Resolved":134,"System Uptime %":99.17,"Downtime Hours":2.4,"Average Resolution Hours":17.9,"IT Cost":609874,"SLA Compliance %":98.9,"Users Supported":2710},{"Month":"2026-09-30T18:29:50.000Z","IT Incidents":64,"Incidents Resolved":137,"System Uptime %":98.35,"Downtime Hours":7.7,"Average Resolution Hours":9.8,"IT Cost":895195,"SLA Compliance %":93.6,"Users Supported":2689},{"Month":"2026-10-31T18:29:50.000Z","IT Incidents":144,"Incidents Resolved":58,"System Uptime %":98.85,"Downtime Hours":26.2,"Average Resolution Hours":4.2,"IT Cost":316851,"SLA Compliance %":92.8,"Users Supported":657},{"Month":"2026-11-30T18:29:50.000Z","IT Incidents":129,"Incidents Resolved":136,"System Uptime %":98.98,"Downtime Hours":17.9,"Average Resolution Hours":2.4,"IT Cost":397337,"SLA Compliance %":96.6,"Users Supported":1856}],"columns":[{"name":"Month","type":"date","role":"time","missing":0,"missingPct":0,"unique":12,"uniqueRatio":1,"top":[{"value":"2025-12-31","count":1},{"value":"2026-01-31","count":1},{"value":"2026-02-28","count":1},{"value":"2026-03-31","count":1},{"value":"2026-04-30","count":1},{"value":"2026-05-31","count":1},{"value":"2026-06-30","count":1},{"value":"2026-07-31","count":1}],"mixed":false,"min":null,"max":null,"sum":null,"mean":null,"median":null,"std":null,"dateMin":"2025-12-31T18:29:50.000Z","dateMax":"2026-11-30T18:29:50.000Z","manual":false,"numericRatio":0},{"name":"IT Incidents","type":"number","role":"measure","missing":0,"missingPct":0,"unique":12,"uniqueRatio":1,"top":[{"value":142,"count":1},{"value":74,"count":1},{"value":159,"count":1},{"value":82,"count":1},{"value":141,"count":1},{"value":132,"count":1},{"value":126,"count":1},{"value":118,"count":1}],"mixed":false,"min":42,"max":159,"sum":1353,"mean":112.75,"median":127.5,"std":35.865779883709024,"dateMin":null,"dateMax":null,"manual":false,"numericRatio":1,"allInteger":true},{"name":"Incidents Resolved","type":"number","role":"measure","missing":0,"missingPct":0,"unique":11,"uniqueRatio":0.9166666666666666,"top":[{"value":123,"count":2},{"value":88,"count":1},{"value":110,"count":1},{"value":96,"count":1},{"value":44,"count":1},{"value":81,"count":1},{"value":59,"count":1},{"value":134,"count":1}],"mixed":false,"min":44,"max":137,"sum":1189,"mean":99.08333333333333,"median":103,"std":31.716079868455086,"dateMin":null,"dateMax":null,"manual":false,"numericRatio":1,"allInteger":true},{"name":"System Uptime %","type":"number","role":"measure","missing":0,"missingPct":0,"unique":12,"uniqueRatio":1,"top":[{"value":98.41,"count":1},{"value":99.1,"count":1},{"value":98.52,"count":1},{"value":98.83,"count":1},{"value":98.04,"count":1},{"value":98.56,"count":1},{"value":98.54,"count":1},{"value":99.83,"count":1}],"mixed":false,"min":98.04,"max":99.83,"sum":1185.18,"mean":98.765,"median":98.695,"std":0.45135905884339933,"dateMin":null,"dateMax":null,"manual":false,"numericRatio":1,"allInteger":false},{"name":"Downtime Hours","type":"number","role":"measure","missing":0,"missingPct":0,"unique":12,"uniqueRatio":1,"top":[{"value":19.8,"count":1},{"value":16.9,"count":1},{"value":13.8,"count":1},{"value":10.7,"count":1},{"value":18.1,"count":1},{"value":29.3,"count":1},{"value":17.5,"count":1},{"value":26.8,"count":1}],"mixed":false,"min":2.4,"max":29.3,"sum":207.10000000000002,"mean":17.258333333333336,"median":17.7,"std":7.587649870385136,"dateMin":null,"dateMax":null,"manual":false,"numericRatio":1,"allInteger":false},{"name":"Average Resolution Hours","type":"number","role":"measure","missing":0,"missingPct":0,"unique":10,"uniqueRatio":0.8333333333333334,"top":[{"value":9.8,"count":2},{"value":7.9,"count":2},{"value":6.7,"count":1},{"value":12.9,"count":1},{"value":9,"count":1},{"value":14.4,"count":1},{"value":17.1,"count":1},{"value":17.9,"count":1}],"mixed":false,"min":2.4,"max":17.9,"sum":120.00000000000003,"mean":10.000000000000002,"median":9.4,"std":4.589662296945169,"dateMin":null,"dateMax":null,"manual":false,"numericRatio":1,"allInteger":false},{"name":"IT Cost","type":"number","role":"measure","missing":0,"missingPct":0,"unique":12,"uniqueRatio":1,"top":[{"value":371454,"count":1},{"value":596794,"count":1},{"value":489505,"count":1},{"value":345812,"count":1},{"value":801361,"count":1},{"value":370627,"count":1},{"value":438990,"count":1},{"value":440903,"count":1}],"mixed":false,"min":316851,"max":895195,"sum":6074703,"mean":506225.25,"median":439946.5,"std":177110.44687337757,"dateMin":null,"dateMax":null,"manual":false,"numericRatio":1,"allInteger":true},{"name":"SLA Compliance %","type":"number","role":"measure","missing":0,"missingPct":0,"unique":12,"uniqueRatio":1,"top":[{"value":89.2,"count":1},{"value":98.1,"count":1},{"value":94.8,"count":1},{"value":96.1,"count":1},{"value":91.9,"count":1},{"value":98.3,"count":1},{"value":98.7,"count":1},{"value":94.1,"count":1}],"mixed":false,"min":89.2,"max":98.9,"sum":1143.1000000000001,"mean":95.25833333333334,"median":95.44999999999999,"std":2.933558230015025,"dateMin":null,"dateMax":null,"manual":false,"numericRatio":1,"allInteger":false},{"name":"Users Supported","type":"number","role":"measure","missing":0,"missingPct":0,"unique":12,"uniqueRatio":1,"top":[{"value":1245,"count":1},{"value":2110,"count":1},{"value":2524,"count":1},{"value":1001,"count":1},{"value":2442,"count":1},{"value":1787,"count":1},{"value":1010,"count":1},{"value":541,"count":1}],"mixed":false,"min":541,"max":2710,"sum":20572,"mean":1714.3333333333333,"median":1821.5,"std":765.2971463570357,"dateMin":null,"dateMax":null,"manual":false,"numericRatio":1,"allInteger":true}],"filters":{},"dark":false};</script><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"1.10.54","fileName":"Central_Bank_of_India_Q1FY27_Excel.xlsx","sheetNames":["Index","Quarterly Financials 1","Quarterly Financials 2","Cost Ratios","Snapshot 1","Snapshot 2","Price to Book","Source & Notes"],"activeSheet":"Index","headerRow":0,"excludedSummaryRows":0,"rows":[{"Central Bank of India – Q1FY27":"Workbook contents"},{"Central Bank of India – Q1FY27":"Quarterly Financials 1"},{"Central Bank of India – Q1FY27":"Quarterly Financials 2"},{"Central Bank of India – Q1FY27":"Cost Ratios"},{"Central Bank of India – Q1FY27":"Snapshot 1"},{"Central Bank of India – Q1FY27":"Snapshot 2"},{"Central Bank of India – Q1FY27":"Price to Book"},{"Central Bank of India – Q1FY27":"Source & Notes"}],"columns":[{"name":"Central Bank of India – Q1FY27","type":"text","role":"dimension","missing":0,"missingPct":0,"unique":8,"uniqueRatio":1,"top":[{"value":"Workbook contents","count":1},{"value":"Quarterly Financials 1","count":1},{"value":"Quarterly Financials 2","count":1},{"value":"Cost Ratios","count":1},{"value":"Snapshot 1","count":1},{"value":"Snapshot 2","count":1},{"value":"Price to Book","count":1},{"value":"Source & Notes","count":1}],"mixed":false,"min":null,"max":null,"sum":null,"mean":null,"median":null,"std":null,"dateMin":null,"dateMax":null,"manual":false,"numericRatio":0}],"filters":{},"dark":false};</script><!-- InstantDash v1.11.04: direct iPhone-safe Diagnose binding -->
+<!-- InstantDash v1.11.04: inline self-contained Diagnose handler for iOS Safari -->
+<!-- InstantDash v1.11.04: Health Check automatically opens local diagnosis after upload -->
+<!-- InstantDash v1.11.04 — diagnosis is automatic; no button tap required -->
+<!-- InstantDash v1.11.04 — diagnosis rendered inline; no click dependency -->
+<!-- InstantDash v1.11.04 — recommended action summary added -->
+<!-- InstantDash v1.11.04 — diagnosis summary no longer double-counts constant fields; verification styling corrected -->
+<!-- InstantDash v1.11.04 — diagnosis summary uses one consistent finding hierarchy -->
 
 <style id="instantdash-v11101-smart-charts">
 .smart-chart-shell{border:1px solid var(--border);border-radius:18px;background:var(--card);box-shadow:var(--shadow);overflow:hidden}
@@ -1082,7 +1082,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.11.03</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.11.04</span>
   </div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -1247,17 +1247,9 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
         <div class="id-health-launch-title"><span class="pulse" aria-hidden="true"></span>🩺 Health Check</div>
         <div class="id-health-launch-sub">Run a quick read-only check of data completeness, duplicates, field quality, measures, time basis and movement analysis before relying on the dashboard.</div>
       </div>
+      <button class="id-health-launch-btn" type="button" id="interactiveChartsJumpBtn" style="margin-right:8px;background:var(--accent);color:#111;border-color:var(--accent)" onclick="document.getElementById('smartChartsSection')?.scrollIntoView({behavior:'smooth',block:'start'});return false;">📊 VIEW CHARTS →</button>
       <button class="id-health-launch-btn" type="button" id="healthCheckLaunchBtn" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-launch-wired="1">RUN HEALTH CHECK →</button>
     </section>
-
-    
-
-
-<div class="section no-print">
-      <div class="card filters" id="filterBar"><span><span style="font-size:12px;color:var(--muted);font-weight:500">Filters</span></span><div class="filter"><button class="">Central Bank of India – Q1FY27 <span class="pop-count">All</span> <span class="caret">▾</span></button><div class="filter-pop"><input type="search" placeholder="Find a value…">
-    <div class="row"><button class="btn sm" data-all="">Select all</button><button class="btn sm" data-none="">Clear</button></div>
-    <div class="opts"></div></div></div></div>
-    </div>
 
     <div class="section" id="smartChartsSection">
       <div class="section-head">
@@ -1265,7 +1257,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
         <span class="hint" id="smartChartHint">Choose a data type to see its relevant chart</span>
       </div>
       <div class="smart-chart-shell" id="smartChartsRoot">
-        <!-- v1.11.03 — chart intelligence: max 4 data types, latest-period composition, touch-safe details -->
+        <!-- v1.11.04 — chart intelligence: max 4 data types, latest-period composition, touch-safe details -->
         <div class="smart-chart-top no-print">
           <div>
             <div class="smart-label">DATA TYPE</div>
@@ -1294,6 +1286,16 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
           <div id="smartChartDetail" class="smart-detail">Touch a bar, point or segment to see the exact figures.</div>
         </div>
       </div>
+    </div>
+
+
+    
+
+
+<div class="section no-print">
+      <div class="card filters" id="filterBar"><span><span style="font-size:12px;color:var(--muted);font-weight:500">Filters</span></span><div class="filter"><button class="">Central Bank of India – Q1FY27 <span class="pop-count">All</span> <span class="caret">▾</span></button><div class="filter-pop"><input type="search" placeholder="Find a value…">
+    <div class="row"><button class="btn sm" data-all="">Select all</button><button class="btn sm" data-none="">Clear</button></div>
+    <div class="opts"></div></div></div></div>
     </div>
 
     <div class="section">
@@ -1438,7 +1440,7 @@ Charts on screen: Row count by Central Bank of India – Q1FY27.</pre></div>
 const CONFIG = {
   BUILD_VERSION: '1.11.01',
   APP_NAME: 'InstantDash',
-  VERSION: 'v1.11.03',
+  VERSION: 'v1.11.04',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -1486,7 +1488,7 @@ const APP = {
   excludedSummaryRows: 0
 };
 
-// v1.11.03: make the live application state available to diagnostic modules.
+// v1.11.04: make the live application state available to diagnostic modules.
 // APP remains the single source of truth used by the dashboard.
 window.__INSTANTDASH_APP__ = APP;
 
@@ -2116,7 +2118,7 @@ function detectAndExcludeSummaryRows(rows, names, srcIndex){
   return {rows:keptRows, srcIndex:keptSrc, excluded:exclude.size};
 }
 
-/* v1.11.03 — stability/accuracy guards.
+/* v1.11.04 — stability/accuracy guards.
    These checks are read-only: they never alter APP.rows, APP.filtered or KPI values.
    They protect against stale comparison caches and accidental filtered-data drift. */
 function invalidateAnalysisCaches(){
@@ -2130,11 +2132,11 @@ function auditDashboardState(stage){
     const numeric=cols.filter(c=>c && c.type==='number').length;
     const badSubset=filtered.some(r=>all.indexOf(r)<0);
     const ok=filtered.length<=all.length && !badSubset;
-    if(!ok) console.warn('[InstantDash v1.11.03] data-state audit failed at',stage,{rows:all.length,filtered:filtered.length});
+    if(!ok) console.warn('[InstantDash v1.11.04] data-state audit failed at',stage,{rows:all.length,filtered:filtered.length});
     window.__instantDashDataAudit={stage,ok,rows:all.length,filtered:filtered.length,columns:cols.length,numeric};
     return ok;
   }catch(err){
-    console.warn('[InstantDash v1.11.03] data-state audit unavailable',err);
+    console.warn('[InstantDash v1.11.04] data-state audit unavailable',err);
     return true;
   }
 }
@@ -3529,7 +3531,7 @@ function miDirectoryDirection(kpiName){
   }catch(_){ }
   return null;
 }
-/* v1.11.03 — deterministic period comparison.
+/* v1.11.04 — deterministic period comparison.
    Compare the latest two CALENDAR PERIODS rather than the latest two raw
    dates. This prevents results changing when a file contains multiple rows
    within a month/day or when row order changes. The period is selected from
@@ -3589,7 +3591,7 @@ function miLatestPeriodRows(rows,dateCol){
   MI_PERIOD_CACHE.set(cacheKey,result);
   return result;
 }
-/* v1.11.03 — deterministic KPI aggregation.
+/* v1.11.04 — deterministic KPI aggregation.
    Additive measures are summed; rates, percentages, ratios, averages and
    per-unit measures are averaged across the selected period rows. This keeps
    management comparisons stable and prevents percentages such as occupancy
@@ -3608,7 +3610,7 @@ function miMetricValue(rows,col){
 function miSum(rows,col){ return miMetricValue(rows,col) ?? 0; }
 function miChange(a,b){ return {abs:b-a,pct:a!==0?(b-a)/Math.abs(a):null}; }
 function miAggregationLabel(name){ return miAggMode(name)==='avg'?'Average across comparable records':'Total across comparable records'; }
-/* v1.11.03 — domain-aware interpretation layer.
+/* v1.11.04 — domain-aware interpretation layer.
    The dashboard must distinguish a true performance KPI from a contextual
    activity/capacity measure. It must also recognise common ESG and healthcare
    measures without pretending that the data proves causation. */
@@ -4224,7 +4226,7 @@ function buildManagementInsights(){
   const lr=miLatestPeriodRows(rows,dateCol);
   const numeric=APP.columns.filter(c=>c.type==='number' && c.role==='measure');
 
-  /* v1.11.03: calculate operational intensity/relationship signals before
+  /* v1.11.04: calculate operational intensity/relationship signals before
      classifying isolated movements. */
   miAddOperationalRelationships(rows,lr,items);
 
@@ -4547,7 +4549,7 @@ function buildManagementInsights(){
 
   window.__miStatus=miStatus(items);
   window.__miItems=items;
-  /* v1.11.03 — keep executive movement counters synchronised after the
+  /* v1.11.04 — keep executive movement counters synchronised after the
      management-insight engine finishes. Previously the buttons were initialised
      before __miItems existed and could remain at 0 even when attention or
      favourable movements had actually been detected. */
@@ -4570,7 +4572,7 @@ function buildManagementInsights(){
   wireMovementSummaryLinks();
 }
 
-/* v1.11.03 — direct movement-detail routing; summary/status buttons open the requested bucket without indirection */
+/* v1.11.04 — direct movement-detail routing; summary/status buttons open the requested bucket without indirection */
 function wireMovementSummaryLinks(){
   const modal=$('miEvidenceModal'), list=$('miEvidenceList'), tabs=$('miEvidenceTabs'), close=$('miEvidenceClose');
   if(!modal||!list||!tabs)return;
@@ -4587,7 +4589,7 @@ function wireMovementSummaryLinks(){
   };
   const movementFacts=plain=>{
     /*
-      v1.11.03 — robust movement fact extraction.
+      v1.11.04 — robust movement fact extraction.
       Never render an empty FROM/TO strip when the finding contains a valid
       movement. Tolerates commas, decimals, percentages and "changed/went from".
     */
@@ -4703,7 +4705,7 @@ function wireMovementSummaryLinks(){
     const dc=timeCols()[0];
     const dateBasis=(()=>{try{const lr0=dc&&miLatestPeriodRows(APP.filtered||[],dc);return lr0?`Comparison basis: ${fmtDate(lr0.prev)} → ${fmtDate(lr0.latest)} · current filters applied.`:'Comparison basis: latest two comparable periods in the current filtered dataset.';}catch(_){return 'Comparison basis: latest two comparable periods in the current filtered dataset.';}})();
     $('miEvidenceSubtitle').textContent=`${total} material movement${total===1?'':'s'}: ${perf.length} favourable, ${att.length} attention and ${ctx.length} contextual, from the current loaded and filtered dataset. ${dateBasis}`;
-    /* v1.11.03: explicit button switching. Every tab remains clickable,
+    /* v1.11.04: explicit button switching. Every tab remains clickable,
        including zero-count tabs, and the selected panel is changed directly. */
     const specs=[['all','● All',total],['performance','✓ Favourable',perf.length],['attention','⚠ Attention',att.length],['contextual','◐ Contextual',ctx.length]];
     tabs.innerHTML=specs.map(([b,label,count])=>`<button type="button" class="mi-evidence-tab" data-bucket="${b}" aria-selected="${initial===b?'true':'false'}">${label} · ${count}</button>`).join('');
@@ -4722,7 +4724,7 @@ function wireMovementSummaryLinks(){
       const titleMap={all:'All Movement Details',performance:'Favourable Movements',attention:'Attention Movements',contextual:'Contextual Movements'};
       $('miEvidenceTitle').textContent=titleMap[b]||'Movement Details';
       list.scrollTop=0;
-      /* v1.11.03 — keep dashboard category selection synchronised with the modal. */
+      /* v1.11.04 — keep dashboard category selection synchronised with the modal. */
       if(b==='all'){ if(typeof window.__clearMovementCategory==='function') window.__clearMovementCategory(); }
       else if(typeof window.__selectMovementCategory==='function') window.__selectMovementCategory(b);
     };
@@ -4813,7 +4815,7 @@ function wireChartBuilder(){
    ===================================================================== */
 
 /* =====================================================================
-   InstantDash v1.11.03 — Executive Management Cockpit
+   InstantDash v1.11.04 — Executive Management Cockpit
    Generic: uses only detected runtime column roles and statistics.
    ===================================================================== */
 function buildExecutiveCockpit(){
@@ -5187,7 +5189,7 @@ function wireRest(){
   wireExecutiveCockpit();
   wireRest();
 
-  /* v1.11.03 — restore a dashboard exported with Share/Save. */
+  /* v1.11.04 — restore a dashboard exported with Share/Save. */
   const shared=window.__INSTANTDASH_SHARED_STATE__;
   if(shared && Array.isArray(shared.rows) && shared.rows.length){
     try{
@@ -5262,7 +5264,7 @@ function wireRest(){
 </div><!-- /#pageScroll -->
 
 <style id="v133-movement-hardening">
-/* v1.11.03 — iPhone movement tabs: direct inline display + touch-safe modal */
+/* v1.11.04 — iPhone movement tabs: direct inline display + touch-safe modal */
 #miEvidenceModal{position:fixed!important;inset:0!important;display:none!important;z-index:9999!important;background:rgba(14,14,16,.48)!important;place-items:center!important;padding:8px!important;pointer-events:none!important}
 #miEvidenceModal.on{display:grid!important;pointer-events:auto!important}
 #miEvidenceModal .mi-evidence-modal{width:min(920px,96vw)!important;max-width:920px!important;max-height:94dvh!important;height:auto!important;overflow:hidden!important;background:var(--card,#fff)!important;border:1px solid var(--border,#e6dccb)!important;border-radius:20px!important;box-shadow:0 20px 60px rgba(0,0,0,.25)!important;display:flex!important;flex-direction:column!important;padding:14px!important}
@@ -5276,7 +5278,7 @@ function wireRest(){
 @media(max-width:600px){#miEvidenceModal .mi-evidence-modal{width:96vw!important;max-width:96vw!important;max-height:94dvh!important;border-radius:18px!important;padding:14px!important}}
 </style>
 <style id="v135-movement-facts-polish">
-/* v1.11.03 — ratio endpoints and predictable mobile panel position */
+/* v1.11.04 — ratio endpoints and predictable mobile panel position */
 #miEvidenceModal .mi-movement-facts .mi-change b{white-space:nowrap}
 @media(max-width:600px){
   #miEvidenceModal .mi-evidence-tabs{margin:10px 0 12px}
@@ -5292,7 +5294,7 @@ function wireRest(){
 #miEvidenceModal .mi-native-panel.active{display:block!important}
 </style>
 <script>
-/* v1.11.03 — delegated movement controls. This survives dashboard redraws and
+/* v1.11.04 — delegated movement controls. This survives dashboard redraws and
    does not depend on a dynamically replaced element retaining its handler. */
 (function(){
   if(window.__v132MovementBridge) return;
@@ -5340,7 +5342,7 @@ function wireRest(){
     el.click();
   },true);
 
-  /* v1.11.03 — tab switching is deliberately inline-style based. This avoids
+  /* v1.11.04 — tab switching is deliberately inline-style based. This avoids
      any dependency on CSS class precedence and is reliable in iOS WebViews,
      GitHub Pages and after dynamic redraws. */
   function switchMovementTab(tab){
@@ -5394,7 +5396,7 @@ function wireRest(){
 
 <style id="v143-movement-facts-contrast">
 
-/* v1.11.03 — high-contrast FROM/TO values in movement cards */
+/* v1.11.04 — high-contrast FROM/TO values in movement cards */
 #miEvidenceModal .mi-movement-facts>div{
   color:#171717!important;
 }
@@ -5414,7 +5416,7 @@ function wireRest(){
 
 
 <style id="v144-movement-compact">
-/* v1.11.03 — compact Movement Details layout; calculation/classification unchanged */
+/* v1.11.04 — compact Movement Details layout; calculation/classification unchanged */
 
 /* Header and tabs stay outside the scrolling list, so they remain visible. */
 #miEvidenceModal .mi-evidence-head{
@@ -5494,7 +5496,7 @@ function wireRest(){
 
 
 <style id="v145-movement-overlap-fix">
-/* v1.11.03 — prevent Movement Details content from sliding underneath tabs */
+/* v1.11.04 — prevent Movement Details content from sliding underneath tabs */
 
 /* Never allow the explanatory note to start underneath the filter tabs. */
 #miEvidenceModal .mi-evidence-tabs{
@@ -5544,7 +5546,7 @@ function wireRest(){
 </style>
 
 <style id="v146-movement-flow-fix">
-/* v1.11.03 — eliminate iPhone overlap by using normal block flow for the
+/* v1.11.04 — eliminate iPhone overlap by using normal block flow for the
    Movement Details content. The previous grid/flex combination could give
    the priority note a compressed row while its text remained visible. */
 #miEvidenceModal .mi-evidence-list{
@@ -5604,7 +5606,7 @@ function wireRest(){
 }
 </style>
 
-<!-- InstantDash v1.11.03 — robust iPhone/iPad sharing -->
+<!-- InstantDash v1.11.04 — robust iPhone/iPad sharing -->
 <style id="instantdash-v152-share-fix">
   #v154SharePanel{
     position:fixed!important;
@@ -5681,7 +5683,7 @@ function wireRest(){
     panel.setAttribute('aria-hidden','true');
 
     /*
-      v1.11.03 — export the LIVE dashboard state, not just the page shell.
+      v1.11.04 — export the LIVE dashboard state, not just the page shell.
       outerHTML preserves the visual DOM, but APP.rows/filters are JavaScript
       runtime state and would otherwise be lost when the HTML is opened again.
       The state is embedded before </head> and restored by start().
@@ -5712,7 +5714,7 @@ function wireRest(){
     const bootstrap='<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__='+json+';<\/script>';
     let html='<!doctype html>\n'+document.documentElement.outerHTML;
     html=html.replace('</head>',bootstrap+'</head>');
-    const f=new File([html],'InstantDash_Dashboard_v1.11.03.html',{type:'text/html'});
+    const f=new File([html],'InstantDash_Dashboard_v1.11.04.html',{type:'text/html'});
     if(wasOpen){
       panel.classList.add('is-open');
       panel.setAttribute('aria-hidden','false');
@@ -5751,7 +5753,7 @@ function wireRest(){
           return;
         }
       }
-      await navigator.share({title:'InstantDash Dashboard v1.11.03',text:'InstantDash interactive dashboard with loaded data and management movement analysis.',files:[f]});
+      await navigator.share({title:'InstantDash Dashboard v1.11.04',text:'InstantDash interactive dashboard with loaded data and management movement analysis.',files:[f]});
       setNote('Dashboard file shared successfully.');
     }catch(err){
       if(err&&err.name==='AbortError') return;
@@ -5760,7 +5762,7 @@ function wireRest(){
   }
   async function copyShare(e){
     if(e){e.preventDefault();e.stopPropagation();}
-    const text='InstantDash Dashboard v1.11.03 — interactive management dashboard.';
+    const text='InstantDash Dashboard v1.11.04 — interactive management dashboard.';
     try{
       if(navigator.clipboard&&navigator.clipboard.writeText){
         await navigator.clipboard.writeText(text);
@@ -5786,7 +5788,7 @@ function wireRest(){
 </script>
 
 <script id="instantdash-v156-movement-controls">
-/* v1.11.03 — delegated controls; works after redraws and on iPhone touch */
+/* v1.11.04 — delegated controls; works after redraws and on iPhone touch */
 (function(){
   'use strict';
   function el(id){return document.getElementById(id)}
@@ -5910,7 +5912,7 @@ function wireRest(){
 </script>
 
 <style id="v157-direct-movement-controls">
-/* v1.11.03 — direct iPhone-safe movement control layer */
+/* v1.11.04 — direct iPhone-safe movement control layer */
 #movementActionBar,
 #movementActionBar .movement-action,
 #movementActionBar .movement-view{
@@ -5928,7 +5930,7 @@ function wireRest(){
 }
 </style>
 <script>
-/* v1.11.03 — bypass delegated-event conflicts on iPhone/Safari by wiring each
+/* v1.11.04 — bypass delegated-event conflicts on iPhone/Safari by wiring each
    movement button directly. The handler retries while the dashboard is rebuilding. */
 (function(){
   function openDirect(bucket){
@@ -6075,10 +6077,10 @@ function wireRest(){
 })();
 </script>
 
-<!-- v1.11.03 — stability release: deterministic cache invalidation + read-only data-state audits. -->
+<!-- v1.11.04 — stability release: deterministic cache invalidation + read-only data-state audits. -->
 
 <style id="instantdash-v161-category-filter">
-/* v1.11.03 — movement category filter synchronisation; calculation-neutral. */
+/* v1.11.04 — movement category filter synchronisation; calculation-neutral. */
 #movementActionBar .movement-action:not(.selected){opacity:.92!important}
 #movementActionBar .movement-action.selected{position:relative!important;z-index:2!important}
 #movementActionBar .movement-action.selected::after{
@@ -6145,7 +6147,7 @@ function wireRest(){
 })();
 </script>
 
-<!-- v1.11.03 — final movement selection synchronisation + all-movements view.
+<!-- v1.11.04 — final movement selection synchronisation + all-movements view.
      Zero-count categories remain selectable and the dashboard highlight always
      follows the category currently displayed in Movement Details. -->
 <style id="instantdash-v163-movement-selection">
@@ -6199,7 +6201,7 @@ function wireRest(){
   </section>
 </div>
 <style id="instantdash-v172-health-ai">
-/* InstantDash v1.11.03 — Data Rectification Assistant */
+/* InstantDash v1.11.04 — Data Rectification Assistant */
 .id-health-actions{display:flex;flex-wrap:wrap;gap:10px;}
 
 .id-diagnosis-banner{margin-top:14px;padding:18px 16px;border:3px solid #f2ad00;border-radius:20px;background:linear-gradient(135deg,#ffd84a,#ff9800);box-shadow:0 8px 22px rgba(240,170,0,.22);text-align:center;color:#111;}
@@ -6258,7 +6260,7 @@ function wireRest(){
 @media(max-width:600px){#localDiagnosisBtn{font-size:17px!important;padding:15px 12px!important;}#localDiagnosisBtn small{font-size:10px!important;}}
 </style>
 <style id="instantdash-v167-movement-modal-mobile">
-/* InstantDash v1.11.03 — mobile Movement Details modal polish
+/* InstantDash v1.11.04 — mobile Movement Details modal polish
    Goal: keep more movement evidence visible on iPhone without removing
    the internal scrolling needed for long evidence. */
 #miEvidenceModal .mi-evidence-modal{
@@ -6382,7 +6384,7 @@ function wireRest(){
 
 
 <style id="instantdash-v168-health-hardening">
-/* v1.11.03 — Health Check control hardening */
+/* v1.11.04 — Health Check control hardening */
 #healthCheckLaunchBtn,#healthCheckBtn,#healthCheckRefresh,#healthCheckClose,#healthCheckOpenQuality,#healthCheckAskAI,#healthAIClose,#healthAICopy,#healthAIOpen{
   touch-action:manipulation;
   -webkit-tap-highlight-color:transparent;
@@ -6391,7 +6393,7 @@ function wireRest(){
 
 
 <style id="instantdash-v169-health-check-final">
-/* v1.11.03 — independent Health Check controller */
+/* v1.11.04 — independent Health Check controller */
 #healthCheckModal{
   z-index:2147483647!important;
   pointer-events:auto!important;
@@ -6652,7 +6654,7 @@ function wireRest(){
   }
 
 
-  // v1.11.03 — Inline diagnosis. No click, hidden panel or modal event is
+  // v1.11.04 — Inline diagnosis. No click, hidden panel or modal event is
   // required. It uses the same local dataset already used by Health Check.
   function renderInlineDiagnosis(){
     var host=byId('inlineDiagnosis');
@@ -6859,7 +6861,7 @@ function wireRest(){
     }
   },true);
 
-  /* v1.11.03 — direct iPhone-safe Diagnose binding.
+  /* v1.11.04 — direct iPhone-safe Diagnose binding.
      The button is static inside the Health Check modal, so bind directly as well
      as through delegation. This avoids interference from other document-level
      touch/click handlers on iOS Safari/GitHub Pages. */
@@ -6893,7 +6895,7 @@ function wireRest(){
   setTimeout(wireLocalDiagnosis,100);
   setTimeout(wireLocalDiagnosis,500);
 
-  // v1.11.03 — iPhone-safe automatic diagnosis watchdog.
+  // v1.11.04 — iPhone-safe automatic diagnosis watchdog.
   // If Health Check is open, diagnosis is populated without requiring a tap.
   function ensureAutomaticDiagnosis(){
     var modal=byId('healthCheckModal');
@@ -6927,7 +6929,7 @@ function wireRest(){
 
 
 
-<!-- InstantDash v1.11.03 — deterministic default movement selection.
+<!-- InstantDash v1.11.04 — deterministic default movement selection.
      If management status is Needs attention, Attention is selected first;
      if there is no attention movement, Favourable is selected when available;
      otherwise Contextual is selected. Manual category choices are preserved. -->
