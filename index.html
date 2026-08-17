@@ -1085,7 +1085,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 </style>
 
 <style id="instantdash-v11116-ui-fix">
-/* v1.11.16 — result-first navigation, touch-safe charts, expandable chart view */
+/* v1.11.17 — result-first navigation, touch-safe charts, expandable chart view */
 #smartChartsSection{scroll-margin-top:18px}
 .smart-result-strip{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 14px;padding:13px 15px;border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:15px;background:var(--card);box-shadow:var(--shadow)}
 .smart-result-strip strong{font-size:14px}.smart-result-strip span{display:block;color:var(--muted);font-size:11px;margin-top:3px}.smart-result-actions{display:flex;gap:8px;flex-shrink:0}.smart-result-actions button{border:1px solid var(--border);background:var(--card-2);color:var(--text);border-radius:10px;padding:9px 12px;font-weight:800;cursor:pointer}.smart-result-actions .primary{background:var(--accent);color:#111;border-color:var(--accent)}
@@ -1106,7 +1106,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.11.16</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.11.17</span>
   </div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -1471,7 +1471,7 @@ Charts on screen: Row count by Central Bank of India – Q1FY27.</pre></div>
 const CONFIG = {
   BUILD_VERSION: '1.11.07',
   APP_NAME: 'InstantDash',
-  VERSION: 'v1.11.16',
+  VERSION: 'v1.11.17',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -5745,7 +5745,7 @@ function wireRest(){
     const bootstrap='<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__='+json+';<\/script>';
     let html='<!doctype html>\n'+document.documentElement.outerHTML;
     html=html.replace('</head>',bootstrap+'</head>');
-    const f=new File([html],'InstantDash_Dashboard_v1.11.16.html',{type:'text/html'});
+    const f=new File([html],'InstantDash_Dashboard_v1.11.17.html',{type:'text/html'});
     if(wasOpen){
       panel.classList.add('is-open');
       panel.setAttribute('aria-hidden','false');
@@ -5784,7 +5784,7 @@ function wireRest(){
           return;
         }
       }
-      await navigator.share({title:'InstantDash Dashboard v1.11.16',text:'InstantDash interactive dashboard with loaded data and management movement analysis.',files:[f]});
+      await navigator.share({title:'InstantDash Dashboard v1.11.17',text:'InstantDash interactive dashboard with loaded data and management movement analysis.',files:[f]});
       setNote('Dashboard file shared successfully.');
     }catch(err){
       if(err&&err.name==='AbortError') return;
@@ -5793,7 +5793,7 @@ function wireRest(){
   }
   async function copyShare(e){
     if(e){e.preventDefault();e.stopPropagation();}
-    const text='InstantDash Dashboard v1.11.16 — interactive management dashboard.';
+    const text='InstantDash Dashboard v1.11.17 — interactive management dashboard.';
     try{
       if(navigator.clipboard&&navigator.clipboard.writeText){
         await navigator.clipboard.writeText(text);
@@ -7057,7 +7057,7 @@ function wireRest(){
 <script id="instantdash-v11113-smart-charts-js">
 (function(){
   'use strict';
-  /* InstantDash v1.11.16 — Local AI Chart Advisor.
+  /* InstantDash v1.11.17 — Local AI Chart Advisor.
      Semantic analysis is performed in-browser from column names, value patterns,
      units, cardinality and relationships. No dataset is sent to an external AI.
      AI recommendations are suggestions only; every numeric parameter remains
@@ -7078,7 +7078,7 @@ function wireRest(){
   function data(){var a=app();return {rows:a&&Array.isArray(a.filtered)&&a.filtered.length?a.filtered:(a&&Array.isArray(a.rows)?a.rows:[]),all:a&&Array.isArray(a.rows)?a.rows:[],cols:a&&Array.isArray(a.columns)?a.columns:[]}}
   function isId(n){return /(^|[^a-z])(id|code|account|acct|sol\s*id|agent\s*id|serial|sno|sr\s*no)([^a-z]|$)/i.test(String(n||''))}
   function isTime(n,c){return c&&(((c.type||'').toLowerCase()==='date')||c.role==='time')||/date|month|period|quarter|year|fy|week|day/i.test(String(n||''))}
-  /* v1.11.16 — parameter discovery is based on the actual row objects first.
+  /* v1.11.17 — parameter discovery is based on the actual row objects first.
      The previous build trusted APP.columns too much. Some sheets can have
      correctly populated APP.rows while the column profile is incomplete or
      temporarily carries text roles. That made the dropdown say 0 parameters
@@ -7115,17 +7115,21 @@ function wireRest(){
   function dimensions(d){
     var out=[],names=rowColumnNames(d),seen={};
     names.forEach(function(n){
-      var c=columnMeta(d,n),t=String(c.type||'').toLowerCase(); if(isId(n)||seen[n])return; seen[n]=1;
+      var c=columnMeta(d,n),t=String(c.type||'').toLowerCase();
+      if(isId(n)||seen[n])return; seen[n]=1;
       var vals=(d.rows||[]).map(function(r){return r[n]}).filter(function(v){return v!==null&&v!==undefined&&String(v)!==''});
       var u=[...new Set(vals.map(function(v){return String(v)}))]; if(u.length<2)return;
-      if(isTime(n,c)&&u.length>1){out.push({name:n,kind:'time',unique:u.length,score:120});return;}
+      /* A real date/time field is always a valid grouping dimension. */
+      if(isTime(n,c)&&u.length>1){out.push({name:n,kind:'time',unique:u.length,score:140});return;}
       var numericRatio=vals.filter(function(v){return isFinite(num(v))}).length/Math.max(1,vals.length);
-      /* Numeric columns are measures, not grouping dimensions, unless they
-         are explicitly date/time fields. */
-      if(numericRatio>=0.70 && t!=='text' && c.role!=='dimension')return;
+      /* Never use a numeric measure as the default 'Group by'. This was the
+         source of screenshots such as 'grouped by NO_OF_WORKING_DAYS'. A
+         numeric field can still be selected as Parameter 1/2/3. */
+      if(numericRatio>=0.70)return;
       if(u.length>100)return;
-      var score=0;if(c.role==='dimension')score+=30;
-      if(/region|zone|state|district|dist|branch|category|segment|product|department|team|group|type|class|channel|territory|name|month|date|period|quarter|year/i.test(n))score+=50;
+      var score=0;
+      if(c.role==='dimension')score+=35;
+      if(/region|zone|state|district|dist|branch|category|segment|product|department|team|group|type|class|channel|territory|name|month|date|period|quarter|year/i.test(n))score+=55;
       if(u.length<=15)score+=25;if(u.length<=8)score+=10;
       out.push({name:n,kind:'cat',unique:u.length,score:score});
     });
@@ -7243,8 +7247,56 @@ function wireRest(){
   function detail(i,d){var box=$('smartChartDetail');if(!box)return;var h='<strong>'+esc(d.labels[i]||'Overall')+'</strong><div class="smart-detail-grid">';d.series.forEach(function(s){h+='<div class="smart-detail-item"><span>'+esc(s.name)+'</span><b>'+esc(fmt(s.values[i]))+'</b></div>'});h+='</div>';box.innerHTML=h;}
   function bindHits(wrap,d){wrap.querySelectorAll('.sc-hit').forEach(function(n){['click','touchend'].forEach(function(ev){n.addEventListener(ev,function(e){if(ev==='touchend')e.preventDefault();state.selected=+n.getAttribute('data-i')||0;detail(state.selected,d);},{passive:ev==='touchend'});});});}
   function drawCartesian(wrap,d,type){var labels=d.labels,ss=d.series,W=1000,H=390,L=76,R=24,T=35,B=65,iw=W-L-R,ih=H-T-B;var all=[];ss.forEach(function(s){s.values.forEach(function(v){if(isFinite(v))all.push(v)})});var max=Math.max(0,...all),min=Math.min(0,...all);if(max===min)max=min+1;var n=labels.length||1,svg='<svg viewBox="0 0 '+W+' '+H+'" class="smart-svg" role="img">';for(var g=0;g<=4;g++){var y=T+ih*g/4,v=max-(max-min)*g/4;svg+='<line x1="'+L+'" y1="'+y+'" x2="'+(W-R)+'" y2="'+y+'" stroke="currentColor" opacity=".10"/><text x="'+(L-8)+'" y="'+(y+4)+'" text-anchor="end" fill="currentColor" opacity=".58" font-size="11">'+esc(short(v))+'</text>'}if(type==='line'||type==='area'){ss.forEach(function(s,si){var pts=s.values.map(function(v,i){return [L+(n===1?iw/2:iw*i/(n-1)),T+ih*(max-v)/(max-min)]});var good=pts.filter(function(p){return isFinite(p[1])});if(!good.length)return;var path=good.map(function(p,i){return (i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)}).join(' ');if(type==='area')path+=' L '+good[good.length-1][0]+' '+(T+ih)+' L '+good[0][0]+' '+(T+ih)+' Z';svg+='<path d="'+path+'" fill="'+(type==='area'?palette[si]:'none')+'" opacity="'+(type==='area'?.16:1)+'" stroke="'+palette[si]+'" stroke-width="3"/>';pts.forEach(function(p,i){if(isFinite(p[1]))svg+='<circle class="sc-hit" data-i="'+i+'" cx="'+p[0]+'" cy="'+p[1]+'" r="8" fill="'+palette[si]+'"/> ';});});} else if(type==='hbar'){var maxh=Math.max(0,...all),rowH=(H-55)/Math.max(1,n);for(var i=0;i<n;i++){var y0=28+i*rowH;svg+='<text x="8" y="'+(y0+rowH*.55)+'" fill="currentColor" opacity=".72" font-size="11">'+esc(labels[i])+'</text>';ss.forEach(function(s,si){var v=s.values[i];if(!isFinite(v))return;var hh=Math.max(7,(rowH-12)/ss.length),yy=y0+si*hh,ww=maxh?Math.max(1,(W-290)*Math.abs(v)/maxh):1;svg+='<rect class="sc-hit" data-i="'+i+'" x="250" y="'+yy+'" width="'+ww+'" height="'+hh+'" rx="4" fill="'+palette[si]+'"><title>'+esc(s.name)+': '+esc(fmt(v))+'</title></rect>'})}} else {var gw=iw/Math.max(1,n),gap=Math.min(12,gw*.08),bw=Math.max(7,(gw-gap*(ss.length+1))/Math.max(1,ss.length)),base=T+ih*max/(max-min);for(var j=0;j<n;j++){if(type==='stacked'){var pos=0,neg=0;ss.forEach(function(s,si){var v=s.values[j];if(!isFinite(v))return;var h=ih*Math.abs(v)/(max-min),y;if(v>=0){y=base-h-pos;pos+=h}else{y=base+neg;neg+=h}svg+='<rect class="sc-hit" data-i="'+j+'" x="'+(L+j*gw+gap/2)+'" y="'+y+'" width="'+(gw-gap)+'" height="'+h+'" rx="4" fill="'+palette[si]+'"><title>'+esc(s.name)+': '+esc(fmt(v))+'</title></rect>'});}else{ss.forEach(function(s,si){var v=s.values[j];if(!isFinite(v))return;var h=ih*Math.abs(v)/(max-min),x=L+j*gw+gap+si*bw,y=v>=0?base-h:base;svg+='<rect class="sc-hit" data-i="'+j+'" x="'+x+'" y="'+y+'" width="'+bw+'" height="'+h+'" rx="4" fill="'+palette[si]+'"><title>'+esc(s.name)+': '+esc(fmt(v))+'</title></rect>'});}if(n<=20)svg+='<text x="'+(L+j*gw+gw/2)+'" y="'+(H-20)+'" text-anchor="middle" fill="currentColor" opacity=".65" font-size="11">'+esc(labels[j])+'</text>'}}ss.forEach(function(s,si){svg+='<rect x="'+(L+si*190)+'" y="10" width="11" height="11" rx="2" fill="'+palette[si]+'"/><text x="'+(L+si*190+17)+'" y="20" fill="currentColor" opacity=".72" font-size="11">'+esc(s.name)+'</text>'});svg+='</svg>';wrap.innerHTML=svg;bindHits(wrap,d);}
-  function drawPie(wrap,d,donut){var s=d.series[0];if(!s){wrap.innerHTML='';return;}var vals=s.values.map(function(v){return isFinite(v)&&v>0?v:0}),total=vals.reduce(function(a,b){return a+b},0);if(!total){wrap.innerHTML='<div style="padding:30px;color:var(--muted)">Pie/Donut needs a positive numeric measure.</div>';return;}var cx=340,cy=195,r=145,start=-Math.PI/2,svg='<svg viewBox="0 0 1000 390" class="smart-svg" role="img">';vals.forEach(function(v,i){if(!v)return;var a=v/total*Math.PI*2,end=start+a,large=a>Math.PI?1:0,x1=cx+r*Math.cos(start),y1=cy+r*Math.sin(start),x2=cx+r*Math.cos(end),y2=cy+r*Math.sin(end);if(donut){svg+='<path class="sc-hit" data-i="'+i+'" d="M '+x1+' '+y1+' A '+r+' '+r+' 0 '+large+' 1 '+x2+' '+y2+' L '+(cx+75*Math.cos(end))+' '+(cy+75*Math.sin(end))+' A 75 75 0 '+large+' 0 '+(cx+75*Math.cos(start))+' '+(cy+75*Math.sin(start))+' Z" fill="'+palette[i%palette.length]+'"><title>'+esc(label(d.labels[i]))+': '+esc(fmt(v))+'</title></path>';}else{svg+='<path class="sc-hit" data-i="'+i+'" d="M '+cx+' '+cy+' L '+x1+' '+y1+' A '+r+' '+r+' 0 '+large+' 1 '+x2+' '+y2+' Z" fill="'+palette[i%palette.length]+'"><title>'+esc(label(d.labels[i]))+': '+esc(fmt(v))+'</title></path>';}start=end;});if(donut)svg+='<circle cx="'+cx+'" cy="'+cy+'" r="72" fill="var(--card,#fff)"/>';svg+='<text x="'+cx+'" y="'+(cy+5)+'" text-anchor="middle" fill="currentColor" font-size="22" font-weight="800">'+esc(fmt(total))+'</text>';vals.forEach(function(v,i){var y=45+i*24;svg+='<rect x="590" y="'+(y-10)+'" width="12" height="12" rx="2" fill="'+palette[i%palette.length]+'"/><text x="610" y="'+y+'" fill="currentColor" opacity=".75" font-size="12">'+esc(d.labels[i])+' · '+esc(((v/total)*100).toFixed(1))+'%</text>'});svg+='</svg>';wrap.innerHTML=svg;bindHits(wrap,d);}
-  function draw(){var wrap=$('smartChartCanvas'),detailBox=$('smartChartDetail');if(!wrap)return;var d=seriesData();if(!d.series.length){wrap.innerHTML='<div style="padding:30px;color:var(--muted)">Select at least one numeric parameter.</div>';if(detailBox)detailBox.textContent='';return;}var title=$('smartChartTitle'),sub=$('smartChartSubtitle');if(title)title.textContent=d.series.map(function(s){return s.name}).join(' + ');if(sub)sub.textContent=(state.groupBy?'grouped by '+state.groupBy:'overall')+(state.model.usingDemo?' · AI PREVIEW DATA':' · LIVE DATA');if(state.type==='pie'||state.type==='donut')drawPie(wrap,d,state.type==='donut');else drawCartesian(wrap,d,state.type);if(d.labels.length)detail(state.selected<d.labels.length?state.selected:0,d);}
+  function drawPie(wrap,d,donut){
+    /* Pie/Donut has two valid meanings:
+       1) one selected parameter + a categorical/time group => composition by group;
+       2) two or more selected parameters => each selected parameter is a slice,
+          using its total value across the current dataset/groups. The previous
+          build always used series[0], which made every multi-parameter pie look
+          identical even when Parameter 2/3 changed. */
+    var pd=d;
+    var parameterMode=d.series.length>1;
+    if(parameterMode){
+      var labels=d.series.map(function(s){return s.name});
+      var vals=d.series.map(function(s){return s.values.reduce(function(a,b){return a+(isFinite(b)?b:0)},0)});
+      pd={labels:labels,rows:[d.rows&&d.rows[0]?d.rows[0]:[]],series:[{name:'Selected parameters',values:vals}],pieMode:'parameters',parameterNames:labels};
+    } else {
+      pd=d;
+    }
+    var s=pd.series[0];if(!s){wrap.innerHTML='';return;}
+    var vals=s.values.map(function(v){return isFinite(v)&&v>0?v:0}),total=vals.reduce(function(a,b){return a+b},0);
+    if(!total){wrap.innerHTML='<div style="padding:30px;color:var(--muted)">Pie/Donut needs a positive numeric measure.</div>';return;}
+    var cx=340,cy=195,r=145,start=-Math.PI/2,svg='<svg viewBox="0 0 1000 390" class="smart-svg" role="img">';
+    vals.forEach(function(v,i){if(!v)return;var a=v/total*Math.PI*2,end=start+a,large=a>Math.PI?1:0,x1=cx+r*Math.cos(start),y1=cy+r*Math.sin(start),x2=cx+r*Math.cos(end),y2=cy+r*Math.sin(end);
+      if(donut){svg+='<path class="sc-hit" data-i="'+i+'" d="M '+x1+' '+y1+' A '+r+' '+r+' 0 '+large+' 1 '+x2+' '+y2+' L '+(cx+75*Math.cos(end))+' '+(cy+75*Math.sin(end))+' A 75 75 0 '+large+' 0 '+(cx+75*Math.cos(start))+' '+(cy+75*Math.sin(start))+' Z" fill="'+palette[i%palette.length]+'"><title>'+esc(label(pd.labels[i]))+': '+esc(fmt(v))+'</title></path>';
+      }else{svg+='<path class="sc-hit" data-i="'+i+'" d="M '+cx+' '+cy+' L '+x1+' '+y1+' A '+r+' '+r+' 0 '+large+' 1 '+x2+' '+y2+' Z" fill="'+palette[i%palette.length]+'"><title>'+esc(label(pd.labels[i]))+': '+esc(fmt(v))+'</title></path>';}
+      start=end;
+    });
+    if(donut)svg+='<circle cx="'+cx+'" cy="'+cy+'" r="72" fill="var(--card,#fff)"/>';
+    svg+='<text x="'+cx+'" y="'+(cy+5)+'" text-anchor="middle" fill="currentColor" font-size="22" font-weight="800">'+esc(fmt(total))+'</text>';
+    vals.forEach(function(v,i){var y=45+i*24;svg+='<rect x="590" y="'+(y-10)+'" width="12" height="12" rx="2" fill="'+palette[i%palette.length]+'"/><text x="610" y="'+y+'" fill="currentColor" opacity=".75" font-size="12">'+esc(pd.labels[i])+' · '+esc(((v/total)*100).toFixed(1))+'%</text>';});
+    svg+='</svg>';wrap.innerHTML=svg;
+    bindHits(wrap,pd);
+    /* For parameter-mode pies, replace the generic group detail with the
+       selected parameter name and its total. */
+    if(parameterMode){
+      wrap.querySelectorAll('.sc-hit').forEach(function(n){['click','touchend'].forEach(function(ev){n.addEventListener(ev,function(e){if(ev==='touchend')e.preventDefault();var i=+n.getAttribute('data-i')||0;var box=$('smartChartDetail');if(box){box.innerHTML='<strong>'+esc(pd.labels[i])+'</strong><div class="smart-detail-grid"><div class="smart-detail-item"><span>Total</span><b>'+esc(fmt(vals[i]))+'</b></div><div class="smart-detail-item"><span>Share</span><b>'+esc(((vals[i]/total)*100).toFixed(1))+'%</b></div></div>';}} ,{passive:ev==='touchend'});});});
+    }
+  }
+  function draw(){var wrap=$('smartChartCanvas'),detailBox=$('smartChartDetail');if(!wrap)return;
+    /* A numeric measure must never become the grouping field just because it
+       appears in APP.columns as a dimension. Revalidate the current group on
+       every draw, including after a new file is uploaded. */
+    var validGroups=state.model.dimensions.map(function(x){return x.name});
+    if(state.groupBy && !validGroups.includes(state.groupBy))state.groupBy='';
+    var d=seriesData();
+    if(!d.series.length){wrap.innerHTML='<div style="padding:30px;color:var(--muted)">Select at least one numeric parameter.</div>';if(detailBox)detailBox.textContent='';return;}
+    var title=$('smartChartTitle'),sub=$('smartChartSubtitle');
+    if(title)title.textContent=d.series.map(function(s){return s.name}).join(' + ');
+    if(sub)sub.textContent=(state.type==='pie'||state.type==='donut'&&d.series.length>1?'selected parameters':(state.groupBy?'grouped by '+state.groupBy:'overall'))+(state.model.usingDemo?' · AI PREVIEW DATA':' · LIVE DATA');
+    if(state.type==='pie'||state.type==='donut')drawPie(wrap,d,state.type==='donut');else drawCartesian(wrap,d,state.type);
+    if(d.labels.length)detail(state.selected<d.labels.length?state.selected:0,d);
+  }
   function refresh(){state.model=getModel();chooseDefaults(false);renderTypes();sync();draw();}
   function bind(){['smartChartType','smartParam1','smartParam2','smartParam3','smartGroupBy'].forEach(function(id){var e=$(id);if(!e)return;e.addEventListener('change',function(){if(id==='smartChartType')state.type=e.value;else if(id==='smartGroupBy')state.groupBy=e.value;else{var i=id==='smartParam1'?0:id==='smartParam2'?1:2;state.params[i]=e.value;}state.selected=0;sync();draw();});});var r=$('smartResetBtn');if(r)r.addEventListener('click',function(){state={model:null,type:'bar',groupBy:'',params:[],selected:0};refresh();});}
   bind();
