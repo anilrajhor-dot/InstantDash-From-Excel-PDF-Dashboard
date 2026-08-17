@@ -7033,8 +7033,14 @@ function wireRest(){
   function num(v){if(typeof v==='number'&&isFinite(v))return v;if(v instanceof Date)return NaN;if(typeof v==='string'){var s=v.replace(/[₹$€£¥₩₽%]/g,'').replace(/,/g,'').trim();if(!s)return NaN;var n=parseFloat(s);return isFinite(n)?n:NaN}return NaN}
   function fmt(v){if(!isFinite(v))return '—';var a=Math.abs(v);var d=a>=100?0:(a>=10?1:2);return v.toLocaleString('en-IN',{maximumFractionDigits:d})}
   function short(v){if(!isFinite(v))return '—';var a=Math.abs(v);if(a>=10000000)return (v/10000000).toFixed(1)+'Cr';if(a>=100000)return (v/100000).toFixed(1)+'L';if(a>=1000)return (v/1000).toFixed(1)+'K';return fmt(v)}
-  function rows(){return (window.APP&&Array.isArray(APP.filtered)&&APP.filtered.length?APP.filtered:(window.APP&&Array.isArray(APP.rows)?APP.rows:[]))}
-  function cols(){return window.APP&&Array.isArray(APP.columns)?APP.columns:[]}
+  var DEMO_ROWS=[
+    {Period:'FY 2024-25',Revenue:4800,Expenses:4140,PAT:660,Assets:5100,Cash:540,OperatingCash:820,InvestingCash:-260,FinancingCash:-390},
+    {Period:'FY 2025-26',Revenue:5600,Expenses:4800,PAT:680,Assets:5470,Cash:610,OperatingCash:940,InvestingCash:-310,FinancingCash:-430}
+  ];
+  var DEMO_COLS=['Revenue','Expenses','PAT','Assets','Cash','OperatingCash','InvestingCash','FinancingCash'];
+  function rows(){var real=(window.APP&&Array.isArray(APP.filtered)&&APP.filtered.length?APP.filtered:(window.APP&&Array.isArray(APP.rows)?APP.rows:[]));return real.length?real:DEMO_ROWS}
+  function cols(){var real=window.APP&&Array.isArray(APP.columns)?APP.columns:[];if(real.length)return real;return DEMO_COLS.map(function(n){return {name:n,type:'number'}})}
+  function usingDemo(){return !(window.APP&&Array.isArray(APP.rows)&&APP.rows.length)}
   function isNumCol(c, rs){if(!c)return false;if(c.type==='number')return true;var vals=rs.map(function(r){return num(r[c.name])}).filter(isFinite);return vals.length>=Math.max(2,Math.ceil(rs.length*.7))}
   function nameScore(n,terms){var s=String(n||'').toLowerCase();return terms.reduce(function(a,t){return a+(s.indexOf(t)>=0?1:0)},0)}
   function detectModel(){
@@ -7159,7 +7165,7 @@ function wireRest(){
     svg+=svgText(cx,cy+5,isDonut?'':'',{'text-anchor':'middle','font-size':'12','font-weight':'800','fill':'currentColor'});vals.forEach(function(o,i){svg+='<rect x="700" y="'+(90+i*32)+'" width="11" height="11" rx="2" fill="'+palette[i]+'"/><text x="720" y="'+(100+i*32)+'" fill="currentColor" opacity=".75" font-size="11">'+esc(o.name)+' · '+((o.v/total)*100).toFixed(1)+'%</text>'});svg+='</svg>';wrap.innerHTML=svg;wrap.querySelectorAll('.sc-hit').forEach(function(el){el.addEventListener('click',function(){var i=+el.dataset.i;detail.innerHTML='<strong>'+esc(vals[i].name)+'</strong><div class="smart-detail-grid"><div class="smart-detail-item"><span>'+esc(labels[latestIndex]||'Period')+'</span><b>'+fmt(vals[i].v)+'</b></div><div class="smart-detail-item"><span>Share</span><b>'+((vals[i].v/total)*100).toFixed(1)+'%</b></div></div>'})});
   }
   function showDetail(i,labels,series,detail){var label=labels[i]??('Item '+(i+1));var html='<strong>'+esc(label)+'</strong><div class="smart-detail-grid">';series.forEach(function(s){html+='<div class="smart-detail-item"><span>'+esc(s.name)+'</span><b>'+esc(fmt(s.values[i]))+'</b></div>'});html+='</div>';detail.innerHTML=html}
-  function refresh(){state.model=detectModel();var cats=allCategories(state.model);if(!state.category&&cats.length)state.category=cats[0].name;chooseDefaults();renderTypes();syncControls();draw();var h=$('smartChartHint');if(h)h.textContent=state.model.mode==='none'?'No numeric measures detected':'Choose a data type · '+state.model.numeric.length+' numeric measure'+(state.model.numeric.length===1?'':'s')+' available';}
+  function refresh(){state.model=detectModel();var cats=allCategories(state.model);if(!state.category&&cats.length)state.category=cats[0].name;chooseDefaults();renderTypes();syncControls();draw();var h=$('smartChartHint');if(h)h.textContent=usingDemo()?'Demo chart · upload a file to replace the demo data':'Choose a data type · '+state.model.numeric.length+' numeric measure'+(state.model.numeric.length===1?'':'s')+' available';var sub=$('smartChartSubtitle');if(sub&&usingDemo())sub.textContent='DEMO DATA — upload Excel / CSV / PDF to replace it with your data.';}
   function bind(){
     ['smartChartType','smartParam1','smartParam2','smartParam3'].forEach(function(id){var el=$(id);if(!el)return;el.addEventListener('change',function(){if(id==='smartChartType')state.type=el.value;else{var i=id==='smartParam1'?0:id==='smartParam2'?1:2;state.params[i]=el.value}state.selected=0;draw()})});
     var r=$('smartResetBtn');if(r)r.addEventListener('click',function(){state.category='';state.type='bar';state.params=[];state.selected=0;refresh()});
