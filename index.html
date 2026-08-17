@@ -1083,6 +1083,18 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 @media(max-width:900px){.smart-chart-top{grid-template-columns:1fr}.smart-controls{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){.smart-chart-top{padding:12px}.smart-chart-card{padding:12px}.smart-type-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.smart-type-btn{text-align:left;padding:10px;font-size:11px}.smart-controls{grid-template-columns:1fr 1fr}.smart-svg-wrap,.smart-svg-wrap svg{height:320px;min-height:320px}.smart-chart-head h3{font-size:16px}.smart-detail-grid{grid-template-columns:1fr}.customChartsPanel{margin-top:10px}}
 </style>
+
+<style id="instantdash-v11116-ui-fix">
+/* v1.11.16 — result-first navigation, touch-safe charts, expandable chart view */
+#smartChartsSection{scroll-margin-top:18px}
+.smart-result-strip{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 14px;padding:13px 15px;border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:15px;background:var(--card);box-shadow:var(--shadow)}
+.smart-result-strip strong{font-size:14px}.smart-result-strip span{display:block;color:var(--muted);font-size:11px;margin-top:3px}.smart-result-actions{display:flex;gap:8px;flex-shrink:0}.smart-result-actions button{border:1px solid var(--border);background:var(--card-2);color:var(--text);border-radius:10px;padding:9px 12px;font-weight:800;cursor:pointer}.smart-result-actions .primary{background:var(--accent);color:#111;border-color:var(--accent)}
+.smart-chart-head{position:relative}.smart-expand-btn{margin-left:auto!important;min-width:92px}.smart-svg-wrap{position:relative;touch-action:manipulation;-webkit-user-select:none;user-select:none}.smart-svg-wrap svg{touch-action:manipulation}.sc-hit{cursor:pointer;pointer-events:all;transition:opacity .12s,transform .12s}.sc-hit:hover{opacity:.82}.sc-hit:active{opacity:.68}
+.smart-detail{min-height:56px}.smart-detail strong{display:block;margin-bottom:8px}.smart-detail-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.smart-detail-item{border:1px solid var(--border);background:var(--card-2);border-radius:11px;padding:9px}.smart-detail-item span{display:block;color:var(--muted);font-size:10px;line-height:1.25}.smart-detail-item b{display:block;font-size:14px;margin-top:3px}
+.chart-expand-overlay{position:fixed;inset:0;background:rgba(0,0,0,.58);z-index:99999;display:none;padding:14px;align-items:center;justify-content:center}.chart-expand-overlay.open{display:flex}.chart-expand-card{width:min(1100px,100%);max-height:94vh;overflow:auto;background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:20px;box-shadow:0 25px 80px rgba(0,0,0,.28);padding:16px}.chart-expand-head{display:flex;align-items:flex-start;gap:10px;justify-content:space-between;margin-bottom:10px}.chart-expand-head h3{margin:0;font-size:20px}.chart-expand-head p{margin:4px 0 0;color:var(--muted);font-size:11px}.chart-expand-close{border:1px solid var(--border);background:var(--card-2);color:var(--text);border-radius:11px;padding:9px 12px;font-weight:800}.chart-expand-canvas{min-height:460px;border:1px solid var(--border);border-radius:15px;overflow:hidden;background:var(--card-2)}.chart-expand-canvas svg{width:100%;height:460px;display:block}.chart-expand-detail{margin-top:10px}
+@media(max-width:600px){.smart-result-strip{align-items:flex-start;flex-direction:column}.smart-result-actions{width:100%}.smart-result-actions button{flex:1}.smart-detail-grid{grid-template-columns:1fr}.smart-expand-btn{min-width:0}.chart-expand-overlay{padding:0}.chart-expand-card{height:100%;max-height:100vh;border-radius:0;padding:12px}.chart-expand-canvas{min-height:360px}.chart-expand-canvas svg{height:360px}.chart-expand-head h3{font-size:17px}}
+</style>
+
 </head>
 <body class="" style="overflow: hidden;">
 <div id="pageScroll">
@@ -1094,7 +1106,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.11.14</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.11.16</span>
   </div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -1263,7 +1275,9 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
       <button class="id-health-launch-btn" type="button" id="healthCheckLaunchBtn" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-launch-wired="1">RUN HEALTH CHECK →</button>
     </section>
 
-    <div class="section" id="smartChartsSection">
+    <div class="smart-result-strip no-print" id="smartResultStrip" hidden><div><strong id="smartResultTitle">Data loaded successfully</strong><span id="smartResultMeta">Your file has been analysed. Results are ready below.</span></div><div class="smart-result-actions"><button type="button" id="smartResultTopBtn">↑ Results</button><button type="button" class="primary" id="smartResultChartBtn">📊 Charts</button></div></div>
+
+<div class="section" id="smartChartsSection">
       <div class="section-head">
         <h2>Interactive Charts</h2>
         <span class="hint" id="smartChartHint">Choose one of the 3–4 data views below; only the selected chart is displayed.</span>
@@ -1297,7 +1311,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
         <div class="smart-chart-card">
           <div class="smart-chart-head">
             <div><h3 id="smartChartTitle">Select a data type</h3><div id="smartChartSubtitle" class="smart-subtitle">Upload or select a data set with numeric measures.</div></div>
-            <button class="btn sm no-print" id="smartResetBtn" type="button">Reset</button>
+            <div style="display:flex;gap:8px;margin-left:auto"><button class="btn sm no-print smart-expand-btn" id="smartExpandBtn" type="button">⛶ Expand</button><button class="btn sm no-print" id="smartResetBtn" type="button">Reset</button></div>
           </div>
           <div id="smartChartCanvas" class="smart-svg-wrap" aria-live="polite"></div>
           <div id="smartChartDetail" class="smart-detail">Touch a bar, point or segment to see the exact figures.</div>
@@ -1457,7 +1471,7 @@ Charts on screen: Row count by Central Bank of India – Q1FY27.</pre></div>
 const CONFIG = {
   BUILD_VERSION: '1.11.07',
   APP_NAME: 'InstantDash',
-  VERSION: 'v1.11.15',
+  VERSION: 'v1.11.16',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -5731,7 +5745,7 @@ function wireRest(){
     const bootstrap='<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__='+json+';<\/script>';
     let html='<!doctype html>\n'+document.documentElement.outerHTML;
     html=html.replace('</head>',bootstrap+'</head>');
-    const f=new File([html],'InstantDash_Dashboard_v1.11.14.html',{type:'text/html'});
+    const f=new File([html],'InstantDash_Dashboard_v1.11.16.html',{type:'text/html'});
     if(wasOpen){
       panel.classList.add('is-open');
       panel.setAttribute('aria-hidden','false');
@@ -5770,7 +5784,7 @@ function wireRest(){
           return;
         }
       }
-      await navigator.share({title:'InstantDash Dashboard v1.11.15',text:'InstantDash interactive dashboard with loaded data and management movement analysis.',files:[f]});
+      await navigator.share({title:'InstantDash Dashboard v1.11.16',text:'InstantDash interactive dashboard with loaded data and management movement analysis.',files:[f]});
       setNote('Dashboard file shared successfully.');
     }catch(err){
       if(err&&err.name==='AbortError') return;
@@ -5779,7 +5793,7 @@ function wireRest(){
   }
   async function copyShare(e){
     if(e){e.preventDefault();e.stopPropagation();}
-    const text='InstantDash Dashboard v1.11.15 — interactive management dashboard.';
+    const text='InstantDash Dashboard v1.11.16 — interactive management dashboard.';
     try{
       if(navigator.clipboard&&navigator.clipboard.writeText){
         await navigator.clipboard.writeText(text);
@@ -7043,7 +7057,7 @@ function wireRest(){
 <script id="instantdash-v11113-smart-charts-js">
 (function(){
   'use strict';
-  /* InstantDash v1.11.15 — Local AI Chart Advisor.
+  /* InstantDash v1.11.16 — Local AI Chart Advisor.
      Semantic analysis is performed in-browser from column names, value patterns,
      units, cardinality and relationships. No dataset is sent to an external AI.
      AI recommendations are suggestions only; every numeric parameter remains
@@ -7064,7 +7078,7 @@ function wireRest(){
   function data(){var a=app();return {rows:a&&Array.isArray(a.filtered)&&a.filtered.length?a.filtered:(a&&Array.isArray(a.rows)?a.rows:[]),all:a&&Array.isArray(a.rows)?a.rows:[],cols:a&&Array.isArray(a.columns)?a.columns:[]}}
   function isId(n){return /(^|[^a-z])(id|code|account|acct|sol\s*id|agent\s*id|serial|sno|sr\s*no)([^a-z]|$)/i.test(String(n||''))}
   function isTime(n,c){return c&&(((c.type||'').toLowerCase()==='date')||c.role==='time')||/date|month|period|quarter|year|fy|week|day/i.test(String(n||''))}
-  /* v1.11.15 — parameter discovery is based on the actual row objects first.
+  /* v1.11.16 — parameter discovery is based on the actual row objects first.
      The previous build trusted APP.columns too much. Some sheets can have
      correctly populated APP.rows while the column profile is incomplete or
      temporarily carries text roles. That made the dropdown say 0 parameters
@@ -7239,4 +7253,64 @@ function wireRest(){
   [50,150,300,600,1000,1600,2500,4000,7000,10000].forEach(function(ms){setTimeout(watch,ms)});setInterval(watch,750);if(window.MutationObserver&&!window.__instantDashSmartChartObserver){window.__instantDashSmartChartObserver=true;new MutationObserver(function(){watch()}).observe(document.body,{childList:true,subtree:true});}window.__instantDashSmartChartsRefresh=refresh;refresh();
 })();
 </script>
+<div class="chart-expand-overlay" id="smartChartExpand" aria-hidden="true"><div class="chart-expand-card" role="dialog" aria-modal="true" aria-label="Expanded chart"><div class="chart-expand-head"><div><h3 id="smartExpandTitle">Chart</h3><p id="smartExpandSubtitle"></p></div><button type="button" class="chart-expand-close" id="smartExpandClose">✕ Close</button></div><div class="chart-expand-canvas" id="smartExpandCanvas"></div><div class="smart-detail chart-expand-detail" id="smartExpandDetail"></div></div></div>
+
+
+<script id="instantdash-v11116-ui-fix-js">
+(function(){
+  'use strict';
+  var $=function(id){return document.getElementById(id)};
+  function resultStrip(){
+    var app=$('app'), strip=$('smartResultStrip'); if(!app||!strip)return;
+    var file=$('fileName'), meta=$('fileMeta');
+    var fn=file&&file.textContent?file.textContent.trim():'Your file';
+    var mt=meta&&meta.textContent?meta.textContent.trim():'Analysis complete';
+    $('smartResultTitle').textContent='Results ready — '+fn;
+    $('smartResultMeta').textContent=mt+' · Dashboard, insights and interactive charts are ready.';
+    strip.hidden=false;
+  }
+  function goResults(){var a=$('app');if(a&&!a.hidden){window.scrollTo({top:Math.max(0,a.getBoundingClientRect().top+window.scrollY-8),behavior:'smooth'});}}
+  function goCharts(){var e=$('smartChartsSection');if(e)e.scrollIntoView({behavior:'smooth',block:'start'});}
+  function openExpand(){
+    var ov=$('smartChartExpand'), src=$('smartChartCanvas'), dst=$('smartExpandCanvas');if(!ov||!src||!dst)return;
+    dst.innerHTML=src.innerHTML;
+    var title=$('smartChartTitle'), sub=$('smartChartSubtitle');
+    $('smartExpandTitle').textContent=title?title.textContent:'Interactive chart';
+    $('smartExpandSubtitle').textContent=sub?sub.textContent:'';
+    $('smartExpandDetail').innerHTML=($('smartChartDetail')||{}).innerHTML||'';
+    ov.classList.add('open');ov.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';
+    dst.querySelectorAll('.sc-hit').forEach(function(n){
+      var handler=function(e){e.preventDefault();var i=Number(n.getAttribute('data-i')||0);var original=src.querySelector('.sc-hit[data-i="'+i+'"]');if(original)original.dispatchEvent(new Event('click',{bubbles:true}));setTimeout(function(){var d=$('smartChartDetail');if(d)$('smartExpandDetail').innerHTML=d.innerHTML;},30);};
+      n.addEventListener('click',handler,{passive:false});n.addEventListener('touchend',handler,{passive:false});
+    });
+  }
+  function closeExpand(){var ov=$('smartChartExpand');if(!ov)return;ov.classList.remove('open');ov.setAttribute('aria-hidden','true');document.body.style.overflow='';}
+  function wire(){
+    var top=$('smartResultTopBtn'),ch=$('smartResultChartBtn'),ex=$('smartExpandBtn'),cl=$('smartExpandClose'),ov=$('smartChartExpand');
+    if(top&&!top.__wired){top.__wired=1;top.addEventListener('click',goResults);}
+    if(ch&&!ch.__wired){ch.__wired=1;ch.addEventListener('click',goCharts);}
+    if(ex&&!ex.__wired){ex.__wired=1;ex.addEventListener('click',openExpand);}
+    var cv=$('smartChartCanvas');
+    if(cv&&!cv.__wired){cv.__wired=1;cv.addEventListener('click',function(e){if(e.target&&e.target.closest&&e.target.closest('.sc-hit'))return;openExpand();},{passive:false});cv.addEventListener('touchend',function(e){if(e.target&&e.target.closest&&e.target.closest('.sc-hit'))return;e.preventDefault();openExpand();},{passive:false});}
+    if(cl&&!cl.__wired){cl.__wired=1;cl.addEventListener('click',closeExpand);}
+    if(ov&&!ov.__wired){ov.__wired=1;ov.addEventListener('click',function(e){if(e.target===ov)closeExpand();});}
+  }
+  var last='';
+  function watch(){
+    wire();
+    var a=$('app'), empty=$('emptyState'), file=$('fileName');
+    if(a&&!a.hidden){
+      resultStrip();
+      var sig=(file&&file.textContent||'')+'|'+(a.offsetHeight||0);
+      if(sig!==last){last=sig;setTimeout(function(){goResults();},180);}
+    }
+  }
+  setInterval(watch,300);watch();
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeExpand();});
+  // Make chart hits reliably activate on iPhone/iPad as well as laptop.
+  var obs=new MutationObserver(function(){wire();});
+  if(document.body)obs.observe(document.body,{childList:true,subtree:true});
+})();
+</script>
+
 </body></html>
