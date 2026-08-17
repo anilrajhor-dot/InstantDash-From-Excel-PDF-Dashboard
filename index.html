@@ -1457,7 +1457,7 @@ Charts on screen: Row count by Central Bank of India – Q1FY27.</pre></div>
 const CONFIG = {
   BUILD_VERSION: '1.11.07',
   APP_NAME: 'InstantDash',
-  VERSION: 'v1.11.14',
+  VERSION: 'v1.11.15',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -5770,7 +5770,7 @@ function wireRest(){
           return;
         }
       }
-      await navigator.share({title:'InstantDash Dashboard v1.11.14',text:'InstantDash interactive dashboard with loaded data and management movement analysis.',files:[f]});
+      await navigator.share({title:'InstantDash Dashboard v1.11.15',text:'InstantDash interactive dashboard with loaded data and management movement analysis.',files:[f]});
       setNote('Dashboard file shared successfully.');
     }catch(err){
       if(err&&err.name==='AbortError') return;
@@ -5779,7 +5779,7 @@ function wireRest(){
   }
   async function copyShare(e){
     if(e){e.preventDefault();e.stopPropagation();}
-    const text='InstantDash Dashboard v1.11.14 — interactive management dashboard.';
+    const text='InstantDash Dashboard v1.11.15 — interactive management dashboard.';
     try{
       if(navigator.clipboard&&navigator.clipboard.writeText){
         await navigator.clipboard.writeText(text);
@@ -7043,7 +7043,7 @@ function wireRest(){
 <script id="instantdash-v11113-smart-charts-js">
 (function(){
   'use strict';
-  /* InstantDash v1.11.14 — Local AI Chart Advisor.
+  /* InstantDash v1.11.15 — Local AI Chart Advisor.
      Semantic analysis is performed in-browser from column names, value patterns,
      units, cardinality and relationships. No dataset is sent to an external AI.
      AI recommendations are suggestions only; every numeric parameter remains
@@ -7064,32 +7064,56 @@ function wireRest(){
   function data(){var a=app();return {rows:a&&Array.isArray(a.filtered)&&a.filtered.length?a.filtered:(a&&Array.isArray(a.rows)?a.rows:[]),all:a&&Array.isArray(a.rows)?a.rows:[],cols:a&&Array.isArray(a.columns)?a.columns:[]}}
   function isId(n){return /(^|[^a-z])(id|code|account|acct|sol\s*id|agent\s*id|serial|sno|sr\s*no)([^a-z]|$)/i.test(String(n||''))}
   function isTime(n,c){return c&&(((c.type||'').toLowerCase()==='date')||c.role==='time')||/date|month|period|quarter|year|fy|week|day/i.test(String(n||''))}
+  /* v1.11.15 — parameter discovery is based on the actual row objects first.
+     The previous build trusted APP.columns too much. Some sheets can have
+     correctly populated APP.rows while the column profile is incomplete or
+     temporarily carries text roles. That made the dropdown say 0 parameters
+     even though the rows contained many numeric fields. */
+  function rowColumnNames(d){
+    var seen={},out=[];
+    (d.rows||[]).forEach(function(r){
+      if(!r||typeof r!=='object')return;
+      Object.keys(r).forEach(function(k){if(k!==''&&!seen[k]){seen[k]=1;out.push(k)}});
+    });
+    return out;
+  }
+  function columnMeta(d,n){
+    return (d.cols||[]).find(function(c){return String(c.name||'')===String(n)})||{name:n,type:'',role:''};
+  }
   function numericMeasures(d){
-    /* v1.11.14: EVERY genuine numeric parameter is exposed to the user.
-       AI categories are suggestions only and never remove a parameter.
-       Numeric-looking columns are recognised from their actual values as a fallback. */
-    return d.cols.filter(function(c){
-      var n=String(c.name||''); if(!n||isId(n))return false;
-      var vals=d.rows.map(function(r){return num(r[n])}).filter(isFinite);
-      if(!vals.length)return false;
+    var names=rowColumnNames(d);
+    var cols=d.cols||[];
+    /* Preserve source-column order, then append any keys found in rows but
+       missing from the profile. This guarantees every genuine numeric field
+       from the uploaded dataset reaches all three parameter dropdowns. */
+    var ordered=[]; cols.forEach(function(c){var n=String(c.name||'');if(n&&names.includes(n)&&!ordered.includes(n))ordered.push(n)});
+    names.forEach(function(n){if(!ordered.includes(n))ordered.push(n)});
+    return ordered.map(function(n){
+      var c=columnMeta(d,n); if(isId(n))return null;
+      var vals=(d.rows||[]).map(function(r){return num(r[n])}).filter(isFinite);
+      if(!vals.length)return null;
+      var ratio=vals.length/Math.max(1,(d.rows||[]).length);
       var t=String(c.type||'').toLowerCase();
       var declared=(t==='number'||t==='measure'||c.role==='measure'||c.role==='numeric');
-      var ratio=vals.length/Math.max(1,d.rows.length);
-      return declared || ratio>=0.70;
-    });
+      return (declared||ratio>=0.70)?{name:n,type:'number',role:'measure',sourceMeta:c}:null;
+    }).filter(Boolean);
   }
   function dimensions(d){
-    var out=[];
-    d.cols.forEach(function(c){
-      var n=String(c.name||''),t=String(c.type||'').toLowerCase(); if(isId(n))return;
-      var vals=d.rows.map(function(r){return r[n]}).filter(function(v){return v!==null&&v!==undefined&&String(v)!==''});
-      var u=[...new Set(vals.map(String))]; if(u.length<2)return;
+    var out=[],names=rowColumnNames(d),seen={};
+    names.forEach(function(n){
+      var c=columnMeta(d,n),t=String(c.type||'').toLowerCase(); if(isId(n)||seen[n])return; seen[n]=1;
+      var vals=(d.rows||[]).map(function(r){return r[n]}).filter(function(v){return v!==null&&v!==undefined&&String(v)!==''});
+      var u=[...new Set(vals.map(function(v){return String(v)}))]; if(u.length<2)return;
       if(isTime(n,c)&&u.length>1){out.push({name:n,kind:'time',unique:u.length,score:120});return;}
-      if(t!=='text'&&t!=='number'&&c.role!=='dimension'&&c.role!=='highdim')return;
+      var numericRatio=vals.filter(function(v){return isFinite(num(v))}).length/Math.max(1,vals.length);
+      /* Numeric columns are measures, not grouping dimensions, unless they
+         are explicitly date/time fields. */
+      if(numericRatio>=0.70 && t!=='text' && c.role!=='dimension')return;
       if(u.length>100)return;
       var score=0;if(c.role==='dimension')score+=30;
-      if(/region|zone|state|district|dist|branch|category|segment|product|department|team|group|type|class|channel|territory|name/i.test(n))score+=50;
-      if(u.length<=15)score+=25;if(u.length<=8)score+=10;out.push({name:n,kind:'cat',unique:u.length,score:score});
+      if(/region|zone|state|district|dist|branch|category|segment|product|department|team|group|type|class|channel|territory|name|month|date|period|quarter|year/i.test(n))score+=50;
+      if(u.length<=15)score+=25;if(u.length<=8)score+=10;
+      out.push({name:n,kind:'cat',unique:u.length,score:score});
     });
     out.sort(function(a,b){return b.score-a.score||a.unique-b.unique}); return out;
   }
