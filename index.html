@@ -7720,6 +7720,10 @@ function bind(){
      if(e.value){state.params=state.params.map(function(p,i){return i!==idx&&p===e.value?'':p});}
    }
    state.selected=0;sync();draw();
+   /* v1.13.05 — keep the independent parameter renderer synchronised.
+      This is deliberately called after the normal renderer so manual
+      selections always produce a chart even if the AI renderer has no model. */
+   try{ if(window.__instantDashParameterFallback && typeof window.__instantDashParameterFallback.redraw==='function') window.__instantDashParameterFallback.redraw(); }catch(_){}
  })});
  var r=$('smartResetBtn');if(r)r.onclick=function(){state={model:null,type:'bar',groupBy:'',params:[],selected:0};refresh()};
 }
@@ -7966,10 +7970,15 @@ window.__instantDashAIMultiChartsRefresh=render;
     var a=$('app'), empty=$('emptyState'), file=$('fileName');
     if(a&&!a.hidden){
       resultStrip();
-      var sig=(file&&file.textContent||'')+'|'+(a.offsetHeight||0);
+      /* v1.13.05 — NEVER use app height as a navigation trigger.
+         Chart rendering changes page height repeatedly and the old watcher
+         therefore kept scrolling the iPhone viewport up/down. */
+      var live=window.__INSTANTDASH_APP__||{};
+      var sig=(file&&file.textContent||'')+'|'+(live.__dataVersion||0)+'|'+(live.fileName||'');
       if(sig!==last){
         last=sig;
-        if(window.__instantDashUserUploadComplete){
+        if(window.__instantDashUserUploadComplete && !a.dataset.v11305AutoScrolled){
+          a.dataset.v11305AutoScrolled='1';
           setTimeout(function(){goResults();},180);
         }
       }
@@ -8210,17 +8219,41 @@ function renderFallback(){
 }
 function tick(){
  var f=fields();if(!f.measures.length)return;
- var before=$('smartParam1')&&[].slice.call($('smartParam1').options||[]).filter(function(o){return o.value}).length;
  ensureOptions();
- var after=$('smartParam1')&&[].slice.call($('smartParam1').options||[]).filter(function(o){return o.value}).length;
- if(after&&after!==before){var s=$('smartParam1');if(!s.value)s.value=f.measures[0].name;}
- /* The existing renderer remains primary. Fallback only takes over when it
-    has no usable parameters, which is exactly the failure mode being fixed. */
- if(after){var msg=$('smartNoParameters');if(msg)msg.hidden=true;var area=$('smartChartCanvas');if(area&&/Select at least one numeric parameter/i.test(area.textContent||''))renderFallback();}
+ var p=$('smartParam1');
+ if(p && !p.value) p.value=f.measures[0].name;
+ var area=$('smartChartCanvas');
+ if(area) renderFallback();
 }
-setTimeout(tick,100);setInterval(tick,500);
-window.__instantDashParameterFallback={fields:fields,refresh:tick};
+function redraw(){
+ /* Do not scroll, rebuild the page, or call the AI sync here. Only redraw
+    the chart from the current dropdown values. */
+ var f=fields(); if(f.measures.length) renderFallback();
+}
+function bindFallback(){
+ ['smartChartType','smartParam1','smartParam2','smartParam3','smartGroupBy'].forEach(function(id){
+   var e=$(id); if(!e || e.dataset.v11305Fallback==='1') return;
+   e.dataset.v11305Fallback='1';
+   e.addEventListener('change',function(){ setTimeout(redraw,0); },false);
+   e.addEventListener('input',function(){ setTimeout(redraw,0); },false);
+ });
+}
+function bootFallback(){
+ ensureOptions(); bindFallback(); redraw();
+}
+setTimeout(bootFallback,80);
+setTimeout(bootFallback,500);
+setTimeout(bootFallback,1200);
+var observer=window.MutationObserver?new MutationObserver(function(){bindFallback();}):null;
+if(observer && document.body) observer.observe(document.body,{childList:true,subtree:true});
+window.__instantDashParameterFallback={fields:fields,refresh:tick,redraw:redraw,bind:bindFallback};
 })();
 </script>
 
+<style id="instantdash-v11305-stability">
+/* v1.13.05 — stable iPhone chart interaction */
+#smartChartsSection,#smartChartCanvas,#smartChartCanvas svg{scroll-margin-top:12px;}
+#smartChartCanvas{min-height:360px;overflow:hidden;position:relative;}
+#smartChartCanvas select{touch-action:manipulation;}
+</style>
 </body></html>
