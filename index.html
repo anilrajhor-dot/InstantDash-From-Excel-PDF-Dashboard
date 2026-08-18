@@ -8747,4 +8747,130 @@ window.__instantDashParameterFallback={fields:fields,refresh:tick,redraw:redraw,
   setTimeout(watch,1000);
 })();
 </script>
+
+<style id="instantdash-v123-executive-summary-css">
+/* v1.13.23 — Executive Summary: management-first, visual and source-aware */
+.id-exec-summary{margin:0 0 14px;border:1px solid var(--border);border-radius:18px;overflow:hidden;background:var(--card);box-shadow:var(--shadow)}
+.id-exec-summary .es-top{padding:18px 18px 15px;background:linear-gradient(135deg,var(--card),color-mix(in srgb,var(--accent) 10%,var(--card)));border-bottom:1px solid var(--border)}
+.id-exec-summary .es-kicker{font-size:10px;font-weight:900;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)}
+.id-exec-summary .es-title{font:900 22px/1.15 Poppins,-apple-system,sans-serif;margin-top:5px}
+.id-exec-summary .es-sub{font-size:11.5px;color:var(--muted);margin-top:6px;line-height:1.5}
+.id-exec-summary .es-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;padding:13px 14px 6px}
+.id-exec-summary .es-kpi{position:relative;min-width:0;padding:13px;border:1px solid var(--border);border-radius:13px;background:var(--card-2)}
+.id-exec-summary .es-kpi.hot{border-top:3px solid var(--accent)}
+.id-exec-summary .es-kpi.good{border-top:3px solid var(--ok)}
+.id-exec-summary .es-kpi.warn{border-top:3px solid var(--warn)}
+.id-exec-summary .es-label{font-size:9.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.id-exec-summary .es-value{font:900 20px/1.2 Poppins,-apple-system,sans-serif;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.id-exec-summary .es-value small{font:700 10px Poppins,sans-serif;color:var(--muted)}
+.id-exec-summary .es-change{font-size:10.5px;font-weight:800;margin-top:5px}
+.id-exec-summary .es-change.up{color:var(--ok)}.id-exec-summary .es-change.down{color:var(--warn)}.id-exec-summary .es-change.flat{color:var(--muted)}
+.id-exec-summary .es-body{display:grid;grid-template-columns:1.25fr .75fr;gap:10px;padding:7px 14px 14px}
+.id-exec-summary .es-story,.id-exec-summary .es-actions{border:1px solid var(--border);border-radius:13px;background:var(--card-2);padding:13px}
+.id-exec-summary .es-section-label{font-size:9.5px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+.id-exec-summary .es-story p{margin:0;font-size:12px;line-height:1.6}
+.id-exec-summary .es-points{display:grid;gap:7px;margin-top:8px}
+.id-exec-summary .es-point{font-size:11px;line-height:1.45;padding:8px 9px;border-radius:9px;background:var(--card)}
+.id-exec-summary .es-point b{font-weight:850}
+.id-exec-summary .es-actions ul{margin:0;padding-left:17px}.id-exec-summary .es-actions li{font-size:11px;line-height:1.5;margin:5px 0}
+.id-exec-summary .es-source{padding:8px 14px 11px;border-top:1px dashed var(--border);font-size:9.5px;color:var(--muted)}
+.id-exec-summary .es-source b{color:var(--text)}
+@media(max-width:900px){.id-exec-summary .es-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.id-exec-summary .es-body{grid-template-columns:1fr}}
+@media(max-width:480px){.id-exec-summary .es-top{padding:15px}.id-exec-summary .es-title{font-size:19px}.id-exec-summary .es-grid{grid-template-columns:1fr 1fr;padding:10px}.id-exec-summary .es-kpi{padding:10px}.id-exec-summary .es-value{font-size:17px}.id-exec-summary .es-body{padding:5px 10px 10px}}
+</style>
+
+
+<script id="instantdash-v123-executive-summary-js">
+(function(){
+'use strict';
+function A(){return window.__INSTANTDASH_APP__||window.APP||{}}
+function rows(){var a=A();return Array.isArray(a.filtered)&&a.filtered.length?a.filtered:(Array.isArray(a.rows)?a.rows:[])}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function num(v){if(typeof v==='number'&&isFinite(v))return v;if(v==null)return null;var s=String(v).replace(/[₹$€£¥₩,%\s]/g,'').replace(/,/g,'').trim();if(!s)return null;var n=Number(s);return isFinite(n)?n:null}
+function fmt(v){if(v==null||!isFinite(v))return '—';return Number(v).toLocaleString('en-IN',{maximumFractionDigits:2})}
+function pct(v){if(v==null||!isFinite(v))return '—';return (v>=0?'+':'')+v.toFixed(1)+'%'}
+function nice(s){return String(s||'').replace(/[_-]+/g,' ').replace(/\s+/g,' ').trim()}
+function keys(rs){var seen={},out=[];rs.forEach(function(r){if(!r||typeof r!=='object')return;Object.keys(r).forEach(function(k){if(!seen[k]){seen[k]=1;out.push(k)}})});return out}
+function isNumericKey(rs,k){var a=rs.map(function(r){return num(r[k])}).filter(function(v){return v!=null});return a.length>=Math.max(2,Math.floor(rs.length*.35))}
+function financialRows(rs){
+  var ks=keys(rs); if(!ks.length)return null;
+  var labelScore={};
+  ks.forEach(function(k){var sc=0;rs.forEach(function(r){var s=nice(r[k]).toLowerCase();if(!s)return; if(/revenue from operations|total income|profit before tax|net profit|earnings per share|exceptional item|other comprehensive|segment revenue|total expenses/.test(s))sc+=4; else if(/revenue|profit|income|expense|tax|eps|ebit|ebitda|assets|liabilities|dividend|cash flow/.test(s))sc+=1;});labelScore[k]=sc});
+  var labelKey=ks.sort(function(a,b){return labelScore[b]-labelScore[a]})[0];
+  if(!labelKey||labelScore[labelKey]<5)return null;
+  var numKeys=ks.filter(function(k){return k!==labelKey&&isNumericKey(rs,k)});
+  if(numKeys.length<2)return null;
+  var map={};
+  rs.forEach(function(r){var label=nice(r[labelKey]);if(!label)return;var vals=numKeys.map(function(k){return num(r[k])});if(vals.filter(function(v){return v!=null}).length>=2){(map[label.toLowerCase()]||(map[label.toLowerCase()]=[])).push({label:label,vals:vals})}});
+  function find(re){var arr=[];Object.keys(map).forEach(function(k){if(re.test(k))arr=arr.concat(map[k])});return arr}
+  var rev=find(/^revenue from operations$/i)[0]||find(/revenue from operations/i)[0];
+  var income=find(/^total income$/i)[0]||find(/total income/i)[0];
+  var pbe=find(/profit before exceptional items and tax/i)[0];
+  var pbt=find(/^profit before tax/i)[0];
+  var np=find(/^net profit for the period/i)[0]||find(/net profit for the period/i)[0];
+  var eps=find(/basic.*net profit.*after exceptional/i)[0]||find(/basic.*profit attributable.*after exceptional/i)[0];
+  var exc=find(/exceptional items.*loss.*gain/i)[0]||find(/^exceptional items/i)[0];
+  if(!(rev||pbt||np))return null;
+  return {labelKey:labelKey,numKeys:numKeys,map:map,metrics:{rev:rev,income:income,pbe:pbe,pbt:pbt,np:np,eps:eps,exc:exc}}
+}
+function metricChange(rec,idxA,idxB){if(!rec||!rec.vals)return null;var a=rec.vals[idxA],b=rec.vals[idxB];if(a==null||b==null||b===0)return null;return (a-b)/Math.abs(b)*100}
+function statementSummary(rs,st){
+  var m=st.metrics; var rev=m.rev, pbe=m.pbe, np=m.np, exc=m.exc, eps=m.eps;
+  var kpis=[];
+  function add(label,rec,kind){if(!rec)return;kpis.push({label:label,value:rec.vals[0],qoq:metricChange(rec,0,1),yoy:metricChange(rec,0,2),kind:kind||'hot'})}
+  add('Revenue from operations',rev,'hot'); add('PBT before exceptional',pbe,'good'); add('Net profit',np,(np&&np.vals[0]<0)?'warn':'hot'); add('EPS',eps,'good');
+  var story=[], actions=[];
+  if(rev&&rev.vals[0]!=null){var q=metricChange(rev,0,1),y=metricChange(rev,0,2);story.push('<b>Core revenue:</b> '+fmt(rev.vals[0])+' in the latest period, '+(q==null?'with no prior-quarter comparison':(q>=0?'up ':'down ')+Math.abs(q).toFixed(1)+'% QoQ')+(y==null?'': ' and '+(y>=0?'up ':'down ')+Math.abs(y).toFixed(1)+'% YoY')+'.')}
+  if(pbe&&np){var q1=metricChange(pbe,0,1),q2=metricChange(np,0,1); if(q1!=null&&q2!=null&&q1>0&&q2<0)story.push('<b>Profit quality signal:</b> profit before exceptional items improved while reported net profit declined versus the preceding quarter. Review exceptional items and tax before treating the net-profit movement as operating deterioration.');}
+  if(exc&&exc.vals[0]!=null&&Math.abs(exc.vals[0])>0)story.push('<b>Exceptional item:</b> '+fmt(exc.vals[0])+' is present in the latest period and can materially affect reported profit; keep it separate from recurring operating performance.');
+  if(m.pbt&&pbe&&m.pbt.vals[0]!=null&&pbe.vals[0]!=null&&Math.abs(m.pbt.vals[0]-pbe.vals[0])>0.01)story.push('<b>Reported vs underlying:</b> profit before tax differs from profit before exceptional items, so the bridge should be reviewed rather than relying on a single headline profit number.');
+  if(!story.length)story.push('<b>Management view:</b> the file contains financial statement measures, but the extracted data does not provide enough clean comparative values for a stronger executive conclusion.');
+  actions.push('Start review with revenue, pre-exceptional profit and reported net profit together.');
+  if(exc)actions.push('Review the exceptional-item note before explaining the change in reported earnings.');
+  actions.push('Use the segment pages and supporting notes to identify the operating driver before assigning causation.');
+  return {title:'Executive Summary',sub:'Management view generated from the current financial-results file. Movements are comparative signals, not proof of cause.',kpis:kpis.slice(0,4),story:story.slice(0,4),actions:actions.slice(0,3),source:(A().fileName||'Current file')+' · financial statement structure detected'};
+}
+function comparativeSummary(rs){
+  var ks=keys(rs), period=ks.find(function(k){return /period|date|year|quarter|fy/i.test(k)}), entity=ks.find(function(k){return /entity|branch|company|bank|customer/i.test(k)}), target=ks.find(function(k){return /target/i.test(k)}), actual=ks.find(function(k){return /actual|revenue|advances|sales|profit/i.test(k)&&k!==target}), nums=ks.filter(function(k){return isNumericKey(rs,k)});
+  if(!period||!nums.length)return null;
+  var pvals=[];rs.forEach(function(r){if(r[period]!=null&&!pvals.includes(String(r[period])))pvals.push(String(r[period]))});
+  if(pvals.length<2)return null;
+  var latest=pvals[pvals.length-1], prev=pvals[pvals.length-2];
+  function agg(k,p){return rs.filter(function(r){return String(r[period])===p}).reduce(function(s,r){var v=num(r[k]);return s+(v==null?0:v)},0)}
+  var chosen=actual||nums[0], cur=agg(chosen,latest), old=agg(chosen,prev), ch=old?((cur-old)/Math.abs(old)*100):null;
+  var t=target?agg(target,latest):null, gap=(target&&t!=null)?cur-t:null;
+  var story=['<b>Latest period:</b> '+esc(latest)+' compared with '+esc(prev)+' across '+rs.length.toLocaleString()+' loaded records.'];
+  if(ch!=null)story.push('<b>'+esc(nice(chosen))+'</b> '+(ch>=0?'increased ':'decreased ')+Math.abs(ch).toFixed(1)+'% in the latest period.');
+  if(gap!=null)story.push('<b>Target position:</b> '+(gap>=0?'above':'below')+' target by '+fmt(Math.abs(gap))+'.');
+  var acts=[]; if(target)acts.push('Review the largest target gap and the entity/period driving it.'); acts.push('Compare the latest movement with the supporting KPI and prior period before deciding action.');
+  return {title:'Executive Summary',sub:'Comparative management view from the current file. Target and growth signals use only fields actually present in the data.',kpis:[{label:nice(chosen),value:cur,qoq:ch}],story:story,actions:acts,source:(A().fileName||'Current file')+' · comparative structure detected'};
+}
+function genericSummary(rs){
+  var a=A(),ks=keys(rs), nums=ks.filter(function(k){return isNumericKey(rs,k)}).slice(0,4),kpis=[];
+  nums.forEach(function(k){var vals=rs.map(function(r){return num(r[k])}).filter(function(v){return v!=null});if(!vals.length)return;var avg=vals.reduce(function(x,y){return x+y},0)/vals.length;kpis.push({label:nice(k),value:avg,qoq:null,kind:'hot'});});
+  return {title:'Executive Summary',sub:'A concise management view based only on the currently loaded dataset.',kpis:kpis,story:['<b>Coverage:</b> '+rs.length.toLocaleString()+' records and '+ks.length+' fields are available for analysis.','<b>Evidence discipline:</b> no target, trend or cause is invented when the source does not contain it.'],actions:['Select the most material KPI and compare it with the nearest supporting dimension or period.','Use Health Check for missing-data issues and the detailed views for drill-down.'],source:(a.fileName||'Current file')+' · generic data structure'};
+}
+function render(data){
+  var host=document.getElementById('managementInsightsSection');if(!host)return;
+  var box=document.getElementById('instantDashExecutiveSummary');
+  if(!box){box=document.createElement('div');box.id='instantDashExecutiveSummary';box.className='id-exec-summary';var grid=host.querySelector('.mi-grid');if(grid)grid.parentNode.insertBefore(box,grid);else host.appendChild(box)}
+  var k=data.kpis||[];
+  function changeHtml(x){if(x==null)return '<span class="es-change flat">No comparable period</span>';return '<span class="es-change '+(x>0?'up':x<0?'down':'flat')+'">'+(x>0?'▲ ':x<0?'▼ ':'• ')+pct(x)+' vs preceding period</span>'}
+  var cards=k.map(function(x){return '<div class="es-kpi '+esc(x.kind||'hot')+'"><div class="es-label">'+esc(x.label)+'</div><div class="es-value">'+fmt(x.value)+'</div>'+changeHtml(x.qoq)+'</div>'}).join('');
+  while((k.length+0)<4){cards+='<div class="es-kpi"><div class="es-label">Management signal</div><div class="es-value">—</div><div class="es-change flat">Awaiting comparable KPI</div></div>';k.push({})}
+  box.innerHTML='<div class="es-top"><div class="es-kicker">Management briefing</div><div class="es-title">'+esc(data.title)+'</div><div class="es-sub">'+data.sub+'</div></div><div class="es-grid">'+cards+'</div><div class="es-body"><div class="es-story"><div class="es-section-label">What management should notice</div>'+data.story.map(function(x){return '<div class="es-point">'+x+'</div>'}).join('')+'</div><div class="es-actions"><div class="es-section-label">Recommended review</div><ul>'+data.actions.map(function(x){return '<li>'+x+'</li>'}).join('')+'</ul></div></div><div class="es-source"><b>Source:</b> '+esc(data.source)+'</div>';
+}
+function run(){var rs=rows();if(!rs.length)return;var st=financialRows(rs),data=st?statementSummary(rs,st):comparativeSummary(rs)||genericSummary(rs);render(data)}
+function install(){
+  if(window.__instantDashExecSummaryWrapped)return; window.__instantDashExecSummaryWrapped=true;
+  var oldMI=window.buildManagementInsights, oldEC=window.buildExecutiveCockpit;
+  if(typeof oldMI==='function')window.buildManagementInsights=function(){var r=oldMI.apply(this,arguments);setTimeout(run,20);return r};
+  if(typeof oldEC==='function')window.buildExecutiveCockpit=function(){var r=oldEC.apply(this,arguments);setTimeout(run,20);return r};
+  setTimeout(run,500);setTimeout(run,1600);
+}
+install();
+window.__instantDashExecutiveSummary={refresh:run};
+})();
+</script>
+
 </body></html>
