@@ -1096,7 +1096,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 </style>
 
 
-<meta name="instantdash-build" content="v1.12.05-final-verified">
+<meta name="instantdash-build" content="v1.12.06-ai-auto-dashboard">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style></head>
 <body class="" style="overflow: hidden;">
@@ -1109,7 +1109,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.12.05</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.12.06</span>
   </div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -1283,7 +1283,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 <div class="section" id="smartChartsSection">
       <div class="section-head">
         <h2>Interactive Charts</h2>
-        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.12.05 FINAL</span><span class="hint" id="smartChartHint">Choose one of the 3–4 data views below; only the selected chart is displayed.</span>
+        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.12.06 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
       </div>
       <div class="smart-chart-shell" id="smartChartsRoot">
         <!-- v1.11.14 — chart intelligence: max 4 data types, latest-period composition, touch-safe details -->
@@ -1536,6 +1536,18 @@ const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&a
 function toast(msg){ const t = $('toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(t._t); t._t = setTimeout(()=>t.classList.remove('on'), 2200); }
 function showLoader(text, sub){ $('loaderText').textContent = text || 'Working…'; $('loaderSub').textContent = sub || ''; $('loader').classList.add('on'); }
 function hideLoader(){ $('loader').classList.remove('on'); }
+
+// v1.12.06 — after a successful upload, take the user straight to the result.
+// This is especially important on iPhone/iPad where the native file picker
+// returns to the exact scroll position from which the file was selected.
+function scrollToResults(){
+  const target = $('smartChartsSection') || $('smartResultStrip') || $('app');
+  if (!target) return;
+  setTimeout(() => {
+    const y = Math.max(0, target.getBoundingClientRect().top + window.scrollY - 14);
+    window.scrollTo({top:y, behavior:'smooth'});
+  }, 120);
+}
 function nextFrame(){ return new Promise(r => requestAnimationFrame(()=>requestAnimationFrame(r))); }
 
 // Number formatting with thousands separators; compacts very large values.
@@ -1993,6 +2005,8 @@ async function handleFile(file){
     let pick = chooseBestWorkbookSheet(wb);
     buildSheetSelector(pick);
     await loadSheet(pick, true);
+    // Do not leave the user at the upload control after analysis.
+    scrollToResults();
   } catch (err){
     console.error(err);
     hideLoader();
@@ -2282,7 +2296,8 @@ async function rebuildFromAoa(){
   coerceValues();              // converts text numbers/dates in place
   buildEverything();
   hideLoader();
-  toast('Dashboard ready — analysis calculated from your file');
+  toast('Dashboard ready — AI chart analysis completed');
+  scrollToResults();
 }
 
 function showFatal(msg){
@@ -7122,7 +7137,7 @@ function boot(){if(!$('smartDataVerification')){var h=$('smartChartHint');if(h){
 (function(){
 'use strict';
 /*
- InstantDash v1.12.05 — Parameter-Accurate Chart Engine
+ InstantDash v1.12.06 — AI Auto Chart Intelligence
  - All genuine numeric measures are available in every parameter dropdown.
  - Semantic AI-style analysis recommends, but never restricts, choices.
  - Handles ordinary tabular data and statement-style financial sheets.
@@ -7223,47 +7238,96 @@ function dimensions(d){
  out.sort(function(a,b){return b.score-a.score||a.unique-b.unique});
  return out;
 }
+/* ------------------------------------------------------------------
+   v1.12.06 — AI CHART INTELLIGENCE
+   Local, deterministic semantic reasoning. It does not send the file
+   anywhere. It scores field names, values, cardinality, time structure,
+   scale and relationships, then selects a chart that fits the evidence.
+   ------------------------------------------------------------------ */
 var semanticRules=[
- {kind:'percentage',terms:['%','percent','percentage','ratio','margin','rate','yield','growth','cagr','share','mix','coverage','utilization','achievement','attainment','occupancy','satisfaction','conversion','recycling','compliance']},
- {kind:'count',terms:['count','number','noof','qty','quantity','units','volume','transactions','transactioncount','headcount','employees','customers','members','accounts','visits','cases','orders','patients','beneficiaries','complaints','incidents']},
- {kind:'amount',terms:['amount','value','sales','revenue','turnover','income','expense','cost','profit','pat','ebit','ebitda','commission','fee','fees','deposit','advance','loan','asset','liability','equity','cash','balance','capital','debt','recovery','target','budget','salary','spend','savings']},
- {kind:'growth',terms:['growth','change','yoy','mom','qoq','cagr','increase','decrease','variation']},
- {kind:'duration',terms:['days','day','hours','duration','time','tat','turnaround','holding','age','leadtime','resolutiontime']}
+ {kind:'percentage',terms:['%','percent','percentage','ratio','rate','margin','yield','share','mix','coverage','utilization','achievement','attainment','occupancy','satisfaction','conversion','compliance','penetration']},
+ {kind:'count',terms:['count','number','noof','qty','quantity','units','volume','transactions','transactioncount','headcount','employees','customers','members','accounts','visits','cases','orders','patients','beneficiaries','complaints','incidents','applications','loans']},
+ {kind:'amount',terms:['amount','value','sales','revenue','turnover','income','expense','expenses','cost','profit','pat','ebit','ebitda','commission','fee','fees','deposit','advance','loan','asset','liability','equity','cash','balance','capital','debt','recovery','target','budget','salary','spend','savings','investment','premium','receivable','payable','inventory']},
+ {kind:'growth',terms:['growth','change','yoy','mom','qoq','cagr','increase','decrease','variation','variance','delta','movement']},
+ {kind:'duration',terms:['days','day','hours','duration','time','tat','turnaround','holding','age','leadtime','resolutiontime','tenure','cycle']},
+ {kind:'score',terms:['score','rating','index','grade','rank','quality','riskscore','creditscore']}
 ];
 function semantic(n,d){
- var x=norm(n),scores={amount:0,count:0,percentage:0,growth:0,duration:0};
- semanticRules.forEach(function(r){r.terms.forEach(function(t){var q=norm(t);if(!q)return;if(x===q)scores[r.kind]+=80;else if(x.indexOf(q)>=0)scores[r.kind]+=q.length>=5?22:8})});
- var vals=valueRows(d.rows,n);
+ var x=norm(n),scores={amount:0,count:0,percentage:0,growth:0,duration:0,score:0};
+ semanticRules.forEach(function(r){r.terms.forEach(function(t){var q=norm(t);if(!q)return;if(x===q)scores[r.kind]+=100;else if(x.indexOf(q)>=0)scores[r.kind]+=q.length>=6?24:10})});
+ var vals=valueRows(d.rows,n), rows=d.rows||[];
  if(vals.length){
-   var bounded=vals.filter(function(v){return Math.abs(v)<=1.001}).length/vals.length;
-   if(bounded>.8&&scores.percentage>0)scores.percentage+=25;
-   var pct=d.rows.map(function(r){return String(r[n]??'')}).filter(function(v){return v.indexOf('%')>=0}).length;
-   if(pct/Math.max(1,d.rows.length)>.5)scores.percentage+=50;
+   var bounded01=vals.filter(function(v){return Math.abs(v)<=1.001}).length/vals.length;
+   if(bounded01>.8 && (scores.percentage>0||scores.growth>0))scores.percentage+=35;
+   var pct=rows.map(function(r){return String(r[n]??'')}).filter(function(v){return /%/.test(v)}).length;
+   if(pct/Math.max(1,rows.length)>.45)scores.percentage+=60;
+   var integerish=vals.filter(Number.isInteger).length/vals.length;
+   if(integerish>.85 && scores.count>0)scores.count+=15;
  }
  var best=Object.keys(scores).sort(function(a,b){return scores[b]-scores[a]})[0];
  return {kind:scores[best]>0?best:'amount',scores:scores};
 }
-function compatible(a,b){if(!a||!b)return 0;if(a.kind===b.kind)return 4;if((a.kind==='growth'&&b.kind==='percentage')||(a.kind==='percentage'&&b.kind==='growth'))return 3;if((a.kind==='amount'&&b.kind==='count')||(a.kind==='count'&&b.kind==='amount'))return 2;if((a.kind==='amount'&&b.kind==='percentage')||(a.kind==='percentage'&&b.kind==='amount'))return 1;return 0}
+function fieldStats(rows,n){
+ var vals=(rows||[]).map(function(r){return r[n]}).filter(function(v){return v!==null&&v!==undefined&&String(v)!==''});
+ var nums=vals.map(num).filter(isFinite), unique=new Set(vals.map(String)).size;
+ var min=nums.length?Math.min.apply(null,nums):NaN,max=nums.length?Math.max.apply(null,nums):NaN;
+ var mean=nums.length?nums.reduce(function(a,b){return a+b},0)/nums.length:NaN;
+ var sd=nums.length>1?Math.sqrt(nums.reduce(function(a,b){return a+Math.pow(b-mean,2)},0)/nums.length):0;
+ return {rows:vals.length,numeric:nums.length,ratio:nums.length/Math.max(1,vals.length),unique:unique,min:min,max:max,mean:mean,sd:sd};
+}
+function correlation(rows,a,b){
+ var pts=[];(rows||[]).forEach(function(r){var x=num(r[a]),y=num(r[b]);if(isFinite(x)&&isFinite(y))pts.push([x,y])});
+ if(pts.length<5)return 0;
+ var ax=pts.reduce(function(s,p){return s+p[0]},0)/pts.length, ay=pts.reduce(function(s,p){return s+p[1]},0)/pts.length;
+ var xy=0,xx=0,yy=0;pts.forEach(function(p){var x=p[0]-ax,y=p[1]-ay;xy+=x*y;xx+=x*x;yy+=y*y});
+ return xx&&yy?xy/Math.sqrt(xx*yy):0;
+}
+function pairName(a,b){return a+' + '+b}
 function recommendations(ms,ds,d){
- var metas=ms.map(function(m){return {name:m.name,sem:semantic(m.name,d)}});
- var group=ds.find(function(x){return x.kind==='time'})||ds[0], rec=[];
- function add(title,ps,type,why,score){ps=ps.filter(Boolean).filter(function(v,i,a){return a.indexOf(v)===i}).slice(0,3);if(ps.length)rec.push({title:title,params:ps,type:type,group:group?group.name:'',why:why,score:score})}
- if(group&&group.kind==='time'){
-   var vals=metas.filter(function(x){return x.sem.kind==='amount'||x.sem.kind==='count'}).slice(0,3);
-   if(vals.length)add('Trend of key measures',vals.map(function(x){return x.name}),'line','Time/period detected; line is best for movement over time.',98);
-   var rates=metas.filter(function(x){return x.sem.kind==='percentage'||x.sem.kind==='growth'}).slice(0,3);
-   if(rates.length)add('Rates / growth over time',rates.map(function(x){return x.name}),'line','Rates and growth measures are best read as trends.',90);
+ var rows=d.rows||[], metas=ms.map(function(m){return {name:m.name,sem:semantic(m.name,d),stats:fieldStats(rows,m.name)}});
+ var time=ds.find(function(x){return x.kind==='time'}), cat=ds.filter(function(x){return x.kind==='cat'}).sort(function(a,b){return a.unique-b.unique||b.score-a.score});
+ var group=time||cat[0]||null, rec=[];
+ function add(title,ps,type,why,score,grp){
+   ps=ps.filter(Boolean).filter(function(v,i,a){return a.indexOf(v)===i}).slice(0,3);if(!ps.length)return;
+   rec.push({title:title,params:ps,type:type,group:(grp||group&&group.name||''),why:why,score:score});
  }
- if(group&&group.kind==='cat'){
-   var vals2=metas.filter(function(x){return x.sem.kind==='amount'||x.sem.kind==='count'}).slice(0,3);
-   if(vals2.length)add('Category comparison',vals2.map(function(x){return x.name}),'bar','A categorical dimension is available for comparison.',94);
+ var primary=metas.slice().sort(function(a,b){
+   function pri(x){return (x.sem.kind==='amount'?30:x.sem.kind==='count'?25:x.sem.kind==='percentage'||x.sem.kind==='growth'?22:x.sem.kind==='score'?18:10)+(x.stats.sd>0?8:0)}
+   return pri(b)-pri(a);
+ })[0];
+ if(time&&primary){
+   var trend=metas.filter(function(x){return ['amount','count','percentage','growth','score','duration'].indexOf(x.sem.kind)>=0}).slice(0,3);
+   add('Best time trend',trend.map(function(x){return x.name}),'line','Time/period detected. A line chart preserves the sequence and shows movement clearly.',100,time.name);
+   var rate=metas.filter(function(x){return x.sem.kind==='percentage'||x.sem.kind==='growth'}).slice(0,2);
+   if(rate.length)add('Rates and growth trend',rate.map(function(x){return x.name}),'line','Rate/growth semantics detected. A line chart makes change over time easier to interpret.',96,time.name);
  }
- var ranked=[];
- for(var i=0;i<metas.length;i++)for(var j=i+1;j<metas.length;j++)ranked.push({a:metas[i],b:metas[j],s:compatible(metas[i].sem,metas[j].sem)});
- ranked.sort(function(a,b){return b.s-a.s});
- if(ranked.length){var z=ranked[0],third=metas.find(function(x){return x.name!==z.a.name&&x.name!==z.b.name&&compatible(z.a.sem,x.sem)>=3});add('Related measures',[z.a.name,z.b.name,third&&third.name],group&&group.kind==='time'?'line':'bar','Semantically related measures can be read together.',85+z.s)}
- if(group&&group.kind==='cat'&&group.unique<=8){var one=metas.find(function(x){return x.sem.kind==='amount'||x.sem.kind==='count'});if(one)add('Composition',[one.name],'donut','Small category set detected; donut shows composition.',74)}
- return rec.sort(function(a,b){return b.score-a.score}).slice(0,4);
+ if(cat.length&&primary){
+   var c=cat[0];
+   if(c.unique<=8 && (primary.sem.kind==='amount'||primary.sem.kind==='count'))
+     add('Best composition', [primary.name], 'donut','A small categorical field can be read as a share of the selected measure.',92,c.name);
+   add('Best category comparison',[primary.name], 'bar','A categorical grouping was detected. Bars make category magnitudes easy to compare.',90,c.name);
+ }
+ // Target/actual, current/previous and variance pairs get a high-priority comparison.
+ var target=metas.find(function(x){return /target|budget|plan|standard|benchmark/i.test(x.name)}), actual=metas.find(function(x){return /actual|achieved|achievement|result|current/i.test(x.name)});
+ if(target&&actual)add('Target vs actual',[target.name,actual.name],'bar','Target/actual semantics detected. The two measures are directly comparable.',99,group&&group.name);
+ // Two numeric measures with a meaningful relationship → scatter.
+ var bestPair=null;
+ for(var i=0;i<metas.length;i++)for(var j=i+1;j<metas.length;j++){
+   var r=Math.abs(correlation(rows,metas[i].name,metas[j].name));
+   if(!bestPair||r>bestPair.r)bestPair={a:metas[i],b:metas[j],r:r};
+ }
+ if(bestPair&&bestPair.r>=0.45)add('Relationship between measures',[bestPair.a.name,bestPair.b.name],'scatter','Two numeric measures show a meaningful row-level relationship (correlation '+bestPair.r.toFixed(2)+').',88,'');
+ // Semantically related measures for a readable multi-series comparison.
+ var related=[];
+ for(var a=0;a<metas.length;a++)for(var b=a+1;b<metas.length;b++){
+   var sa=metas[a].sem,sb=metas[b].sem,score=(sa.kind===sb.kind?5:((sa.kind==='growth'||sa.kind==='percentage')&&(sb.kind==='growth'||sb.kind==='percentage')?4:((sa.kind==='amount'&&sb.kind==='count')||(sa.kind==='count'&&sb.kind==='amount')?2:0)));
+   if(score)related.push({a:metas[a],b:metas[b],score:score});
+ }
+ related.sort(function(a,b){return b.score-a.score});
+ if(related.length)add('Related measures',[related[0].a.name,related[0].b.name],'line','The selected measures have compatible semantics and can be compared without mixing unrelated units.',82,group&&group.name);
+ // Distribution is useful for a standalone numeric field when there is no better semantic story.
+ if(primary&&(!group||!cat.length))add('Measure distribution',[primary.name],'histogram','No strong grouping field was found, so the distribution of the main measure is the most informative view.',70,'');
+ return rec.sort(function(a,b){return b.score-a.score}).slice(0,6);
 }
 var families=[
  {name:'Financial / Profitability',terms:['revenue','sales','profit','pat','ebit','ebitda','expense','cost','income','margin','roa','roe','budget','actual']},
@@ -7323,10 +7387,12 @@ function getModel(){var m=model();return (m.hasApp||m.rows.length)?m:demo()}
 function opts(){return state.model.measures.map(function(m){return m.name})}
 function choose(){
  var o=opts(), rec=state.model.ai&&state.model.ai[0];
- if(!state.params.length||!state.params.some(function(p){return o.indexOf(p)>=0}))state.params=rec?rec.params.slice(0,3):o.slice(0,3);
- state.params=state.params.map(function(p){return o.indexOf(p)>=0?p:''});
- if(!state.groupBy||!state.model.dimensions.some(function(d){return d.name===state.groupBy}))state.groupBy=state.model.defaultGroup||'';
- if(!state.type){state.type=rec?rec.type:(state.groupBy&&state.model.dimensions.find(function(d){return d.name===state.groupBy&&d.kind==='time'})?'line':'bar')}
+ var valid=state.params.filter(function(p){return o.indexOf(p)>=0}).filter(function(p,i,a){return a.indexOf(p)===i});
+ if(!valid.length)valid=rec?rec.params.slice(0,3):o.slice(0,3);
+ state.params=valid.map(function(p){return o.indexOf(p)>=0?p:''});
+ if(!state.groupBy||!state.model.dimensions.some(function(d){return d.name===state.groupBy}))state.groupBy=(rec&&rec.group)||state.model.defaultGroup||'';
+ if(!state.type||state.type==='bar'&&rec)state.type=rec.type||'bar';
+ if((state.type==='pie'||state.type==='donut')&&state.groupBy){state.params[1]='';state.params[2]='';}
 }
 function fill(id,values,current){
  var s=$(id);if(!s)return;s.innerHTML='';
@@ -7339,14 +7405,14 @@ function sync(){
  fill('smartGroupBy',state.model.dimensions.map(function(d){return d.name}),state.groupBy);
  var t=$('smartChartType');if(t)t.value=state.type;
  var h=$('smartChartHint');
- if(h)h.textContent=(state.model.usingDemo?'DEMO DATA — upload a file to replace it':'LIVE DATA — '+state.model.rows.length.toLocaleString()+' rows · '+o.length+' parameters available in every dropdown')+(state.model.statement?' · statement structure recognised':'')+(state.groupBy?' · grouped by '+state.groupBy:'');
+ if(h)h.textContent=(state.model.usingDemo?'DEMO DATA — upload a file to replace it':'LIVE DATA — '+state.model.rows.length.toLocaleString()+' rows · '+o.length+' parameters available in every dropdown')+(state.model.statement?' · statement structure recognised':'')+(state.groupBy?' · grouped by '+state.groupBy:'')+' · AI mapping active';
  var v=$('smartDataVerification');if(v)v.innerHTML='<b>'+(state.model.usingDemo?'Preview data':'Verified live data')+'</b><span>'+o.length+' chart parameters · '+state.model.dimensions.length+' grouping fields'+(state.model.statement?' · statement layout recognised':'')+'</span>';
  renderAI();renderTypes();
 }
 function renderAI(){
  var sum=$('smartAiSummary'),box=$('smartAiRecommendations');if(!sum||!box)return;
  var rec=state.model.ai||[];
- sum.innerHTML='<span class="smart-ai-badge">'+(state.model.usingDemo?'AI PREVIEW':'AI ADVISOR')+'</span> '+(rec.length?'I found '+state.model.measures.length+' numeric measures and '+state.model.dimensions.length+' grouping fields. Recommendations are suggestions only; all measures remain selectable.':'No strong automatic combination found; all detected measures remain available for manual selection.');
+ sum.innerHTML='<span class="smart-ai-badge">'+(state.model.usingDemo?'AI PREVIEW':'AI ADVISOR')+'</span> '+(rec.length?'AI identified '+state.model.measures.length+' numeric parameters, '+state.model.dimensions.length+' grouping fields and selected the strongest chart logic from the uploaded data. All parameters remain available in every dropdown.':'AI found '+state.model.measures.length+' numeric parameters. No single chart is sufficiently dominant, so the app keeps every parameter available for manual selection.');
  box.innerHTML='';
  rec.forEach(function(r){var b=document.createElement('button');b.type='button';b.className='smart-ai-rec';b.innerHTML='<strong>'+esc(r.title)+'</strong><span>'+esc(r.params.join(' · '))+' · '+esc(r.type==='hbar'?'Horizontal Bar':r.type.charAt(0).toUpperCase()+r.type.slice(1))+(r.group?' · by '+r.group:'')+'</span><span>'+esc(r.why)+'</span>';b.onclick=function(){state.params=r.params.slice(0,3);state.type=r.type;state.groupBy=r.group||'';state.selected=0;sync();draw()};box.appendChild(b)});
 }
