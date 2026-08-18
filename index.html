@@ -1121,7 +1121,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 </style>
 
 
-<meta name="instantdash-build" content="v1.13.08-touch-and-group-fix">
+<meta name="instantdash-build" content="v1.13.09-smart-chart-type-fallback">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -1166,7 +1166,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.13.08</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.13.09</span>
   </div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -1365,7 +1365,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 <div class="section" id="smartChartsSection">
       <div class="section-head">
         <h2>Interactive Charts</h2>
-        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.13.08 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
+        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.13.09 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
       </div>
       <section class="ai-dashboard-charts" id="aiDashboardCharts" aria-label="AI generated charts">
         <div class="ai-dashboard-head">
@@ -7733,10 +7733,11 @@ function bind(){
      state.params[idx]=e.value;
      if(e.value){state.params=state.params.map(function(p,i){return i!==idx&&p===e.value?'':p});}
    }
-   state.selected=0;sync();draw();
-   /* v1.13.07 — keep the independent parameter renderer synchronised.
-      This is deliberately called after the normal renderer so manual
-      selections always produce a chart even if the AI renderer has no model. */
+   state.selected=0;
+   try{sync();draw();}catch(err){console.warn('InstantDash primary smart renderer recovered by fallback',err);}
+   /* v1.13.09 — the independent parameter renderer is the final safety net.
+      It always redraws from the live dropdown values, even if the semantic
+      renderer cannot handle a particular chart type. */
    try{ if(window.__instantDashParameterFallback && typeof window.__instantDashParameterFallback.redraw==='function') window.__instantDashParameterFallback.redraw(); }catch(_){}
  })});
  var r=$('smartResetBtn');if(r)r.onclick=function(){state={model:null,type:'bar',groupBy:'',params:[],selected:0};refresh()};
@@ -7777,7 +7778,7 @@ function col(name){return cols().find(function(c){return String(c.name||'')===St
 function uniqueValues(rs,name){var a=[],seen={};(rs||[]).forEach(function(r){var v=r[name];if(v==null||v==='')return;var k=String(v);if(!seen[k]){seen[k]=1;a.push(v)}});return a}
 function measureScore(name){var x=norm(name),s=0;[[['revenue','sales','profit','pat','ebit','income','expense','cost','cash','deposit','loan','asset','liability','commission','fee','amount','value','balance','budget','target','actual'],18],[['count','number','qty','quantity','volume','transactions','orders','customers','accounts','members','cases','units'],15],[['growth','change','yoy','mom','qoq','rate','ratio','margin','share','percentage','percent','yield'],13]].forEach(function(g){g[0].forEach(function(t){var q=norm(t);if(x===q)s+=50;else if(x.indexOf(q)>=0)s+=g[1]})});return s}
 function getMeasures(rs){var cs=cols(),names=[];if(cs.length){cs.forEach(function(c){if(c.type==='number'&&!isTime(c.name,c)&&!isId(c.name))names.push(c.name)})}else if(rs[0])Object.keys(rs[0]).forEach(function(k){if(!isTime(k,null)&&!isId(k)&&rs.some(function(r){return isFinite(n(r[k]))}))names.push(k)});return names.map(function(name){var vals=rs.map(function(r){return n(r[name])}).filter(isFinite),ratio=vals.length/Math.max(1,rs.length);return {name:name,ratio:ratio,score:measureScore(name),count:vals.length}}).filter(function(x){return x.ratio>=.65}).sort(function(a,b){return b.score-a.score||b.count-a.count})}
-function getGroups(rs){var cs=cols(),out=[];cs.forEach(function(c){if(c.type==='number'||isId(c.name)||isTime(c.name,c))return;var nm=String(c.name||'').trim();/* v1.13.08: MID is commonly a metadata/code field (e.g. 0 / Blank / P), not a management dimension. Do not let AI choose it as the default grouping field. It remains available to the manual Group By selector. */if(/^mid$/i.test(nm))return;var u=uniqueValues(rs,c.name);if(u.length>=2&&u.length<=36)out.push({name:c.name,unique:u.length,kind:'category'})});cs.forEach(function(c){if(isTime(c.name,c)){var u=uniqueValues(rs,c.name);if(u.length>=2)out.unshift({name:c.name,unique:u.length,kind:'time'})}});return out}
+function getGroups(rs){var cs=cols(),out=[];cs.forEach(function(c){if(c.type==='number'||isId(c.name)||isTime(c.name,c))return;var nm=String(c.name||'').trim();/* v1.13.09: MID is commonly a metadata/code field (e.g. 0 / Blank / P), not a management dimension. Do not let AI choose it as the default grouping field. It remains available to the manual Group By selector. */if(/^mid$/i.test(nm))return;var u=uniqueValues(rs,c.name);if(u.length>=2&&u.length<=36)out.push({name:c.name,unique:u.length,kind:'category'})});cs.forEach(function(c){if(isTime(c.name,c)){var u=uniqueValues(rs,c.name);if(u.length>=2)out.unshift({name:c.name,unique:u.length,kind:'time'})}});return out}
 function sortKey(a,b,time){if(!time)return String(a).localeCompare(String(b),undefined,{numeric:true});var da=new Date(a),db=new Date(b);if(!isNaN(da)&&!isNaN(db))return da-db;return String(a).localeCompare(String(b),undefined,{numeric:true})}
 function aggregate(rs,group,measure){var map={};rs.forEach(function(r){var v=n(r[measure]);if(!isFinite(v))return;var k=group?String(r[group]):'Overall';if(k===''||k==='null'||k==='undefined')k='Blank';map[k]=(map[k]||0)+v});var keys=Object.keys(map);var g=col(group),time=group&&isTime(group,g);keys.sort(function(a,b){return sortKey(a,b,time)});if(!time&&keys.length>12){keys.sort(function(a,b){return map[b]-map[a]});keys=keys.slice(0,12)}return {labels:keys,values:keys.map(function(k){return map[k]}),time:time,group:group}}
 function histogram(rs,measure){var vals=rs.map(function(r){return n(r[measure])}).filter(isFinite);if(!vals.length)return {labels:[],values:[]};var min=Math.min.apply(Math,vals),max=Math.max.apply(Math,vals);if(min===max)return {labels:[niceName(measure)],values:[vals.length]};var bins=Math.min(8,Math.max(4,Math.round(Math.sqrt(vals.length))));var step=(max-min)/bins,map=new Array(bins).fill(0);vals.forEach(function(v){var i=Math.min(bins-1,Math.floor((v-min)/step));map[i]++});return {labels:map.map(function(_,i){var a=min+i*step,b=i===bins-1?max:min+(i+1)*step;return a.toLocaleString('en-IN',{maximumFractionDigits:0})+'–'+b.toLocaleString('en-IN',{maximumFractionDigits:0})}),values:map,time:false,group:''}}
@@ -7866,9 +7867,16 @@ function makeConfig(s){
  return cfg;
 }
 function chartTypeOptions(current){
- return '<option value="bar"'+(current==='bar'?' selected':'')+'>Bar</option><option value="hbar"'+(current==='hbar'?' selected':'')+'>Horizontal Bar</option><option value="line"'+(current==='line'?' selected':'')+'>Line</option><option value="area"'+(current==='area'?' selected':'')+'>Area</option><option value="pie"'+(current==='pie'?' selected':'')+'>Pie</option><option value="donut"'+(current==='donut'?' selected':'')+'>Donut</option>';
+ return '<option value="bar"'+(current==='bar'?' selected':'')+'>Bar</option><option value="hbar"'+(current==='hbar'?' selected':'')+'>Horizontal Bar</option><option value="line"'+(current==='line'?' selected':'')+'>Line</option><option value="area"'+(current==='area'?' selected':'')+'>Area</option><option value="stacked"'+(current==='stacked'?' selected':'')+'>Stacked Bar</option><option value="pie"'+(current==='pie'?' selected':'')+'>Pie</option><option value="donut"'+(current==='donut'?' selected':'')+'>Donut</option>';
 }
 function redrawAICard(s,card){
+ /* v1.13.09: automatically replace chart types that are not meaningful for
+    the current data instead of leaving a blank/error state. */
+ var labels=(s.data&&s.data.labels)||[], values=(s.data&&s.data.values)||[], autoReason='';
+ if((s.type==='pie'||s.type==='donut') && labels.length<2){s.type='bar';autoReason='Donut/Pie needs grouped categories; switched to Bar for this data.';}
+ else if((s.type==='line'||s.type==='area') && labels.length<2){s.type='bar';autoReason='Line/Area needs at least two points; switched to Bar for this data.';}
+ else if(s.type==='stacked' && !s.seriesCount && s.seriesCount!==0){/* single-series automatic charts use Bar */}
+ if(s.type==='stacked' && (!s.seriesCount || s.seriesCount<2)){s.type='bar';autoReason='Stacked Bar needs multiple series; switched to Bar for this data.';}
  var old=charts[s.id];
  if(old){try{old.destroy()}catch(_){} delete charts[s.id];}
  var wrap=card.querySelector('.ai-chart-wrap');
@@ -7878,7 +7886,8 @@ function redrawAICard(s,card){
  wrap.innerHTML='<canvas></canvas>';
  var canvas=wrap.querySelector('canvas');
  var sub=card.querySelector('.ai-chart-sub');
- if(sub)sub.textContent=(s.group?'AI selected '+niceName(s.type==='hbar'?'horizontal bar':s.type)+' chart grouped by '+niceName(s.group):'AI selected '+niceName(s.type)+' chart for '+niceName(s.measure))+'.';
+ var selector=card.querySelector('.ai-chart-type');if(selector)selector.value=s.type;
+ if(sub)sub.textContent=(autoReason?autoReason+' ':'')+(s.group?'AI selected '+niceName(s.type==='hbar'?'horizontal bar':s.type)+' chart grouped by '+niceName(s.group):'AI selected '+niceName(s.type)+' chart for '+niceName(s.measure))+'.';
  if(!window.Chart||!canvas)return;
  s.detailEl=card.querySelector('.ai-chart-touch-detail');
  if(s.detailEl)s.detailEl.textContent='Tap a bar or point to see the exact figure.';
@@ -8157,7 +8166,7 @@ window.__instantDashAIMultiChartsRefresh=render;
 <script id="instantdash-v11304-parameter-engine-fallback">
 (function(){
 'use strict';
-/* v1.13.08 FINAL FALLBACK
+/* v1.13.09 FINAL FALLBACK
    Purpose: guarantee that uploaded columns remain selectable even if the
    semantic/AI layer reports zero parameters. This module reads APP.rows
    directly and is deliberately independent of AI classification.
@@ -8231,24 +8240,70 @@ function renderFallback(){
  var p1=$('smartParam1')&&$('smartParam1').value,p2=$('smartParam2')&&$('smartParam2').value,p3=$('smartParam3')&&$('smartParam3').value;
  var ps=[p1,p2,p3].filter(Boolean).filter(function(x,i,a){return a.indexOf(x)===i});
  if(!ps.length){ps=f.measures.slice(0,1).map(function(m){return m.name});var s=$('smartParam1');if(s)s.value=ps[0];}
- var type=($('smartChartType')&&$('smartChartType').value)||'bar',group=($('smartGroupBy')&&$('smartGroupBy').value)||'';
- var gs=grouped(f,group),series=ps.map(function(p){var m=f.measures.find(function(x){return x.name===p})||{agg:'sum'};return {name:p,agg:m.agg,values:gs.map(function(g){return vals(g.rows,p,m.agg)})}});
+ var requested=($('smartChartType')&&$('smartChartType').value)||'bar',type=requested,group=($('smartGroupBy')&&$('smartGroupBy').value)||'',reason='';
+ var gs=grouped(f,group);
+ /* v1.13.09: never leave the user with a blank or meaningless chart.
+    Automatically choose the nearest useful chart when the requested type
+    needs more observations/series than the current selection provides. */
+ if((type==='pie'||type==='donut') && (gs.length<2 || ps.length!==1)){
+   type='bar'; reason='Donut/Pie needs at least two grouped categories and one parameter; Bar is shown instead.';
+ }
+ if((type==='line'||type==='area') && gs.length<2){
+   type='bar'; reason='Line/Area needs at least two points; Bar is shown instead.';
+ }
+ if(type==='stacked' && ps.length<2){
+   type='bar'; reason='Stacked Bar needs at least two parameters; Bar is shown instead.';
+ }
+ if(type==='histogram' || type==='scatter'){
+   type='bar'; reason='This manual view uses grouped measures; Bar is the suitable fallback for this selection.';
+ }
+ var typeSelect=$('smartChartType');if(typeSelect && typeSelect.value!==type)typeSelect.value=type;
+ var series=ps.map(function(p){
+   var m=f.measures.find(function(x){return x.name===p})||{agg:'sum'};
+   return {name:p,agg:m.agg,values:gs.map(function(g){return vals(g.rows,p,m.agg)})};
+ });
  var max=0;series.forEach(function(s){s.values.forEach(function(v){if(v>max)max=v})});max=max||1;
  var colors=['#F5B301','#E2582B','#2E86AB','#3FB07A','#8E5BC9'];
- var w=700,h=360,left=55,bottom=58,top=25,plotW=w-left-25,plotH=h-top-bottom;
- var svg=['<svg viewBox="0 0 '+w+' '+h+'" width="100%" height="100%" style="touch-action:manipulation">'];
- for(var gy=0;gy<=4;gy++){var yy=top+plotH-(plotH*gy/4),yv=max*gy/4;svg.push('<line x1="'+left+'" y1="'+yy+'" x2="'+(w-20)+'" y2="'+yy+'" stroke="#e5dccd" stroke-width="1"/><text x="'+(left-7)+'" y="'+(yy+4)+'" text-anchor="end" font-size="11" fill="#777">'+esc(fmt(yv))+'</text>')}
+ var w=700,h=360,left=58,right=24,bottom=58,top=25,plotW=w-left-right,plotH=h-top-bottom;
+ var svg=['<svg viewBox="0 0 '+w+' '+h+'" width="100%" height="100%" style="touch-action:manipulation;display:block">'];
+ for(var gy=0;gy<=4;gy++){var yy=top+plotH-(plotH*gy/4),yv=max*gy/4;svg.push('<line x1="'+left+'" y1="'+yy+'" x2="'+(w-right)+'" y2="'+yy+'" stroke="#e5dccd" stroke-width="1"/><text x="'+(left-7)+'" y="'+(yy+4)+'" text-anchor="end" font-size="11" fill="#777">'+esc(fmt(yv))+'</text>')}
+ var clickItems=[];
  if(type==='line'||type==='area'){
-   series.forEach(function(s,si){var pts=s.values.map(function(v,i){var x=left+(i+.5)*plotW/Math.max(1,gs.length),y=top+plotH-(v/max)*plotH;return x+','+y}).join(' ');if(type==='area'){var first=left+.5*plotW/Math.max(1,gs.length),last=left+(gs.length-.5)*plotW/Math.max(1,gs.length);svg.push('<polygon points="'+first+','+(top+plotH)+' '+pts+' '+last+','+(top+plotH)+'" fill="'+colors[si%colors.length]+'" opacity=".14"/>')}svg.push('<polyline points="'+pts+'" fill="none" stroke="'+colors[si%colors.length]+'" stroke-width="4" stroke-linejoin="round"/>');s.values.forEach(function(v,i){var x=left+(i+.5)*plotW/Math.max(1,gs.length),y=top+plotH-(v/max)*plotH;svg.push('<circle cx="'+x+'" cy="'+y+'" r="7" fill="'+colors[si%colors.length]+'" data-fallback="'+si+':'+i+'"><title>'+esc(s.name)+': '+esc(fmt(v))+'</title></circle>')})});
+   series.forEach(function(s,si){
+     var pts=s.values.map(function(v,i){var x=left+(i+.5)*plotW/Math.max(1,gs.length),y=top+plotH-(v/max)*plotH;return x+','+y}).join(' ');
+     if(type==='area'){var first=left+.5*plotW/Math.max(1,gs.length),last=left+(gs.length-.5)*plotW/Math.max(1,gs.length);svg.push('<polygon points="'+first+','+(top+plotH)+' '+pts+' '+last+','+(top+plotH)+'" fill="'+colors[si%colors.length]+'" opacity=".14"/>')}
+     svg.push('<polyline points="'+pts+'" fill="none" stroke="'+colors[si%colors.length]+'" stroke-width="4" stroke-linejoin="round"/>');
+     s.values.forEach(function(v,i){var x=left+(i+.5)*plotW/Math.max(1,gs.length),y=top+plotH-(v/max)*plotH;svg.push('<circle cx="'+x+'" cy="'+y+'" r="7" fill="'+colors[si%colors.length]+'" data-fallback="'+si+':'+i+'"><title>'+esc(s.name)+': '+esc(fmt(v))+'</title></circle>')});
+   });
  }else if(type==='pie'||type==='donut'){
-   var s=series[0],total=s.values.reduce(function(a,b){return a+b},0)||1,cx=260,cy=175,r=105,inner=type==='donut'?55:0,start=-Math.PI/2;gs.forEach(function(g,i){var frac=s.values[i]/total,end=start+frac*Math.PI*2,x1=cx+r*Math.cos(start),y1=cy+r*Math.sin(start),x2=cx+r*Math.cos(end),y2=cy+r*Math.sin(end),large=frac>.5?1:0;if(inner){var ix2=cx+inner*Math.cos(end),iy2=cy+inner*Math.sin(end),ix1=cx+inner*Math.cos(start),iy1=cy+inner*Math.sin(start);svg.push('<path d="M '+cx+' '+cy+' L '+x1+' '+y1+' A '+r+' '+r+' 0 '+large+' 1 '+x2+' '+y2+' L '+ix2+' '+iy2+' A '+inner+' '+inner+' 0 '+large+' 0 '+ix1+' '+iy1+' Z" fill="'+colors[i%colors.length]+'" data-fallback="0:'+i+'"><title>'+esc(g.label)+': '+esc(fmt(s.values[i]))+'</title></path>')}else{svg.push('<path d="M '+cx+' '+cy+' L '+x1+' '+y1+' A '+r+' '+r+' 0 '+large+' 1 '+x2+' '+y2+' Z" fill="'+colors[i%colors.length]+'" data-fallback="0:'+i+'"><title>'+esc(g.label)+': '+esc(fmt(s.values[i]))+'</title></path>')}start=end});svg.push('<text x="260" y="180" text-anchor="middle" font-size="20" font-weight="700" fill="currentColor">'+esc(fmt(total))+'</text>');
+   var s=series[0],total=s.values.reduce(function(a,b){return a+b},0)||1,cx=250,cy=170,r=105,inner=type==='donut'?55:0,start=-Math.PI/2;
+   gs.forEach(function(g,i){
+     var frac=Math.max(0,s.values[i])/total,end=start+frac*Math.PI*2,x1=cx+r*Math.cos(start),y1=cy+r*Math.sin(start),x2=cx+r*Math.cos(end),y2=cy+r*Math.sin(end),large=frac>.5?1:0;
+     if(inner){var ix2=cx+inner*Math.cos(end),iy2=cy+inner*Math.sin(end),ix1=cx+inner*Math.cos(start),iy1=cy+inner*Math.sin(start);svg.push('<path d="M '+cx+' '+cy+' L '+x1+' '+y1+' A '+r+' '+r+' 0 '+large+' 1 '+x2+' '+y2+' L '+ix2+' '+iy2+' A '+inner+' '+inner+' 0 '+large+' 0 '+ix1+' '+iy1+' Z" fill="'+colors[i%colors.length]+'" data-fallback="0:'+i+'"><title>'+esc(g.label)+': '+esc(fmt(s.values[i]))+'</title></path>')}
+     else svg.push('<path d="M '+cx+' '+cy+' L '+x1+' '+y1+' A '+r+' '+r+' 0 '+large+' 1 '+x2+' '+y2+' Z" fill="'+colors[i%colors.length]+'" data-fallback="0:'+i+'"><title>'+esc(g.label)+': '+esc(fmt(s.values[i]))+'</title></path>');
+     start=end;
+   });
+   svg.push('<text x="'+cx+'" y="'+(cy+6)+'" text-anchor="middle" font-size="20" font-weight="700" fill="currentColor">'+esc(fmt(total))+'</text>');
+ }else if(type==='hbar'){
+   var n=gs.length,slot=plotH/Math.max(1,n),bh=Math.max(12,slot*.62);
+   gs.forEach(function(g,i){var s=series[0],v=s.values[i],bw=(v/max)*(plotW*.82),y=top+i*slot+(slot-bh)/2;svg.push('<rect x="'+left+'" y="'+y+'" width="'+Math.max(2,bw)+'" height="'+bh+'" rx="4" fill="'+colors[0]+'" data-fallback="0:'+i+'"><title>'+esc(s.name)+' · '+esc(g.label)+': '+esc(fmt(v))+'</title></rect>');var lab=String(g.label);if(lab.length>18)lab=lab.slice(0,17)+'…';svg.push('<text x="'+(left-6)+'" y="'+(y+bh*.68)+'" text-anchor="end" font-size="10" fill="#777">'+esc(lab)+'</text>')});
  }else{
-   var n=gs.length,slot=plotW/Math.max(1,n),bw=Math.max(8,(slot*.72)/series.length);gs.forEach(function(g,i){series.forEach(function(s,si){var v=s.values[i],bh=(v/max)*plotH,x=left+i*slot+slot*.14+si*bw,y=top+plotH-bh;svg.push('<rect x="'+x+'" y="'+y+'" width="'+Math.max(3,bw-3)+'" height="'+bh+'" rx="3" fill="'+colors[si%colors.length]+'" data-fallback="'+si+':'+i+'"><title>'+esc(s.name)+' · '+esc(g.label)+': '+esc(fmt(v))+'</title></rect>')});var lab=String(g.label);if(lab.length>13)lab=lab.slice(0,12)+'…';svg.push('<text x="'+(left+i*slot+slot/2)+'" y="'+(h-30)+'" text-anchor="middle" font-size="10" fill="#777">'+esc(lab)+'</text>')})
+   var n=gs.length,slot=plotW/Math.max(1,n),bw=Math.max(8,(slot*.72)/Math.max(1,series.length));
+   gs.forEach(function(g,i){
+     var base=top+plotH;
+     series.forEach(function(s,si){
+       var v=s.values[i],bh=(v/max)*plotH,x=left+i*slot+slot*.14+si*bw,y=base-bh;
+       if(type==='stacked'){var prev=0;for(var pj=0;pj<si;pj++)prev+=series[pj].values[i]||0;var totalStack=series.reduce(function(a,q){return a+(q.values[i]||0)},0)||1;bh=(v/totalStack)*plotH;y=base-(prev+v)/totalStack*plotH;}
+       svg.push('<rect x="'+x+'" y="'+y+'" width="'+Math.max(3,bw-3)+'" height="'+Math.max(0,bh)+'" rx="3" fill="'+colors[si%colors.length]+'" data-fallback="'+si+':'+i+'"><title>'+esc(s.name)+' · '+esc(g.label)+': '+esc(fmt(v))+'</title></rect>');
+     });
+     var lab=String(g.label);if(lab.length>13)lab=lab.slice(0,12)+'…';svg.push('<text x="'+(left+i*slot+slot/2)+'" y="'+(h-30)+'" text-anchor="middle" font-size="10" fill="#777">'+esc(lab)+'</text>');
+   });
  }
  svg.push('</svg>');
- var note='<div style="padding:10px 4px 0;color:#777;font-size:12px">Tap a bar, point or slice for the exact value. Each series is calculated from '+f.rs.length.toLocaleString()+' loaded rows.</div>';
+ var note=(reason?'<div style="padding:10px 4px 4px;color:#9a6500;font-size:12px;font-weight:700">'+esc(reason)+'</div>':'')+
+          '<div style="padding:8px 4px 0;color:#777;font-size:12px">Tap a bar, point or slice for the exact value. Each series is calculated from '+f.rs.length.toLocaleString()+' loaded rows.</div>';
  wrap.innerHTML=svg.join('')+note;
- wrap.querySelectorAll('[data-fallback]').forEach(function(el){el.addEventListener('click',function(){var q=el.getAttribute('data-fallback').split(':'),si=+q[0],i=+q[1],s=series[si],g=gs[i];var d=$('smartChartDetail');if(d)d.innerHTML='<b>'+esc(s.name)+'</b><div style="margin-top:4px">'+esc(g.label)+' · <strong>'+esc(fmt(s.values[i]))+'</strong></div>';});});
+ wrap.querySelectorAll('[data-fallback]').forEach(function(el){el.addEventListener('click',function(){var q=el.getAttribute('data-fallback').split(':'),si=+q[0],i=+q[1],s=series[si],g=gs[i],d=$('smartChartDetail');if(d)d.innerHTML='<b>'+esc(s.name)+'</b><div style="margin-top:4px">'+esc(g.label)+' · <strong>'+esc(fmt(s.values[i]))+'</strong></div>';});});
 }
 function tick(){
  var f=fields();if(!f.measures.length)return;
