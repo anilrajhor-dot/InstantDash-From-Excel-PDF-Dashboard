@@ -402,6 +402,16 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
 .mi-evidence-item.attention{border-left-color:var(--warn)}
 .mi-evidence-item.contextual{border-left-color:var(--muted)}
 .mi-evidence-list{display:grid;gap:10px}.mi-evidence-item h4{margin:0 0 7px;font-size:13px}.mi-evidence-item .finding{font-size:12px;line-height:1.55}.mi-evidence-meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}.mi-evidence-meta div{border:1px solid var(--border);border-radius:9px;padding:8px;background:var(--card)}.mi-evidence-meta b{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}.mi-evidence-meta span{display:block;margin-top:3px;font-size:11px;font-weight:700}.mi-evidence-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.mi-evidence-actions button{border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:9px;padding:7px 10px;font-weight:700;cursor:pointer}.mi-evidence-item-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.mi-priority-badge{display:inline-flex;align-items:center;white-space:nowrap;border:1px solid var(--border);border-radius:999px;padding:4px 8px;background:var(--card);font-size:9px;font-weight:800;color:var(--text)}.mi-priority-note{margin:0 0 10px;padding:9px 11px;border:1px solid var(--border);border-radius:10px;background:var(--card-2);color:var(--muted);font-size:10.5px;line-height:1.45}.mi-evidence-section-title{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:800;margin:4px 0 2px}.mi-evidence-more{display:flex;justify-content:center;padding:2px 0 4px}.mi-evidence-more button{border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:999px;padding:8px 14px;font-weight:800;cursor:pointer}.mi-evidence-empty{padding:18px;border:1px dashed var(--border);border-radius:12px;color:var(--muted)}
+.mi-data-quality-card{border-left-color:var(--warn)!important;background:var(--card-2)}
+.mi-data-quality-intro{font-size:11.5px;line-height:1.55;color:var(--text);margin:0 0 10px}
+.mi-data-quality-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:10px 0}
+.mi-data-quality-grid div{border:1px solid var(--border);border-radius:9px;padding:9px;background:var(--card)}
+.mi-data-quality-grid b{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.mi-data-quality-grid span{display:block;margin-top:4px;font-size:12px;font-weight:800}
+.mi-data-quality-impact{border:1px solid var(--border);border-radius:10px;padding:9px 11px;background:var(--card);font-size:10.5px;line-height:1.45;color:var(--muted)}
+.data-quality-focus{outline:3px solid var(--warn);outline-offset:-2px;background:rgba(255,193,7,.10)!important}
+@media(max-width:600px){.mi-data-quality-grid{grid-template-columns:1fr}.mi-data-quality-grid div{padding:8px}}
+
 @media(max-width:600px){.mi-evidence-modal{padding:16px;max-height:90vh}.mi-evidence-head{top:-16px}.mi-evidence-meta{grid-template-columns:1fr}.mi-evidence-item .finding{font-size:11.5px}}
 
 .modal h3{font-size:16px;margin-bottom:14px}
@@ -1121,7 +1131,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 </style>
 
 
-<meta name="instantdash-build" content="v1.13.09-smart-chart-type-fallback">
+<meta name="instantdash-build" content="v1.13.10-data-quality-attention">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -1166,7 +1176,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.13.09</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.13.10</span>
   </div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -1365,7 +1375,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 <div class="section" id="smartChartsSection">
       <div class="section-head">
         <h2>Interactive Charts</h2>
-        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.13.09 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
+        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.13.10 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
       </div>
       <section class="ai-dashboard-charts" id="aiDashboardCharts" aria-label="AI generated charts">
         <div class="ai-dashboard-head">
@@ -1566,9 +1576,9 @@ Charts on screen: Row count by Central Bank of India – Q1FY27.</pre></div>
    CONFIG — the knobs worth turning. See "How to Customize" in the notes.
    --------------------------------------------------------------------- */
 const CONFIG = {
-  BUILD_VERSION: '1.12.07',
+  BUILD_VERSION: '1.13.10',
   APP_NAME: 'InstantDash',
-  VERSION: 'v1.11.18',
+  VERSION: 'v1.13.10',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -4887,20 +4897,34 @@ function wireMovementSummaryLinks(){
       const leadingBold=String(item).match(/^\s*<b>(.*?)<\/b>/i);
       const titleMatch=plain.match(/^(.+?)\s+(?:increased|decreased|moved|rose|fell|improved|declined|grew|reduced)\s+from\b/i);
       let title=leadingBold?String(leadingBold[1]).replace(/<[^>]*>/g,' ').trim():(titleMatch?titleMatch[1].trim():'');
-      if(!title&&/missing values?/i.test(plain)){
-        const names=[...plain.matchAll(/\b([A-Za-z][A-Za-z0-9 %_-]{1,40})\s+has\s+\d+(?:\.\d+)?%\s+missing\s+values?/gi)].map(m=>m[1].trim());
-        title=names.length?`Missing data: ${names.slice(0,3).join(', ')}`:'Data quality: missing values';
-      }
+      const missingMatches=[...plain.matchAll(/\b([A-Za-z][A-Za-z0-9 %_()/-]{1,80})\s+has\s+(\d+(?:\.\d+)?)%\s+missing\s+values?/gi)];
+      const missingNames=[...new Set(missingMatches.map(m=>m[1].trim()))];
+      const isDataQuality=missingNames.length>0 && /missing values?/i.test(plain);
+      if(!title&&isDataQuality) title=`Data quality warning: ${missingNames.slice(0,3).join(', ')}`;
       if(!title)title=`${bucket==='performance'?'Favourable':bucket==='attention'?'Attention':'Contextual'} movement ${entry.index+1}`;
       const rankLabel=rankedIndex<3?`<span class="mi-priority-badge">Priority ${rankedIndex+1}</span>`:'';
       const facts=movementFacts(plain);
       const changeClass=bucket==='attention'?'negative':(bucket==='performance'?'positive':'contextual');
       const factStrip=(facts&&facts.from&&facts.to)?`<div class="mi-movement-facts"><div><span>FROM</span><b>${esc(facts.from)}</b></div><div class="mi-arrow">→</div><div><span>TO</span><b>${esc(facts.to)}</b></div><div class="mi-change ${changeClass}"><span>CHANGE</span><b>${esc(facts.change)}</b></div></div>`:'';
-      return `<article class="mi-evidence-item ${bucket==='attention'?'attention':(bucket==='contextual'?'contextual':'')}">
+      let dqBlock='';
+      let actionButton='View underlying data';
+      if(isDataQuality){
+        const totalRows=Array.isArray(rows)?rows.length:((APP.filtered||[]).length||0);
+        const details=missingNames.map(name=>{
+          const col=(APP.columns||[]).find(c=>String(c.name).toLowerCase()===String(name).toLowerCase());
+          const missing=col?Number(col.missing||0):Math.round(totalRows*(Number((missingMatches.find(m=>m[1].trim().toLowerCase()===name.toLowerCase())||[])[2])||0)/100);
+          const usable=Math.max(0,totalRows-missing);
+          return `<div><b>${esc(name)}</b><span>${usable.toLocaleString()} / ${totalRows.toLocaleString()} usable</span><small>${missing.toLocaleString()} missing · ${col?Number(col.missingPct||0).toFixed(0):Number((missingMatches.find(m=>m[1].trim().toLowerCase()===name.toLowerCase())||[])[2]||0).toFixed(0)}% missing</small></div>`;
+        }).join('');
+        dqBlock=`<p class="mi-data-quality-intro"><b>Data quality warning:</b> these fields contain no usable values in the loaded records. They are excluded from comparative conclusions; other populated parameters can still be analysed.</p><div class="mi-data-quality-grid">${details}</div><div class="mi-data-quality-impact"><b>Impact:</b> This is a data-completeness issue, not evidence of adverse business performance. Validate the source fields before using them for management decisions.</div>`;
+        actionButton='View affected fields';
+      }
+      return `<article class="mi-evidence-item ${bucket==='attention'?'attention':(bucket==='contextual'?'contextual':'')} ${isDataQuality?'mi-data-quality-card':''}">
         <div class="mi-evidence-item-head"><h4>${esc(title)}</h4>${rankLabel}</div>${factStrip}
         <div class="finding">${item}</div>
-        <div class="mi-evidence-meta"><div><b>Classification</b><span>${bucket==='performance'?'Favourable movement':bucket==='attention'?'Attention movement':'Contextual movement'}</span></div><div><b>Confidence</b><span>${level}</span></div><div><b>Evidence basis</b><span>${esc(basis)}</span></div></div>
-        <div class="mi-evidence-actions"><button type="button" data-mi-raw="1">View underlying data</button></div>
+        ${dqBlock}
+        <div class="mi-evidence-meta"><div><b>Classification</b><span>${isDataQuality?'Data quality warning':(bucket==='performance'?'Favourable movement':bucket==='attention'?'Attention movement':'Contextual movement')}</span></div><div><b>Confidence</b><span>${isDataQuality?'Limited':level}</span></div><div><b>Evidence basis</b><span>${isDataQuality?'Completeness check on loaded records':esc(basis)}</span></div></div>
+        <div class="mi-evidence-actions"><button type="button" data-mi-raw="1" data-mi-cols="${esc(missingNames.join('|'))}">${actionButton}</button></div>
       </article>`;
     };
     return `<section class="mi-native-panel" id="miPanel_${bucket}"><div class="mi-evidence-section-title">Top priority movements</div>${ranked.map((entry,i)=>renderItem(entry,i)).join('')}</section>`;
@@ -4921,7 +4945,9 @@ function wireMovementSummaryLinks(){
        including zero-count tabs, and the selected panel is changed directly. */
     const specs=[['all','● All',total],['performance','✓ Favourable',perf.length],['attention','⚠ Attention',att.length],['contextual','◐ Contextual',ctx.length]];
     tabs.innerHTML=specs.map(([b,label,count])=>`<button type="button" class="mi-evidence-tab" data-bucket="${b}" aria-selected="${initial===b?'true':'false'}">${label} · ${count}</button>`).join('');
-    const summary=`<div class="mi-evidence-summary"><b>Material movements:</b> ${total}<span>• Favourable: ${perf.length} · Attention: ${att.length} · Contextual: ${ctx.length}</span></div><div class="mi-priority-note"><b>Priority ranking:</b> Top movements are ranked by the magnitude of the reported change. This is a review aid, not a standalone risk or performance score.<br><b>Calculation:</b> additive measures use totals; rates, percentages, ratios and per-unit/average measures use averages across comparable records.</div>`;
+    const missingCols=(APP.columns||[]).filter(c=>Number(c.missingPct||0)>=100);
+    const qualityNote=missingCols.length?`<div class="mi-priority-note"><b>Data quality:</b> ${missingCols.length} field${missingCols.length>1?'s':''} contain no usable values in the loaded records. These fields are excluded from management conclusions; validate the source before using them.</div>`:'';
+    const summary=`<div class="mi-evidence-summary"><b>Material movements:</b> ${total}<span>• Favourable: ${perf.length} · Attention: ${att.length} · Contextual: ${ctx.length}</span></div>${qualityNote}<div class="mi-priority-note"><b>Priority ranking:</b> Top movements are ranked by the magnitude of the reported change. This is a review aid, not a standalone risk or performance score.<br><b>Calculation:</b> additive measures use totals; rates, percentages, ratios and per-unit/average measures use averages across comparable records.</div>`;
     list.innerHTML=summary+renderPanel('performance',perf,level,basis,APP.filtered||[])+renderPanel('attention',att,level,basis,APP.filtered||[])+renderPanel('contextual',ctx,level,basis,APP.filtered||[]);
     const showBucket=bucketName=>{
       const b=(bucketName==='all'||bucketName==='attention'||bucketName==='contextual')?bucketName:'performance';
@@ -4948,7 +4974,20 @@ function wireMovementSummaryLinks(){
     wireTabs();
     const initialTab=tabs.querySelector('.mi-evidence-tab[data-bucket=\"'+initial+'\"]');
     if(initialTab) switchMovementTab(initialTab);
-    list.querySelectorAll('[data-mi-raw]').forEach(b=>b.onclick=()=>{modal.classList.remove('on');const raw=$('dataTable');if(raw)raw.scrollIntoView({behavior:'smooth',block:'start'});});
+    list.querySelectorAll('[data-mi-raw]').forEach(b=>b.onclick=()=>{
+      modal.classList.remove('on');
+      const raw=$('dataTable');
+      if(!raw)return;
+      const names=(b.dataset.miCols||'').split('|').map(x=>x.trim()).filter(Boolean);
+      raw.querySelectorAll('.data-quality-focus').forEach(el=>el.classList.remove('data-quality-focus'));
+      const headers=[...raw.querySelectorAll('th')];
+      names.forEach(name=>{
+        const th=headers.find(h=>String(h.dataset.col||h.textContent||'').trim().toLowerCase()===name.toLowerCase());
+        if(th){th.classList.add('data-quality-focus'); const idx=headers.indexOf(th); raw.querySelectorAll('tbody tr').forEach(tr=>{if(tr.children[idx])tr.children[idx].classList.add('data-quality-focus');});}
+      });
+      raw.scrollIntoView({behavior:'smooth',block:'start'});
+      if(names.length && headers.length){const th=headers.find(h=>String(h.dataset.col||'').trim().toLowerCase()===names[0].toLowerCase()); if(th) setTimeout(()=>th.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'}),350);}
+    });
   };
   window.__openMovementDetails=open;
   if(close)close.onclick=()=>modal.classList.remove('on');
@@ -7735,7 +7774,7 @@ function bind(){
    }
    state.selected=0;
    try{sync();draw();}catch(err){console.warn('InstantDash primary smart renderer recovered by fallback',err);}
-   /* v1.13.09 — the independent parameter renderer is the final safety net.
+   /* v1.13.10 — the independent parameter renderer is the final safety net.
       It always redraws from the live dropdown values, even if the semantic
       renderer cannot handle a particular chart type. */
    try{ if(window.__instantDashParameterFallback && typeof window.__instantDashParameterFallback.redraw==='function') window.__instantDashParameterFallback.redraw(); }catch(_){}
@@ -8166,7 +8205,7 @@ window.__instantDashAIMultiChartsRefresh=render;
 <script id="instantdash-v11304-parameter-engine-fallback">
 (function(){
 'use strict';
-/* v1.13.09 FINAL FALLBACK
+/* v1.13.10 FINAL FALLBACK
    Purpose: guarantee that uploaded columns remain selectable even if the
    semantic/AI layer reports zero parameters. This module reads APP.rows
    directly and is deliberately independent of AI classification.
