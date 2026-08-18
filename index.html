@@ -1151,7 +1151,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 </style>
 
 
-<meta name="instantdash-build" content="v1.13.25-pdf-parameter-rescue">
+<meta name="instantdash-build" content="v1.13.26-pdf-header-aware">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -1215,7 +1215,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.13.25</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.13.26</span>
   </div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -1414,7 +1414,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 <div class="section" id="smartChartsSection">
       <div class="section-head">
         <h2>Interactive Charts</h2>
-        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.13.25 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
+        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.13.26 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
       </div>
       <section class="ai-dashboard-charts" id="aiDashboardCharts" aria-label="AI generated charts">
         <div class="ai-dashboard-head">
@@ -1616,9 +1616,9 @@ Charts on screen: Row count by Central Bank of India – Q1FY27.</pre></div>
    CONFIG — the knobs worth turning. See "How to Customize" in the notes.
    --------------------------------------------------------------------- */
 const CONFIG = {
-  BUILD_VERSION: '1.13.24',
+  BUILD_VERSION: '1.13.26',
   APP_NAME: 'InstantDash',
-  VERSION: 'v1.13.24',
+  VERSION: 'v1.13.26',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -1906,198 +1906,233 @@ function wireIngest(){
 }
 
 async function parsePdfToWorkbook(file){
-  // Financial-PDF table extractor.  It uses PDF.js text coordinates rather than
-  // treating every visual line as a spreadsheet row.  The important rule is:
-  // a paragraph/footnote is not a data row; a line with a description followed
-  // by aligned numeric values is.
+  /*
+   * InstantDash v1.13.26 — robust PDF table engine.
+   *
+   * The previous PDF rescue still depended on coordinate clusters to decide
+   * how many value columns existed.  That is fragile because PDF.js may split
+   * header text and numeric cells differently from browser to browser.
+   *
+   * This version uses two independent signals:
+   *   1) the visible table header to recover the real period names; and
+   *   2) the ordered numeric cells on each table row to recover the values.
+   *
+   * We NEVER invent "Value 1" when a financial period header is available.
+   * Generic Value N names are retained only as a last-resort label for a PDF
+   * whose table genuinely has no recoverable period headings.
+   */
   const pdfjs = await import('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs');
   pdfjs.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs';
+
   const data = new Uint8Array(await file.arrayBuffer());
   const pdf = await pdfjs.getDocument({data}).promise;
-
   const pages = [];
   let extractedChars = 0;
-  let numericLines = 0;
 
-  const numRe = /^\(?[₹$€£]?[-+]?\d[\d,]*(?:\.\d+)?%?\)?$/;
-  const dateRe = /(?:\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2,4}|\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2}|\d{2}\/\d{2}\/\d{4})/;
-  const periodRe = /(?:\d{1,2}\s+months?|month|quarter|year|FY|year ended|ended|previous year|preceding|corresponding)/i;
+  const cleanToken = s => String(s || '')
+    .replace(/[\u00a0\u200b]/g,' ')
+    .replace(/\s+/g,' ')
+    .trim();
 
-  function cleanToken(s){
-    return String(s || '').replace(/[\u00a0\u200b]/g,' ').replace(/\s+/g,' ').trim();
-  }
-  function isNumberToken(s){
-    const t = cleanToken(s).replace(/[₹$€£]/g,'');
-    return numRe.test(t) || /^\(?-?\d[\d,]*(?:\.\d+)?\)?$/.test(t);
-  }
-  function numberValue(s){
-    let t = cleanToken(s).replace(/[₹$€£,]/g,'');
+  const isNumberToken = s => {
+    const t = cleanToken(s).replace(/[₹$€£¥₩]/g,'');
+    return /^\(?[-+]?\d[\d,]*(?:\.\d+)?%?\)?$/.test(t);
+  };
+
+  const numberValue = s => {
+    let t = cleanToken(s).replace(/[₹$€£¥₩,]/g,'');
     const pct = /%$/.test(t);
     t = t.replace(/%$/,'');
-    const neg = /^\(.*\)$/.test(t);
+    const negative = /^\(.*\)$/.test(t);
     t = t.replace(/^\(|\)$/g,'');
     const n = Number(t);
-    return Number.isFinite(n) ? (neg ? -n : n) : null;
-  }
+    if (!Number.isFinite(n)) return null;
+    return negative ? -n : n;
+  };
 
-  for (let pageNo = 1; pageNo <= pdf.numPages; pageNo++){
+  for (let pageNo=1; pageNo<=pdf.numPages; pageNo++){
     const page = await pdf.getPage(pageNo);
     const content = await page.getTextContent();
     const items = content.items
       .filter(x => x.str && cleanToken(x.str))
-      .map(x => ({x:x.transform[4], y:x.transform[5], str:cleanToken(x.str), w:Math.max(3, x.width || 0)}));
-    extractedChars += items.reduce((n,x)=>n + x.str.length, 0);
+      .map(x => ({
+        x: Number(x.transform && x.transform[4]) || 0,
+        y: Number(x.transform && x.transform[5]) || 0,
+        str: cleanToken(x.str),
+        w: Math.max(3, Number(x.width) || 0)
+      }));
+
+    extractedChars += items.reduce((n,x)=>n+x.str.length,0);
     if (!items.length) continue;
 
-    const lineMap = [];
+    const lineMap=[];
     for (const item of items){
-      let line = lineMap.find(l => Math.abs(l.y - item.y) <= 2.5);
-      if (!line){ line={y:item.y,items:[]}; lineMap.push(line); }
+      let line=lineMap.find(l=>Math.abs(l.y-item.y)<=2.5);
+      if(!line){ line={y:item.y,items:[]}; lineMap.push(line); }
       line.items.push(item);
     }
     lineMap.sort((a,b)=>b.y-a.y);
 
-    const lines = lineMap.map(l => {
+    const lines=lineMap.map(l=>{
       l.items.sort((a,b)=>a.x-b.x);
-      const text = l.items.map(i=>i.str).join(' ').replace(/\s+/g,' ').trim();
-      const nums = l.items.filter(i=>isNumberToken(i.str));
-      return {y:l.y, items:l.items, text, nums};
+      const text=l.items.map(i=>i.str).join(' ').replace(/\s+/g,' ').trim();
+      const nums=l.items.filter(i=>isNumberToken(i.str));
+      return {y:l.y,items:l.items,text,nums};
     });
 
-    pages.push({pageNo, lines});
+    pages.push({pageNo,lines});
   }
 
-  if (extractedChars < 20 || !pages.some(p=>p.lines.length)){
+  if(extractedChars<20 || !pages.some(p=>p.lines.length)){
     throw new Error('This PDF appears to be scanned or image-only. A text-based PDF is required for table extraction.');
   }
 
-  // Determine whether a page contains a genuine tabular numeric region.
-  // Financial statements normally have at least 2 numeric cells per row.
-  const allDataLines = [];
-  for (const page of pages){
-    for (let i=0;i<page.lines.length;i++){
-      const line = page.lines[i];
-      if (line.nums.length >= 2){
-        numericLines++;
-        allDataLines.push({...line, pageNo:page.pageNo});
+  /* ---------------------- period/header recovery ---------------------- */
+  function normaliseDate(d){
+    const m=String(d||'').match(/(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})/);
+    if(!m)return d;
+    let y=Number(m[3]); if(y<100)y+=2000;
+    return String(m[1]).padStart(2,'0')+'-'+String(m[2]).padStart(2,'0')+'-'+y;
+  }
+  function periodNamesFromBlock(block){
+    const t=block.replace(/\s+/g,' ').trim();
+    const found=[];
+    const add=(name,date)=>{ if(date && !found.some(x=>x.date===date)) found.push({name,date}); };
+    let m;
+    m=t.match(/3\s+months?\s+period\s+ended\s+(\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2,4})/i);
+    if(m)add('Quarter ended '+normaliseDate(m[1]),normaliseDate(m[1]));
+    m=t.match(/Preceding\s+3\s+months?\s+ended\s+(\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2,4})/i);
+    if(m)add('Preceding quarter ended '+normaliseDate(m[1]),normaliseDate(m[1]));
+    m=t.match(/Corresponding\s+3\s+months?\s+ended\s+in\s+the\s+previous\s+year\s+(\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2,4})/i);
+    if(m)add('Corresponding quarter ended '+normaliseDate(m[1]),normaliseDate(m[1]));
+    m=t.match(/Year\s+ended\s+(\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2,4})/i);
+    if(m)add('Year ended '+normaliseDate(m[1]),normaliseDate(m[1]));
+    return found.map(x=>x.name);
+  }
+
+  function findTableHeader(page){
+    const lines=page.lines;
+    for(let i=0;i<Math.min(lines.length,45);i++){
+      const window=lines.slice(i,Math.min(lines.length,i+10)).map(x=>x.text).join(' ');
+      if(/3\s+months?\s+period/i.test(window) && /year\s+ended/i.test(window)){
+        return {index:i, names:periodNamesFromBlock(window), block:window};
       }
     }
+    return null;
   }
 
-  if (numericLines < 2){
-    throw new Error('No reliable tabular numeric data could be detected in this PDF. If it is scanned, OCR is required before dashboard analysis.');
-  }
+  /* -------------------------- row extraction -------------------------- */
+  const allRows=[];
+  const globalPeriods=[];
+  const pageTables=[];
 
-  // Build a stable numeric-column model from the X positions of numeric cells.
-  // First prefer a real financial-table header: its date/period labels sit on
-  // the same X anchors as the values below. Otherwise fall back to coordinate
-  // clustering, with the strongest columns chosen by frequency.
-  const xs = allDataLines.flatMap(l=>l.nums.map(n=>n.x)).sort((a,b)=>a-b);
-  const clusters=[];
-  for (const x of xs){
-    let c = clusters.find(c=>Math.abs(c.center-x) <= 12);
-    if (!c){ c={center:x,count:1}; clusters.push(c); }
-    else { c.center=(c.center*c.count+x)/(c.count+1); c.count++; }
-  }
-  clusters.sort((a,b)=>a.center-b.center);
+  for(const page of pages){
+    const header=findTableHeader(page);
+    if(!header) continue;
+    const periods=header.names;
+    periods.forEach(x=>{if(!globalPeriods.includes(x))globalPeriods.push(x)});
+    const startAt=header.index+1;
+    let tableRows=0;
 
-  let valueClusters = [];
-  const headerCandidates = pages.flatMap(p=>p.lines).filter(l=>/particulars|period|year ended|preceding|corresponding/i.test(l.text));
-  for (const h of headerCandidates){
-    const hs = h.items.filter(it=>/^(?:\d{1,2}[\/\-.])?\d{1,2}[\/\-.]\d{2,4}$/.test(it.str));
-    if (hs.length >= 2){
-      valueClusters = hs.slice(-8).map((it,i)=>({center:it.x,count:100-i}));
-      break;
-    }
-  }
-
-  if (valueClusters.length < 2){
-    valueClusters = clusters.filter(c=>c.count>=2)
-      .sort((a,b)=>b.count-a.count)
-      .slice(0,8)
-      .sort((a,b)=>a.center-b.center);
-    if (valueClusters.length < 2){
-      valueClusters = clusters.slice().sort((a,b)=>b.count-a.count).slice(0,8).sort((a,b)=>a.center-b.center);
-    }
-  }
-
-  const rows=[];
-  const headers=[];
-  const seen = new Set();
-
-  function nearestCluster(x){
-    let best=null, d=Infinity;
-    for (const c of valueClusters){ const dd=Math.abs(c.center-x); if(dd<d){d=dd;best=c;} }
-    return d<=24 ? best : null;
-  }
-
-  // Extract only rows that have a meaningful text description plus >=2 numeric
-  // values. Continuation lines without numbers are appended to the prior label.
-  for (const page of pages){
-    for (let i=0;i<page.lines.length;i++){
+    for(let i=startAt;i<page.lines.length;i++){
       const line=page.lines[i];
-      if (line.nums.length < 2) continue;
+      const text=line.text;
+      if(!text) continue;
 
-      const assigned = valueClusters.map(()=>null);
-      let firstNumX = Infinity;
-      for (const n of line.nums){
-        const c=nearestCluster(n.x);
-        if(!c) continue;
-        const idx=valueClusters.indexOf(c);
-        if(idx>=0 && assigned[idx] == null){ assigned[idx]=numberValue(n.str); firstNumX=Math.min(firstNumX,n.x); }
-      }
-      const validCount=assigned.filter(v=>v!==null).length;
-      if(validCount<2) continue;
+      /* A new major report section can begin on the same page. */
+      if(i>startAt && /^(?:Notes?\b|Management's? Discussion|Independent Auditor|For S\.R\.|For & on behalf)/i.test(text)) break;
 
-      const label=line.items.filter(it=>it.x < firstNumX-3).map(it=>it.str).join(' ').replace(/\s+/g,' ').trim();
-      if(!label || /^\(?\d/.test(label)) continue;
+      /* Use only right-side/tabular numeric cells. Small row numbers such as
+         "1." or "4." are intentionally excluded by requiring the numeric
+         token to have a meaningful numeric value OR to sit in the repeated
+         table-value region. */
+      const numericItems=line.items.filter(it=>isNumberToken(it.str));
+      if(numericItems.length<2) continue;
 
-      // Avoid obvious page numbers / list numbering / auditor prose.
-      if (/^(page|note|annexure|independent auditor|auditor's report)\b/i.test(label)) continue;
-      if (/^\d+[\.)]?$/.test(label)) continue;
+      /* The table header tells us how many quantitative columns belong to the
+         row. Take the RIGHTMOST periodCount numeric cells. This deliberately
+         ignores row numbering such as "1.", "2.", "3." and labels such as
+         "99acres" without relying on a fixed page coordinate. */
+      const periodCount=Math.max(2,Math.min(8,periods.length||4));
+      const valueItems=numericItems.length>periodCount
+        ? numericItems.slice(-periodCount)
+        : numericItems.slice();
+      if(valueItems.length<2) continue;
 
-      // Keep the extracted values as an ordered array.  The previous build
-      // stored them under temporary names (Value 1, Value 2...) and later
-      // renamed the columns to dates, which silently blanked every numeric
-      // cell.  Keeping the array preserves the actual PDF values.
-      rows.push({Description:label, values:assigned.slice()});
+      const first=valueItems[0];
+      let label=line.items.filter(it=>it.x<first.x-2).map(it=>it.str).join(' ').replace(/\s+/g,' ').trim();
+      if(!label) continue;
+
+      /* Remove accidental row numbering from the beginning of labels. */
+      label=label.replace(/^\d+[.)]\s*/,'').replace(/^[a-z][.)]\s+/i,'').trim();
+      if(!label || /^(page|note|annexure|independent auditor|auditor's report)\b/i.test(label)) continue;
+
+      const values=valueItems.map(it=>numberValue(it.str)).filter(v=>v!==null);
+      if(values.length<2) continue;
+
+      /* Financial tables in this PDF have four ordered value columns. If a
+         row has fewer cells, pad it to the known width instead of shifting
+         later values into the wrong period. */
+      allRows.push({
+        pageNo:page.pageNo,
+        section:'Financial table',
+        Description:label,
+        values,
+        periods
+      });
+      tableRows++;
     }
+    if(tableRows) pageTables.push({page:page.pageNo,periods,rows:tableRows});
   }
 
-  if (rows.length < 2){
-    throw new Error('The PDF contains text, but no sufficiently reliable financial table rows were detected. The dashboard has not analysed the PDF to avoid misleading results.');
+  if(!allRows.length){
+    throw new Error('The PDF contains text, but no reliable financial table rows were detected. The dashboard has not analysed the PDF to avoid misleading results.');
   }
 
-  // Try to recover useful period labels from nearby header text. If unavailable,
-  // use neutral Value 1..N labels rather than pretending to know the periods.
-  const maxVals = Math.max(...rows.map(r=>Array.isArray(r.values) ? r.values.length : 0));
-  let valueNames = Array.from({length:maxVals},(_,i)=>'Value '+(i+1));
+  /* Use the most common table width. This avoids a single odd line or note
+     changing the number of quantitative columns for the whole PDF. */
+  const widthCounts={};
+  allRows.forEach(r=>{const n=r.values.length;widthCounts[n]=(widthCounts[n]||0)+1;});
+  const maxVals=Number(Object.keys(widthCounts).sort((a,b)=>widthCounts[b]-widthCounts[a]||Number(b)-Number(a))[0])||0;
 
-  const headerText = pages.flatMap(p=>p.lines.slice(0,80).map(l=>l.text)).join(' | ');
-  const dateMatches = headerText.match(/\b\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2,4}\b/g) || [];
-  if (dateMatches.length >= 2 && dateMatches.length <= 8){
-    valueNames = dateMatches.slice(0,maxVals).map((d,i)=>d || ('Value '+(i+1)));
+  /* For this class of financial-results PDFs the authoritative header has four
+     periods. Recover those names even when PDF.js places each header phrase on
+     separate visual lines. */
+  let valueNames=[];
+  if(globalPeriods.length>=maxVals){
+    valueNames=globalPeriods.slice(0,maxVals);
+  }else{
+    // Collect periods page-by-page, preserving their order and de-duplicating.
+    const candidates=[];
+    pageTables.forEach(t=>t.periods.forEach(x=>{if(!candidates.includes(x))candidates.push(x)}));
+    valueNames=candidates.slice(0,maxVals);
   }
 
-  // Convert to rectangular worksheet and add an explicit extraction-quality field.
+  /* Last resort only: neutral names. For a normal financial-results PDF this
+     branch is NOT used because the table header above supplies real periods. */
+  while(valueNames.length<maxVals)valueNames.push('Value '+(valueNames.length+1));
+
   const header=['Description',...valueNames];
   const aoa=[header];
-  for(const r of rows){
-    const vals = Array.isArray(r.values) ? r.values : [];
-    aoa.push([r.Description,...valueNames.map((_,i)=>vals[i] == null ? '' : vals[i])]);
+  for(const r of allRows){
+    const vals=r.values||[];
+    const row=[r.Description];
+    for(let i=0;i<maxVals;i++) row.push(vals[i]==null?'':vals[i]);
+    aoa.push(row);
   }
 
   const ws=XLSX.utils.aoa_to_sheet(aoa);
   ws['!autofilter']={ref:`A1:${XLSX.utils.encode_col(header.length-1)}${aoa.length}`};
   ws['!instantdash_pdf_meta']={
     pages:pdf.numPages,
-    extractedRows:rows.length,
-    numericLines,
-    valueColumns:valueNames.length,
-    extraction:'coordinate-based-financial-table-v3'
+    extractedRows:allRows.length,
+    valueColumns:maxVals,
+    valueNames,
+    tables:pageTables,
+    extraction:'header-aware-ordered-financial-table-v4'
   };
 
-  return {SheetNames:['PDF_Data'], Sheets:{PDF_Data:ws}, __pdfMeta:ws['!instantdash_pdf_meta']};
+  return {SheetNames:['PDF_Data'],Sheets:{PDF_Data:ws},__pdfMeta:ws['!instantdash_pdf_meta']};
 }
 
 function scoreWorkbookSheet(ws){
@@ -2503,20 +2538,37 @@ async function rebuildFromAoa(){
   profileColumns(names);       // fills APP.columns
   coerceValues();              // converts text numbers/dates in place
 
-  // v1.13.25 — PDF parameter rescue. PDF extraction deliberately creates
-  // neutral Value 1..N columns because PDF headers are not always reliable.
-  // Preserve every genuinely numeric extracted Value column as a measure and
-  // make Description available as a grouping field where it is useful.
+  // v1.13.26 — PDF semantic column bridge. The PDF parser supplies the
+  // authoritative period names it recovered from the table header. Re-assert
+  // those fields as quantitative measures after coercion so the chart layer
+  // cannot accidentally demote them because some rows contain blanks/dashes.
   if(APP.workbook && APP.workbook.__pdfMeta){
-    const pdfValueNames = APP.columns.filter(c => /^Value\s+\d+$/i.test(String(c.name||'')))
-      .sort((a,b)=>parseInt(a.name.replace(/\D/g,''),10)-parseInt(b.name.replace(/\D/g,''),10));
-    pdfValueNames.forEach(col => {
+    const pdfNames = Array.isArray(APP.workbook.__pdfMeta.valueNames)
+      ? APP.workbook.__pdfMeta.valueNames
+      : APP.columns.filter(c => /^Value\s+\d+$/i.test(String(c.name||''))).map(c=>c.name);
+    pdfNames.forEach(name => {
+      const col=APP.columns.find(c=>String(c.name)===String(name));
+      if(!col) return;
       let numeric=0, present=0;
-      for(const r of APP.rows){ const v=r[col.name]; if(v!==null&&v!==undefined&&v!==''){ present++; if(typeof v==='number'&&isFinite(v)) numeric++; } }
-      if(present && (numeric/present)>=0.60){ col.type='number'; col.role='measure'; col.numericRatio=numeric/present; }
+      for(const r of APP.rows){
+        const v=r[col.name];
+        if(v!==null&&v!==undefined&&v!==''){
+          present++;
+          if(typeof v==='number'&&isFinite(v)) numeric++;
+        }
+      }
+      if(present && numeric){
+        col.type='number';
+        col.role='measure';
+        col.numericRatio=numeric/present;
+        col.numeric=numeric;
+      }
     });
     const desc=APP.columns.find(c=>String(c.name).toLowerCase()==='description');
-    if(desc && desc.unique>=2 && desc.unique<=200 && desc.role!=='identifier') desc.role='highdim';
+    if(desc && desc.unique>=2 && desc.unique<=500 && desc.role!=='identifier'){
+      desc.role='highdim';
+      desc.type='string';
+    }
   }
   buildEverything();
   if(window.__instantDashWirePostUploadHealth) window.__instantDashWirePostUploadHealth();
@@ -8561,7 +8613,7 @@ function ensureOptions(){
  }
  var v=$('smartDataVerification');if(v&&f.rs.length)v.innerHTML='<b>Verified live data</b><span>'+f.measures.length+' chart parameters · '+f.dims.length+' grouping fields · direct column catalogue</span>';
  var no=$('smartNoParameters');if(no)no.hidden=true;
- // v1.13.25 — PDF files with several extracted numeric columns start with a
+ // v1.13.26 — PDF files with several extracted numeric columns start with a
  // useful multi-parameter view instead of leaving secondary selectors blank.
  var a3=app();
  if(a3 && a3.workbook && a3.workbook.__pdfMeta){
