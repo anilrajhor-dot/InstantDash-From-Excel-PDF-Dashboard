@@ -1120,9 +1120,30 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 </style>
 
 
-<meta name="instantdash-build" content="v1.12.10-ai-multi-chart-dashboard">
+<meta name="instantdash-build" content="v1.12.11-ai-multi-chart-dashboard">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
-<style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style></head>
+<style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
+<style id="instantdash-v11211-health-first">
+.id-post-upload-health{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  margin:0 0 14px;padding:15px 16px;border:2px solid var(--accent);
+  border-radius:16px;background:linear-gradient(135deg,rgba(245,179,1,.13),var(--card));
+  box-shadow:var(--shadow);scroll-margin-top:14px
+}
+.id-post-upload-health .copy{min-width:0}
+.id-post-upload-health .title{font:900 15px/1.2 Poppins,sans-serif}
+.id-post-upload-health .sub{margin-top:4px;color:var(--muted);font-size:11px;line-height:1.45}
+.id-post-upload-health .actions{display:flex;gap:8px;flex-shrink:0}
+.id-post-upload-health button{border:1px solid var(--border);border-radius:10px;padding:9px 12px;font:800 11px Poppins,sans-serif;cursor:pointer}
+.id-post-upload-health .primary{background:var(--accent);color:#111;border-color:var(--accent)}
+@media(max-width:600px){
+ .id-post-upload-health{align-items:stretch;flex-direction:column}
+ .id-post-upload-health .actions{width:100%}
+ .id-post-upload-health button{flex:1}
+}
+</style>
+
+</head>
 <body class="" style="overflow: hidden;">
 <div id="pageScroll">
 <div class="author-line">Developed by Anil Sharma &nbsp;•&nbsp; Former General Manager, Central Bank of India</div>
@@ -1133,7 +1154,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.12.10</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.12.11</span>
   </div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -1182,6 +1203,18 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 
   <!-- ============ APP ============ -->
   <section id="app">
+
+
+    <div class="id-post-upload-health no-print" id="postUploadHealth" hidden aria-live="polite">
+      <div class="copy">
+        <div class="title">🩺 Check Health of Your Data Before Reviewing Charts</div>
+        <div class="sub">Your file is loaded. Run a quick data-health check for completeness, duplicates, field quality, measures and analysis readiness before relying on the dashboard.</div>
+      </div>
+      <div class="actions">
+        <button type="button" class="primary" id="postUploadHealthBtn">RUN HEALTH CHECK →</button>
+        <button type="button" id="postUploadContinueBtn">Continue to Results ↓</button>
+      </div>
+    </div>
 
     <div class="card toolbar no-print">
       <span class="file-name">📄 <span id="fileName">Central_Bank_of_India_Q1FY27_Excel.xlsx</span></span>
@@ -1307,7 +1340,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 <div class="section" id="smartChartsSection">
       <div class="section-head">
         <h2>Interactive Charts</h2>
-        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.12.10 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
+        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.12.11 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
       </div>
       <section class="ai-dashboard-charts" id="aiDashboardCharts" aria-label="AI generated charts">
         <div class="ai-dashboard-head">
@@ -1594,6 +1627,23 @@ function scrollToResults(){
     }catch(_){ try{target.scrollIntoView({behavior:'smooth',block:'start'});}catch(__){} }
   }, 180);
 }
+
+function scrollToHealthFirst(){
+  const target = $('postUploadHealth') || $('app');
+  const host = $('pageScroll');
+  if(!target) return;
+  setTimeout(() => {
+    try{
+      if(host){
+        const hr=host.getBoundingClientRect(), tr=target.getBoundingClientRect();
+        host.scrollTo({top:Math.max(0,host.scrollTop+(tr.top-hr.top)-10),behavior:'smooth'});
+      }else{
+        target.scrollIntoView({behavior:'smooth',block:'start'});
+      }
+    }catch(_){ try{target.scrollIntoView({behavior:'smooth',block:'start'});}catch(__){} }
+  },180);
+}
+
 function nextFrame(){ return new Promise(r => requestAnimationFrame(()=>requestAnimationFrame(r))); }
 
 // Number formatting with thousands separators; compacts very large values.
@@ -2342,9 +2392,12 @@ async function rebuildFromAoa(){
   profileColumns(names);       // fills APP.columns
   coerceValues();              // converts text numbers/dates in place
   buildEverything();
+  if(window.__instantDashWirePostUploadHealth) window.__instantDashWirePostUploadHealth();
   hideLoader();
-  toast('Dashboard ready — AI chart analysis completed');
-  scrollToResults();
+  var healthBanner = $('postUploadHealth');
+  if(healthBanner) healthBanner.hidden = false;
+  toast('Data loaded — check data health before reviewing charts');
+  scrollToHealthFirst();
 }
 
 function showFatal(msg){
@@ -7184,7 +7237,7 @@ function boot(){if(!$('smartDataVerification')){var h=$('smartChartHint');if(h){
 (function(){
 'use strict';
 /*
- InstantDash v1.12.10 — AI Multi-Chart Intelligence
+ InstantDash v1.12.11 — AI Multi-Chart Intelligence
  - All genuine numeric measures are available in every parameter dropdown.
  - Semantic AI-style analysis recommends, but never restricts, choices.
  - Handles ordinary tabular data and statement-style financial sheets.
@@ -7286,7 +7339,7 @@ function dimensions(d){
  return out;
 }
 /* ------------------------------------------------------------------
-   v1.12.10 — AI CHART INTELLIGENCE
+   v1.12.11 — AI CHART INTELLIGENCE
    Local, deterministic semantic reasoning. It does not send the file
    anywhere. It scores field names, values, cardinality, time structure,
    scale and relationships, then selects a chart that fits the evidence.
@@ -7831,6 +7884,37 @@ window.__instantDashAIMultiChartsRefresh=render;
   // Make chart hits reliably activate on iPhone/iPad as well as laptop.
   var obs=new MutationObserver(function(){wire();});
   if(document.body)obs.observe(document.body,{childList:true,subtree:true});
+})();
+</script>
+
+
+<script>
+(function(){
+  function wirePostUploadHealth(){
+    var banner=document.getElementById('postUploadHealth');
+    var run=document.getElementById('postUploadHealthBtn');
+    var cont=document.getElementById('postUploadContinueBtn');
+    if(run && !run.dataset.wired){
+      run.dataset.wired='1';
+      run.addEventListener('click',function(){
+        if(window.__instantDashHealthOpen) window.__instantDashHealthOpen();
+        else {
+          var b=document.getElementById('healthCheckBtn');
+          if(b) b.click();
+        }
+      });
+    }
+    if(cont && !cont.dataset.wired){
+      cont.dataset.wired='1';
+      cont.addEventListener('click',function(){
+        var t=document.getElementById('kpiSection')||document.getElementById('smartChartsSection');
+        if(t) t.scrollIntoView({behavior:'smooth',block:'start'});
+      });
+    }
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',wirePostUploadHealth);
+  else wirePostUploadHealth();
+  window.__instantDashWirePostUploadHealth=wirePostUploadHealth;
 })();
 </script>
 
