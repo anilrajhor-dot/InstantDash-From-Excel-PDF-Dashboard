@@ -2043,7 +2043,7 @@ async function parsePdfToWorkbook(file){
   for(const r of rows){aoa.push([r.description,...Array.from({length:count},(_,i)=>r.values[i]===undefined?'':r.values[i])])}
   const ws=XLSX.utils.aoa_to_sheet(aoa);
   ws['!autofilter']={ref:`A1:${XLSX.utils.encode_col(header.length-1)}${aoa.length}`};
-  ws['!instantdash_pdf_meta']={pages:pdf.numPages,extractedRows:rows.length,valueColumns:count,valueNames:names,extraction:'universal-pdf-table-v13.28'};
+  ws['!instantdash_pdf_meta']={pages:pdf.numPages,extractedRows:rows.length,valueColumns:count,valueNames:names,extraction:'universal-pdf-table-v13.29'};
   return {SheetNames:['PDF_Data'],Sheets:{PDF_Data:ws},__pdfMeta:ws['!instantdash_pdf_meta']};
 }
 
@@ -2089,6 +2089,9 @@ async function handleFile(file){
   // charts or management insights after a new workbook has been selected.
   const loadToken = ++APP.__loadToken;
   window.__instantDashCurrentLoadToken = loadToken;
+  /* v13.29 FINAL — hard-reset selector state at the START of every upload. */
+  try{ if(typeof state!=='undefined') state={model:null,type:'bar',groupBy:'',params:[],selected:0}; }catch(_){ }
+  try{ if(window.__instantDashParameterFallback && typeof window.__instantDashParameterFallback.reset==='function') window.__instantDashParameterFallback.reset(); }catch(_){ }
   $('app').hidden = true;
   $('emptyState').hidden = true;
   showLoader('ANALYSING… ' + name, 'Reading and calculating your dashboard locally on this device.');
@@ -2137,7 +2140,7 @@ async function handleFile(file){
     APP.__pdfMeta = wb.__pdfMeta || (wb.Sheets && wb.Sheets.PDF_Data && wb.Sheets.PDF_Data['!instantdash_pdf_meta']) || null;
     APP.fileName = name;
     APP.sheetNames = wb.SheetNames.slice();
-    APP.activeSheet = ''; APP.__pdfMeta = null;
+    APP.activeSheet = ''; /* preserve APP.__pdfMeta committed above */
     APP.aoa = []; APP.columns = []; APP.rows = []; APP.filtered = [];
     APP.filters = {}; APP.search = ''; APP.sort = {col:null,dir:1}; APP.page = 0;
     APP.excludedSummaryRows = 0;
@@ -2455,9 +2458,10 @@ async function rebuildFromAoa(){
   // authoritative period names it recovered from the table header. Re-assert
   // those fields as quantitative measures after coercion so the chart layer
   // cannot accidentally demote them because some rows contain blanks/dashes.
-  if(APP.workbook && APP.workbook.__pdfMeta){
-    const pdfNames = Array.isArray(APP.workbook.__pdfMeta.valueNames)
-      ? APP.workbook.__pdfMeta.valueNames
+  if(APP.__pdfMeta || (APP.workbook && APP.workbook.__pdfMeta)){
+    const pdfMeta = APP.__pdfMeta || APP.workbook.__pdfMeta;
+    const pdfNames = Array.isArray(pdfMeta.valueNames)
+      ? pdfMeta.valueNames
       : APP.columns.filter(c => /^Value\s+\d+$/i.test(String(c.name||''))).map(c=>c.name);
     pdfNames.forEach(name => {
       const col=APP.columns.find(c=>String(c.name)===String(name));
@@ -7586,7 +7590,9 @@ function inferCategories(ms,d){
 function parameterProfile(name,drows,cols){
  var c=meta(cols,name), vals=(drows||[]).map(function(r){return r[name]}).filter(function(v){return v!==null&&v!==undefined&&String(v).trim()!==''});
  var nums=vals.map(num).filter(isFinite), ratio=nums.length/Math.max(1,vals.length), unique=new Set(vals.map(String)).size;
- var id=isId(name), time=isTime(name,c);
+ var pdfNames=(app()&&app().__pdfMeta&&Array.isArray(app().__pdfMeta.valueNames))?app().__pdfMeta.valueNames:[];
+ var pdfMeasure=pdfNames.indexOf(name)>=0;
+ var id=isId(name), time=isTime(name,c)&&!pdfMeasure;
  var x=norm(name);
  var categoricalName=/(name|state|district|branch|category|segment|type|class|group|channel|region|zone|mid|code|account|acct|pan|mobile|phone|email|pincode|key)/.test(x);
  var agg='sum',kind='amount';
@@ -7619,8 +7625,11 @@ function appColumnCatalogue(d){
       row values are unavailable or have been filtered, while still checking
       the actual values when they are present. */
    var isNumeric=(type==='number'||type==='numeric'||ratio>=.20);
+   var pdfNames=(a&&a.__pdfMeta&&Array.isArray(a.__pdfMeta.valueNames))?a.__pdfMeta.valueNames:[];
+   var pdfMeasure=pdfNames.indexOf(name)>=0;
    var time=isTime(name,c);
-   if(time)return;
+   if(time && !pdfMeasure)return;
+   if(pdfMeasure){isNumeric=true; time=false;}
    var id=isId(name) || c.role==='identifier';
    var kind=id?'identifier':(c.role==='dimension'||c.role==='highdim'?'category':'amount');
    var agg=id?'count':'sum';
@@ -8529,7 +8538,7 @@ function ensureOptions(){
  // v13.28 FINAL — PDF files with several extracted numeric columns start with a
  // useful multi-parameter view instead of leaving secondary selectors blank.
  var a3=app();
- if(a3 && a3.workbook && a3.workbook.__pdfMeta){
+ if(a3 && a3.__pdfMeta){
    var chosen=f.measures.slice(0,3).map(function(m){return m.name});
    ['smartParam1','smartParam2','smartParam3','smartParam4'].forEach(function(id,idx){var s=$(id);if(s && !s.value && chosen[idx]) s.value=chosen[idx];});
    var gg=$('smartGroupBy');
