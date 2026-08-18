@@ -1414,7 +1414,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 <div class="section" id="smartChartsSection">
       <div class="section-head">
         <h2>Interactive Charts</h2>
-        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.13.23 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
+        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.13.24 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
       </div>
       <section class="ai-dashboard-charts" id="aiDashboardCharts" aria-label="AI generated charts">
         <div class="ai-dashboard-head">
@@ -8179,7 +8179,7 @@ function boot(){
   var ov=$('aiChartOverlay');if(ov){$('aiOverlayClose').onclick=closeExpand;ov.addEventListener('click',function(e){if(e.target===ov)closeExpand()});document.addEventListener('keydown',function(e){if(e.key==='Escape')closeExpand()})}watch();setInterval(watch,700)}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 
-/* v1.13.23 — hard-refresh every data-dependent intelligence surface after a new upload.
+/* v1.13.24 — hard-refresh every data-dependent intelligence surface after a new upload.
    This deliberately rebuilds from APP.rows/APP.columns and never carries semantic state
    from the previous workbook. */
 window.__instantDashHardRefreshAll=function(reason){
@@ -8192,6 +8192,26 @@ window.__instantDashHardRefreshAll=function(reason){
       source.classList.toggle('stale',!live);
       text.textContent=live?((a.fileName||'Current workbook')+' · '+(a.activeSheet||'Current sheet')+' · '+a.rows.length.toLocaleString()+' rows · '+a.columns.length+' columns'): 'No current dataset is committed yet';
     }
+    /* v1.13.24 — rehydrate ALL chart-selector engines after upload.
+       The manual selector scripts boot before a file is loaded, so their
+       first pass quite correctly sees zero rows. Previously that empty state
+       was never re-run after APP.rows/APP.columns were populated, leaving
+       every Parameter dropdown at None for subsequent files. */
+    if(window.__instantDashParameterFallback){
+      try{
+        if(typeof window.__instantDashParameterFallback.refresh==='function') window.__instantDashParameterFallback.refresh();
+        if(typeof window.__instantDashParameterFallback.bind==='function') window.__instantDashParameterFallback.bind();
+        if(typeof window.__instantDashParameterFallback.redraw==='function') window.__instantDashParameterFallback.redraw();
+      }catch(e){console.warn('InstantDash parameter fallback refresh failed',e);}
+    }
+    try{
+      if(typeof state!=='undefined'){
+        state.model=ensureCatalogue(getModel());
+        choose();
+        sync();
+        draw();
+      }
+    }catch(e){console.warn('InstantDash smart selector rehydration failed',e);}
     if(typeof window.__instantDashSmartChartsRefresh==='function') window.__instantDashSmartChartsRefresh();
     if(typeof window.__instantDashAIMultiChartsRefresh==='function') window.__instantDashAIMultiChartsRefresh();
     if(typeof window.__instantDashRunExecutiveAI==='function') window.__instantDashRunExecutiveAI();
