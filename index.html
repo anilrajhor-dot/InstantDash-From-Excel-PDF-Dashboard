@@ -1093,10 +1093,34 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 .smart-detail{min-height:56px}.smart-detail strong{display:block;margin-bottom:8px}.smart-detail-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.smart-detail-item{border:1px solid var(--border);background:var(--card-2);border-radius:11px;padding:9px}.smart-detail-item span{display:block;color:var(--muted);font-size:10px;line-height:1.25}.smart-detail-item b{display:block;font-size:14px;margin-top:3px}
 .chart-expand-overlay{position:fixed;inset:0;background:rgba(0,0,0,.58);z-index:99999;display:none;padding:14px;align-items:center;justify-content:center}.chart-expand-overlay.open{display:flex}.chart-expand-card{width:min(1100px,100%);max-height:94vh;overflow:auto;background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:20px;box-shadow:0 25px 80px rgba(0,0,0,.28);padding:16px}.chart-expand-head{display:flex;align-items:flex-start;gap:10px;justify-content:space-between;margin-bottom:10px}.chart-expand-head h3{margin:0;font-size:20px}.chart-expand-head p{margin:4px 0 0;color:var(--muted);font-size:11px}.chart-expand-close{border:1px solid var(--border);background:var(--card-2);color:var(--text);border-radius:11px;padding:9px 12px;font-weight:800}.chart-expand-canvas{min-height:460px;border:1px solid var(--border);border-radius:15px;overflow:hidden;background:var(--card-2)}.chart-expand-canvas svg{width:100%;height:460px;display:block}.chart-expand-detail{margin-top:10px}
 @media(max-width:600px){.smart-result-strip{align-items:flex-start;flex-direction:column}.smart-result-actions{width:100%}.smart-result-actions button{flex:1}.smart-detail-grid{grid-template-columns:1fr}.smart-expand-btn{min-width:0}.chart-expand-overlay{padding:0}.chart-expand-card{height:100%;max-height:100vh;border-radius:0;padding:12px}.chart-expand-canvas{min-height:360px}.chart-expand-canvas svg{height:360px}.chart-expand-head h3{font-size:17px}}
+
+.ai-dashboard-charts{margin:0 0 16px;padding:16px;border:1px solid var(--border);border-radius:18px;background:var(--card);box-shadow:var(--shadow)}
+.ai-dashboard-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}
+.ai-dashboard-head h3{margin:3px 0 4px;font-size:20px;line-height:1.2}
+.ai-dashboard-head p{margin:0;color:var(--muted);font-size:11.5px;line-height:1.5;max-width:820px}
+.ai-dashboard-badge{white-space:nowrap;border:1px solid var(--border);background:var(--card-2);border-radius:999px;padding:7px 10px;font-size:9px;font-weight:900;letter-spacing:.08em;color:var(--muted)}
+.ai-chart-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.ai-chart-card{border:1px solid var(--border);border-radius:15px;background:var(--card-2);padding:12px;min-width:0}
+.ai-chart-card-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start;margin-bottom:8px}
+.ai-chart-card-head h4{margin:0;font-size:14px;line-height:1.3}
+.ai-chart-card-head p{margin:3px 0 0;color:var(--muted);font-size:10px;line-height:1.35}
+.ai-chart-expand{border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:9px;padding:7px 9px;font:800 10px Poppins,sans-serif;cursor:pointer;white-space:nowrap}
+.ai-chart-wrap{height:260px;position:relative;border:1px solid var(--border);border-radius:12px;background:var(--card);padding:7px}
+.ai-chart-wrap canvas{width:100%!important;height:100%!important;display:block}
+.ai-chart-foot{margin-top:7px;font-size:10px;color:var(--muted);line-height:1.35}
+.ai-empty{padding:28px 12px;text-align:center;color:var(--muted);font-size:12px;border:1px dashed var(--border);border-radius:12px}
+.ai-chart-overlay{position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:100000;display:none;align-items:center;justify-content:center;padding:12px}
+.ai-chart-overlay.open{display:flex}
+.ai-chart-overlay-card{width:min(1100px,100%);max-height:94vh;overflow:auto;background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:20px;padding:14px}
+.ai-chart-overlay-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:10px}
+.ai-chart-overlay-head h3{margin:0;font-size:18px}.ai-chart-overlay-head p{margin:3px 0 0;color:var(--muted);font-size:11px}
+.ai-chart-overlay-close{border:1px solid var(--border);background:var(--card-2);color:var(--text);border-radius:10px;padding:8px 11px;font-weight:800}
+.ai-chart-overlay-wrap{height:520px;border:1px solid var(--border);border-radius:14px;background:var(--card-2);padding:8px}
+@media(max-width:800px){.ai-chart-grid{grid-template-columns:1fr}.ai-dashboard-head{flex-direction:column}.ai-chart-wrap{height:270px}.ai-chart-overlay{padding:0}.ai-chart-overlay-card{width:100%;height:100%;max-height:100vh;border-radius:0}.ai-chart-overlay-wrap{height:calc(100vh - 120px)}}
 </style>
 
 
-<meta name="instantdash-build" content="v1.12.06-ai-auto-dashboard">
+<meta name="instantdash-build" content="v1.12.07-ai-multi-chart-dashboard">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style></head>
 <body class="" style="overflow: hidden;">
@@ -1283,8 +1307,20 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 <div class="section" id="smartChartsSection">
       <div class="section-head">
         <h2>Interactive Charts</h2>
-        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.12.06 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
+        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.12.07 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
       </div>
+      <section class="ai-dashboard-charts" id="aiDashboardCharts" aria-label="AI generated charts">
+        <div class="ai-dashboard-head">
+          <div>
+            <div class="smart-label">AI-GENERATED MANAGEMENT CHARTS</div>
+            <h3>Key parameters — separate charts</h3>
+            <p id="aiDashboardSub">After analysing your file, InstantDash creates a separate chart for each important parameter instead of combining unrelated measures into one chart.</p>
+          </div>
+          <span class="ai-dashboard-badge">AUTO-BUILT</span>
+        </div>
+        <div class="ai-chart-grid" id="aiChartGrid"></div>
+      </section>
+
       <div class="smart-chart-shell" id="smartChartsRoot">
         <!-- v1.11.14 — chart intelligence: max 4 data types, latest-period composition, touch-safe details -->
         <div class="smart-chart-top no-print">
@@ -1541,12 +1577,22 @@ function hideLoader(){ $('loader').classList.remove('on'); }
 // This is especially important on iPhone/iPad where the native file picker
 // returns to the exact scroll position from which the file was selected.
 function scrollToResults(){
-  const target = $('smartChartsSection') || $('smartResultStrip') || $('app');
+  const target = $('aiDashboardCharts') || $('smartChartsSection') || $('smartResultStrip') || $('app');
+  const host = $('pageScroll');
   if (!target) return;
   setTimeout(() => {
-    const y = Math.max(0, target.getBoundingClientRect().top + window.scrollY - 14);
-    window.scrollTo({top:y, behavior:'smooth'});
-  }, 120);
+    try{
+      if(host){
+        const hostRect=host.getBoundingClientRect();
+        const rect=target.getBoundingClientRect();
+        const y=Math.max(0, host.scrollTop + (rect.top-hostRect.top) - 12);
+        host.scrollTo({top:y, behavior:'smooth'});
+      }else{
+        const y=Math.max(0, target.getBoundingClientRect().top + window.scrollY - 14);
+        window.scrollTo({top:y, behavior:'smooth'});
+      }
+    }catch(_){ try{target.scrollIntoView({behavior:'smooth',block:'start'});}catch(__){} }
+  }, 180);
 }
 function nextFrame(){ return new Promise(r => requestAnimationFrame(()=>requestAnimationFrame(r))); }
 
@@ -7137,7 +7183,7 @@ function boot(){if(!$('smartDataVerification')){var h=$('smartChartHint');if(h){
 (function(){
 'use strict';
 /*
- InstantDash v1.12.06 — AI Auto Chart Intelligence
+ InstantDash v1.12.07 — AI Multi-Chart Intelligence
  - All genuine numeric measures are available in every parameter dropdown.
  - Semantic AI-style analysis recommends, but never restricts, choices.
  - Handles ordinary tabular data and statement-style financial sheets.
@@ -7543,6 +7589,76 @@ setInterval(watch,700);
 window.__instantDashSmartChartsRefresh=refresh;
 })();
 </script>
+
+<script id="instantdash-v11207-ai-multi-chart-js">
+(function(){
+'use strict';
+var $=function(id){return document.getElementById(id)};
+var charts={}, overlayChart=null, lastSig='';
+function app(){return window.__INSTANTDASH_APP__||window.APP||null}
+function rows(){var a=app();return a&&Array.isArray(a.filtered)&&a.filtered.length?a.filtered:(a&&Array.isArray(a.rows)?a.rows:[])}
+function cols(){var a=app();return a&&Array.isArray(a.columns)?a.columns:[]}
+function n(v){if(typeof v==='number'&&isFinite(v))return v;if(typeof v==='string'){var s=v.replace(/[₹$€£¥₩₽,%]/g,'').replace(/,/g,'').trim();if(!s)return NaN;var x=Number(s);return isFinite(x)?x:NaN}return NaN}
+function norm(s){return String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'')}
+function label(s){var x=String(s==null?'':s);return x.length>28?x.slice(0,26)+'…':x}
+function niceName(s){return String(s||'').replace(/[_\-]+/g,' ').replace(/\s+/g,' ').trim().replace(/\b\w/g,function(c){return c.toUpperCase()})}
+function isId(name){return /(^|[^a-z])(id|code|account|acct|serial|sno|sr\s*no|phone|mobile|email|pan|gst|aadhaar|pincode|key)([^a-z]|$)/i.test(String(name||''))}
+function isTime(name,c){var x=String(name||'');return !!(c&&((String(c.type||'').toLowerCase()==='date')||c.role==='time'))||/(^|[^a-z])(date|month|period|quarter|year|fy|week|timestamp)([^a-z]|$)/i.test(x)}
+function col(name){return cols().find(function(c){return String(c.name||'')===String(name)})||{name:name,type:'',role:''}}
+function uniqueValues(rs,name){var a=[],seen={};(rs||[]).forEach(function(r){var v=r[name];if(v==null||v==='')return;var k=String(v);if(!seen[k]){seen[k]=1;a.push(v)}});return a}
+function measureScore(name){var x=norm(name),s=0;[[['revenue','sales','profit','pat','ebit','income','expense','cost','cash','deposit','loan','asset','liability','commission','fee','amount','value','balance','budget','target','actual'],18],[['count','number','qty','quantity','volume','transactions','orders','customers','accounts','members','cases','units'],15],[['growth','change','yoy','mom','qoq','rate','ratio','margin','share','percentage','percent','yield'],13]].forEach(function(g){g[0].forEach(function(t){var q=norm(t);if(x===q)s+=50;else if(x.indexOf(q)>=0)s+=g[1]})});return s}
+function getMeasures(rs){var cs=cols(),names=[];if(cs.length){cs.forEach(function(c){if(c.type==='number'&&!isTime(c.name,c)&&!isId(c.name))names.push(c.name)})}else if(rs[0])Object.keys(rs[0]).forEach(function(k){if(!isTime(k,null)&&!isId(k)&&rs.some(function(r){return isFinite(n(r[k]))}))names.push(k)});return names.map(function(name){var vals=rs.map(function(r){return n(r[name])}).filter(isFinite),ratio=vals.length/Math.max(1,rs.length);return {name:name,ratio:ratio,score:measureScore(name),count:vals.length}}).filter(function(x){return x.ratio>=.65}).sort(function(a,b){return b.score-a.score||b.count-a.count})}
+function getGroups(rs){var cs=cols(),out=[];cs.forEach(function(c){if(c.type==='number'||isId(c.name)||isTime(c.name,c))return;var u=uniqueValues(rs,c.name);if(u.length>=2&&u.length<=36)out.push({name:c.name,unique:u.length,kind:'category'})});cs.forEach(function(c){if(isTime(c.name,c)){var u=uniqueValues(rs,c.name);if(u.length>=2)out.unshift({name:c.name,unique:u.length,kind:'time'})}});return out}
+function sortKey(a,b,time){if(!time)return String(a).localeCompare(String(b),undefined,{numeric:true});var da=new Date(a),db=new Date(b);if(!isNaN(da)&&!isNaN(db))return da-db;return String(a).localeCompare(String(b),undefined,{numeric:true})}
+function aggregate(rs,group,measure){var map={};rs.forEach(function(r){var v=n(r[measure]);if(!isFinite(v))return;var k=group?String(r[group]):'Overall';if(k===''||k==='null'||k==='undefined')k='Blank';map[k]=(map[k]||0)+v});var keys=Object.keys(map);var g=col(group),time=group&&isTime(group,g);keys.sort(function(a,b){return sortKey(a,b,time)});if(!time&&keys.length>12){keys.sort(function(a,b){return map[b]-map[a]});keys=keys.slice(0,12)}return {labels:keys,values:keys.map(function(k){return map[k]}),time:time,group:group}}
+function histogram(rs,measure){var vals=rs.map(function(r){return n(r[measure])}).filter(isFinite);if(!vals.length)return {labels:[],values:[]};var min=Math.min.apply(Math,vals),max=Math.max.apply(Math,vals);if(min===max)return {labels:[niceName(measure)],values:[vals.length]};var bins=Math.min(8,Math.max(4,Math.round(Math.sqrt(vals.length))));var step=(max-min)/bins,map=new Array(bins).fill(0);vals.forEach(function(v){var i=Math.min(bins-1,Math.floor((v-min)/step));map[i]++});return {labels:map.map(function(_,i){var a=min+i*step,b=i===bins-1?max:min+(i+1)*step;return a.toLocaleString('en-IN',{maximumFractionDigits:0})+'–'+b.toLocaleString('en-IN',{maximumFractionDigits:0})}),values:map,time:false,group:''}}
+function chartType(m,group){var x=norm(m.name);if(group&&group.kind==='time')return 'line';if(/growth|rate|ratio|margin|percentage|percent|share|yield/.test(x)&&group)return 'line';return 'bar'}
+function makeSpecs(){var rs=rows();if(!rs.length)return [];var ms=getMeasures(rs),gs=getGroups(rs),g=gs[0]||null,specs=[];ms.slice(0,4).forEach(function(m,i){var data=g?aggregate(rs,g.name,m.name):histogram(rs,m.name);var type=chartType(m,g);specs.push({id:'ai-'+i,measure:m.name,group:g?g.name:'',type:type,data:data,title:niceName(m.name),subtitle:g?'AI selected '+niceName(type)+' chart grouped by '+niceName(g.name):'AI selected a distribution because no reliable grouping field was found.',foot:g?'Each bar/point is calculated from '+rs.length.toLocaleString()+' loaded rows.':'Distribution of '+niceName(m.name)+' across '+rs.length.toLocaleString()+' loaded rows.'})});return specs}
+function makeConfig(s){
+ var ds=s.data, isLine=s.type==='line';
+ return {
+  type:s.type,
+  data:{
+   labels:ds.labels,
+   datasets:[{
+    label:niceName(s.measure),
+    data:ds.values,
+    borderWidth:2,
+    tension:.28,
+    fill:isLine,
+    backgroundColor:'rgba(245,179,1,.22)',
+    borderColor:'#F5B301',
+    pointRadius:isLine?3:0,
+    pointHoverRadius:5
+   }]
+  },
+  options:{
+   responsive:true,
+   maintainAspectRatio:false,
+   animation:false,
+   plugins:{
+    legend:{display:true,labels:{font:{family:'Poppins',size:10}}},
+    tooltip:{callbacks:{label:function(ctx){return niceName(s.measure)+': '+Number(ctx.raw||0).toLocaleString('en-IN',{maximumFractionDigits:2})}}}
+   },
+   scales:{
+    x:{ticks:{autoSkip:true,maxTicksLimit:10,font:{family:'Poppins',size:9}},grid:{display:false}},
+    y:{beginAtZero:true,ticks:{font:{family:'Poppins',size:9},callback:function(v){return Number(v).toLocaleString('en-IN',{notation:'compact',maximumFractionDigits:1})}},grid:{color:'rgba(14,14,16,.08)'}}
+   }
+  }
+ };
+}
+function render(){var grid=$('aiChartGrid');if(!grid)return;Object.keys(charts).forEach(function(k){try{charts[k].destroy()}catch(_){}});charts={};var specs=makeSpecs();grid.innerHTML='';if(!specs.length){grid.innerHTML='<div class="ai-empty">No reliable numeric parameters were detected for automatic chart creation. Use the manual parameter selectors below.</div>';return}var sub=$('aiDashboardSub');if(sub)sub.textContent='AI identified '+specs.length+' key parameter'+(specs.length>1?'s':'')+' and created a separate chart for each. The charts use the actual selected measure and never combine unrelated figures.';specs.forEach(function(s){var card=document.createElement('article');card.className='ai-chart-card';card.innerHTML='<div class="ai-chart-card-head"><div><h4>'+esc(niceName(s.title))+'</h4><p>'+esc(s.subtitle)+'</p></div><button type="button" class="ai-chart-expand">⛶ Expand</button></div><div class="ai-chart-wrap"><canvas></canvas></div><div class="ai-chart-foot">'+esc(s.foot)+'</div>';grid.appendChild(card);var canvas=card.querySelector('canvas');if(window.Chart)charts[s.id]=new Chart(canvas.getContext('2d'),makeConfig(s));card.querySelector('.ai-chart-expand').addEventListener('click',function(){openExpand(s)});card.querySelector('.ai-chart-wrap').addEventListener('click',function(e){if(e.target.tagName==='CANVAS')openExpand(s)});});}
+function openExpand(s){var ov=$('aiChartOverlay'),cv=$('aiOverlayCanvas');if(!ov||!cv||!window.Chart)return;$('aiOverlayTitle').textContent=niceName(s.title);$('aiOverlaySub').textContent=s.subtitle;ov.classList.add('open');ov.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';if(overlayChart)overlayChart.destroy();overlayChart=new Chart(cv.getContext('2d'),makeConfig(s))}
+function closeExpand(){var ov=$('aiChartOverlay');if(!ov)return;ov.classList.remove('open');ov.setAttribute('aria-hidden','true');if(overlayChart){overlayChart.destroy();overlayChart=null}document.body.style.overflow=''}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function watch(){var a=app(),sig=a?[a.__dataVersion||0,a.fileName||'',(a.rows||[]).length,(a.columns||[]).length,a.activeSheet||''].join('|'):'';if(sig&&sig!==lastSig){lastSig=sig;setTimeout(render,220);setTimeout(function(){try{var host=$('pageScroll'),target=$('aiDashboardCharts');if(host&&target){var hr=host.getBoundingClientRect(),tr=target.getBoundingClientRect();host.scrollTo({top:Math.max(0,host.scrollTop+tr.top-hr.top-12),behavior:'smooth'})}}catch(_){scrollToResults&&scrollToResults()}},520)}}
+function boot(){var ov=$('aiChartOverlay');if(ov){$('aiOverlayClose').onclick=closeExpand;ov.addEventListener('click',function(e){if(e.target===ov)closeExpand()});document.addEventListener('keydown',function(e){if(e.key==='Escape')closeExpand()})}watch();setInterval(watch,700)}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+window.__instantDashAIMultiChartsRefresh=render;
+})();
+</script>
+
+<div class="ai-chart-overlay" id="aiChartOverlay" aria-hidden="true"><div class="ai-chart-overlay-card"><div class="ai-chart-overlay-head"><div><h3 id="aiOverlayTitle">Chart</h3><p id="aiOverlaySub"></p></div><button type="button" class="ai-chart-overlay-close" id="aiOverlayClose">✕ Close</button></div><div class="ai-chart-overlay-wrap"><canvas id="aiOverlayCanvas"></canvas></div></div></div>
 
 <div class="chart-expand-overlay" id="smartChartExpand" aria-hidden="true"><div class="chart-expand-card" role="dialog" aria-modal="true" aria-label="Expanded chart"><div class="chart-expand-head"><div><h3 id="smartExpandTitle">Chart</h3><p id="smartExpandSubtitle"></p></div><button type="button" class="chart-expand-close" id="smartExpandClose">✕ Close</button></div><div class="chart-expand-canvas" id="smartExpandCanvas"></div><div class="smart-detail chart-expand-detail" id="smartExpandDetail"></div></div></div>
 
