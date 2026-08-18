@@ -1096,7 +1096,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 </style>
 
 
-<meta name="instantdash-build" content="v1.12.02-final-verified">
+<meta name="instantdash-build" content="v1.12.03-final-verified">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style></head>
 <body class="" style="overflow: hidden;">
@@ -1109,7 +1109,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.12.02</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.12.03</span>
   </div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -1283,7 +1283,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 <div class="section" id="smartChartsSection">
       <div class="section-head">
         <h2>Interactive Charts</h2>
-        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.12.02 FINAL</span><span class="hint" id="smartChartHint">Choose one of the 3–4 data views below; only the selected chart is displayed.</span>
+        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.12.03 FINAL</span><span class="hint" id="smartChartHint">Choose one of the 3–4 data views below; only the selected chart is displayed.</span>
       </div>
       <div class="smart-chart-shell" id="smartChartsRoot">
         <!-- v1.11.14 — chart intelligence: max 4 data types, latest-period composition, touch-safe details -->
@@ -7082,7 +7082,7 @@ function boot(){if(!$('smartDataVerification')){var h=$('smartChartHint');if(h){
 (function(){
 'use strict';
 /*
- InstantDash v1.12.02 — Final Verified Universal AI Chart Engine
+ InstantDash v1.12.03 — Final Verified Universal AI Chart Engine
  - All genuine numeric measures are available in every parameter dropdown.
  - Semantic AI-style analysis recommends, but never restricts, choices.
  - Handles ordinary tabular data and statement-style financial sheets.
@@ -7242,15 +7242,37 @@ function inferCategories(ms,d){
  }).filter(Boolean).slice(0,8);
 }
 function model(){
- var d=dataset(), names=namesFromRows(d.rows), ms=names.map(function(n){
+ var d=dataset();
+ /* v1.12.03 — parameter discovery must be based on the COMPLETE uploaded
+    dataset, not on the currently filtered rows and not only on columns that
+    happen to have a 70% numeric ratio. Every genuine numeric measure in the
+    uploaded file must be available in every parameter dropdown. */
+ var discoveryRows=(d.all&&d.all.length)?d.all:(d.rows||[]);
+ var names=namesFromRows(discoveryRows);
+ var ms=names.map(function(n){
    if(isId(n))return null;
-   var vals=valueRows(d.rows,n),ratio=vals.length/Math.max(1,d.rows.length),c=meta(d.cols,n),time=isTime(n,c);
+   var c=meta(d.cols,n), time=isTime(n,c);
    if(time)return null;
-   return (vals.length&&(ratio>=.70||c.role==='measure'||c.role==='numeric'))?{name:n,type:'number'}:null;
+   var vals=valueRows(discoveryRows,n);
+   var ratio=vals.length/Math.max(1,discoveryRows.length);
+   var looksNumeric=(c.type==='number'||c.role==='measure'||c.role==='numeric'||ratio>=.20);
+   return (vals.length&&looksNumeric)?{name:n,type:'number'}:null;
  }).filter(Boolean);
- var ds=dimensions(d), cats=inferCategories(ms,d), ai=recommendations(ms,ds,d);
+ /* Absolute fallback: if profiling supplied an unusual type/role, inspect
+    the raw uploaded values directly. This prevents the second-file case from
+    producing an empty parameter list. */
+ if(!ms.length){
+   ms=names.map(function(n){
+     if(isId(n)||isTime(n,meta(d.cols,n)))return null;
+     var vals=valueRows(discoveryRows,n);
+     return vals.length?{name:n,type:'number'}:null;
+   }).filter(Boolean);
+ }
+ var ds=dimensions({rows:discoveryRows,all:discoveryRows,cols:d.cols});
+ var cats=inferCategories(ms,{rows:discoveryRows,all:discoveryRows,cols:d.cols});
+ var ai=recommendations(ms,ds,{rows:discoveryRows,all:discoveryRows,cols:d.cols});
  var group=ds.find(function(x){return x.kind==='time'})||ds[0];
- return {rows:d.rows,all:d.all,measures:ms,dimensions:ds,categories:cats,ai:ai,defaultGroup:group?group.name:'',statement:!!d.statement,statementLabel:d.statementLabel||'',usingDemo:false,hasApp:!!app()};
+ return {rows:d.rows,all:discoveryRows,measures:ms,dimensions:ds,categories:cats,ai:ai,defaultGroup:group?group.name:'',statement:!!d.statement,statementLabel:d.statementLabel||'',usingDemo:false,hasApp:!!app()};
 }
 function demo(){
  var rows=[{Month:'Jan 2026',Revenue:4800,Expenses:4140,PAT:660,Orders:1200},{Month:'Feb 2026',Revenue:5200,Expenses:4250,PAT:950,Orders:1320},{Month:'Mar 2026',Revenue:5600,Expenses:4800,PAT:800,Orders:1490}];
@@ -7376,7 +7398,12 @@ bind();
 var last='', timer=0;
 function watch(){
  var a=app(),rows=a&&Array.isArray(a.rows)?a.rows.length:0,filtered=a&&Array.isArray(a.filtered)?a.filtered.length:0,cols=a&&Array.isArray(a.columns)?a.columns.length:0,sheet=a&&a.activeSheet||'',file=a&&a.fileName||'',ver=a&&a.__dataVersion||0,keys=a&&a.rows&&a.rows[0]?Object.keys(a.rows[0]).join('¦'):'',sample=a&&a.rows&&a.rows[0]?Object.keys(a.rows[0]).slice(0,12).map(function(k){return String(a.rows[0][k])}).join('¦'):'',sig=[ver,file,rows,filtered,cols,sheet,keys,sample].join('|');
- if(sig!==last){last=sig;clearTimeout(timer);timer=setTimeout(refresh,30)}
+ if(sig!==last){
+   last=sig;
+   state={model:null,type:'bar',groupBy:'',params:[],selected:0};
+   clearTimeout(timer);
+   timer=setTimeout(refresh,30);
+ }
 }
 setTimeout(refresh,80);[200,500,1000,2000,4000,7000].forEach(function(ms){setTimeout(watch,ms)});
 setInterval(watch,700);
