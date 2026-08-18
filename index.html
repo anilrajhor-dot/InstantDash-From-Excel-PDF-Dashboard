@@ -1132,7 +1132,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 </style>
 
 
-<meta name="instantdash-build" content="v1.13.17-management-quality-separation">
+<meta name="instantdash-build" content="v1.13.18-chart-parameter-recovery">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -1177,7 +1177,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.13.17</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.13.18</span>
   </div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -1376,7 +1376,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 <div class="section" id="smartChartsSection">
       <div class="section-head">
         <h2>Interactive Charts</h2>
-        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.13.17 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
+        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.13.18 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
       </div>
       <section class="ai-dashboard-charts" id="aiDashboardCharts" aria-label="AI generated charts">
         <div class="ai-dashboard-head">
@@ -1577,9 +1577,9 @@ Charts on screen: Row count by Central Bank of India – Q1FY27.</pre></div>
    CONFIG — the knobs worth turning. See "How to Customize" in the notes.
    --------------------------------------------------------------------- */
 const CONFIG = {
-  BUILD_VERSION: '1.13.15',
+  BUILD_VERSION: '1.13.18',
   APP_NAME: 'InstantDash',
-  VERSION: 'v1.13.17',
+  VERSION: 'v1.13.18',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -8355,20 +8355,32 @@ function fields(){
    if(isTime(n)){ if(uniq>=2&&uniq<=100)dims.push({name:n,kind:'time',unique:uniq}); return; }
    var idField=isId(n)||c.role==='identifier';
    var categoricalName=isDimensionName(n);
-   /* Host profile wins for genuine numeric measures, but identifiers and
-      explicit dimensions remain excluded from quantitative parameters. */
+   /* v1.13.18 — the host parser's numeric type is authoritative for chart
+      selection. Do not let semantic name heuristics such as 'population',
+      'branch' or 'name' suppress a genuinely numeric column. Only explicit
+      identifier-like fields remain excluded from quantitative measures. */
    if(idField){
      if(uniq>=2&&uniq<=100)dims.push({name:n,kind:'cat',unique:uniq,identifier:true});
-   } else if(hostMeasure || (hostNumber && !categoricalName)){
+   } else if(hostNumber || hostMeasure || ratio>=.20){
      if(!measureSeen[n]){measureSeen[n]=1;measures.push({name:n,agg:'sum',identifier:false,ratio:ratio,numeric:nums.length,type:'number'});}
    } else if(categoricalName && uniq>=2 && uniq<=100){
      dims.push({name:n,kind:'cat',unique:uniq});
-   } else if(ratio>=.20){
-     if(!measureSeen[n]){measureSeen[n]=1;measures.push({name:n,agg:'sum',identifier:false,ratio:ratio,numeric:nums.length,type:'number'});}
    } else if(uniq>=2&&uniq<=100){
      dims.push({name:n,kind:'cat',unique:uniq});
    }
  });
+ /* v1.13.18 — final host-profile rescue. The automatic dashboard can only
+    draw a numeric chart if APP.columns knows a numeric field, so that profile
+    is the most reliable source when row-level coercion is temporarily sparse. */
+ if(!measures.length && a && Array.isArray(a.columns)){
+   a.columns.forEach(function(c){
+     if(!c||!c.name||isTime(c.name)||isId(c.name))return;
+     var t=String(c.type||'').toLowerCase();
+     if(t==='number'||t==='numeric'||c.role==='measure'){
+       if(!measureSeen[c.name]){measureSeen[c.name]=1;measures.push({name:c.name,agg:'sum',identifier:false,ratio:Number(c.numericRatio)||1,numeric:Number(c.unique)||rs.length,type:'number'});}
+     }
+   });
+ }
  return {rs:rs,measures:measures,dims:dims};
 }
 function ensureOptions(){
@@ -8377,8 +8389,8 @@ function ensureOptions(){
    var a=app(),rs=a&&Array.isArray(a.filtered)&&a.filtered.length?a.filtered:(a&&Array.isArray(a.rows)?a.rows:[]),cols=a&&Array.isArray(a.columns)?a.columns:[];
    var direct=[];
    cols.forEach(function(c){
-     if(!c||!c.name||isTime(c.name)||isId(c.name)||c.role==='identifier')return;
-     if(c.role==='measure'||String(c.type||'').toLowerCase()==='number'||String(c.type||'').toLowerCase()==='numeric')direct.push({name:c.name,agg:'sum',identifier:false,ratio:1,numeric:rs.length,type:'number'});
+     if(!c||!c.name||isTime(c.name)||isId(c.name))return;
+     if(String(c.type||'').toLowerCase()==='number'||String(c.type||'').toLowerCase()==='numeric'||c.role==='measure')direct.push({name:c.name,agg:'sum',identifier:false,ratio:Number(c.numericRatio)||1,numeric:rs.length,type:'number'});
    });
    if(direct.length){f.measures=direct;f.rs=rs;}
  }
