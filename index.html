@@ -1120,7 +1120,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 </style>
 
 
-<meta name="instantdash-build" content="v1.13.06-stable-chart-fix">
+<meta name="instantdash-build" content="v1.13.07-stable-chart-fix">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -1165,7 +1165,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.13.06</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.13.07</span>
   </div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -1364,7 +1364,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 <div class="section" id="smartChartsSection">
       <div class="section-head">
         <h2>Interactive Charts</h2>
-        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.13.06 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
+        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.13.07 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
       </div>
       <section class="ai-dashboard-charts" id="aiDashboardCharts" aria-label="AI generated charts">
         <div class="ai-dashboard-head">
@@ -7497,8 +7497,12 @@ function parameterProfile(name,drows,cols){
  return {name:name,type:ratio>=.20?'number':(c.type||'text'),kind:kind,agg:agg,ratio:ratio,unique:unique,numeric:nums.length,display:niceName(name)};
 }
 function appColumnCatalogue(d){
- var a=app(), rows=(d&&d.all&&d.all.length)?d.all:(d&&d.rows?d.rows:[]);
+ var a=app();
  var cols=(a&&Array.isArray(a.columns))?a.columns:[];
+ /* v1.13.07: use the same live row view as the automatic chart engine.
+    Previously this catalogue preferred d.all, which could be stale/raw while
+    the automatic charts were using APP.filtered. */
+ var rows=(a&&Array.isArray(a.filtered)&&a.filtered.length)?a.filtered:(d&&d.rows?d.rows:[]);
  var out=[];
  cols.forEach(function(c){
    if(!c||!c.name)return;
@@ -7592,7 +7596,7 @@ function model(){
  });
  ms=uniqMs;
 
- /* v1.13.06 — reconcile the manual catalogue with the same live columns
+ /* v1.13.07 — reconcile the manual catalogue with the same live columns
     already used by the automatic multi-chart engine. If automatic charts can
     render a numeric field, that field must be selectable manually as well. */
  var liveCols=appColumnCatalogue(d);
@@ -7729,7 +7733,7 @@ function bind(){
      if(e.value){state.params=state.params.map(function(p,i){return i!==idx&&p===e.value?'':p});}
    }
    state.selected=0;sync();draw();
-   /* v1.13.06 — keep the independent parameter renderer synchronised.
+   /* v1.13.07 — keep the independent parameter renderer synchronised.
       This is deliberately called after the normal renderer so manual
       selections always produce a chart even if the AI renderer has no model. */
    try{ if(window.__instantDashParameterFallback && typeof window.__instantDashParameterFallback.redraw==='function') window.__instantDashParameterFallback.redraw(); }catch(_){}
@@ -7980,7 +7984,7 @@ window.__instantDashAIMultiChartsRefresh=render;
     var a=$('app'), empty=$('emptyState'), file=$('fileName');
     if(a&&!a.hidden){
       resultStrip();
-      /* v1.13.06 — NEVER use app height as a navigation trigger.
+      /* v1.13.07 — NEVER use app height as a navigation trigger.
          Chart rendering changes page height repeatedly and the old watcher
          therefore kept scrolling the iPhone viewport up/down. */
       var live=window.__INSTANTDASH_APP__||{};
@@ -8140,7 +8144,7 @@ window.__instantDashAIMultiChartsRefresh=render;
 <script id="instantdash-v11304-parameter-engine-fallback">
 (function(){
 'use strict';
-/* v1.13.06 FINAL FALLBACK
+/* v1.13.07 FINAL FALLBACK
    Purpose: guarantee that uploaded columns remain selectable even if the
    semantic/AI layer reports zero parameters. This module reads APP.rows
    directly and is deliberately independent of AI classification.
@@ -8155,7 +8159,7 @@ function num(v){
 function isId(n){return /(^|[^a-z])(id|code|account|acct|serial|sno|sr\s*no|pan|mobile|phone|pincode|ifsc|micr|customer\s*(id|no|number)|branch\s*(code|id|no|number))([^a-z]|$)/i.test(String(n||''))}
 function isTime(n){return /(^|[^a-z])(date|month|period|quarter|year|fy|week)([^a-z]|$)/i.test(String(n||''))}
 function fields(){
- var a=app(),rs=a&&Array.isArray(a.rows)?a.rows:[]; if(!rs.length)return {rs:[],measures:[],dims:[]};
+ var a=app(),rs=a&&Array.isArray(a.filtered)&&a.filtered.length?a.filtered:(a&&Array.isArray(a.rows)?a.rows:[]); if(!rs.length)return {rs:[],measures:[],dims:[]};
  var seen={},names=[];rs.forEach(function(r){if(!r||typeof r!=='object'||Array.isArray(r))return;Object.keys(r).forEach(function(k){if(k&&!seen[k]){seen[k]=1;names.push(k)}})});
  var measures=[],dims=[];
  names.forEach(function(n){
@@ -8261,6 +8265,9 @@ setTimeout(bootFallback,120);
 setTimeout(bootFallback,600);
 setTimeout(bootFallback,1400);
 setTimeout(bootFallback,1200);
+/* v1.13.07: reconcile after the host app/filter settles. This prevents the
+   primary smart-chart renderer from briefly clearing a valid manual catalogue. */
+[2200,3500,5500].forEach(function(ms){setTimeout(function(){ensureOptions();redraw()},ms)});
 var observer=window.MutationObserver?new MutationObserver(function(){bindFallback();}):null;
 if(observer && document.body) observer.observe(document.body,{childList:true,subtree:true});
 window.__instantDashParameterFallback={fields:fields,refresh:tick,redraw:redraw,bind:bindFallback};
@@ -8268,7 +8275,7 @@ window.__instantDashParameterFallback={fields:fields,refresh:tick,redraw:redraw,
 </script>
 
 <style id="instantdash-v11306-stability">
-/* v1.13.06 — stable iPhone chart interaction */
+/* v1.13.07 — stable iPhone chart interaction */
 #smartChartsSection,#smartChartCanvas,#smartChartCanvas svg{scroll-margin-top:12px;}
 #smartChartCanvas{min-height:360px;overflow:hidden;position:relative;}
 #smartChartCanvas select{touch-action:manipulation;}
