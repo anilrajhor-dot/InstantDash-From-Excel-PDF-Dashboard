@@ -1120,7 +1120,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 </style>
 
 
-<meta name="instantdash-build" content="v1.13.02-ai-multi-chart-dashboard">
+<meta name="instantdash-build" content="v1.13.04-parameter-engine-fallback">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -1165,7 +1165,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.13.02</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.13.04</span>
   </div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -1364,7 +1364,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 <div class="section" id="smartChartsSection">
       <div class="section-head">
         <h2>Interactive Charts</h2>
-        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.13.02 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
+        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.13.04 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
       </div>
       <section class="ai-dashboard-charts" id="aiDashboardCharts" aria-label="AI generated charts">
         <div class="ai-dashboard-head">
@@ -7262,7 +7262,7 @@ function boot(){if(!$('smartDataVerification')){var h=$('smartChartHint');if(h){
 (function(){
 'use strict';
 /*
- InstantDash v1.13.02 — AI Multi-Chart Intelligence
+ InstantDash v1.13.03 — AI Multi-Chart Intelligence
  - All genuine numeric measures are available in every parameter dropdown.
  - Semantic AI-style analysis recommends, but never restricts, choices.
  - Handles ordinary tabular data and statement-style financial sheets.
@@ -7291,8 +7291,13 @@ function norm(v){return String(v==null?'':v).toLowerCase().replace(/[^a-z0-9]+/g
 function app(){return window.__INSTANTDASH_APP__||window.APP||null}
 function rawData(){
  var a=app();
- return {rows:a&&Array.isArray(a.filtered)&&a.filtered.length?a.filtered:(a&&Array.isArray(a.rows)?a.rows:[]),
-         all:a&&Array.isArray(a.rows)?a.rows:[], cols:a&&Array.isArray(a.columns)?a.columns:[],
+ var filtered=a&&Array.isArray(a.filtered)&&a.filtered.length?a.filtered:[];
+ var rows=a&&Array.isArray(a.rows)?a.rows:[];
+ /* Prefer the live filtered view only when it actually contains row objects.
+    Otherwise fall back immediately to the authoritative APP.rows. */
+ var usableFiltered=filtered.length && filtered.some(function(r){return r&&typeof r==='object'&&!Array.isArray(r)});
+ return {rows:usableFiltered?filtered:rows, all:rows,
+         cols:a&&Array.isArray(a.columns)?a.columns:[],
          sheet:a&&a.activeSheet?a.activeSheet:''};
 }
 function isId(n){
@@ -7368,7 +7373,7 @@ function dimensions(d){
  return out;
 }
 /* ------------------------------------------------------------------
-   v1.13.02 — AI CHART INTELLIGENCE
+   v1.13.03 — AI CHART INTELLIGENCE
    Local, deterministic semantic reasoning. It does not send the file
    anywhere. It scores field names, values, cardinality, time structure,
    scale and relationships, then selects a chart that fits the evidence.
@@ -7491,11 +7496,47 @@ function parameterProfile(name,drows,cols){
  } else {kind='other';agg='none'}
  return {name:name,type:ratio>=.20?'number':(c.type||'text'),kind:kind,agg:agg,ratio:ratio,unique:unique,numeric:nums.length,display:niceName(name)};
 }
+function appColumnCatalogue(d){
+ var a=app(), rows=(d&&d.all&&d.all.length)?d.all:(d&&d.rows?d.rows:[]);
+ var cols=(a&&Array.isArray(a.columns))?a.columns:[];
+ var out=[];
+ cols.forEach(function(c){
+   if(!c||!c.name)return;
+   var name=String(c.name);
+   var vals=rows.map(function(r){return r? r[name]:null}).filter(function(v){return v!==null&&v!==undefined&&String(v).trim()!==''});
+   var nums=vals.map(num).filter(isFinite);
+   var ratio=nums.length/Math.max(1,vals.length);
+   var type=String(c.type||'').toLowerCase();
+   /* The core parser already knows the column type. Trust that metadata when
+      row values are unavailable or have been filtered, while still checking
+      the actual values when they are present. */
+   var isNumeric=(type==='number'||type==='numeric'||ratio>=.20);
+   var time=isTime(name,c);
+   if(time)return;
+   var id=isId(name) || c.role==='identifier';
+   var kind=id?'identifier':(c.role==='dimension'||c.role==='highdim'?'category':'amount');
+   var agg=id?'count':'sum';
+   var sem=semantic(name,{rows:rows});
+   if(!id && isNumeric && sem && sem.kind)kind=sem.kind;
+   out.push({
+     name:name,
+     type:isNumeric?'number':(c.type||'text'),
+     kind:kind,
+     agg:agg,
+     ratio:Math.max(ratio,Number(c.numericRatio)||0),
+     unique:Number(c.unique)||new Set(vals.map(String)).size,
+     numeric:nums.length||Number(c.unique)||0,
+     display:niceName(name)
+   });
+ });
+ return out;
+}
 function model(){
  var d=dataset();
- /* v1.13.02 — COMPLETE parameter catalogue. Numeric identifiers such as
-    account numbers must remain selectable, but AI must never sum them.
-    Identifier/category fields are exposed as Count/Unique Count candidates. */
+ /* v1.13.03 — robust catalogue:
+    use both row-value discovery AND the application's authoritative column
+    profiles. This fixes cases where the host parser has classified numeric
+    columns correctly but the secondary AI layer cannot see enough raw values. */
  var discoveryRows=(d.all&&d.all.length)?d.all:(d.rows||[]);
  var names=namesFromRows(discoveryRows);
  var profiles=names.map(function(n){return parameterProfile(n,discoveryRows,d.cols)});
@@ -7505,9 +7546,16 @@ function model(){
      (m.numeric>0 && m.ratio>=.20)
    );
  });
- // Safety net for real uploaded sheets: if the host parser has not supplied
- // column metadata, discover numeric fields directly from the row values.
- // This prevents the manual dropdowns from becoming empty on a second file.
+
+ /* Merge authoritative APP column metadata. Do NOT require row-level numeric
+    evidence here; APP.columns is populated immediately after Excel parsing and
+    remains available even when a filtered/derived view has sparse values. */
+ var appCat=appColumnCatalogue(d);
+ appCat.forEach(function(m){
+   if(!ms.some(function(x){return x.name===m.name})) ms.push(m);
+ });
+
+ /* Final value-level safety net for plain objects with no column metadata. */
  if(!ms.length){
    ms=names.map(function(n){
      var vals=discoveryRows.map(function(r){return r[n]}).filter(function(v){return v!==null&&v!==undefined&&String(v).trim()!==''});
@@ -7517,14 +7565,54 @@ function model(){
      return {name:n,type:'number',kind:kind,agg:agg,ratio:ratio,unique:uniq,numeric:nums.length,display:niceName(n)};
    }).filter(Boolean);
  }
- /* Never use identifier/category fields as numeric AI measures. They remain
-    in every dropdown and are rendered with Count rather than SUM. */
+
+ /* If the workbook parser has supplied numeric column profiles but rows are
+    temporarily inaccessible, still expose those fields for manual selection.
+    The chart engine will use APP.rows as soon as the data is available. */
+ if(!ms.length){
+   var a=app();
+   if(a&&Array.isArray(a.columns)){
+     ms=a.columns.filter(function(c){
+       return c && !isTime(c.name,c) &&
+         (c.type==='number' || c.numericRatio>=.20 || c.role==='identifier');
+     }).map(function(c){
+       var id=isId(c.name)||c.role==='identifier';
+       return {name:c.name,type:'number',kind:id?'identifier':'measure',agg:id?'count':'sum',
+               ratio:Number(c.numericRatio)||1,unique:Number(c.unique)||0,numeric:Number(c.unique)||0,
+               display:niceName(c.name)};
+     });
+   }
+ }
+
+ /* Deduplicate while preserving the strongest classification. */
+ var uniqMs=[],seenMs={};
+ ms.forEach(function(m){
+   if(!m||!m.name||seenMs[m.name])return;
+   seenMs[m.name]=1;uniqMs.push(m);
+ });
+ ms=uniqMs;
+
  var aiMeasures=ms.filter(function(m){return m.kind!=='identifier'&&m.kind!=='category'});
  var ds=dimensions({rows:discoveryRows,all:discoveryRows,cols:d.cols});
+
+ /* If row-based dimensions are unavailable, use APP column roles. */
+ if(!ds.length){
+   var a2=app();
+   if(a2&&Array.isArray(a2.columns)){
+     ds=a2.columns.filter(function(c){
+       return c && (c.role==='dimension'||c.role==='highdim'||c.role==='time') &&
+              !isTime(c.name,c) ? true : (c&&c.role==='time');
+     }).map(function(c){
+       return {name:c.name,kind:c.role==='time'?'time':'cat',unique:Number(c.unique)||0,score:c.role==='time'?140:60};
+     });
+   }
+ }
  var cats=inferCategories(aiMeasures,{rows:discoveryRows,all:discoveryRows,cols:d.cols});
  var ai=recommendations(aiMeasures,ds,{rows:discoveryRows,all:discoveryRows,cols:d.cols});
  var group=ds.find(function(x){return x.kind==='time'})||ds[0];
- return {rows:d.rows,all:discoveryRows,measures:ms,aiMeasures:aiMeasures,dimensions:ds,categories:cats,ai:ai,defaultGroup:group?group.name:'',statement:!!d.statement,statementLabel:d.statementLabel||'',usingDemo:false,hasApp:!!app()};
+ return {rows:d.rows,all:discoveryRows,measures:ms,aiMeasures:aiMeasures,dimensions:ds,categories:cats,ai:ai,
+         defaultGroup:group?group.name:'',statement:!!d.statement,statementLabel:d.statementLabel||'',
+         usingDemo:false,hasApp:!!app()};
 }
 function demo(){
  var rows=[{Month:'Jan 2026',Revenue:4800,Expenses:4140,PAT:660,Orders:1200},{Month:'Feb 2026',Revenue:5200,Expenses:4250,PAT:950,Orders:1320},{Month:'Mar 2026',Revenue:5600,Expenses:4800,PAT:800,Orders:1490}];
@@ -7555,6 +7643,7 @@ function sync(){
  var h=$('smartChartHint');
  if(h)h.textContent=(state.model.usingDemo?'DEMO DATA — upload a file to replace it':'LIVE DATA — '+state.model.rows.length.toLocaleString()+' rows · '+o.length+' parameters available in every dropdown')+(state.model.statement?' · statement structure recognised':'')+(state.groupBy?' · grouped by '+state.groupBy:'')+' · AI mapping active';
  var v=$('smartDataVerification');if(v)v.innerHTML='<b>'+(state.model.usingDemo?'Preview data':'Verified live data')+'</b><span>'+o.length+' parameters · '+state.model.aiMeasures.length+' numeric measures · '+state.model.dimensions.length+' grouping fields'+(state.model.statement?' · statement layout recognised':'')+'</span>';
+ var no=$('smartNoParameters');if(no)no.hidden=!!o.length;
  renderAI();renderTypes();
 }
 function renderAI(){
@@ -8025,6 +8114,112 @@ window.__instantDashAIMultiChartsRefresh=render;
   document.addEventListener('click',function(e){
     if(e.target && e.target.id==='aiExecutiveRefresh')render()
   });
+})();
+</script>
+
+
+<script id="instantdash-v11304-parameter-engine-fallback">
+(function(){
+'use strict';
+/* v1.13.04 FINAL FALLBACK
+   Purpose: guarantee that uploaded columns remain selectable even if the
+   semantic/AI layer reports zero parameters. This module reads APP.rows
+   directly and is deliberately independent of AI classification.
+*/
+var $=function(id){return document.getElementById(id)};
+function app(){return window.__INSTANTDASH_APP__||window.APP||null}
+function num(v){
+  if(typeof v==='number'&&isFinite(v))return v;
+  if(typeof v==='string'){var s=v.replace(/[₹$€£¥₩₽,%]/g,'').replace(/,/g,'').trim();if(!s)return NaN;var n=Number(s);return isFinite(n)?n:NaN}
+  return NaN
+}
+function isId(n){return /(^|[^a-z])(id|code|account|acct|serial|sno|sr\s*no|pan|mobile|phone|pincode|ifsc|micr|customer\s*(id|no|number)|branch\s*(code|id|no|number))([^a-z]|$)/i.test(String(n||''))}
+function isTime(n){return /(^|[^a-z])(date|month|period|quarter|year|fy|week)([^a-z]|$)/i.test(String(n||''))}
+function fields(){
+ var a=app(),rs=a&&Array.isArray(a.rows)?a.rows:[]; if(!rs.length)return {rs:[],measures:[],dims:[]};
+ var seen={},names=[];rs.forEach(function(r){if(!r||typeof r!=='object'||Array.isArray(r))return;Object.keys(r).forEach(function(k){if(k&&!seen[k]){seen[k]=1;names.push(k)}})});
+ var measures=[],dims=[];
+ names.forEach(function(n){
+   var vals=rs.map(function(r){return r[n]}).filter(function(v){return v!==null&&v!==undefined&&String(v).trim()!==''});
+   if(vals.length<1)return;
+   var nums=vals.map(num).filter(isFinite),ratio=nums.length/vals.length,uniq=new Set(vals.map(String)).size;
+   if(isTime(n)) { if(uniq>=2&&uniq<=100)dims.push({name:n,kind:'time',unique:uniq}); return; }
+   if(ratio>=.20){
+     measures.push({name:n,agg:isId(n)?'count':'sum',identifier:isId(n),ratio:ratio});
+   } else if(uniq>=2&&uniq<=100){
+     dims.push({name:n,kind:'cat',unique:uniq});
+   }
+ });
+ return {rs:rs,measures:measures,dims:dims};
+}
+function ensureOptions(){
+ var f=fields(); if(!f.measures.length)return false;
+ ['smartParam1','smartParam2','smartParam3'].forEach(function(id){
+   var s=$(id);if(!s)return;var current=s.value;
+   /* Only rebuild when the live dropdown has no real field options. */
+   var real=[].slice.call(s.options||[]).filter(function(o){return o.value});
+   if(real.length===f.measures.length)return;
+   s.innerHTML='<option value="">None</option>';
+   f.measures.forEach(function(m){var o=document.createElement('option');o.value=m.name;o.textContent=m.name+(m.identifier?' · Count':'');s.appendChild(o)});
+   if(current&&f.measures.some(function(m){return m.name===current}))s.value=current;
+ });
+ var g=$('smartGroupBy');
+ if(g){var cur=g.value, opts=[].slice.call(g.options||[]).filter(function(o){return o.value});
+   if(opts.length!==f.dims.length){g.innerHTML='<option value="">None</option>';f.dims.forEach(function(d){var o=document.createElement('option');o.value=d.name;o.textContent=d.name;g.appendChild(o)});if(cur&&f.dims.some(function(d){return d.name===cur}))g.value=cur;}
+ }
+ var hint=$('smartChartHint');
+ if(hint){var text=hint.textContent||'';if(/0 parameters available|0 chart parameters|No usable parameters/i.test(text))hint.textContent='LIVE DATA — '+f.rs.length.toLocaleString()+' rows · '+f.measures.length+' parameters available in every dropdown · fallback catalogue active'}
+ var v=$('smartDataVerification');if(v&&f.rs.length)v.innerHTML='<b>Verified live data</b><span>'+f.measures.length+' chart parameters · '+f.dims.length+' grouping fields · direct column catalogue</span>';
+ var no=$('smartNoParameters');if(no)no.hidden=true;
+ return true;
+}
+function vals(rs,n,agg){
+ if(agg==='count')return rs.filter(function(r){var v=r[n];return v!==null&&v!==undefined&&String(v).trim()!==''}).length;
+ return rs.map(function(r){return num(r[n])}).filter(isFinite).reduce(function(a,b){return a+b},0);
+}
+function grouped(f,group){
+ if(!group)return [{label:'Overall',rows:f.rs}];
+ var map=new Map();f.rs.forEach(function(r){var v=r[group];if(v===null||v===undefined||String(v).trim()==='')return;var k=String(v);if(!map.has(k))map.set(k,[]);map.get(k).push(r)});
+ var a=[...map.entries()];if(a.length>30)a=a.slice(0,30);return a.map(function(e){return {label:e[0],rows:e[1]}});
+}
+function esc(s){return String(s==null?'':s).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c]})}
+function fmt(v){return isFinite(v)?Number(v).toLocaleString('en-IN',{maximumFractionDigits:2}):'—'}
+function renderFallback(){
+ var f=fields(),wrap=$('smartChartCanvas');if(!f.measures.length||!wrap)return;
+ var p1=$('smartParam1')&&$('smartParam1').value,p2=$('smartParam2')&&$('smartParam2').value,p3=$('smartParam3')&&$('smartParam3').value;
+ var ps=[p1,p2,p3].filter(Boolean).filter(function(x,i,a){return a.indexOf(x)===i});
+ if(!ps.length){ps=f.measures.slice(0,1).map(function(m){return m.name});var s=$('smartParam1');if(s)s.value=ps[0];}
+ var type=($('smartChartType')&&$('smartChartType').value)||'bar',group=($('smartGroupBy')&&$('smartGroupBy').value)||'';
+ var gs=grouped(f,group),series=ps.map(function(p){var m=f.measures.find(function(x){return x.name===p})||{agg:'sum'};return {name:p,agg:m.agg,values:gs.map(function(g){return vals(g.rows,p,m.agg)})}});
+ var max=0;series.forEach(function(s){s.values.forEach(function(v){if(v>max)max=v})});max=max||1;
+ var colors=['#F5B301','#E2582B','#2E86AB','#3FB07A','#8E5BC9'];
+ var w=700,h=360,left=55,bottom=58,top=25,plotW=w-left-25,plotH=h-top-bottom;
+ var svg=['<svg viewBox="0 0 '+w+' '+h+'" width="100%" height="100%" style="touch-action:manipulation">'];
+ for(var gy=0;gy<=4;gy++){var yy=top+plotH-(plotH*gy/4),yv=max*gy/4;svg.push('<line x1="'+left+'" y1="'+yy+'" x2="'+(w-20)+'" y2="'+yy+'" stroke="#e5dccd" stroke-width="1"/><text x="'+(left-7)+'" y="'+(yy+4)+'" text-anchor="end" font-size="11" fill="#777">'+esc(fmt(yv))+'</text>')}
+ if(type==='line'||type==='area'){
+   series.forEach(function(s,si){var pts=s.values.map(function(v,i){var x=left+(i+.5)*plotW/Math.max(1,gs.length),y=top+plotH-(v/max)*plotH;return x+','+y}).join(' ');if(type==='area'){var first=left+.5*plotW/Math.max(1,gs.length),last=left+(gs.length-.5)*plotW/Math.max(1,gs.length);svg.push('<polygon points="'+first+','+(top+plotH)+' '+pts+' '+last+','+(top+plotH)+'" fill="'+colors[si%colors.length]+'" opacity=".14"/>')}svg.push('<polyline points="'+pts+'" fill="none" stroke="'+colors[si%colors.length]+'" stroke-width="4" stroke-linejoin="round"/>');s.values.forEach(function(v,i){var x=left+(i+.5)*plotW/Math.max(1,gs.length),y=top+plotH-(v/max)*plotH;svg.push('<circle cx="'+x+'" cy="'+y+'" r="7" fill="'+colors[si%colors.length]+'" data-fallback="'+si+':'+i+'"><title>'+esc(s.name)+': '+esc(fmt(v))+'</title></circle>')})});
+ }else if(type==='pie'||type==='donut'){
+   var s=series[0],total=s.values.reduce(function(a,b){return a+b},0)||1,cx=260,cy=175,r=105,inner=type==='donut'?55:0,start=-Math.PI/2;gs.forEach(function(g,i){var frac=s.values[i]/total,end=start+frac*Math.PI*2,x1=cx+r*Math.cos(start),y1=cy+r*Math.sin(start),x2=cx+r*Math.cos(end),y2=cy+r*Math.sin(end),large=frac>.5?1:0;if(inner){var ix2=cx+inner*Math.cos(end),iy2=cy+inner*Math.sin(end),ix1=cx+inner*Math.cos(start),iy1=cy+inner*Math.sin(start);svg.push('<path d="M '+cx+' '+cy+' L '+x1+' '+y1+' A '+r+' '+r+' 0 '+large+' 1 '+x2+' '+y2+' L '+ix2+' '+iy2+' A '+inner+' '+inner+' 0 '+large+' 0 '+ix1+' '+iy1+' Z" fill="'+colors[i%colors.length]+'" data-fallback="0:'+i+'"><title>'+esc(g.label)+': '+esc(fmt(s.values[i]))+'</title></path>')}else{svg.push('<path d="M '+cx+' '+cy+' L '+x1+' '+y1+' A '+r+' '+r+' 0 '+large+' 1 '+x2+' '+y2+' Z" fill="'+colors[i%colors.length]+'" data-fallback="0:'+i+'"><title>'+esc(g.label)+': '+esc(fmt(s.values[i]))+'</title></path>')}start=end});svg.push('<text x="260" y="180" text-anchor="middle" font-size="20" font-weight="700" fill="currentColor">'+esc(fmt(total))+'</text>');
+ }else{
+   var n=gs.length,slot=plotW/Math.max(1,n),bw=Math.max(8,(slot*.72)/series.length);gs.forEach(function(g,i){series.forEach(function(s,si){var v=s.values[i],bh=(v/max)*plotH,x=left+i*slot+slot*.14+si*bw,y=top+plotH-bh;svg.push('<rect x="'+x+'" y="'+y+'" width="'+Math.max(3,bw-3)+'" height="'+bh+'" rx="3" fill="'+colors[si%colors.length]+'" data-fallback="'+si+':'+i+'"><title>'+esc(s.name)+' · '+esc(g.label)+': '+esc(fmt(v))+'</title></rect>')});var lab=String(g.label);if(lab.length>13)lab=lab.slice(0,12)+'…';svg.push('<text x="'+(left+i*slot+slot/2)+'" y="'+(h-30)+'" text-anchor="middle" font-size="10" fill="#777">'+esc(lab)+'</text>')})
+ }
+ svg.push('</svg>');
+ var note='<div style="padding:10px 4px 0;color:#777;font-size:12px">Tap a bar, point or slice for the exact value. Each series is calculated from '+f.rs.length.toLocaleString()+' loaded rows.</div>';
+ wrap.innerHTML=svg.join('')+note;
+ wrap.querySelectorAll('[data-fallback]').forEach(function(el){el.addEventListener('click',function(){var q=el.getAttribute('data-fallback').split(':'),si=+q[0],i=+q[1],s=series[si],g=gs[i];var d=$('smartChartDetail');if(d)d.innerHTML='<b>'+esc(s.name)+'</b><div style="margin-top:4px">'+esc(g.label)+' · <strong>'+esc(fmt(s.values[i]))+'</strong></div>';});});
+}
+function tick(){
+ var f=fields();if(!f.measures.length)return;
+ var before=$('smartParam1')&&[].slice.call($('smartParam1').options||[]).filter(function(o){return o.value}).length;
+ ensureOptions();
+ var after=$('smartParam1')&&[].slice.call($('smartParam1').options||[]).filter(function(o){return o.value}).length;
+ if(after&&after!==before){var s=$('smartParam1');if(!s.value)s.value=f.measures[0].name;}
+ /* The existing renderer remains primary. Fallback only takes over when it
+    has no usable parameters, which is exactly the failure mode being fixed. */
+ if(after){var msg=$('smartNoParameters');if(msg)msg.hidden=true;var area=$('smartChartCanvas');if(area&&/Select at least one numeric parameter/i.test(area.textContent||''))renderFallback();}
+}
+setTimeout(tick,100);setInterval(tick,500);
+window.__instantDashParameterFallback={fields:fields,refresh:tick};
 })();
 </script>
 
