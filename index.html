@@ -1120,7 +1120,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 </style>
 
 
-<meta name="instantdash-build" content="v1.13.01-ai-multi-chart-dashboard">
+<meta name="instantdash-build" content="v1.13.02-ai-multi-chart-dashboard">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -1165,7 +1165,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.13.01</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.13.02</span>
   </div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -1364,7 +1364,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 <div class="section" id="smartChartsSection">
       <div class="section-head">
         <h2>Interactive Charts</h2>
-        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.13.01 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
+        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.13.02 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
       </div>
       <section class="ai-dashboard-charts" id="aiDashboardCharts" aria-label="AI generated charts">
         <div class="ai-dashboard-head">
@@ -7262,7 +7262,7 @@ function boot(){if(!$('smartDataVerification')){var h=$('smartChartHint');if(h){
 (function(){
 'use strict';
 /*
- InstantDash v1.13.01 — AI Multi-Chart Intelligence
+ InstantDash v1.13.02 — AI Multi-Chart Intelligence
  - All genuine numeric measures are available in every parameter dropdown.
  - Semantic AI-style analysis recommends, but never restricts, choices.
  - Handles ordinary tabular data and statement-style financial sheets.
@@ -7295,7 +7295,11 @@ function rawData(){
          all:a&&Array.isArray(a.rows)?a.rows:[], cols:a&&Array.isArray(a.columns)?a.columns:[],
          sheet:a&&a.activeSheet?a.activeSheet:''};
 }
-function isId(n){return /(^|[^a-z])(id|code|account|acct|sol\s*id|agent\s*id|serial|sno|sr\s*no)([^a-z]|$)/i.test(String(n||''))}
+function isId(n){
+ var x=String(n||'').trim();
+ var z=x.toLowerCase().replace(/[_\-\/\.]+/g,' ');
+ return /(^|\s)(id|code|account|acct|a\s*\/?c|ac\s*no|account\s*(no|number)|a\/c\s*(no|number)|settlement\s*ac|saving\s*ac|sr\s*no|s\.?no|serial|pan|mobile|phone|pincode|pin|ifsc|micr|customer\s*(id|no|number)|agent\s*(id|no|number)|branch\s*(code|id|no|number)|ds\s*code)(\s|$)/i.test(z)
+}
 function isTime(n,c){
  var x=String(n||'');
  return !!(c&&(((c.type||'').toLowerCase()==='date')||c.role==='time')) ||
@@ -7364,7 +7368,7 @@ function dimensions(d){
  return out;
 }
 /* ------------------------------------------------------------------
-   v1.13.01 — AI CHART INTELLIGENCE
+   v1.13.02 — AI CHART INTELLIGENCE
    Local, deterministic semantic reasoning. It does not send the file
    anywhere. It scores field names, values, cardinality, time structure,
    scale and relationships, then selects a chart that fits the evidence.
@@ -7471,7 +7475,7 @@ function inferCategories(ms,d){
  }).filter(Boolean).slice(0,8);
 }
 function parameterProfile(name,drows,cols){
- var c=meta(cols,name), vals=(drows||[]).map(function(r){return r[name]}).filter(function(v){return v!==null&&v!==undefined&&String(v)!==''});
+ var c=meta(cols,name), vals=(drows||[]).map(function(r){return r[name]}).filter(function(v){return v!==null&&v!==undefined&&String(v).trim()!==''});
  var nums=vals.map(num).filter(isFinite), ratio=nums.length/Math.max(1,vals.length), unique=new Set(vals.map(String)).size;
  var id=isId(name), time=isTime(name,c);
  var x=norm(name);
@@ -7479,23 +7483,40 @@ function parameterProfile(name,drows,cols){
  var agg='sum',kind='amount';
  if(time){kind='time';agg='none'}
  else if(id){kind='identifier';agg='count'}
- else if(categoricalName && ratio<.95){kind='category';agg='count'}
- else {
+ else if(categoricalName && (ratio<.95 || unique<Math.max(2,Math.floor(vals.length*.95)))){kind='category';agg='count'}
+ else if(ratio>=.20){
    var sem=semantic(name,{rows:drows});
-   kind=sem.kind;
+   kind=sem.kind||'amount';
    agg=(kind==='count'?'sum':'sum');
- }
+ } else {kind='other';agg='none'}
  return {name:name,type:ratio>=.20?'number':(c.type||'text'),kind:kind,agg:agg,ratio:ratio,unique:unique,numeric:nums.length,display:niceName(name)};
 }
 function model(){
  var d=dataset();
- /* v1.13.01 — COMPLETE parameter catalogue. Numeric identifiers such as
+ /* v1.13.02 — COMPLETE parameter catalogue. Numeric identifiers such as
     account numbers must remain selectable, but AI must never sum them.
     Identifier/category fields are exposed as Count/Unique Count candidates. */
  var discoveryRows=(d.all&&d.all.length)?d.all:(d.rows||[]);
  var names=namesFromRows(discoveryRows);
  var profiles=names.map(function(n){return parameterProfile(n,discoveryRows,d.cols)});
- var ms=profiles.filter(function(m){return !isTime(m.name,meta(d.cols,m.name)) && ((m.numeric>0&&m.ratio>=.20)||m.kind==='identifier'||m.kind==='category')});
+ var ms=profiles.filter(function(m){
+   return !isTime(m.name,meta(d.cols,m.name)) && (
+     m.kind==='identifier' || m.kind==='category' ||
+     (m.numeric>0 && m.ratio>=.20)
+   );
+ });
+ // Safety net for real uploaded sheets: if the host parser has not supplied
+ // column metadata, discover numeric fields directly from the row values.
+ // This prevents the manual dropdowns from becoming empty on a second file.
+ if(!ms.length){
+   ms=names.map(function(n){
+     var vals=discoveryRows.map(function(r){return r[n]}).filter(function(v){return v!==null&&v!==undefined&&String(v).trim()!==''});
+     var nums=vals.map(num).filter(isFinite), ratio=nums.length/Math.max(1,vals.length), uniq=new Set(vals.map(String)).size;
+     if(!vals.length || ratio<.20 || isTime(n,meta(d.cols,n))) return null;
+     var id=isId(n), kind=id?'identifier':'measure', agg=id?'count':'sum';
+     return {name:n,type:'number',kind:kind,agg:agg,ratio:ratio,unique:uniq,numeric:nums.length,display:niceName(n)};
+   }).filter(Boolean);
+ }
  /* Never use identifier/category fields as numeric AI measures. They remain
     in every dropdown and are rendered with Count rather than SUM. */
  var aiMeasures=ms.filter(function(m){return m.kind!=='identifier'&&m.kind!=='category'});
@@ -7524,7 +7545,7 @@ function choose(){
 function fill(id,values,current){
  var s=$(id);if(!s)return;s.innerHTML='';
  var none=document.createElement('option');none.value='';none.textContent='None';s.appendChild(none);
- values.forEach(function(v){var o=document.createElement('option');o.value=v;o.textContent=v;s.appendChild(o)});
+ values.forEach(function(v){var o=document.createElement('option');o.value=v;var m=state.model&&state.model.measures?state.model.measures.find(function(x){return x.name===v}):null;o.textContent=v+(m&&m.kind==='identifier'?'  ·  Count':'');s.appendChild(o)});
  s.value=current&&values.indexOf(current)>=0?current:'';
 }
 function sync(){
@@ -7539,7 +7560,7 @@ function sync(){
 function renderAI(){
  var sum=$('smartAiSummary'),box=$('smartAiRecommendations');if(!sum||!box)return;
  var rec=state.model.ai||[];
- sum.innerHTML='<span class="smart-ai-badge">'+(state.model.usingDemo?'AI PREVIEW':'AI ADVISOR')+'</span> '+(rec.length?'AI identified '+state.model.measures.length+' parameters ('+state.model.aiMeasures.length+' measures + identifiers/categories), '+state.model.dimensions.length+' grouping fields and selected the strongest chart logic from the uploaded data. All parameters remain available in every dropdown.':'AI found '+state.model.measures.length+' parameters. No single chart is sufficiently dominant, so the app keeps every parameter available for manual selection.');
+ sum.innerHTML='<span class="smart-ai-badge">'+(state.model.usingDemo?'AI PREVIEW':'AI ADVISOR')+'</span> '+(rec.length?'AI identified '+state.model.measures.length+' parameters ('+state.model.aiMeasures.length+' measures + identifiers/categories), '+state.model.dimensions.length+' grouping fields and selected the strongest chart logic from the uploaded data. All parameters remain available in every dropdown.':(state.model.measures.length?'AI identified '+state.model.measures.length+' usable parameters. No single chart is sufficiently dominant, so every detected parameter remains available for manual selection.':'No usable parameters were detected yet.'));
  box.innerHTML='';
  var idFields=state.model.measures.filter(function(m){return m.kind==='identifier'}).map(function(m){return m.name});
  if(idFields.length){var note=document.createElement('div');note.className='smart-ai-note';note.innerHTML='<b>Identifier protection:</b> '+esc(idFields.slice(0,8).join(', '))+(idFields.length>8?' and more':'')+' will be counted, not summed. This prevents misleading charts from account numbers, IDs and codes.';box.appendChild(note)}
