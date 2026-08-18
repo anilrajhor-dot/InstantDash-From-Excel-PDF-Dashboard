@@ -1131,7 +1131,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 </style>
 
 
-<meta name="instantdash-build" content="v1.13.14-identifier-protection">
+<meta name="instantdash-build" content="v1.13.15-unified-classification">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -1375,7 +1375,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 <div class="section" id="smartChartsSection">
       <div class="section-head">
         <h2>Interactive Charts</h2>
-        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.13.14 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
+        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.13.15 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
       </div>
       <section class="ai-dashboard-charts" id="aiDashboardCharts" aria-label="AI generated charts">
         <div class="ai-dashboard-head">
@@ -8321,7 +8321,16 @@ function num(v){
   if(typeof v==='string'){var s=v.replace(/[₹$€£¥₩₽,%]/g,'').replace(/,/g,'').trim();if(!s)return NaN;var n=Number(s);return isFinite(n)?n:NaN}
   return NaN
 }
-function isId(n){return /(^|[^a-z])(id|code|account|acct|serial|sno|sr\s*no|pan|mobile|phone|pincode|ifsc|micr|customer\s*(id|no|number)|branch\s*(code|id|no|number))([^a-z]|$)/i.test(String(n||''))}
+function isId(n){
+  var x=String(n||'').trim();
+  return /(^|[^a-z])(id|ids|uid|guid|uuid|code|codes|account|acct|a\/?c|a\/?c\s*no|account\s*no|account\s*number|saving\s*a\/?c|savings?\s*a\/?c|settlement\s*a\/?c|serial|sno|sr\s*no|sr\s*number|pan|aadhaar|aadhar|mobile|phone|pincode|pin\s*code|ifsc|micr|customer\s*(id|no|number)|branch\s*(code|id|no|number)|br\s*(code|id|no|number)|reference|ref\s*no|invoice|inv\s*no|voucher|cheque|check\s*no|transaction\s*(id|no|number))([^a-z]|$)/i.test(x)
+    || /\b(ac|a\/c)\s*(no|number)\b/i.test(x)
+    || /\b(sr|sl)\s*\.?\s*(no|number)\b/i.test(x);
+}
+function isDimensionName(n){
+  var x=String(n||'').trim();
+  return /(^|[^a-z])(name|names|district|state|branch|br|category|segment|type|class|group|channel|region|zone|mid|population|gender|status|product|scheme|department|office|location)([^a-z]|$)/i.test(x);
+}
 function isTime(n){return /(^|[^a-z])(date|month|period|quarter|year|fy|week)([^a-z]|$)/i.test(String(n||''))}
 function fields(){
  var a=app(),rs=a&&Array.isArray(a.filtered)&&a.filtered.length?a.filtered:(a&&Array.isArray(a.rows)?a.rows:[]); if(!rs.length)return {rs:[],measures:[],dims:[]};
@@ -8333,14 +8342,14 @@ function fields(){
    var nums=vals.map(num).filter(isFinite),ratio=nums.length/vals.length,uniq=new Set(vals.map(String)).size;
    if(isTime(n)) { if(uniq>=2&&uniq<=100)dims.push({name:n,kind:'time',unique:uniq}); return; }
    var idField=isId(n);
-   var categoricalName=/(^|[^a-z])(name|state|district|branch|category|segment|type|class|group|channel|region|zone|mid)([^a-z]|$)/i.test(String(n||''));
-   /* Account numbers, SR NO, customer IDs and similar fields are identifiers,
-      even when every value is numeric. Never use them as chart measures. */
+   var categoricalName=isDimensionName(n);
+   /* Classification priority is deliberate: identifier/dimension semantics
+      beat numeric coercion. This prevents fields such as Saving A/C No,
+      Settlement A/C No, SR No and Br Name from becoming measures merely
+      because their values happen to parse as numbers. */
    if(idField){
      if(uniq>=2&&uniq<=100) dims.push({name:n,kind:'cat',unique:uniq,identifier:true});
-   } else if(categoricalName && uniq>=2 && uniq<=36){
-     /* A low-cardinality field such as Mid (0 / Blank / P) is a dimension,
-        even when some values can be parsed as numbers. */
+   } else if(categoricalName && uniq>=2 && uniq<=100){
      dims.push({name:n,kind:'cat',unique:uniq});
    } else if(ratio>=.20){
      measures.push({name:n,agg:'sum',identifier:false,ratio:ratio});
@@ -8354,20 +8363,25 @@ function ensureOptions(){
  var f=fields(); if(!f.measures.length)return false;
  ['smartParam1','smartParam2','smartParam3'].forEach(function(id){
    var s=$(id);if(!s)return;var current=s.value;
-   /* Only rebuild when the live dropdown has no real field options. */
+   /* v1.13.15: the live classification is authoritative. Rebuild whenever
+      the dropdown contains a stale/non-measure field, not only when it is empty. */
    var real=[].slice.call(s.options||[]).filter(function(o){return o.value});
-   var same=real.length===f.measures.length && real.every(function(o,i){return f.measures[i]&&o.value===f.measures[i].name});
+   var allowed={};f.measures.forEach(function(m){allowed[m.name]=1});
+   var same=real.length===f.measures.length && real.every(function(o){return !!allowed[o.value]});
    if(same)return;
+   var currentValid=current && allowed[current] ? current : '';
    s.innerHTML='<option value="">None</option>';
    f.measures.forEach(function(m){var o=document.createElement('option');o.value=m.name;o.textContent=m.name+(m.identifier?' · Count':'');s.appendChild(o)});
-   if(current&&f.measures.some(function(m){return m.name===current}))s.value=current;
+   if(currentValid)s.value=currentValid;
  });
  var g=$('smartGroupBy');
  if(g){var cur=g.value, opts=[].slice.call(g.options||[]).filter(function(o){return o.value});
    if(opts.length!==f.dims.length){g.innerHTML='<option value="">None</option>';f.dims.forEach(function(d){var o=document.createElement('option');o.value=d.name;o.textContent=d.name;g.appendChild(o)});if(cur&&f.dims.some(function(d){return d.name===cur}))g.value=cur;}
  }
  var hint=$('smartChartHint');
- if(hint){var text=hint.textContent||'';if(/0 parameters available|0 chart parameters|No usable parameters/i.test(text))hint.textContent='LIVE DATA — '+f.rs.length.toLocaleString()+' rows · '+f.measures.length+' parameters available in every dropdown · fallback catalogue active'}
+ if(hint){var text=hint.textContent||'';if(/0 parameters available|0 chart parameters|No usable parameters/i.test(text))hint.textContent='LIVE DATA — '+f.rs.length.toLocaleString()+' rows · '+f.measures.length+' parameters available in every dropdown · unified live-column catalogue active'}
+ var ai=document.getElementById('smartAiSummary');
+ if(ai && f.measures.length){ai.innerHTML='<span class="smart-ai-badge">AI ADVISOR</span> AI found '+f.measures.length+' usable quantitative parameter'+(f.measures.length===1?'':'s')+' from the live loaded columns. Dimensions and identifiers are kept out of the measure list.';}
  var v=$('smartDataVerification');if(v&&f.rs.length)v.innerHTML='<b>Verified live data</b><span>'+f.measures.length+' chart parameters · '+f.dims.length+' grouping fields · direct column catalogue</span>';
  var no=$('smartNoParameters');if(no)no.hidden=true;
  return true;
