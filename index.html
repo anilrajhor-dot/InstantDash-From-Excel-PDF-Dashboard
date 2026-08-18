@@ -1120,7 +1120,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 </style>
 
 
-<meta name="instantdash-build" content="v1.13.00-ai-multi-chart-dashboard">
+<meta name="instantdash-build" content="v1.13.01-ai-multi-chart-dashboard">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -1165,7 +1165,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.13.00</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.13.01</span>
   </div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -1364,7 +1364,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 <div class="section" id="smartChartsSection">
       <div class="section-head">
         <h2>Interactive Charts</h2>
-        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.13.00 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
+        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.13.01 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
       </div>
       <section class="ai-dashboard-charts" id="aiDashboardCharts" aria-label="AI generated charts">
         <div class="ai-dashboard-head">
@@ -7262,7 +7262,7 @@ function boot(){if(!$('smartDataVerification')){var h=$('smartChartHint');if(h){
 (function(){
 'use strict';
 /*
- InstantDash v1.13.00 — AI Multi-Chart Intelligence
+ InstantDash v1.13.01 — AI Multi-Chart Intelligence
  - All genuine numeric measures are available in every parameter dropdown.
  - Semantic AI-style analysis recommends, but never restricts, choices.
  - Handles ordinary tabular data and statement-style financial sheets.
@@ -7364,7 +7364,7 @@ function dimensions(d){
  return out;
 }
 /* ------------------------------------------------------------------
-   v1.13.00 — AI CHART INTELLIGENCE
+   v1.13.01 — AI CHART INTELLIGENCE
    Local, deterministic semantic reasoning. It does not send the file
    anywhere. It scores field names, values, cardinality, time structure,
    scale and relationships, then selects a chart that fits the evidence.
@@ -7470,38 +7470,40 @@ function inferCategories(ms,d){
    return hits.length?{name:f.name,params:hits.slice(0,6).map(function(x){return x.name})}:null;
  }).filter(Boolean).slice(0,8);
 }
+function parameterProfile(name,drows,cols){
+ var c=meta(cols,name), vals=(drows||[]).map(function(r){return r[name]}).filter(function(v){return v!==null&&v!==undefined&&String(v)!==''});
+ var nums=vals.map(num).filter(isFinite), ratio=nums.length/Math.max(1,vals.length), unique=new Set(vals.map(String)).size;
+ var id=isId(name), time=isTime(name,c);
+ var x=norm(name);
+ var categoricalName=/(name|state|district|branch|category|segment|type|class|group|channel|region|zone|mid|code|account|acct|pan|mobile|phone|email|pincode|key)/.test(x);
+ var agg='sum',kind='amount';
+ if(time){kind='time';agg='none'}
+ else if(id){kind='identifier';agg='count'}
+ else if(categoricalName && ratio<.95){kind='category';agg='count'}
+ else {
+   var sem=semantic(name,{rows:drows});
+   kind=sem.kind;
+   agg=(kind==='count'?'sum':'sum');
+ }
+ return {name:name,type:ratio>=.20?'number':(c.type||'text'),kind:kind,agg:agg,ratio:ratio,unique:unique,numeric:nums.length,display:niceName(name)};
+}
 function model(){
  var d=dataset();
- /* v1.12.05 — parameter discovery must be based on the COMPLETE uploaded
-    dataset, not on the currently filtered rows and not only on columns that
-    happen to have a 70% numeric ratio. Every genuine numeric measure in the
-    uploaded file must be available in every parameter dropdown. */
+ /* v1.13.01 — COMPLETE parameter catalogue. Numeric identifiers such as
+    account numbers must remain selectable, but AI must never sum them.
+    Identifier/category fields are exposed as Count/Unique Count candidates. */
  var discoveryRows=(d.all&&d.all.length)?d.all:(d.rows||[]);
  var names=namesFromRows(discoveryRows);
- var ms=names.map(function(n){
-   if(isId(n))return null;
-   var c=meta(d.cols,n), time=isTime(n,c);
-   if(time)return null;
-   var vals=valueRows(discoveryRows,n);
-   var ratio=vals.length/Math.max(1,discoveryRows.length);
-   var looksNumeric=(c.type==='number'||c.role==='measure'||c.role==='numeric'||ratio>=.20);
-   return (vals.length&&looksNumeric)?{name:n,type:'number'}:null;
- }).filter(Boolean);
- /* Absolute fallback: if profiling supplied an unusual type/role, inspect
-    the raw uploaded values directly. This prevents the second-file case from
-    producing an empty parameter list. */
- if(!ms.length){
-   ms=names.map(function(n){
-     if(isId(n)||isTime(n,meta(d.cols,n)))return null;
-     var vals=valueRows(discoveryRows,n);
-     return vals.length?{name:n,type:'number'}:null;
-   }).filter(Boolean);
- }
+ var profiles=names.map(function(n){return parameterProfile(n,discoveryRows,d.cols)});
+ var ms=profiles.filter(function(m){return !isTime(m.name,meta(d.cols,m.name)) && ((m.numeric>0&&m.ratio>=.20)||m.kind==='identifier'||m.kind==='category')});
+ /* Never use identifier/category fields as numeric AI measures. They remain
+    in every dropdown and are rendered with Count rather than SUM. */
+ var aiMeasures=ms.filter(function(m){return m.kind!=='identifier'&&m.kind!=='category'});
  var ds=dimensions({rows:discoveryRows,all:discoveryRows,cols:d.cols});
- var cats=inferCategories(ms,{rows:discoveryRows,all:discoveryRows,cols:d.cols});
- var ai=recommendations(ms,ds,{rows:discoveryRows,all:discoveryRows,cols:d.cols});
+ var cats=inferCategories(aiMeasures,{rows:discoveryRows,all:discoveryRows,cols:d.cols});
+ var ai=recommendations(aiMeasures,ds,{rows:discoveryRows,all:discoveryRows,cols:d.cols});
  var group=ds.find(function(x){return x.kind==='time'})||ds[0];
- return {rows:d.rows,all:discoveryRows,measures:ms,dimensions:ds,categories:cats,ai:ai,defaultGroup:group?group.name:'',statement:!!d.statement,statementLabel:d.statementLabel||'',usingDemo:false,hasApp:!!app()};
+ return {rows:d.rows,all:discoveryRows,measures:ms,aiMeasures:aiMeasures,dimensions:ds,categories:cats,ai:ai,defaultGroup:group?group.name:'',statement:!!d.statement,statementLabel:d.statementLabel||'',usingDemo:false,hasApp:!!app()};
 }
 function demo(){
  var rows=[{Month:'Jan 2026',Revenue:4800,Expenses:4140,PAT:660,Orders:1200},{Month:'Feb 2026',Revenue:5200,Expenses:4250,PAT:950,Orders:1320},{Month:'Mar 2026',Revenue:5600,Expenses:4800,PAT:800,Orders:1490}];
@@ -7531,14 +7533,16 @@ function sync(){
  var t=$('smartChartType');if(t)t.value=state.type;
  var h=$('smartChartHint');
  if(h)h.textContent=(state.model.usingDemo?'DEMO DATA — upload a file to replace it':'LIVE DATA — '+state.model.rows.length.toLocaleString()+' rows · '+o.length+' parameters available in every dropdown')+(state.model.statement?' · statement structure recognised':'')+(state.groupBy?' · grouped by '+state.groupBy:'')+' · AI mapping active';
- var v=$('smartDataVerification');if(v)v.innerHTML='<b>'+(state.model.usingDemo?'Preview data':'Verified live data')+'</b><span>'+o.length+' chart parameters · '+state.model.dimensions.length+' grouping fields'+(state.model.statement?' · statement layout recognised':'')+'</span>';
+ var v=$('smartDataVerification');if(v)v.innerHTML='<b>'+(state.model.usingDemo?'Preview data':'Verified live data')+'</b><span>'+o.length+' parameters · '+state.model.aiMeasures.length+' numeric measures · '+state.model.dimensions.length+' grouping fields'+(state.model.statement?' · statement layout recognised':'')+'</span>';
  renderAI();renderTypes();
 }
 function renderAI(){
  var sum=$('smartAiSummary'),box=$('smartAiRecommendations');if(!sum||!box)return;
  var rec=state.model.ai||[];
- sum.innerHTML='<span class="smart-ai-badge">'+(state.model.usingDemo?'AI PREVIEW':'AI ADVISOR')+'</span> '+(rec.length?'AI identified '+state.model.measures.length+' numeric parameters, '+state.model.dimensions.length+' grouping fields and selected the strongest chart logic from the uploaded data. All parameters remain available in every dropdown.':'AI found '+state.model.measures.length+' numeric parameters. No single chart is sufficiently dominant, so the app keeps every parameter available for manual selection.');
+ sum.innerHTML='<span class="smart-ai-badge">'+(state.model.usingDemo?'AI PREVIEW':'AI ADVISOR')+'</span> '+(rec.length?'AI identified '+state.model.measures.length+' parameters ('+state.model.aiMeasures.length+' measures + identifiers/categories), '+state.model.dimensions.length+' grouping fields and selected the strongest chart logic from the uploaded data. All parameters remain available in every dropdown.':'AI found '+state.model.measures.length+' parameters. No single chart is sufficiently dominant, so the app keeps every parameter available for manual selection.');
  box.innerHTML='';
+ var idFields=state.model.measures.filter(function(m){return m.kind==='identifier'}).map(function(m){return m.name});
+ if(idFields.length){var note=document.createElement('div');note.className='smart-ai-note';note.innerHTML='<b>Identifier protection:</b> '+esc(idFields.slice(0,8).join(', '))+(idFields.length>8?' and more':'')+' will be counted, not summed. This prevents misleading charts from account numbers, IDs and codes.';box.appendChild(note)}
  rec.forEach(function(r){var b=document.createElement('button');b.type='button';b.className='smart-ai-rec';b.innerHTML='<strong>'+esc(r.title)+'</strong><span>'+esc(r.params.join(' · '))+' · '+esc(r.type==='hbar'?'Horizontal Bar':r.type.charAt(0).toUpperCase()+r.type.slice(1))+(r.group?' · by '+r.group:'')+'</span><span>'+esc(r.why)+'</span>';b.onclick=function(){state.params=r.params.slice(0,3);state.type=r.type;state.groupBy=r.group||'';state.selected=0;sync();draw()};box.appendChild(b)});
 }
 function renderTypes(){
@@ -7553,67 +7557,24 @@ function aggregate(){
  var rs=state.model.rows,g=state.groupBy;if(!g)return {labels:['Overall'],rows:[rs]};
  var map=new Map();rs.forEach(function(r){var v=r[g];if(v==null||v==='')return;var k=String(v);if(!map.has(k))map.set(k,[]);map.get(k).push(r)});
  var es=[...map.entries()],dim=state.model.dimensions.find(function(d){return d.name===g});
- es.sort(function(a,b){if(dim&&dim.kind==='time')return new Date(a[0])-new Date(b[0]);return b[1].length-a[1].length||a[0].localeCompare(b[0])});
+ es.sort(function(a,b){if(dim&&dim.kind==='time'){var da=new Date(a[0]),db=new Date(b[0]);if(!isNaN(da)&&!isNaN(db))return da-db}return b[1].length-a[1].length||a[0].localeCompare(b[0])});
  if(es.length>24)es=es.slice(0,24);
  return {labels:es.map(function(e){return label(e[0])}),rows:es.map(function(e){return e[1]})};
 }
+function metricValue(rows,m){
+ var metaM=state.model.measures.find(function(x){return x.name===m})||{name:m,agg:'sum'};
+ if(metaM.agg==='count')return rows.filter(function(r){var v=r[m];return v!==null&&v!==undefined&&String(v).trim()!==''}).length;
+ if(metaM.agg==='unique')return new Set(rows.map(function(r){return String(r[m]??'')}).filter(function(v){return v!==''})).size;
+ var vals=rows.map(function(r){return num(r[m])}).filter(isFinite);
+ return vals.reduce(function(a,b){return a+b},0);
+}
 function seriesData(){
- var a=aggregate(), seen={};
- var ps=state.params.filter(function(p){if(!p||seen[p])return false;seen[p]=1;return true});
- /* Pie/Donut is a composition chart. When a grouping field is selected,
-    the slices must represent that grouping for ONE selected measure. The
-    previous engine ignored groupBy for Pie/Donut and summed every selected
-    parameter across the entire dataset, which could make different choices
-    appear to show the same figures. */
- if((state.type==='pie'||state.type==='donut') && state.groupBy && ps.length){
-   ps=[ps[0]];
- }
- return {labels:a.labels,rows:a.rows,series:ps.map(function(p){return {name:p,values:a.rows.map(function(gr){var vals=gr.map(function(r){return num(r[p])}).filter(isFinite);return vals.length?vals.reduce(function(x,y){return x+y},0):NaN})}})};
-}
-function detail(i,d){
- var box=$('smartChartDetail');if(!box)return;
- var h='<strong>'+esc(d.labels[i]||'Overall')+'</strong><div class="smart-detail-grid">';
- d.series.forEach(function(s){h+='<div class="smart-detail-item"><span>'+esc(s.name)+'</span><b>'+esc(fmt(s.values[i]))+'</b></div>'});
- box.innerHTML=h+'</div>';
-}
-function bindHits(wrap,d){
- wrap.querySelectorAll('.sc-hit').forEach(function(n){n.addEventListener('click',function(){state.selected=+n.getAttribute('data-i')||0;detail(state.selected,d)});n.addEventListener('touchend',function(e){e.preventDefault();state.selected=+n.getAttribute('data-i')||0;detail(state.selected,d)},{passive:false})});
-}
-function drawCartesian(wrap,d,type){
- var labels=d.labels,ss=d.series,W=1000,H=390,L=78,R=25,T=38,B=62,iw=W-L-R,ih=H-T-B;
- var all=[];ss.forEach(function(s){s.values.forEach(function(v){if(isFinite(v))all.push(v)})});
- if(!all.length){wrap.innerHTML='<div style="padding:30px;color:var(--muted)">No numeric values for the selected parameters.</div>';return}
- var max=Math.max(0,...all),min=Math.min(0,...all);if(max===min)max=min+1;
- var n=labels.length||1,svg='<svg viewBox="0 0 '+W+' '+H+'" class="smart-svg" role="img">';
- for(var g=0;g<=4;g++){var y=T+ih*g/4,v=max-(max-min)*g/4;svg+='<line x1="'+L+'" y1="'+y+'" x2="'+(W-R)+'" y2="'+y+'" stroke="currentColor" opacity=".10"/><text x="'+(L-8)+'" y="'+(y+4)+'" text-anchor="end" fill="currentColor" opacity=".58" font-size="11">'+esc(short(v))+'</text>'}
- if(type==='line'||type==='area'){
-   ss.forEach(function(s,si){var pts=s.values.map(function(v,i){return [L+(n===1?iw/2:iw*i/(n-1)),T+ih*(max-v)/(max-min)]});var good=pts.filter(function(p){return isFinite(p[1])});if(!good.length)return;var path=good.map(function(p,i){return (i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)}).join(' ');if(type==='area')path+=' L '+good[good.length-1][0]+' '+(T+ih)+' L '+good[0][0]+' '+(T+ih)+' Z';svg+='<path d="'+path+'" fill="'+(type==='area'?palette[si]:'none')+'" opacity="'+(type==='area'?.16:1)+'" stroke="'+palette[si]+'" stroke-width="3"/>';pts.forEach(function(p,i){if(isFinite(p[1]))svg+='<circle class="sc-hit" data-i="'+i+'" cx="'+p[0]+'" cy="'+p[1]+'" r="9" fill="'+palette[si]+'"><title>'+esc(s.name)+': '+esc(fmt(s.values[i]))+'</title></circle>'})});
- }else if(type==='hbar'){
-   var maxh=Math.max(0,...all),rowH=(H-55)/Math.max(1,n);
-   for(var i=0;i<n;i++){var y0=28+i*rowH;svg+='<text x="8" y="'+(y0+rowH*.55)+'" fill="currentColor" opacity=".72" font-size="11">'+esc(labels[i])+'</text>';ss.forEach(function(s,si){var v=s.values[i];if(!isFinite(v))return;var hh=Math.max(8,(rowH-12)/ss.length),yy=y0+si*hh,ww=maxh?Math.max(2,(W-290)*Math.abs(v)/maxh):2;svg+='<rect class="sc-hit" data-i="'+i+'" x="250" y="'+yy+'" width="'+ww+'" height="'+hh+'" rx="4" fill="'+palette[si]+'"><title>'+esc(s.name)+': '+esc(fmt(v))+'</title></rect>'})}
- }else{
-   var gw=iw/Math.max(1,n),gap=Math.min(12,gw*.08),bw=Math.max(7,(gw-gap*(ss.length+1))/Math.max(1,ss.length)),base=T+ih*max/(max-min);
-   for(var j=0;j<n;j++){if(type==='stacked'){var pos=0,neg=0;ss.forEach(function(s,si){var v=s.values[j];if(!isFinite(v))return;var h=ih*Math.abs(v)/(max-min),y;if(v>=0){y=base-h-pos;pos+=h}else{y=base+neg;neg+=h}svg+='<rect class="sc-hit" data-i="'+j+'" x="'+(L+j*gw+gap/2)+'" y="'+y+'" width="'+(gw-gap)+'" height="'+h+'" rx="4" fill="'+palette[si]+'"><title>'+esc(s.name)+': '+esc(fmt(v))+'</title></rect>'})}else{ss.forEach(function(s,si){var v=s.values[j];if(!isFinite(v))return;var h=ih*Math.abs(v)/(max-min),x=L+j*gw+gap+si*bw,y=v>=0?base-h:base;svg+='<rect class="sc-hit" data-i="'+j+'" x="'+x+'" y="'+y+'" width="'+bw+'" height="'+h+'" rx="4" fill="'+palette[si]+'"><title>'+esc(s.name)+': '+esc(fmt(v))+'</title></rect>'})}if(n<=24)svg+='<text x="'+(L+j*gw+gw/2)+'" y="'+(H-20)+'" text-anchor="middle" fill="currentColor" opacity=".65" font-size="11">'+esc(labels[j])+'</text>'}
- }
- ss.forEach(function(s,si){svg+='<rect x="'+(L+si*205)+'" y="10" width="11" height="11" rx="2" fill="'+palette[si]+'"/><text x="'+(L+si*205+17)+'" y="20" fill="currentColor" opacity=".72" font-size="11">'+esc(s.name)+'</text>'});
- svg+='</svg>';wrap.innerHTML=svg;bindHits(wrap,d);
-}
-function drawPie(wrap,d,donut){
- var vals,labels,parameterMode=d.series.length>1;
- if(parameterMode){labels=d.series.map(function(s){return s.name});vals=d.series.map(function(s){return s.values.reduce(function(a,b){return a+(isFinite(b)?b:0)},0)})}
- else {labels=d.labels;vals=(d.series[0]?d.series[0].values:[]).map(function(v){return isFinite(v)&&v>0?v:0})}
- var total=vals.reduce(function(a,b){return a+b},0);if(!total){wrap.innerHTML='<div style="padding:30px;color:var(--muted)">Pie/Donut needs positive values.</div>';return}
- var cx=300,cy=195,r=145,start=-Math.PI/2,svg='<svg viewBox="0 0 1000 390" class="smart-svg" role="img">';
- vals.forEach(function(v,i){if(!v)return;var a=v/total*Math.PI*2,end=start+a,large=a>Math.PI?1:0,x1=cx+r*Math.cos(start),y1=cy+r*Math.sin(start),x2=cx+r*Math.cos(end),y2=cy+r*Math.sin(end);
-   if(donut)svg+='<path class="sc-hit" data-i="'+i+'" d="M '+x1+' '+y1+' A '+r+' '+r+' 0 '+large+' 1 '+x2+' '+y2+' L '+(cx+75*Math.cos(end))+' '+(cy+75*Math.sin(end))+' A 75 75 0 '+large+' 0 '+(cx+75*Math.cos(start))+' '+(cy+75*Math.sin(start))+' Z" fill="'+palette[i%palette.length]+'"><title>'+esc(labels[i])+': '+esc(fmt(v))+'</title></path>';
-   else svg+='<path class="sc-hit" data-i="'+i+'" d="M '+cx+' '+cy+' L '+x1+' '+y1+' A '+r+' '+r+' 0 '+large+' 1 '+x2+' '+y2+' Z" fill="'+palette[i%palette.length]+'"><title>'+esc(labels[i])+': '+esc(fmt(v))+'</title></path>';
-   start=end;
+ var a=aggregate(),ps=state.params.filter(Boolean),series=[];
+ ps.forEach(function(p){
+   var vals=a.rows.map(function(rs){return metricValue(rs,p)});
+   series.push({name:p,values:vals,agg:(state.model.measures.find(function(m){return m.name===p})||{}).agg||'sum'});
  });
- if(donut)svg+='<circle cx="'+cx+'" cy="'+cy+'" r="72" fill="var(--card,#fff)"/>';
- svg+='<text x="'+cx+'" y="'+(cy+5)+'" text-anchor="middle" fill="currentColor" font-size="22" font-weight="800">'+esc(fmt(total))+'</text>';
- vals.forEach(function(v,i){var y=45+i*25;svg+='<rect x="560" y="'+(y-10)+'" width="12" height="12" rx="2" fill="'+palette[i%palette.length]+'"/><text x="580" y="'+y+'" fill="currentColor" opacity=".75" font-size="12">'+esc(labels[i])+' · '+esc(((v/total)*100).toFixed(1))+'%</text>'});
- svg+='</svg>';wrap.innerHTML=svg;
- wrap.querySelectorAll('.sc-hit').forEach(function(n){n.addEventListener('click',function(){var i=+n.getAttribute('data-i')||0;var box=$('smartChartDetail');if(box)box.innerHTML='<strong>'+esc(labels[i])+'</strong><div class="smart-detail-grid"><div class="smart-detail-item"><span>Value</span><b>'+esc(fmt(vals[i]))+'</b></div><div class="smart-detail-item"><span>Share</span><b>'+esc(((vals[i]/total)*100).toFixed(1))+'%</b></div></div>'});n.addEventListener('touchend',function(e){e.preventDefault();n.click()},{passive:false})});
+ return {labels:a.labels,series:series,rows:a.rows};
 }
 function draw(){
  var wrap=$('smartChartCanvas');if(!wrap)return;
@@ -7627,8 +7588,8 @@ function draw(){
  var d=seriesData();
  if(!d.series.length){wrap.innerHTML='<div style="padding:30px;color:var(--muted)">Select at least one numeric parameter.</div>';return}
  var title=$('smartChartTitle'),sub=$('smartChartSubtitle');
- if(title)title.textContent=d.series.map(function(s){return s.name}).join(' + ');
- if(sub)sub.textContent=(state.type==='pie'||state.type==='donut')?(state.groupBy?'Share of '+d.series[0].name+' by '+state.groupBy:'Composition of '+d.series.map(function(s){return s.name}).join(' + ')):(state.groupBy?'Grouped by '+state.groupBy:'Overall')+(state.model.statement?' · statement data':'');
+ if(title)title.textContent=d.series.map(function(s){return (s.agg==='count'?'Count of ':'')+s.name}).join(' + ');
+ if(sub)sub.textContent=(state.type==='pie'||state.type==='donut')?(state.groupBy?'Share of '+(d.series[0].agg==='count'?'Count of ':'')+d.series[0].name+' by '+state.groupBy:'Composition of '+d.series.map(function(s){return (s.agg==='count'?'Count of ':'')+s.name}).join(' + ')):(state.groupBy?'Grouped by '+state.groupBy:'Overall')+(state.model.statement?' · statement data':'');
  if(state.type==='pie'||state.type==='donut')drawPie(wrap,d,state.type==='donut');else drawCartesian(wrap,d,state.type);
  detail(state.selected<d.labels.length?state.selected:0,d);
 }
