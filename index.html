@@ -1131,7 +1131,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 </style>
 
 
-<meta name="instantdash-build" content="v1.13.12-parameter-bridge-fix">
+<meta name="instantdash-build" content="v1.13.13-parameter-bridge-fix">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -1176,7 +1176,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.13.12</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.13.13</span>
   </div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -1375,7 +1375,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 <div class="section" id="smartChartsSection">
       <div class="section-head">
         <h2>Interactive Charts</h2>
-        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.13.12 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
+        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.13.13 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
       </div>
       <section class="ai-dashboard-charts" id="aiDashboardCharts" aria-label="AI generated charts">
         <div class="ai-dashboard-head">
@@ -1578,7 +1578,7 @@ Charts on screen: Row count by Central Bank of India – Q1FY27.</pre></div>
 const CONFIG = {
   BUILD_VERSION: '1.13.12',
   APP_NAME: 'InstantDash',
-  VERSION: 'v1.13.12',
+  VERSION: 'v1.13.13',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -7598,7 +7598,7 @@ function model(){
  appCat.forEach(function(m){
    if(!ms.some(function(x){return x.name===m.name})) ms.push(m);
  });
- /* v1.13.12 — authoritative bridge from the already-rendered automatic charts.
+ /* v1.13.13 — authoritative bridge from the already-rendered automatic charts.
     If the automatic engine has a usable y/series field, expose that exact field
     to the manual parameter selector. This prevents two parameter engines from
     disagreeing about the same loaded dataset. */
@@ -7683,7 +7683,7 @@ function demo(){
 }
 var state={model:null,type:'bar',groupBy:'',params:[],selected:0};
 function getModel(){var m=model();return (m.hasApp||m.rows.length)?m:demo()}
-/* v1.13.12 — single-source parameter recovery. If the host parser exposes
+/* v1.13.13 — single-source parameter recovery. If the host parser exposes
    rows/columns before the semantic catalogue is ready, build a conservative
    live catalogue immediately. This prevents the Advisor from saying
    'No usable parameters' while the automatic chart engine can already plot.
@@ -7737,10 +7737,34 @@ function ensureCatalogue(m){
   else e.measures.forEach(function(x){if(!m.measures.some(function(y){return y.name===x.name}))m.measures.push(x)});
   if(!m.dimensions||!m.dimensions.length)m.dimensions=e.dimensions;
   else e.dimensions.forEach(function(x){if(!m.dimensions.some(function(y){return y.name===x.name}))m.dimensions.push(x)});
-  m.aiMeasures=(m.measures||[]).filter(function(x){return x.kind!=='identifier'&&x.kind!=='category'&&x.kind!=='time'});
+  m.aiMeasures=(m.measures||[]).filter(function(x){return x.kind!=='identifier'&&x.kind!=='time' && (x.kind!=='category'||Number(x.numeric)>0||Number(x.ratio)>=.20||x.type==='number')});
   return m;
 }
-function opts(){return (state.model.aiMeasures||state.model.measures).filter(function(m){return m.kind!=='category'&&m.kind!=='time'}).map(function(m){return m.name})}
+function opts(){
+ var ms=state.model&&Array.isArray(state.model.measures)?state.model.measures:[];
+ /* v1.13.13 — manual selectors must use the actual numeric evidence, not only
+    the AI semantic kind. A numeric field can be temporarily classified as a
+    category when it contains blanks/mixed values; it must still be selectable. */
+ var out=ms.filter(function(m){
+   if(!m||!m.name||m.kind==='time')return false;
+   if(m.kind==='identifier')return true;
+   if(m.kind!=='category')return true;
+   return Number(m.numeric)>0 || Number(m.ratio)>=.20 || Number(m.numericRatio)>=.20 || m.type==='number';
+ }).map(function(m){return m.name});
+ /* Last-resort live-column bridge. */
+ var a=app(),rows=a&&Array.isArray(a.filtered)&&a.filtered.length?a.filtered:(a&&Array.isArray(a.rows)?a.rows:[]);
+ if(rows.length){
+   var seen={};out.forEach(function(x){seen[x]=1});
+   var cols=a&&Array.isArray(a.columns)?a.columns:[];
+   cols.forEach(function(c){
+     if(!c||!c.name||seen[c.name]||isTime(c.name,c)||c.role==='time')return;
+     var vals=rows.map(function(r){return r[c.name]}).filter(function(v){return v!==null&&v!==undefined&&String(v).trim()!==''});
+     var nums=vals.map(num).filter(isFinite), ratio=nums.length/Math.max(1,vals.length);
+     if(nums.length && (ratio>=.20 || c.type==='number' || c.type==='numeric')){seen[c.name]=1;out.push(c.name)}
+   });
+ }
+ return out.filter(function(v,i,a){return a.indexOf(v)===i});
+}
 function choose(){
  var o=opts(), rec=state.model.ai&&state.model.ai[0];
  var valid=state.params.filter(function(p){return o.indexOf(p)>=0}).filter(function(p,i,a){return a.indexOf(p)===i});
@@ -7775,8 +7799,8 @@ function sync(){
 }
 function renderAI(){
  var sum=$('smartAiSummary'),box=$('smartAiRecommendations');if(!sum||!box)return;
- var rec=state.model.ai||[];
- sum.innerHTML='<span class="smart-ai-badge">'+(state.model.usingDemo?'AI PREVIEW':'AI ADVISOR')+'</span> '+(rec.length?'AI identified '+state.model.measures.length+' parameters ('+state.model.aiMeasures.length+' measures + identifiers/categories), '+state.model.dimensions.length+' grouping fields and selected the strongest chart logic from the uploaded data. All parameters remain available in every dropdown.':(state.model.measures.length?'AI identified '+state.model.measures.length+' usable parameters. No single chart is sufficiently dominant, so every detected parameter remains available for manual selection.':'No usable parameters were detected yet. The app is checking the live loaded columns before concluding that no parameters exist.'));
+ var rec=state.model.ai||[], available=opts();
+ sum.innerHTML='<span class="smart-ai-badge">'+(state.model.usingDemo?'AI PREVIEW':'AI ADVISOR')+'</span> '+(rec.length?'AI identified '+state.model.measures.length+' parameters ('+state.model.aiMeasures.length+' AI measures + identifiers/categories), '+state.model.dimensions.length+' grouping fields and selected the strongest chart logic from the uploaded data. All parameters remain available in every dropdown.':(available.length?'AI identified '+available.length+' usable chart parameters from the live columns. No single chart is sufficiently dominant, so every detected parameter remains available for manual selection.':(state.model.measures.length?'AI identified '+state.model.measures.length+' fields, but none currently pass the chart usability test. The manual selector will still expose numeric fields when available.':'No usable parameters were detected yet. The app is checking the live loaded columns before concluding that no parameters exist.')));
  box.innerHTML='';
  var idFields=state.model.measures.filter(function(m){return m.kind==='identifier'}).map(function(m){return m.name});
  if(idFields.length){var note=document.createElement('div');note.className='smart-ai-note';note.innerHTML='<b>Identifier protection:</b> '+esc(idFields.slice(0,8).join(', '))+(idFields.length>8?' and more':'')+' will be counted, not summed. This prevents misleading charts from account numbers, IDs and codes.';box.appendChild(note)}
@@ -8280,7 +8304,7 @@ window.__instantDashAIMultiChartsRefresh=render;
 <script id="instantdash-v11304-parameter-engine-fallback">
 (function(){
 'use strict';
-/* v1.13.12 FINAL FALLBACK
+/* v1.13.13 FINAL FALLBACK
    Purpose: guarantee that uploaded columns remain selectable even if the
    semantic/AI layer reports zero parameters. This module reads APP.rows
    directly and is deliberately independent of AI classification.
