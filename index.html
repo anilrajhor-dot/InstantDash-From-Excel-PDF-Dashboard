@@ -1069,6 +1069,11 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 .ai-chart-card{background:rgba(255,255,255,.78)!important;border-radius:18px!important;box-shadow:0 8px 22px rgba(68,50,20,.05)!important}
 @media(max-width:600px){.id-chart-visual{height:315px}.id-touch-value strong{font-size:18px}}
 </style>
+<style id="instantdash-v11321-polish">
+.id-live-dataset{margin:0 0 12px;padding:10px 12px;border:1px solid #eadfce;border-radius:14px;background:linear-gradient(135deg,#fffdf8,#fff7df);display:flex;align-items:center;gap:9px;flex-wrap:wrap;font:700 11px/1.35 Poppins,sans-serif;color:#514b44}.id-live-dataset .dot{width:9px;height:9px;border-radius:50%;background:#2e9d69;box-shadow:0 0 0 4px rgba(46,157,105,.12);flex:0 0 auto}.id-live-dataset .source{color:#9b5419}.id-live-dataset .meta{color:#71695f;font-weight:600}.id-live-dataset.stale{background:#fff3ee;border-color:#efc8b8}.id-live-dataset.stale .dot{background:#d9534f;box-shadow:0 0 0 4px rgba(217,83,79,.12)}
+.ai-chart-wrap{background:linear-gradient(145deg,#fffdf8,#ffffff)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 6px 18px rgba(75,55,25,.05);min-height:270px}.ai-chart-card{background:linear-gradient(160deg,rgba(255,255,255,.96),rgba(255,250,238,.92))!important}.ai-chart-card-head h4{font-size:15px!important}.ai-chart-foot{font-weight:650}.ai-chart-touch-detail{background:#fffaf0!important;color:#5f574e!important}
+@media(max-width:600px){.id-live-dataset{font-size:10px}.ai-chart-wrap{height:290px!important}}
+</style>
 <style id="instantdash-v11101-smart-charts">
  .smart-ai-summary{font-size:12px;line-height:1.45;color:var(--text);font-weight:700;margin-bottom:10px}
 .smart-ai-recs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
@@ -1146,7 +1151,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 </style>
 
 
-<meta name="instantdash-build" content="v1.13.20-data-isolation-and-chart-polish">
+<meta name="instantdash-build" content="v1.13.21-data-isolation-and-chart-polish">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -1200,7 +1205,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.13.20</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.13.21</span>
   </div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -1399,7 +1404,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 <div class="section" id="smartChartsSection">
       <div class="section-head">
         <h2>Interactive Charts</h2>
-        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.13.20 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
+        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.13.21 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
       </div>
       <section class="ai-dashboard-charts" id="aiDashboardCharts" aria-label="AI generated charts">
         <div class="ai-dashboard-head">
@@ -1410,6 +1415,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
           </div>
           <span class="ai-dashboard-badge">AUTO-BUILT</span>
         </div>
+        <div class="id-live-dataset" id="aiLiveDataset"><span class="dot"></span><span class="source">LIVE SOURCE</span><span class="meta" id="aiLiveDatasetText">Waiting for the current uploaded file…</span></div>
         <div class="ai-chart-grid" id="aiChartGrid"></div>
       </section>
 
@@ -1602,7 +1608,7 @@ Charts on screen: Row count by Central Bank of India – Q1FY27.</pre></div>
 const CONFIG = {
   BUILD_VERSION: '1.13.20',
   APP_NAME: 'InstantDash',
-  VERSION: 'v1.13.20',
+  VERSION: 'v1.13.21',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -2120,7 +2126,7 @@ async function handleFile(file){
     return showFatal('That file type isn’t supported. Choose an .xlsx, .xls or .csv, or a text-based .pdf file.');
   }
 
-  // v1.13.20 — every upload gets a unique transaction token. Any older
+  // v1.13.21 — every upload gets a unique transaction token. Any older
   // asynchronous read is ignored if the user selects another file before it
   // finishes. This prevents an earlier workbook from repopulating AI cards,
   // charts or management insights after a new workbook has been selected.
@@ -2488,6 +2494,7 @@ async function rebuildFromAoa(){
   coerceValues();              // converts text numbers/dates in place
   buildEverything();
   if(window.__instantDashWirePostUploadHealth) window.__instantDashWirePostUploadHealth();
+  if(typeof window.__instantDashHardRefreshAll === 'function') window.__instantDashHardRefreshAll('new-dataset-committed');
   hideLoader();
   var healthBanner = $('postUploadHealth');
   if(healthBanner) healthBanner.hidden = false;
@@ -5433,6 +5440,9 @@ function buildEverything(){
     if(typeof window.__instantDashSmartChartsRefresh === 'function'){
       window.__instantDashSmartChartsRefresh();
     }
+    if(typeof window.__instantDashHardRefreshAll === 'function'){
+      setTimeout(function(){window.__instantDashHardRefreshAll('buildEverything');},60);
+    }
   }catch(_){ }
 }
 
@@ -7983,7 +7993,7 @@ function isTime(name,c){var x=String(name||'');return !!(c&&((String(c.type||'')
 function col(name){return cols().find(function(c){return String(c.name||'')===String(name)})||{name:name,type:'',role:''}}
 function uniqueValues(rs,name){var a=[],seen={};(rs||[]).forEach(function(r){var v=r[name];if(v==null||v==='')return;var k=String(v);if(!seen[k]){seen[k]=1;a.push(v)}});return a}
 function measureScore(name){var x=norm(name),s=0;[[['revenue','sales','profit','pat','ebit','income','expense','cost','cash','deposit','loan','asset','liability','commission','fee','amount','value','balance','budget','target','actual'],18],[['count','number','qty','quantity','volume','transactions','orders','customers','accounts','members','cases','units'],15],[['growth','change','yoy','mom','qoq','rate','ratio','margin','share','percentage','percent','yield'],13]].forEach(function(g){g[0].forEach(function(t){var q=norm(t);if(x===q)s+=50;else if(x.indexOf(q)>=0)s+=g[1]})});return s}
-function getMeasures(rs){var cs=cols(),names=[];if(cs.length){cs.forEach(function(c){if(c.type==='number'&&!isTime(c.name,c)&&!isId(c.name))names.push(c.name)})}else if(rs[0])Object.keys(rs[0]).forEach(function(k){if(!isTime(k,null)&&!isId(k)&&rs.some(function(r){return isFinite(n(r[k]))}))names.push(k)});return names.map(function(name){var vals=rs.map(function(r){return n(r[name])}).filter(isFinite),ratio=vals.length/Math.max(1,rs.length);return {name:name,ratio:ratio,score:measureScore(name),count:vals.length}}).filter(function(x){return x.ratio>=.65}).sort(function(a,b){return b.score-a.score||b.count-a.count})}
+function getMeasures(rs){var cs=cols(),names=[];if(cs.length){cs.forEach(function(c){if(c.type==='number'&&!isTime(c.name,c)&&!isId(c.name))names.push(c.name)})}else if(rs[0])Object.keys(rs[0]).forEach(function(k){if(!isTime(k,null)&&!isId(k)&&rs.some(function(r){return isFinite(n(r[k]))}))names.push(k)});return names.map(function(name){var vals=rs.map(function(r){return n(r[name])}).filter(isFinite),ratio=vals.length/Math.max(1,rs.length);return {name:name,ratio:ratio,score:measureScore(name),count:vals.length}}).filter(function(x){return x.ratio>=.20}).sort(function(a,b){return b.score-a.score||b.count-a.count})}
 function getGroups(rs){var cs=cols(),out=[];cs.forEach(function(c){if(c.type==='number'||isId(c.name)||isTime(c.name,c))return;var nm=String(c.name||'').trim();/* v1.13.09: MID is commonly a metadata/code field (e.g. 0 / Blank / P), not a management dimension. Do not let AI choose it as the default grouping field. It remains available to the manual Group By selector. */if(/^mid$/i.test(nm))return;var u=uniqueValues(rs,c.name);if(u.length>=2&&u.length<=36)out.push({name:c.name,unique:u.length,kind:'category'})});cs.forEach(function(c){if(isTime(c.name,c)){var u=uniqueValues(rs,c.name);if(u.length>=2)out.unshift({name:c.name,unique:u.length,kind:'time'})}});return out}
 function sortKey(a,b,time){if(!time)return String(a).localeCompare(String(b),undefined,{numeric:true});var da=new Date(a),db=new Date(b);if(!isNaN(da)&&!isNaN(db))return da-db;return String(a).localeCompare(String(b),undefined,{numeric:true})}
 function aggregate(rs,group,measure){var map={};rs.forEach(function(r){var v=n(r[measure]);if(!isFinite(v))return;var k=group?String(r[group]):'Overall';if(k===''||k==='null'||k==='undefined')k='Blank';map[k]=(map[k]||0)+v});var keys=Object.keys(map);var g=col(group),time=group&&isTime(group,g);keys.sort(function(a,b){return sortKey(a,b,time)});if(!time&&keys.length>12){keys.sort(function(a,b){return map[b]-map[a]});keys=keys.slice(0,12)}return {labels:keys,values:keys.map(function(k){return map[k]}),time:time,group:group}}
@@ -8006,17 +8016,21 @@ function makeConfig(s){
  if(!vals.length || !labels.length){
    throw new Error('No chartable values');
  }
- var bg=isPie?labels.map(function(_,i){return palette[i%palette.length]}):'rgba(245,179,1,.22)';
+ var chartIndex=Math.max(0,parseInt(String(s.id||'ai-0').split('-').pop(),10)||0);
+ var solid=palette[chartIndex%palette.length];
+ var bg=isPie?labels.map(function(_,i){return palette[i%palette.length]}):(isLine?(t==='area'?solid+'44':solid):solid);
  var dataset={
    label:niceName(s.measure),
    data:vals,
-   borderWidth:isPie?1:2,
-   tension:.28,
+   borderWidth:isPie?1:(isLine?3:1.5),
+   tension:.3,
    fill:t==='area',
    backgroundColor:bg,
-   borderColor:isPie?'rgba(255,255,255,.9)':'#F5B301',
-   pointRadius:isLine?3:0,
-   pointHoverRadius:5
+   borderColor:isPie?'rgba(255,255,255,.95)':solid,
+   pointRadius:isLine?4:0,
+   pointHoverRadius:7,
+   borderRadius:(isPie||isLine)?0:8,
+   borderSkipped:false
  };
  if(isPie){
    dataset.borderColor='rgba(255,255,255,.9)';
@@ -8028,7 +8042,15 @@ function makeConfig(s){
    options:{
      responsive:true,
      maintainAspectRatio:false,
-     animation:false,
+     animation:{duration:450,easing:'easeOutQuart'},
+     plugins:{
+       legend:{display:true,position:isPie?'right':'top',labels:{font:{family:'Poppins',size:10},usePointStyle:true,padding:12}},
+       tooltip:{callbacks:{label:function(ctx){
+         var v=Number(ctx.raw||0);
+         if(isPie){var total=vals.reduce(function(a,b){return a+(isFinite(b)?b:0)},0);var pct=total?((v/total)*100).toFixed(1):'0.0';return niceName(s.measure)+': '+v.toLocaleString('en-IN',{maximumFractionDigits:2})+' ('+pct+'%)';}
+         return niceName(s.measure)+': '+v.toLocaleString('en-IN',{maximumFractionDigits:2});
+       }}}
+     },
      onClick:function(evt,active){
        try{
          if(!s.detailEl)return;
@@ -8039,18 +8061,6 @@ function makeConfig(s){
          s.detailEl.textContent=niceName(s.measure)+' · '+label+' · '+Number(value).toLocaleString('en-IN',{maximumFractionDigits:2});
        }catch(_){ }
      },
-     plugins:{
-       legend:{display:true,position:isPie?'right':'top',labels:{font:{family:'Poppins',size:10}}},
-       tooltip:{callbacks:{label:function(ctx){
-         var v=Number(ctx.raw||0);
-         if(isPie){
-           var total=vals.reduce(function(a,b){return a+(isFinite(b)?b:0)},0);
-           var pct=total?((v/total)*100).toFixed(1):'0.0';
-           return niceName(s.measure)+': '+v.toLocaleString('en-IN',{maximumFractionDigits:2})+' ('+pct+'%)';
-         }
-         return niceName(s.measure)+': '+v.toLocaleString('en-IN',{maximumFractionDigits:2});
-       }}}
-     }
    }
  };
  if(isPie){
@@ -8158,6 +8168,27 @@ function boot(){
   if(appEl) appEl.hidden=true;
   var ov=$('aiChartOverlay');if(ov){$('aiOverlayClose').onclick=closeExpand;ov.addEventListener('click',function(e){if(e.target===ov)closeExpand()});document.addEventListener('keydown',function(e){if(e.key==='Escape')closeExpand()})}watch();setInterval(watch,700)}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+
+/* v1.13.21 — hard-refresh every data-dependent intelligence surface after a new upload.
+   This deliberately rebuilds from APP.rows/APP.columns and never carries semantic state
+   from the previous workbook. */
+window.__instantDashHardRefreshAll=function(reason){
+  try{
+    var a=window.__INSTANTDASH_APP__||{};
+    var live=(Array.isArray(a.rows)?a.rows.length:0)>0;
+    var source=document.getElementById('aiLiveDataset');
+    var text=document.getElementById('aiLiveDatasetText');
+    if(source&&text){
+      source.classList.toggle('stale',!live);
+      text.textContent=live?((a.fileName||'Current workbook')+' · '+(a.activeSheet||'Current sheet')+' · '+a.rows.length.toLocaleString()+' rows · '+a.columns.length+' columns'): 'No current dataset is committed yet';
+    }
+    if(typeof window.__instantDashSmartChartsRefresh==='function') window.__instantDashSmartChartsRefresh();
+    if(typeof window.__instantDashAIMultiChartsRefresh==='function') window.__instantDashAIMultiChartsRefresh();
+    if(typeof window.__instantDashRunExecutiveAI==='function') window.__instantDashRunExecutiveAI();
+    if(typeof window.__instantDashWirePostUploadHealth==='function') window.__instantDashWirePostUploadHealth();
+  }catch(err){console.warn('InstantDash hard refresh failed',reason,err);}
+};
+
 window.__instantDashAIMultiChartsRefresh=render;
 })();
 </script>
