@@ -1151,7 +1151,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 </style>
 
 
-<meta name="instantdash-build" content="v1.13.22-data-isolation-and-chart-polish">
+<meta name="instantdash-build" content="v1.13.23-data-isolation-and-chart-polish">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -1194,6 +1194,16 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 .id-chart-note{font-size:10.5px!important}
 @media(max-width:600px){.id-live-source{max-width:100%;font-size:9px}.id-chart-visual{height:325px}}
 </style>
+<style id="instantdash-v11323-executive-polish">
+#aiExecutiveCards .exec-card{min-height:142px;border-radius:18px!important;padding:16px!important;background:linear-gradient(145deg,rgba(255,255,255,.98),rgba(255,249,232,.94))!important;box-shadow:0 10px 24px rgba(70,50,20,.07);transition:transform .18s ease,box-shadow .18s ease}
+#aiExecutiveCards .exec-card:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(70,50,20,.11)}
+#aiExecutiveCards .exec-title{font-size:16px!important;letter-spacing:-.01em}
+#aiExecutiveCards .exec-body{font-size:12px!important;line-height:1.55!important;color:var(--text)}
+#aiExecutiveCards .exec-positive{border-left:5px solid #2e9d69!important}
+#aiExecutiveCards .exec-warning{border-left:5px solid #e2582b!important}
+#aiExecutiveCards .exec-info{border-left:5px solid #f5b301!important}
+#aiExecutiveStatus{padding:9px 12px;border-radius:999px;background:linear-gradient(90deg,#fff8df,#fff);border:1px solid #eadfce}
+</style>
 </head>
 <body class="" style="overflow: hidden;">
 <div id="pageScroll">
@@ -1205,7 +1215,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.13.22</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.13.23</span>
   </div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -1272,7 +1282,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
   <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
     <div>
       <div style="font:900 17px/1.2 Poppins,sans-serif">🤖 AI Executive Intelligence</div>
-      <div style="margin-top:4px;color:var(--muted);font-size:11px">AI-generated management summary, key movements, relationships and attention areas based on the loaded data.</div>
+      <div style="margin-top:4px;color:var(--muted);font-size:11px">Universal executive intelligence adapts to the uploaded file and uses only the current dataset. It does not assume a financial, banking or sales format.</div>
     </div>
     <button id="aiExecutiveRefresh" class="btn primary" type="button">ANALYSE DATA</button>
   </div>
@@ -1404,7 +1414,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 <div class="section" id="smartChartsSection">
       <div class="section-head">
         <h2>Interactive Charts</h2>
-        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.13.22 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
+        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.13.23 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
       </div>
       <section class="ai-dashboard-charts" id="aiDashboardCharts" aria-label="AI generated charts">
         <div class="ai-dashboard-head">
@@ -1606,9 +1616,9 @@ Charts on screen: Row count by Central Bank of India – Q1FY27.</pre></div>
    CONFIG — the knobs worth turning. See "How to Customize" in the notes.
    --------------------------------------------------------------------- */
 const CONFIG = {
-  BUILD_VERSION: '1.13.20',
+  BUILD_VERSION: '1.13.23',
   APP_NAME: 'InstantDash',
-  VERSION: 'v1.13.22',
+  VERSION: 'v1.13.23',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -2126,7 +2136,7 @@ async function handleFile(file){
     return showFatal('That file type isn’t supported. Choose an .xlsx, .xls or .csv, or a text-based .pdf file.');
   }
 
-  // v1.13.22 — every upload gets a unique transaction token. Any older
+  // v1.13.23 — every upload gets a unique transaction token. Any older
   // asynchronous read is ignored if the user selects another file before it
   // finishes. This prevents an earlier workbook from repopulating AI cards,
   // charts or management insights after a new workbook has been selected.
@@ -8169,7 +8179,7 @@ function boot(){
   var ov=$('aiChartOverlay');if(ov){$('aiOverlayClose').onclick=closeExpand;ov.addEventListener('click',function(e){if(e.target===ov)closeExpand()});document.addEventListener('keydown',function(e){if(e.key==='Escape')closeExpand()})}watch();setInterval(watch,700)}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 
-/* v1.13.22 — hard-refresh every data-dependent intelligence surface after a new upload.
+/* v1.13.23 — hard-refresh every data-dependent intelligence surface after a new upload.
    This deliberately rebuilds from APP.rows/APP.columns and never carries semantic state
    from the previous workbook. */
 window.__instantDashHardRefreshAll=function(reason){
@@ -8297,105 +8307,108 @@ window.__instantDashAIMultiChartsRefresh=render;
 </script>
 
 
-<script id="instantdash-v11300-executive-js">
+<script id="instantdash-v11323-universal-executive-js">
 (function(){
+  'use strict';
+  /* v1.13.23 — UNIVERSAL EXECUTIVE INTELLIGENCE
+     Uses ONLY the currently committed APP.rows/APP.columns. No financial
+     vocabulary is assumed. The summary adapts to banking, sales, HR,
+     manufacturing, service, loan, SHG, generic Excel/CSV and PDF tables.
+  */
   function app(){return window.__INSTANTDASH_APP__||window.APP||{}}
   function rows(){var a=app();return Array.isArray(a.rows)?a.rows:[]}
   function cols(){var a=app();return Array.isArray(a.columns)?a.columns:[]}
   function num(v){
     if(typeof v==='number')return isFinite(v)?v:null;
     if(v===null||v===undefined||String(v).trim()==='')return null;
-    var s=String(v).replace(/[%₹,$€£,\s]/g,'');
+    var s=String(v).replace(/[₹$€£¥₩₽,%\s]/g,'').replace(/,/g,'');
     var n=Number(s);return isFinite(n)?n:null;
   }
   function nice(s){return String(s||'').replace(/[_\-]+/g,' ').replace(/\b\w/g,function(x){return x.toUpperCase()})}
-  function timeLike(n){
-    return /(date|month|year|quarter|period|fy|financial.?year|week|day|time)/i.test(String(n))
-  }
-  function values(n){return rows().map(function(r){return num(r[n])}).filter(function(v){return v!==null})}
-  function measures(){
-    var rs=rows(), out=[];
-    if(!rs.length)return out;
-    var names=Object.keys(rs[0]||{});
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+  function low(s){return String(s||'').toLowerCase()}
+  function timeLike(n){return /(date|month|year|quarter|period|fy|financial.?year|week|day|time|as.?on|from|to)/i.test(String(n))}
+  function vals(n){return rows().map(function(r){return num(r[n])}).filter(function(v){return v!==null})}
+  function columns(){
+    var rs=rows(), names=Object.keys(rs[0]||{}), out=[];
     names.forEach(function(n){
-      if(timeLike(n))return;
-      var v=values(n);
-      if(v.length<2 || v.length/rs.length<.65)return;
-      var uniq=new Set(v.map(String)).size;
-      if(uniq<2)return;
-      var low=String(n).toLowerCase();
-      var type=/[%]|percent|rate|margin|ratio|growth|achievement|yield|occupancy|satisfaction|sla/.test(low)?'percentage':
-              /count|number|orders|customers|cases|units|visits|transactions|employees|tasks|applications/.test(low)?'count':
-              /days|hours|time|duration|lead|turnaround/.test(low)?'duration':'amount';
-      var avg=v.reduce(function(a,b){return a+b},0)/v.length;
-      var min=Math.min.apply(Math,v),max=Math.max.apply(Math,v);
-      var first=v[0],last=v[v.length-1],change=first!==0?(last-first)/Math.abs(first):0;
-      var score=(type==='amount'?3:2)+(uniq>3?1:0)+(/revenue|profit|pat|sales|cost|expense|deposit|advance|target|actual|production|recovery|risk|npa|cash|budget/i.test(low)?3:0);
-      out.push({name:n,type:type,values:v,avg:avg,min:min,max:max,first:first,last:last,change:change,score:score});
+      var raw=rs.map(function(r){return r[n]}), present=raw.filter(function(v){return v!==null&&v!==undefined&&String(v).trim()!==''}), v=vals(n), ratio=present.length/Math.max(1,rs.length), uniq=new Set(present.map(String)).size;
+      var numericRatio=v.length/Math.max(1,present.length);
+      var idLike=uniq/Math.max(1,present.length)>.9 && !timeLike(n);
+      out.push({name:n,raw:raw,present:present,values:v,missing:rs.length-present.length,coverage:ratio,unique:uniq,numericRatio:numericRatio,idLike:idLike});
+    });
+    return out;
+  }
+  function measures(){
+    var rs=rows(), cs=columns(), out=[]; if(!rs.length)return out;
+    cs.forEach(function(c){
+      if(c.values.length<2 || c.values.length/Math.max(1,rs.length)<.65 || c.idLike || timeLike(c.name))return;
+      var v=c.values, u=new Set(v.map(String)).size; if(u<2)return;
+      var n=low(c.name), type=/[%]|percent|rate|margin|ratio|growth|achievement|yield|occupancy|satisfaction|sla|score/.test(n)?'percentage':/count|number|orders|customers|cases|units|visits|transactions|employees|tasks|applications|volume/.test(n)?'count':/days|hours|duration|lead|turnaround|time/.test(n)?'duration':'amount';
+      var sum=v.reduce(function(a,b){return a+b},0), avg=sum/v.length, min=Math.min.apply(Math,v), max=Math.max.apply(Math,v), first=v[0], last=v[v.length-1];
+      var change=first!==0?(last-first)/Math.abs(first):0;
+      var score=(type==='amount'?3:2)+(u>3?1:0)+(/revenue|profit|pat|sales|cost|expense|deposit|advance|target|actual|production|recovery|risk|npa|cash|budget|income|saving|loan|outstanding|margin|ebitda|eps/.test(n)?4:0);
+      out.push({name:c.name,type:type,values:v,sum:sum,avg:avg,min:min,max:max,first:first,last:last,change:change,score:score,coverage:c.coverage,missing:c.missing});
     });
     return out.sort(function(a,b){return b.score-a.score})
   }
-  function findTime(){
-    var ns=Object.keys(rows()[0]||{}); return ns.find(timeLike)||null
-  }
-  function findCategory(){
-    var rs=rows(),ns=Object.keys(rs[0]||{});
-    for(var i=0;i<ns.length;i++){
-      var n=ns[i]; if(timeLike(n))continue;
-      var vals=rs.map(function(r){return r[n]}).filter(function(v){return v!==null&&v!==undefined&&String(v)!==''});
-      var numeric=vals.filter(function(v){return num(v)!==null}).length/Math.max(1,vals.length);
-      var u=new Set(vals.map(String)).size;
-      if(numeric<.65 && u>=2 && u<=40)return n;
-    }
+  function category(){
+    var cs=columns();
+    for(var i=0;i<cs.length;i++){var c=cs[i];if(c.idLike||timeLike(c.name))continue;if(c.numericRatio<.65&&c.unique>=2&&c.unique<=40)return c.name}
     return null
   }
+  function timeField(){var cs=columns();for(var i=0;i<cs.length;i++)if(timeLike(cs[i].name))return cs[i].name;return null}
+  function format(v,type){
+    if(v==null||!isFinite(v))return '—';
+    var av=Math.abs(v), suffix='';
+    if(type==='percentage'){return (v*100).toFixed(1)+'%'}
+    if(av>=10000000){v=v/10000000;suffix=' Cr'} else if(av>=100000){v=v/100000;suffix=' L'} else if(av>=1000){v=v/1000;suffix=' K'}
+    return (Math.abs(v)>=100?v.toFixed(0):v.toFixed(1))+suffix;
+  }
+  function targetActual(ms){
+    var target=ms.find(function(x){return /target|budget|plan|planned|goal|benchmark/i.test(x.name)}), actual=ms.find(function(x){return /actual|achieved|completed|produced|realised|realized|performance|result/i.test(x.name)&&(!target||x.name!==target.name)});
+    return target&&actual?{target:target,actual:actual,gap:actual.avg-target.avg}:null;
+  }
+  function categoryRank(m,c){
+    if(!c)return null; var rs=rows(), groups={}; rs.forEach(function(r){var k=String(r[c]??'Blank');groups[k]=groups[k]||[];var v=num(r[m.name]);if(v!==null)groups[k].push(v)});
+    return Object.keys(groups).map(function(k){var a=groups[k];return {k:k,v:a.length?a.reduce(function(x,y){return x+y},0)/a.length:null,n:a.length}}).filter(function(x){return x.v!==null}).sort(function(a,b){return b.v-a.v})
+  }
+  function profile(){
+    var rs=rows(), cs=columns(), ms=measures(), t=timeField(), c=category();
+    var quality=cs.length?cs.reduce(function(a,x){return a+x.coverage},0)/cs.length:0;
+    var cls='General dataset';
+    var all=cs.map(function(x){return low(x.name)}).join(' ');
+    if(/revenue|profit|ebitda|eps|pat|balance sheet|financial/.test(all))cls='Financial performance';
+    else if(/loan|advance|deposit|npa|recovery|borrower|sanction|disbursement/.test(all))cls='Banking / credit';
+    else if(/sales|customer|order|product|region/.test(all))cls='Sales / commercial';
+    else if(/employee|staff|attendance|attrition|hr|department/.test(all))cls='People / HR';
+    else if(/production|inventory|rejection|capacity|machine|unit/.test(all))cls='Manufacturing / operations';
+    else if(/service|ticket|sla|case|complaint/.test(all))cls='Service / operations';
+    return {rows:rs.length,cols:cs.length,measures:ms.length,time:t,category:c,quality:quality,className:cls};
+  }
   function cards(){
-    var m=measures(), t=findTime(), c=findCategory(), out=[];
-    if(!m.length)return out;
-    var top=m.slice(0,6);
-    top.slice(0,4).forEach(function(x){
-      if(Math.abs(x.change)>=.08){
-        out.push({kind:x.change>0?'positive':'warning',label:'KEY MOVEMENT',title:nice(x.name),
-          body:(x.change>0?'Increased ':'Decreased ')+Math.abs(x.change*100).toFixed(1)+'% from the first available value to the latest available value.'});
-      }
-    });
-    var target=m.find(function(x){return /target|budget|plan|planned/i.test(x.name)});
-    var actual=m.find(function(x){return /actual|achieved|completed|produced|realised|realized/i.test(x.name)&&(!target||x.name!==target.name)});
-    if(target&&actual){
-      var gap=actual.avg-target.avg;
-      out.unshift({kind:gap>=0?'positive':'warning',label:'TARGET VS ACTUAL',
-        title:nice(actual.name)+' vs '+nice(target.name),
-        body:(gap>=0?'Average actual is ':'Average actual is ')+Math.abs(gap).toLocaleString('en-IN',{maximumFractionDigits:2})+(gap>=0?' above ':' below ')+nice(target.name)+'.'});
+    var rs=rows(), ms=measures(), p=profile(), out=[]; if(!rs.length)return out;
+    var ta=targetActual(ms);
+    if(ta){var pct=ta.target.avg!==0?(ta.gap/Math.abs(ta.target.avg))*100:0;out.push({kind:pct>=0?'positive':'warning',label:'TARGET PERFORMANCE',title:nice(ta.actual.name)+' vs '+nice(ta.target.name),body:(pct>=0?'Average actual is ':'Average actual is ')+Math.abs(pct).toFixed(1)+'% '+(pct>=0?'above':'below')+' the target/benchmark.'})}
+    if(ms.length){var top=ms[0];out.push({kind:'info',label:'KPI SNAPSHOT',title:nice(top.name)+' · '+format(top.avg,top.type),body:'Average '+nice(top.name)+' across '+top.values.length+' populated records; range '+format(top.min,top.type)+' to '+format(top.max,top.type)+'.'});
+      var mover=ms.slice(0,5).sort(function(a,b){return Math.abs(b.change)-Math.abs(a.change)})[0];
+      if(mover&&isFinite(mover.change)&&Math.abs(mover.change)>=.05)out.push({kind:mover.change>0?'positive':'warning',label:'MATERIAL MOVEMENT',title:nice(mover.name),body:(mover.change>0?'Increased ':'Decreased ')+Math.abs(mover.change*100).toFixed(1)+'% from the first available value to the latest available value.'});
+      if(p.category){var rank=categoryRank(top,p.category);if(rank&&rank.length>=2)out.push({kind:'info',label:'TOP CONTRIBUTOR',title:nice(p.category)+' · '+nice(rank[0].k),body:nice(top.name)+' averages '+format(rank[0].v,top.type)+' for this group, versus '+format(rank[rank.length-1].v,top.type)+' for the lowest populated group.'})}
     }
-    var rising=top.filter(function(x){return x.change>0.15}).slice(0,2);
-    if(rising.length) out.push({kind:'positive',label:'POSITIVE TREND',title:nice(rising[0].name),
-      body:'Strong movement detected; consider reviewing the period-by-period trend chart for the drivers.'});
-    var falling=top.filter(function(x){return x.change<-0.15}).slice(0,2);
-    if(falling.length) out.push({kind:'warning',label:'ATTENTION',title:nice(falling[0].name),
-      body:'A material decline was detected; review the underlying category or time period before drawing conclusions.'});
-    if(t) out.push({kind:'info',label:'DATA STRUCTURE',title:'Time series detected',
-      body:'AI identified '+nice(t)+' as a likely time dimension and will prioritise trend charts.'});
-    else if(c) out.push({kind:'info',label:'DATA STRUCTURE',title:'Category comparison detected',
-      body:'AI identified '+nice(c)+' as a likely grouping field and will prioritise comparison charts.'});
-    return out.slice(0,6)
+    var poor=columns().filter(function(c){return c.coverage<.9}).sort(function(a,b){return a.coverage-b.coverage})[0];
+    if(poor)out.push({kind:'warning',label:'DATA QUALITY',title:nice(poor.name)+' · '+(poor.coverage*100).toFixed(0)+'% populated',body:poor.missing.toLocaleString('en-IN')+' of '+rs.length.toLocaleString('en-IN')+' rows are blank. Interpret conclusions involving this field cautiously.'});
+    out.push({kind:'info',label:'DATA PROFILE',title:p.className,body:rs.length.toLocaleString('en-IN')+' rows · '+p.cols+' fields · '+ms.length+' usable quantitative measures'+(p.time?' · time field: '+nice(p.time):'')+(p.category?' · grouping field: '+nice(p.category):'.')});
+    return out.slice(0,6);
   }
   function render(){
-    var box=document.getElementById('aiExecutiveCards'), status=document.getElementById('aiExecutiveStatus');
-    if(!box)return;
-    var m=measures(), cs=cards();
-    box.innerHTML='';
-    if(!m.length){status.textContent='No analysable measures found on the current data sheet.';return}
-    status.textContent='AI analysed '+m.length+' measures from '+rows().length+' rows. Recommendations are local and based on the loaded data.';
-    cs.forEach(function(x){
-      var d=document.createElement('div'); d.className='exec-card exec-'+x.kind;
-      d.innerHTML='<div class="exec-label">'+x.label+'</div><div class="exec-title">'+x.title+'</div><div class="exec-body">'+x.body+'</div>';
-      box.appendChild(d)
-    })
+    var box=document.getElementById('aiExecutiveCards'),status=document.getElementById('aiExecutiveStatus');if(!box)return;
+    var rs=rows(), ms=measures(), p=profile();box.innerHTML='';
+    if(!rs.length){status.textContent='No current dataset is committed. Upload a file to begin analysis.';return}
+    status.textContent='Universal Executive Intelligence · '+p.className+' · '+rs.length.toLocaleString('en-IN')+' current rows · analysis uses this upload only.';
+    cards().forEach(function(x){var d=document.createElement('div');d.className='exec-card exec-'+x.kind;d.innerHTML='<div class="exec-label">'+esc(x.label)+'</div><div class="exec-title">'+esc(x.title)+'</div><div class="exec-body">'+esc(x.body)+'</div>';box.appendChild(d)})
   }
   window.__instantDashRunExecutiveAI=render;
-  document.addEventListener('click',function(e){
-    if(e.target && e.target.id==='aiExecutiveRefresh')render()
-  });
+  document.addEventListener('click',function(e){if(e.target&&e.target.id==='aiExecutiveRefresh')render()});
 })();
 </script>
 
@@ -8652,225 +8665,4 @@ window.__instantDashParameterFallback={fields:fields,refresh:tick,redraw:redraw,
   window.__instantDashDataIdentity=function(){var a=window.__INSTANTDASH_APP__||window.APP||{};return {token:a.__loadToken||0,version:a.__dataVersion||0,file:a.fileName||'',sheet:a.activeSheet||'',rows:Array.isArray(a.rows)?a.rows.length:0};};
 })();
 </script>
-
-<script id="instantdash-v11322-live-parameter-engine">
-(function(){
-  'use strict';
-  var lastSig='';
-  function app(){return window.__INSTANTDASH_APP__||window.APP||null}
-  function $(id){return document.getElementById(id)}
-  function num(v){
-    if(typeof v==='number'&&isFinite(v))return v;
-    if(typeof v==='string'){
-      var x=Number(v.replace(/[₹$€£¥₩₽,%]/g,'').replace(/,/g,'').trim());
-      return isFinite(x)?x:NaN;
-    }
-    return NaN;
-  }
-  function idName(n){
-    return /(^|[\s_\-.])(id|ids|uid|guid|uuid|code|codes|invoice|inv|ref|reference|sku|serial|barcode|phone|mobile|contact|pan|pincode|pin|ifsc|micr|customer[\s_-]*(id|no|number)|agent[\s_-]*(id|no|number)|branch[\s_-]*(code|id|no|number)|settlement[\s_-]*ac|saving[\s_-]*ac|sr[\s_-]*no|s[\s_-]*no|account[\s_-]*(no|number)|acct[\s_-]*(no|number)|default[\s_-]*account)([\s_\-.]|$)/i.test(String(n||''));
-  }
-  function timeName(n,c){
-    var t=String(c&&c.type||'').toLowerCase();
-    if(t==='date'||(c&&c.role==='time'))return true;
-    /* Only treat a name as time when it is not an authoritative numeric measure.
-       This deliberately keeps fields such as NO_OF_WORKING_DAYS selectable. */
-    if(t==='number'||t==='numeric'||(c&&c.role==='measure'))return false;
-    return /(^|[^a-z])(date|month|period|quarter|year|fy|week)([^a-z]|$)/i.test(String(n||''));
-  }
-  function live(){
-    var a=app();
-    var rs=a&&Array.isArray(a.rows)?a.rows:[];
-    var cols=a&&Array.isArray(a.columns)?a.columns:[];
-    if(!rs.length)return {rows:[],measures:[],dims:[],file:a&&a.fileName||'',sheet:a&&a.activeSheet||''};
-    var names=[],seen={};
-    rs.forEach(function(r){if(!r||typeof r!=='object')return;Object.keys(r).forEach(function(k){if(k&&!seen[k]){seen[k]=1;names.push(k)}})});
-    cols.forEach(function(c){if(c&&c.name&&!seen[c.name]){seen[c.name]=1;names.push(c.name)}});
-    var measures=[],dims=[];
-    names.forEach(function(n){
-      var c=cols.find(function(x){return x&&String(x.name)===String(n)})||{};
-      var vals=rs.map(function(r){return r?r[n]:null}).filter(function(v){return v!==null&&v!==undefined&&String(v).trim()!==''});
-      if(!vals.length)return;
-      var nums=vals.map(num).filter(isFinite), ratio=nums.length/Math.max(1,vals.length), unique=new Set(vals.map(String)).size;
-      var authoritative=String(c.type||'').toLowerCase()==='number'||String(c.type||'').toLowerCase()==='numeric'||c.role==='measure';
-      var time=timeName(n,c), id=idName(n)||c.role==='identifier';
-      if(!time&&!id&&(authoritative||ratio>=.20)) measures.push({name:String(n),ratio:ratio,numeric:nums.length,unique:unique});
-      else if(!time&&unique>=2&&unique<=100&&(c.role==='dimension'||c.role==='highdim'||nums.length===0)) dims.push({name:String(n),unique:unique});
-    });
-    /* Prefer useful quantitative fields. */
-    measures.sort(function(a,b){
-      function score(x){var n=x.name.toLowerCase(),s=x.numeric+x.ratio*100;if(/amount|value|total|revenue|sales|commission|profit|count|qty|quantity|deposit|withdraw|transaction|share|balance|volume|ekyc/i.test(n))s+=80;return s}
-      return score(b)-score(a);
-    });
-    dims.sort(function(a,b){return a.unique-b.unique});
-    return {rows:rs,measures:measures,dims:dims,file:a.fileName||'',sheet:a.activeSheet||''};
-  }
-  function fillSelect(id,items,current){
-    var s=$(id);if(!s)return;
-    var keep=current||s.value||'';
-    s.innerHTML='<option value="">None</option>';
-    items.forEach(function(x){var o=document.createElement('option');o.value=x.name;o.textContent=x.name;s.appendChild(o)});
-    s.value=items.some(function(x){return x.name===keep})?keep:'';
-  }
-  function apply(){
-    var f=live();
-    if(!f.rows.length)return;
-    fillSelect('smartParam1',f.measures);
-    fillSelect('smartParam2',f.measures);
-    fillSelect('smartParam3',f.measures);
-    fillSelect('smartGroupBy',f.dims);
-    var p1=$('smartParam1');
-    if(p1&&!p1.value&&f.measures.length)p1.value=f.measures[0].name;
-    var p2=$('smartParam2'),p3=$('smartParam3');
-    if(p2&&p2.value===p1.value)p2.value='';
-    if(p3&&(p3.value===p1.value||p3.value===p2.value))p3.value='';
-    var ai=$('smartAiSummary');
-    if(ai){
-      ai.innerHTML='<span class="smart-ai-badge">AI ADVISOR</span> '+
-        (f.measures.length?'AI found <b>'+f.measures.length+'</b> usable quantitative parameters from the current file.':'No numeric parameters were found in the current file.')+
-        '<div class="id-live-source"><b>LIVE SOURCE</b> '+String(f.file||'Current file')+' · '+String(f.sheet||'Current sheet')+' · '+f.rows.length.toLocaleString()+' rows</div>';
-    }
-    var hint=$('smartChartHint');
-    if(hint)hint.textContent=f.measures.length?'LIVE DATA — '+f.rows.length.toLocaleString()+' rows · '+f.measures.length+' parameters available':'LIVE DATA — '+f.rows.length.toLocaleString()+' rows · no quantitative parameters found';
-    var no=$('smartNoParameters');if(no)no.hidden=!!f.measures.length;
-    var v=$('smartDataVerification');if(v)v.innerHTML='<b>Verified live data</b><span>'+f.measures.length+' chart parameters · '+f.dims.length+' grouping fields · '+f.file+'</span>';
-    if(window.__instantDashParameterFallback&&typeof window.__instantDashParameterFallback.redraw==='function')window.__instantDashParameterFallback.redraw();
-  }
-  function watch(){
-    var a=app();if(!a||!Array.isArray(a.rows)||!a.rows.length)return;
-    var sig=[a.__dataVersion||0,a.fileName||'',a.activeSheet||'',a.rows.length,(a.columns||[]).length,Object.keys(a.rows[0]||{}).join('|')].join('¦');
-    if(sig!==lastSig){lastSig=sig;setTimeout(apply,50);setTimeout(apply,500);setTimeout(apply,1500)}
-  }
-  window.__instantDashLiveParameterEngine={refresh:apply,fields:live};
-  setInterval(watch,500);
-  setTimeout(watch,100);
-  setTimeout(watch,1000);
-})();
-</script>
-
-<style id="instantdash-v123-executive-summary-css">
-/* v1.13.23 — Executive Summary: management-first, visual and source-aware */
-.id-exec-summary{margin:0 0 14px;border:1px solid var(--border);border-radius:18px;overflow:hidden;background:var(--card);box-shadow:var(--shadow)}
-.id-exec-summary .es-top{padding:18px 18px 15px;background:linear-gradient(135deg,var(--card),color-mix(in srgb,var(--accent) 10%,var(--card)));border-bottom:1px solid var(--border)}
-.id-exec-summary .es-kicker{font-size:10px;font-weight:900;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)}
-.id-exec-summary .es-title{font:900 22px/1.15 Poppins,-apple-system,sans-serif;margin-top:5px}
-.id-exec-summary .es-sub{font-size:11.5px;color:var(--muted);margin-top:6px;line-height:1.5}
-.id-exec-summary .es-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;padding:13px 14px 6px}
-.id-exec-summary .es-kpi{position:relative;min-width:0;padding:13px;border:1px solid var(--border);border-radius:13px;background:var(--card-2)}
-.id-exec-summary .es-kpi.hot{border-top:3px solid var(--accent)}
-.id-exec-summary .es-kpi.good{border-top:3px solid var(--ok)}
-.id-exec-summary .es-kpi.warn{border-top:3px solid var(--warn)}
-.id-exec-summary .es-label{font-size:9.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.id-exec-summary .es-value{font:900 20px/1.2 Poppins,-apple-system,sans-serif;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.id-exec-summary .es-value small{font:700 10px Poppins,sans-serif;color:var(--muted)}
-.id-exec-summary .es-change{font-size:10.5px;font-weight:800;margin-top:5px}
-.id-exec-summary .es-change.up{color:var(--ok)}.id-exec-summary .es-change.down{color:var(--warn)}.id-exec-summary .es-change.flat{color:var(--muted)}
-.id-exec-summary .es-body{display:grid;grid-template-columns:1.25fr .75fr;gap:10px;padding:7px 14px 14px}
-.id-exec-summary .es-story,.id-exec-summary .es-actions{border:1px solid var(--border);border-radius:13px;background:var(--card-2);padding:13px}
-.id-exec-summary .es-section-label{font-size:9.5px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
-.id-exec-summary .es-story p{margin:0;font-size:12px;line-height:1.6}
-.id-exec-summary .es-points{display:grid;gap:7px;margin-top:8px}
-.id-exec-summary .es-point{font-size:11px;line-height:1.45;padding:8px 9px;border-radius:9px;background:var(--card)}
-.id-exec-summary .es-point b{font-weight:850}
-.id-exec-summary .es-actions ul{margin:0;padding-left:17px}.id-exec-summary .es-actions li{font-size:11px;line-height:1.5;margin:5px 0}
-.id-exec-summary .es-source{padding:8px 14px 11px;border-top:1px dashed var(--border);font-size:9.5px;color:var(--muted)}
-.id-exec-summary .es-source b{color:var(--text)}
-@media(max-width:900px){.id-exec-summary .es-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.id-exec-summary .es-body{grid-template-columns:1fr}}
-@media(max-width:480px){.id-exec-summary .es-top{padding:15px}.id-exec-summary .es-title{font-size:19px}.id-exec-summary .es-grid{grid-template-columns:1fr 1fr;padding:10px}.id-exec-summary .es-kpi{padding:10px}.id-exec-summary .es-value{font-size:17px}.id-exec-summary .es-body{padding:5px 10px 10px}}
-</style>
-
-
-<script id="instantdash-v123-executive-summary-js">
-(function(){
-'use strict';
-function A(){return window.__INSTANTDASH_APP__||window.APP||{}}
-function rows(){var a=A();return Array.isArray(a.filtered)&&a.filtered.length?a.filtered:(Array.isArray(a.rows)?a.rows:[])}
-function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
-function num(v){if(typeof v==='number'&&isFinite(v))return v;if(v==null)return null;var s=String(v).replace(/[₹$€£¥₩,%\s]/g,'').replace(/,/g,'').trim();if(!s)return null;var n=Number(s);return isFinite(n)?n:null}
-function fmt(v){if(v==null||!isFinite(v))return '—';return Number(v).toLocaleString('en-IN',{maximumFractionDigits:2})}
-function pct(v){if(v==null||!isFinite(v))return '—';return (v>=0?'+':'')+v.toFixed(1)+'%'}
-function nice(s){return String(s||'').replace(/[_-]+/g,' ').replace(/\s+/g,' ').trim()}
-function keys(rs){var seen={},out=[];rs.forEach(function(r){if(!r||typeof r!=='object')return;Object.keys(r).forEach(function(k){if(!seen[k]){seen[k]=1;out.push(k)}})});return out}
-function isNumericKey(rs,k){var a=rs.map(function(r){return num(r[k])}).filter(function(v){return v!=null});return a.length>=Math.max(2,Math.floor(rs.length*.35))}
-function financialRows(rs){
-  var ks=keys(rs); if(!ks.length)return null;
-  var labelScore={};
-  ks.forEach(function(k){var sc=0;rs.forEach(function(r){var s=nice(r[k]).toLowerCase();if(!s)return; if(/revenue from operations|total income|profit before tax|net profit|earnings per share|exceptional item|other comprehensive|segment revenue|total expenses/.test(s))sc+=4; else if(/revenue|profit|income|expense|tax|eps|ebit|ebitda|assets|liabilities|dividend|cash flow/.test(s))sc+=1;});labelScore[k]=sc});
-  var labelKey=ks.sort(function(a,b){return labelScore[b]-labelScore[a]})[0];
-  if(!labelKey||labelScore[labelKey]<5)return null;
-  var numKeys=ks.filter(function(k){return k!==labelKey&&isNumericKey(rs,k)});
-  if(numKeys.length<2)return null;
-  var map={};
-  rs.forEach(function(r){var label=nice(r[labelKey]);if(!label)return;var vals=numKeys.map(function(k){return num(r[k])});if(vals.filter(function(v){return v!=null}).length>=2){(map[label.toLowerCase()]||(map[label.toLowerCase()]=[])).push({label:label,vals:vals})}});
-  function find(re){var arr=[];Object.keys(map).forEach(function(k){if(re.test(k))arr=arr.concat(map[k])});return arr}
-  var rev=find(/^revenue from operations$/i)[0]||find(/revenue from operations/i)[0];
-  var income=find(/^total income$/i)[0]||find(/total income/i)[0];
-  var pbe=find(/profit before exceptional items and tax/i)[0];
-  var pbt=find(/^profit before tax/i)[0];
-  var np=find(/^net profit for the period/i)[0]||find(/net profit for the period/i)[0];
-  var eps=find(/basic.*net profit.*after exceptional/i)[0]||find(/basic.*profit attributable.*after exceptional/i)[0];
-  var exc=find(/exceptional items.*loss.*gain/i)[0]||find(/^exceptional items/i)[0];
-  if(!(rev||pbt||np))return null;
-  return {labelKey:labelKey,numKeys:numKeys,map:map,metrics:{rev:rev,income:income,pbe:pbe,pbt:pbt,np:np,eps:eps,exc:exc}}
-}
-function metricChange(rec,idxA,idxB){if(!rec||!rec.vals)return null;var a=rec.vals[idxA],b=rec.vals[idxB];if(a==null||b==null||b===0)return null;return (a-b)/Math.abs(b)*100}
-function statementSummary(rs,st){
-  var m=st.metrics; var rev=m.rev, pbe=m.pbe, np=m.np, exc=m.exc, eps=m.eps;
-  var kpis=[];
-  function add(label,rec,kind){if(!rec)return;kpis.push({label:label,value:rec.vals[0],qoq:metricChange(rec,0,1),yoy:metricChange(rec,0,2),kind:kind||'hot'})}
-  add('Revenue from operations',rev,'hot'); add('PBT before exceptional',pbe,'good'); add('Net profit',np,(np&&np.vals[0]<0)?'warn':'hot'); add('EPS',eps,'good');
-  var story=[], actions=[];
-  if(rev&&rev.vals[0]!=null){var q=metricChange(rev,0,1),y=metricChange(rev,0,2);story.push('<b>Core revenue:</b> '+fmt(rev.vals[0])+' in the latest period, '+(q==null?'with no prior-quarter comparison':(q>=0?'up ':'down ')+Math.abs(q).toFixed(1)+'% QoQ')+(y==null?'': ' and '+(y>=0?'up ':'down ')+Math.abs(y).toFixed(1)+'% YoY')+'.')}
-  if(pbe&&np){var q1=metricChange(pbe,0,1),q2=metricChange(np,0,1); if(q1!=null&&q2!=null&&q1>0&&q2<0)story.push('<b>Profit quality signal:</b> profit before exceptional items improved while reported net profit declined versus the preceding quarter. Review exceptional items and tax before treating the net-profit movement as operating deterioration.');}
-  if(exc&&exc.vals[0]!=null&&Math.abs(exc.vals[0])>0)story.push('<b>Exceptional item:</b> '+fmt(exc.vals[0])+' is present in the latest period and can materially affect reported profit; keep it separate from recurring operating performance.');
-  if(m.pbt&&pbe&&m.pbt.vals[0]!=null&&pbe.vals[0]!=null&&Math.abs(m.pbt.vals[0]-pbe.vals[0])>0.01)story.push('<b>Reported vs underlying:</b> profit before tax differs from profit before exceptional items, so the bridge should be reviewed rather than relying on a single headline profit number.');
-  if(!story.length)story.push('<b>Management view:</b> the file contains financial statement measures, but the extracted data does not provide enough clean comparative values for a stronger executive conclusion.');
-  actions.push('Start review with revenue, pre-exceptional profit and reported net profit together.');
-  if(exc)actions.push('Review the exceptional-item note before explaining the change in reported earnings.');
-  actions.push('Use the segment pages and supporting notes to identify the operating driver before assigning causation.');
-  return {title:'Executive Summary',sub:'Management view generated from the current financial-results file. Movements are comparative signals, not proof of cause.',kpis:kpis.slice(0,4),story:story.slice(0,4),actions:actions.slice(0,3),source:(A().fileName||'Current file')+' · financial statement structure detected'};
-}
-function comparativeSummary(rs){
-  var ks=keys(rs), period=ks.find(function(k){return /period|date|year|quarter|fy/i.test(k)}), entity=ks.find(function(k){return /entity|branch|company|bank|customer/i.test(k)}), target=ks.find(function(k){return /target/i.test(k)}), actual=ks.find(function(k){return /actual|revenue|advances|sales|profit/i.test(k)&&k!==target}), nums=ks.filter(function(k){return isNumericKey(rs,k)});
-  if(!period||!nums.length)return null;
-  var pvals=[];rs.forEach(function(r){if(r[period]!=null&&!pvals.includes(String(r[period])))pvals.push(String(r[period]))});
-  if(pvals.length<2)return null;
-  var latest=pvals[pvals.length-1], prev=pvals[pvals.length-2];
-  function agg(k,p){return rs.filter(function(r){return String(r[period])===p}).reduce(function(s,r){var v=num(r[k]);return s+(v==null?0:v)},0)}
-  var chosen=actual||nums[0], cur=agg(chosen,latest), old=agg(chosen,prev), ch=old?((cur-old)/Math.abs(old)*100):null;
-  var t=target?agg(target,latest):null, gap=(target&&t!=null)?cur-t:null;
-  var story=['<b>Latest period:</b> '+esc(latest)+' compared with '+esc(prev)+' across '+rs.length.toLocaleString()+' loaded records.'];
-  if(ch!=null)story.push('<b>'+esc(nice(chosen))+'</b> '+(ch>=0?'increased ':'decreased ')+Math.abs(ch).toFixed(1)+'% in the latest period.');
-  if(gap!=null)story.push('<b>Target position:</b> '+(gap>=0?'above':'below')+' target by '+fmt(Math.abs(gap))+'.');
-  var acts=[]; if(target)acts.push('Review the largest target gap and the entity/period driving it.'); acts.push('Compare the latest movement with the supporting KPI and prior period before deciding action.');
-  return {title:'Executive Summary',sub:'Comparative management view from the current file. Target and growth signals use only fields actually present in the data.',kpis:[{label:nice(chosen),value:cur,qoq:ch}],story:story,actions:acts,source:(A().fileName||'Current file')+' · comparative structure detected'};
-}
-function genericSummary(rs){
-  var a=A(),ks=keys(rs), nums=ks.filter(function(k){return isNumericKey(rs,k)}).slice(0,4),kpis=[];
-  nums.forEach(function(k){var vals=rs.map(function(r){return num(r[k])}).filter(function(v){return v!=null});if(!vals.length)return;var avg=vals.reduce(function(x,y){return x+y},0)/vals.length;kpis.push({label:nice(k),value:avg,qoq:null,kind:'hot'});});
-  return {title:'Executive Summary',sub:'A concise management view based only on the currently loaded dataset.',kpis:kpis,story:['<b>Coverage:</b> '+rs.length.toLocaleString()+' records and '+ks.length+' fields are available for analysis.','<b>Evidence discipline:</b> no target, trend or cause is invented when the source does not contain it.'],actions:['Select the most material KPI and compare it with the nearest supporting dimension or period.','Use Health Check for missing-data issues and the detailed views for drill-down.'],source:(a.fileName||'Current file')+' · generic data structure'};
-}
-function render(data){
-  var host=document.getElementById('managementInsightsSection');if(!host)return;
-  var box=document.getElementById('instantDashExecutiveSummary');
-  if(!box){box=document.createElement('div');box.id='instantDashExecutiveSummary';box.className='id-exec-summary';var grid=host.querySelector('.mi-grid');if(grid)grid.parentNode.insertBefore(box,grid);else host.appendChild(box)}
-  var k=data.kpis||[];
-  function changeHtml(x){if(x==null)return '<span class="es-change flat">No comparable period</span>';return '<span class="es-change '+(x>0?'up':x<0?'down':'flat')+'">'+(x>0?'▲ ':x<0?'▼ ':'• ')+pct(x)+' vs preceding period</span>'}
-  var cards=k.map(function(x){return '<div class="es-kpi '+esc(x.kind||'hot')+'"><div class="es-label">'+esc(x.label)+'</div><div class="es-value">'+fmt(x.value)+'</div>'+changeHtml(x.qoq)+'</div>'}).join('');
-  while((k.length+0)<4){cards+='<div class="es-kpi"><div class="es-label">Management signal</div><div class="es-value">—</div><div class="es-change flat">Awaiting comparable KPI</div></div>';k.push({})}
-  box.innerHTML='<div class="es-top"><div class="es-kicker">Management briefing</div><div class="es-title">'+esc(data.title)+'</div><div class="es-sub">'+data.sub+'</div></div><div class="es-grid">'+cards+'</div><div class="es-body"><div class="es-story"><div class="es-section-label">What management should notice</div>'+data.story.map(function(x){return '<div class="es-point">'+x+'</div>'}).join('')+'</div><div class="es-actions"><div class="es-section-label">Recommended review</div><ul>'+data.actions.map(function(x){return '<li>'+x+'</li>'}).join('')+'</ul></div></div><div class="es-source"><b>Source:</b> '+esc(data.source)+'</div>';
-}
-function run(){var rs=rows();if(!rs.length)return;var st=financialRows(rs),data=st?statementSummary(rs,st):comparativeSummary(rs)||genericSummary(rs);render(data)}
-function install(){
-  if(window.__instantDashExecSummaryWrapped)return; window.__instantDashExecSummaryWrapped=true;
-  var oldMI=window.buildManagementInsights, oldEC=window.buildExecutiveCockpit;
-  if(typeof oldMI==='function')window.buildManagementInsights=function(){var r=oldMI.apply(this,arguments);setTimeout(run,20);return r};
-  if(typeof oldEC==='function')window.buildExecutiveCockpit=function(){var r=oldEC.apply(this,arguments);setTimeout(run,20);return r};
-  setTimeout(run,500);setTimeout(run,1600);
-}
-install();
-window.__instantDashExecutiveSummary={refresh:run};
-})();
-</script>
-
 </body></html>
