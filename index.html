@@ -151,6 +151,7 @@ main{max-width:1360px;margin:0 auto;padding:24px}
 .exec-live-note{margin-top:10px;font-size:11px;color:var(--muted);line-height:1.45}
 @media(max-width:700px){.live-pill{font-size:.55em}.exec-live-note{font-size:10.5px}}
 
+/* v1.13.16 — data quality and management insight are separate layers */
 /* v1.11.14 — clickable movement summary */
 #execStatusBadge.movement-link{cursor:pointer;user-select:none;transition:transform .15s ease,box-shadow .15s ease}
 #execStatusBadge.movement-link:hover{transform:translateY(-1px);box-shadow:0 3px 10px rgba(0,0,0,.10)}
@@ -1131,7 +1132,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 </style>
 
 
-<meta name="instantdash-build" content="v1.13.15-unified-classification">
+<meta name="instantdash-build" content="v1.13.16-management-quality-separation">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -1176,7 +1177,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.13.15</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.13.16</span>
   </div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -1375,7 +1376,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 <div class="section" id="smartChartsSection">
       <div class="section-head">
         <h2>Interactive Charts</h2>
-        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.13.15 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
+        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.13.16 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
       </div>
       <section class="ai-dashboard-charts" id="aiDashboardCharts" aria-label="AI generated charts">
         <div class="ai-dashboard-head">
@@ -1578,7 +1579,7 @@ Charts on screen: Row count by Central Bank of India – Q1FY27.</pre></div>
 const CONFIG = {
   BUILD_VERSION: '1.13.15',
   APP_NAME: 'InstantDash',
-  VERSION: 'v1.13.15',
+  VERSION: 'v1.13.16',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -4725,8 +4726,12 @@ function buildManagementInsights(){
     });
   }
 
+  /* v1.13.16 — separate data quality from management performance.
+     Missing/blank columns belong in Health Check, not in the management
+     movement/priority bucket. A blank optional field is not evidence of
+     adverse business performance and must not become Priority 1. */
   const missing=APP.columns.filter(c=>c.missingPct>=CONFIG.MISSING_WARN_PCT);
-  if(missing.length)items.attention.push(`Management interpretation should be read with caution because ${missing.map(c=>`<b>${miEsc(c.name)}</b> has ${c.missingPct.toFixed(0)}% missing values`).join('; ')}.`);
+  window.__miDataQuality = missing.map(c=>({name:c.name, missingPct:Number(c.missingPct||0), missing:Number(c.missing||0)}));
   if(APP.dupeRows)items.attention.push(`<b>${APP.dupeRows.toLocaleString()}</b> duplicate rows were detected; validate the source before relying on aggregate movements.`);
 
   // Final safeguard: no KPI movement should appear without a management remark.
@@ -5110,7 +5115,9 @@ function buildExecutiveCockpit(){
   /* Data quality and comparative evidence are separate dimensions.
      A complete file without a comparison basis must not be presented as
      evidence that performance is favourable or that no adverse movement exists. */
-  if (dataQualityIssue && !att && !perf) reviewStatus = 'Review data quality';
+  /* v1.13.16 — data quality is a separate Health Check dimension.
+     Do not turn missing optional fields into a management-priority status. */
+  if (dataQualityIssue && !att && !perf) reviewStatus = 'Ready for Data Review';
 
   const status = $('execStatusValue'), sub=$('execStatusSub'), badge=$('execStatusBadge');
   if(status && sub && badge){
@@ -5143,13 +5150,10 @@ function buildExecutiveCockpit(){
       badge.setAttribute('tabindex','0');
       badge.setAttribute('aria-label',`${perf} favourable movements — click for details`);
       badge.title='Click to view favourable movement details';
-    } else if (reviewStatus === 'Review data quality') {
-      sub.textContent = 'Data-quality exceptions require review before management interpretation.';
-      badge.textContent = '● Review data quality';
     } else {
       sub.textContent = hasComparativeEvidence
-        ? 'The loaded data is ready for management review; no material movement has been established.'
-        : 'Data quality is ready for review, but comparative performance cannot be assessed from the available fields.';
+        ? 'The loaded data is ready for management review; no material movement has been established. Data-quality exceptions remain available in Health Check.'
+        : 'The loaded data is ready for review, but comparative performance cannot be assessed from the available fields. Data-quality exceptions remain available in Health Check.';
       badge.textContent = hasComparativeEvidence ? '● Data review ready' : '● Limited comparative evidence';
     }
 
@@ -8363,7 +8367,7 @@ function ensureOptions(){
  var f=fields(); if(!f.measures.length)return false;
  ['smartParam1','smartParam2','smartParam3'].forEach(function(id){
    var s=$(id);if(!s)return;var current=s.value;
-   /* v1.13.15: the live classification is authoritative. Rebuild whenever
+   /* v1.13.16: the live classification is authoritative. Rebuild whenever
       the dropdown contains a stale/non-measure field, not only when it is empty. */
    var real=[].slice.call(s.options||[]).filter(function(o){return o.value});
    var allowed={};f.measures.forEach(function(m){allowed[m.name]=1});
