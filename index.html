@@ -1055,6 +1055,20 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 <!-- InstantDash v1.11.14 — diagnosis summary no longer double-counts constant fields; verification styling corrected -->
 <!-- InstantDash v1.11.14 — diagnosis summary uses one consistent finding hierarchy -->
 
+<style id="instantdash-v11319-visuals">
+/* v1.13.19 — distinctive management-dashboard chart language */
+.smart-svg-wrap{background:linear-gradient(145deg,#fffdf8,#fff);border:1px solid #eadfce!important;border-radius:20px!important;padding:8px!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 10px 28px rgba(73,53,25,.07)!important;overflow:hidden!important}
+.id-chart-visual{height:360px;border-radius:15px;background:radial-gradient(circle at 78% 18%,rgba(245,179,1,.12),transparent 32%),linear-gradient(180deg,#fffdf8,#fff);overflow:hidden}
+.id-chart-visual svg{width:100%;height:100%;display:block}
+.id-chart-note{margin:9px 3px 0;padding:8px 10px;border-radius:10px;background:#fbf7ef;color:#746e65;font-size:11px;font-weight:700;line-height:1.35;border:1px solid #eee3d3}
+.id-chart-note.warn{background:#fff6df;color:#8a6100;border-color:#f1d58a}
+.smart-detail{background:linear-gradient(135deg,#fffaf0,#fff)!important;border-radius:14px!important;border-left:4px solid var(--accent)!important;box-shadow:0 8px 20px rgba(60,45,20,.06)!important}
+.id-touch-value{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:6px}.id-touch-value span{color:var(--muted);font-weight:700}.id-touch-value strong{font-size:20px;color:#171717}
+.smart-chart-head h3{font-size:19px!important;letter-spacing:-.02em}.smart-subtitle{font-weight:600}
+.ai-dashboard-charts{background:linear-gradient(145deg,#fffdf8,#fff8e8)!important;border-radius:22px!important;box-shadow:0 14px 38px rgba(68,50,20,.08)!important}
+.ai-chart-card{background:rgba(255,255,255,.78)!important;border-radius:18px!important;box-shadow:0 8px 22px rgba(68,50,20,.05)!important}
+@media(max-width:600px){.id-chart-visual{height:315px}.id-touch-value strong{font-size:18px}}
+</style>
 <style id="instantdash-v11101-smart-charts">
  .smart-ai-summary{font-size:12px;line-height:1.45;color:var(--text);font-weight:700;margin-bottom:10px}
 .smart-ai-recs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
@@ -1132,7 +1146,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 </style>
 
 
-<meta name="instantdash-build" content="v1.13.18-chart-parameter-recovery">
+<meta name="instantdash-build" content="v1.13.19-chart-parameter-recovery">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -1177,7 +1191,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.13.18</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.13.19</span>
   </div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -1376,7 +1390,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 <div class="section" id="smartChartsSection">
       <div class="section-head">
         <h2>Interactive Charts</h2>
-        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.13.18 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
+        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.13.19 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
       </div>
       <section class="ai-dashboard-charts" id="aiDashboardCharts" aria-label="AI generated charts">
         <div class="ai-dashboard-head">
@@ -1577,9 +1591,9 @@ Charts on screen: Row count by Central Bank of India – Q1FY27.</pre></div>
    CONFIG — the knobs worth turning. See "How to Customize" in the notes.
    --------------------------------------------------------------------- */
 const CONFIG = {
-  BUILD_VERSION: '1.13.18',
+  BUILD_VERSION: '1.13.19',
   APP_NAME: 'InstantDash',
-  VERSION: 'v1.13.18',
+  VERSION: 'v1.13.19',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -8355,7 +8369,7 @@ function fields(){
    if(isTime(n)){ if(uniq>=2&&uniq<=100)dims.push({name:n,kind:'time',unique:uniq}); return; }
    var idField=isId(n)||c.role==='identifier';
    var categoricalName=isDimensionName(n);
-   /* v1.13.18 — the host parser's numeric type is authoritative for chart
+   /* v1.13.19 — the host parser's numeric type is authoritative for chart
       selection. Do not let semantic name heuristics such as 'population',
       'branch' or 'name' suppress a genuinely numeric column. Only explicit
       identifier-like fields remain excluded from quantitative measures. */
@@ -8369,7 +8383,7 @@ function fields(){
      dims.push({name:n,kind:'cat',unique:uniq});
    }
  });
- /* v1.13.18 — final host-profile rescue. The automatic dashboard can only
+ /* v1.13.19 — final host-profile rescue. The automatic dashboard can only
     draw a numeric chart if APP.columns knows a numeric field, so that profile
     is the most reliable source when row-level coercion is temporarily sparse. */
  if(!measures.length && a && Array.isArray(a.columns)){
@@ -8435,71 +8449,69 @@ function renderFallback(){
  var f=fields(),wrap=$('smartChartCanvas');if(!f.measures.length||!wrap)return;
  var p1=$('smartParam1')&&$('smartParam1').value,p2=$('smartParam2')&&$('smartParam2').value,p3=$('smartParam3')&&$('smartParam3').value;
  var ps=[p1,p2,p3].filter(Boolean).filter(function(x,i,a){return a.indexOf(x)===i});
- if(!ps.length){ps=f.measures.slice(0,1).map(function(m){return m.name});var s=$('smartParam1');if(s)s.value=ps[0];}
+ if(!ps.length){ps=f.measures.slice(0,1).map(function(m){return m.name});var s0=$('smartParam1');if(s0)s0.value=ps[0];}
  var requested=($('smartChartType')&&$('smartChartType').value)||'bar',type=requested,group=($('smartGroupBy')&&$('smartGroupBy').value)||'',reason='';
  var gs=grouped(f,group);
- /* v1.13.09: never leave the user with a blank or meaningless chart.
-    Automatically choose the nearest useful chart when the requested type
-    needs more observations/series than the current selection provides. */
- if((type==='pie'||type==='donut') && (gs.length<2 || ps.length!==1)){
-   type='bar'; reason='Donut/Pie needs at least two grouped categories and one parameter; Bar is shown instead.';
- }
- if((type==='line'||type==='area') && gs.length<2){
-   type='bar'; reason='Line/Area needs at least two points; Bar is shown instead.';
- }
- if(type==='stacked' && ps.length<2){
-   type='bar'; reason='Stacked Bar needs at least two parameters; Bar is shown instead.';
- }
- if(type==='histogram' || type==='scatter'){
-   type='bar'; reason='This manual view uses grouped measures; Bar is the suitable fallback for this selection.';
- }
- var typeSelect=$('smartChartType');if(typeSelect && typeSelect.value!==type)typeSelect.value=type;
- var series=ps.map(function(p){
-   var m=f.measures.find(function(x){return x.name===p})||{agg:'sum'};
-   return {name:p,agg:m.agg,values:gs.map(function(g){return vals(g.rows,p,m.agg)})};
- });
+ if((type==='pie'||type==='donut') && (gs.length<2 || ps.length!==1)){type='bar';reason='Donut/Pie needs at least two categories and one measure — Bar is shown instead.';}
+ if((type==='line'||type==='area') && gs.length<2){type='bar';reason='Line/Area needs at least two points — Bar is shown instead.';}
+ if(type==='stacked' && ps.length<2){type='bar';reason='Stacked Bar needs at least two measures — Bar is shown instead.';}
+ if(type==='histogram'||type==='scatter'){type='bar';reason='This view needs a different data structure — Bar is shown instead.';}
+ var typeSelect=$('smartChartType');if(typeSelect&&typeSelect.value!==type)typeSelect.value=type;
+ var series=ps.map(function(p){var m=f.measures.find(function(x){return x.name===p})||{agg:'sum'};return{name:p,agg:m.agg,values:gs.map(function(g){return vals(g.rows,p,m.agg)})};});
  var max=0;series.forEach(function(s){s.values.forEach(function(v){if(v>max)max=v})});max=max||1;
- var colors=['#F5B301','#E2582B','#2E86AB','#3FB07A','#8E5BC9'];
- var w=700,h=360,left=58,right=24,bottom=58,top=25,plotW=w-left-right,plotH=h-top-bottom;
- var svg=['<svg viewBox="0 0 '+w+' '+h+'" width="100%" height="100%" style="touch-action:manipulation;display:block">'];
- for(var gy=0;gy<=4;gy++){var yy=top+plotH-(plotH*gy/4),yv=max*gy/4;svg.push('<line x1="'+left+'" y1="'+yy+'" x2="'+(w-right)+'" y2="'+yy+'" stroke="#e5dccd" stroke-width="1"/><text x="'+(left-7)+'" y="'+(yy+4)+'" text-anchor="end" font-size="11" fill="#777">'+esc(fmt(yv))+'</text>')}
- var clickItems=[];
+ var total=series[0]?series[0].values.reduce(function(a,b){return a+b},0):0;
+ var colors=['#F5B301','#E2582B','#2E86AB','#3FB07A','#8E5BC9','#D95F8A'];
+ var w=760,h=390,left=68,right=28,bottom=64,top=28,plotW=w-left-right,plotH=h-top-bottom;
+ function compact(v){
+   var n=Math.abs(Number(v)||0), sign=v<0?'-':'';
+   if(n>=10000000)return sign+'₹'+(n/10000000).toFixed(n>=100000000?1:2)+'Cr';
+   if(n>=100000)return sign+'₹'+(n/100000).toFixed(n>=1000000?1:2)+'L';
+   if(n>=1000)return sign+(n/1000).toFixed(n>=10000?1:2)+'K';
+   return sign+Number(n).toLocaleString('en-IN',{maximumFractionDigits:0});
+ }
+ function niceLabel(v){var t=String(v==null?'':v);return t.length>15?t.slice(0,14)+'…':t;}
+ function escAttr(s){return esc(s).replace(/"/g,'&quot;');}
+ var svg=['<svg viewBox="0 0 '+w+' '+h+'" width="100%" height="100%" style="touch-action:manipulation;display:block;font-family:Poppins,sans-serif">'];
+ /* soft plot background */
+ svg.push('<defs><linearGradient id="idChartFade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff8df"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient><filter id="idChartShadow" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="4" stdDeviation="5" flood-opacity=".12"/></filter></defs>');
+ svg.push('<rect x="'+left+'" y="'+top+'" width="'+plotW+'" height="'+plotH+'" rx="16" fill="url(#idChartFade)"/>');
+ for(var gy=0;gy<=4;gy++){
+   var yy=top+plotH-(plotH*gy/4),yv=max*gy/4;
+   svg.push('<line x1="'+left+'" y1="'+yy+'" x2="'+(w-right)+'" y2="'+yy+'" stroke="#eadfce" stroke-width="1" stroke-dasharray="4 6"/>');
+   svg.push('<text x="'+(left-12)+'" y="'+(yy+4)+'" text-anchor="end" font-size="11" font-weight="600" fill="#827b72">'+esc(compact(yv))+'</text>');
+ }
  if(type==='line'||type==='area'){
    series.forEach(function(s,si){
      var pts=s.values.map(function(v,i){var x=left+(i+.5)*plotW/Math.max(1,gs.length),y=top+plotH-(v/max)*plotH;return x+','+y}).join(' ');
-     if(type==='area'){var first=left+.5*plotW/Math.max(1,gs.length),last=left+(gs.length-.5)*plotW/Math.max(1,gs.length);svg.push('<polygon points="'+first+','+(top+plotH)+' '+pts+' '+last+','+(top+plotH)+'" fill="'+colors[si%colors.length]+'" opacity=".14"/>')}
-     svg.push('<polyline points="'+pts+'" fill="none" stroke="'+colors[si%colors.length]+'" stroke-width="4" stroke-linejoin="round"/>');
-     s.values.forEach(function(v,i){var x=left+(i+.5)*plotW/Math.max(1,gs.length),y=top+plotH-(v/max)*plotH;svg.push('<circle cx="'+x+'" cy="'+y+'" r="7" fill="'+colors[si%colors.length]+'" data-fallback="'+si+':'+i+'"><title>'+esc(s.name)+': '+esc(fmt(v))+'</title></circle>')});
+     var first=left+.5*plotW/Math.max(1,gs.length),last=left+(gs.length-.5)*plotW/Math.max(1,gs.length);
+     if(type==='area')svg.push('<polygon points="'+first+','+(top+plotH)+' '+pts+' '+last+','+(top+plotH)+'" fill="'+colors[si%colors.length]+'" opacity=".12"/>');
+     svg.push('<polyline points="'+pts+'" fill="none" stroke="'+colors[si%colors.length]+'" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>');
+     s.values.forEach(function(v,i){var x=left+(i+.5)*plotW/Math.max(1,gs.length),y=top+plotH-(v/max)*plotH;svg.push('<circle cx="'+x+'" cy="'+y+'" r="7" fill="#fff" stroke="'+colors[si%colors.length]+'" stroke-width="4" data-fallback="'+si+':'+i+'"><title>'+escAttr(s.name)+' · '+escAttr(gs[i].label)+' · '+escAttr(fmt(v))+'</title></circle>');});
    });
+   gs.forEach(function(g,i){var x=left+(i+.5)*plotW/Math.max(1,gs.length);svg.push('<text x="'+x+'" y="'+(h-25)+'" text-anchor="middle" font-size="10" font-weight="700" fill="#777">'+esc(niceLabel(g.label))+'</text>');});
  }else if(type==='pie'||type==='donut'){
-   var s=series[0],total=s.values.reduce(function(a,b){return a+b},0)||1,cx=250,cy=170,r=105,inner=type==='donut'?55:0,start=-Math.PI/2;
+   var s=series[0],safeTotal=s.values.reduce(function(a,b){return a+Math.max(0,b)},0)||1,cx=275,cy=185,r=116,inner=type==='donut'?68:0,start=-Math.PI/2;
    gs.forEach(function(g,i){
-     var frac=Math.max(0,s.values[i])/total,end=start+frac*Math.PI*2,x1=cx+r*Math.cos(start),y1=cy+r*Math.sin(start),x2=cx+r*Math.cos(end),y2=cy+r*Math.sin(end),large=frac>.5?1:0;
-     if(inner){var ix2=cx+inner*Math.cos(end),iy2=cy+inner*Math.sin(end),ix1=cx+inner*Math.cos(start),iy1=cy+inner*Math.sin(start);svg.push('<path d="M '+cx+' '+cy+' L '+x1+' '+y1+' A '+r+' '+r+' 0 '+large+' 1 '+x2+' '+y2+' L '+ix2+' '+iy2+' A '+inner+' '+inner+' 0 '+large+' 0 '+ix1+' '+iy1+' Z" fill="'+colors[i%colors.length]+'" data-fallback="0:'+i+'"><title>'+esc(g.label)+': '+esc(fmt(s.values[i]))+'</title></path>')}
-     else svg.push('<path d="M '+cx+' '+cy+' L '+x1+' '+y1+' A '+r+' '+r+' 0 '+large+' 1 '+x2+' '+y2+' Z" fill="'+colors[i%colors.length]+'" data-fallback="0:'+i+'"><title>'+esc(g.label)+': '+esc(fmt(s.values[i]))+'</title></path>');
+     var val=Math.max(0,s.values[i]),frac=val/safeTotal,end=start+frac*Math.PI*2,x1=cx+r*Math.cos(start),y1=cy+r*Math.sin(start),x2=cx+r*Math.cos(end),y2=cy+r*Math.sin(end),large=frac>.5?1:0;
+     if(frac<=0)return;
+     if(inner){var ix2=cx+inner*Math.cos(end),iy2=cy+inner*Math.sin(end),ix1=cx+inner*Math.cos(start),iy1=cy+inner*Math.sin(start);svg.push('<path d="M '+cx+' '+cy+' L '+x1+' '+y1+' A '+r+' '+r+' 0 '+large+' 1 '+x2+' '+y2+' L '+ix2+' '+iy2+' A '+inner+' '+inner+' 0 '+large+' 0 '+ix1+' '+iy1+' Z" fill="'+colors[i%colors.length]+'" stroke="#fff" stroke-width="4" filter="url(#idChartShadow)" data-fallback="0:'+i+'"><title>'+escAttr(g.label)+' · '+escAttr(fmt(val))+'</title></path>');}
+     else svg.push('<path d="M '+cx+' '+cy+' L '+x1+' '+y1+' A '+r+' '+r+' 0 '+large+' 1 '+x2+' '+y2+' Z" fill="'+colors[i%colors.length]+'" stroke="#fff" stroke-width="4" filter="url(#idChartShadow)" data-fallback="0:'+i+'"><title>'+escAttr(g.label)+' · '+escAttr(fmt(val))+'</title></path>');
      start=end;
    });
-   svg.push('<text x="'+cx+'" y="'+(cy+6)+'" text-anchor="middle" font-size="20" font-weight="700" fill="currentColor">'+esc(fmt(total))+'</text>');
+   svg.push('<text x="'+cx+'" y="'+(cy-3)+'" text-anchor="middle" font-size="25" font-weight="900" fill="#171717">'+esc(compact(safeTotal))+'</text>');
+   svg.push('<text x="'+cx+'" y="'+(cy+20)+'" text-anchor="middle" font-size="10" font-weight="700" fill="#777">TOTAL</text>');
+   var ly=62;gs.slice(0,8).forEach(function(g,i){svg.push('<rect x="500" y="'+ly+'" width="11" height="11" rx="3" fill="'+colors[i%colors.length]+'"/><text x="518" y="'+(ly+10)+'" font-size="10" font-weight="700" fill="#555">'+esc(niceLabel(g.label))+'</text><text x="730" y="'+(ly+10)+'" text-anchor="end" font-size="10" font-weight="800" fill="#222">'+esc(fmt(s.values[i]))+'</text>');ly+=30;});
  }else if(type==='hbar'){
-   var n=gs.length,slot=plotH/Math.max(1,n),bh=Math.max(12,slot*.62);
-   gs.forEach(function(g,i){var s=series[0],v=s.values[i],bw=(v/max)*(plotW*.82),y=top+i*slot+(slot-bh)/2;svg.push('<rect x="'+left+'" y="'+y+'" width="'+Math.max(2,bw)+'" height="'+bh+'" rx="4" fill="'+colors[0]+'" data-fallback="0:'+i+'"><title>'+esc(s.name)+' · '+esc(g.label)+': '+esc(fmt(v))+'</title></rect>');var lab=String(g.label);if(lab.length>18)lab=lab.slice(0,17)+'…';svg.push('<text x="'+(left-6)+'" y="'+(y+bh*.68)+'" text-anchor="end" font-size="10" fill="#777">'+esc(lab)+'</text>')});
+   var n=gs.length,slot=plotH/Math.max(1,n),bh=Math.max(16,slot*.62),s=series[0];
+   gs.forEach(function(g,i){var v=s.values[i],bw=(v/max)*(plotW*.82),y=top+i*slot+(slot-bh)/2;svg.push('<rect x="'+left+'" y="'+y+'" width="'+Math.max(3,bw)+'" height="'+bh+'" rx="10" fill="'+colors[i%colors.length]+'" opacity=".95" data-fallback="0:'+i+'"><title>'+escAttr(s.name)+' · '+escAttr(g.label)+' · '+escAttr(fmt(v))+'</title></rect>');var lab=String(g.label);if(lab.length>17)lab=lab.slice(0,16)+'…';svg.push('<text x="'+(left-10)+'" y="'+(y+bh*.66)+'" text-anchor="end" font-size="10" font-weight="700" fill="#777">'+esc(lab)+'</text>');svg.push('<text x="'+(Math.min(w-right-4,left+bw+8))+'" y="'+(y+bh*.66)+'" font-size="10" font-weight="900" fill="#222">'+esc(compact(v))+'</text>');});
  }else{
-   var n=gs.length,slot=plotW/Math.max(1,n),bw=Math.max(8,(slot*.72)/Math.max(1,series.length));
-   gs.forEach(function(g,i){
-     var base=top+plotH;
-     series.forEach(function(s,si){
-       var v=s.values[i],bh=(v/max)*plotH,x=left+i*slot+slot*.14+si*bw,y=base-bh;
-       if(type==='stacked'){var prev=0;for(var pj=0;pj<si;pj++)prev+=series[pj].values[i]||0;var totalStack=series.reduce(function(a,q){return a+(q.values[i]||0)},0)||1;bh=(v/totalStack)*plotH;y=base-(prev+v)/totalStack*plotH;}
-       svg.push('<rect x="'+x+'" y="'+y+'" width="'+Math.max(3,bw-3)+'" height="'+Math.max(0,bh)+'" rx="3" fill="'+colors[si%colors.length]+'" data-fallback="'+si+':'+i+'"><title>'+esc(s.name)+' · '+esc(g.label)+': '+esc(fmt(v))+'</title></rect>');
-     });
-     var lab=String(g.label);if(lab.length>13)lab=lab.slice(0,12)+'…';svg.push('<text x="'+(left+i*slot+slot/2)+'" y="'+(h-30)+'" text-anchor="middle" font-size="10" fill="#777">'+esc(lab)+'</text>');
-   });
+   var n=gs.length,slot=plotW/Math.max(1,n),bw=Math.max(12,(slot*.68)/Math.max(1,series.length));
+   gs.forEach(function(g,i){var base=top+plotH;series.forEach(function(s,si){var v=s.values[i],bh=(v/max)*plotH,x=left+i*slot+slot*.16+si*bw,y=base-bh;if(type==='stacked'){var prev=0;for(var pj=0;pj<si;pj++)prev+=series[pj].values[i]||0;var totalStack=series.reduce(function(a,q){return a+(q.values[i]||0)},0)||1;bh=(v/totalStack)*plotH;y=base-(prev+v)/totalStack*plotH;}svg.push('<rect x="'+x+'" y="'+y+'" width="'+Math.max(5,bw-5)+'" height="'+Math.max(2,bh)+'" rx="8" fill="'+colors[si%colors.length]+'" filter="url(#idChartShadow)" data-fallback="'+si+':'+i+'"><title>'+escAttr(s.name)+' · '+escAttr(g.label)+' · '+escAttr(fmt(v))+'</title></rect>');if(v>0&&series.length===1)svg.push('<text x="'+(x+bw/2-2)+'" y="'+Math.max(top+12,y-7)+'" text-anchor="middle" font-size="10" font-weight="900" fill="#333">'+esc(compact(v))+'</text>');});var lab=String(g.label);if(lab.length>13)lab=lab.slice(0,12)+'…';svg.push('<text x="'+(left+i*slot+slot/2)+'" y="'+(h-25)+'" text-anchor="middle" font-size="10" font-weight="700" fill="#777">'+esc(lab)+'</text>');});
  }
  svg.push('</svg>');
- var note=(reason?'<div style="padding:10px 4px 4px;color:#9a6500;font-size:12px;font-weight:700">'+esc(reason)+'</div>':'')+
-          '<div style="padding:8px 4px 0;color:#777;font-size:12px">Tap a bar, point or slice for the exact value. Each series is calculated from '+f.rs.length.toLocaleString()+' loaded rows.</div>';
- wrap.innerHTML=svg.join('')+note;
- wrap.querySelectorAll('[data-fallback]').forEach(function(el){el.addEventListener('click',function(){var q=el.getAttribute('data-fallback').split(':'),si=+q[0],i=+q[1],s=series[si],g=gs[i],d=$('smartChartDetail');if(d)d.innerHTML='<b>'+esc(s.name)+'</b><div style="margin-top:4px">'+esc(g.label)+' · <strong>'+esc(fmt(s.values[i]))+'</strong></div>';});});
+ var note=(reason?'<div class="id-chart-note warn">'+esc(reason)+'</div>':'')+'<div class="id-chart-note">Tap a bar, point or segment for the exact figure · '+f.rs.length.toLocaleString()+' loaded rows</div>';
+ wrap.innerHTML='<div class="id-chart-visual">'+svg.join('')+'</div>'+note;
+ wrap.querySelectorAll('[data-fallback]').forEach(function(el){el.addEventListener('click',function(){var q=el.getAttribute('data-fallback').split(':'),si=+q[0],i=+q[1],s=series[si],g=gs[i],d=$('smartChartDetail');if(d)d.innerHTML='<b>'+esc(s.name)+'</b><div class="id-touch-value"><span>'+esc(g.label)+'</span><strong>'+esc(fmt(s.values[i]))+'</strong></div>';});});
 }
 function tick(){
  var f=fields();if(!f.measures.length)return;
