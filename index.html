@@ -1096,7 +1096,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 </style>
 
 
-<meta name="instantdash-build" content="v1.12.01-final-verified">
+<meta name="instantdash-build" content="v1.12.02-final-verified">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style></head>
 <body class="" style="overflow: hidden;">
@@ -1109,7 +1109,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.12.01</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.12.02</span>
   </div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -1283,7 +1283,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 <div class="section" id="smartChartsSection">
       <div class="section-head">
         <h2>Interactive Charts</h2>
-        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.12.01 FINAL</span><span class="hint" id="smartChartHint">Choose one of the 3–4 data views below; only the selected chart is displayed.</span>
+        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.12.02 FINAL</span><span class="hint" id="smartChartHint">Choose one of the 3–4 data views below; only the selected chart is displayed.</span>
       </div>
       <div class="smart-chart-shell" id="smartChartsRoot">
         <!-- v1.11.14 — chart intelligence: max 4 data types, latest-period composition, touch-safe details -->
@@ -2235,6 +2235,7 @@ async function rebuildFromAoa(){
 
   const cleaned = detectAndExcludeSummaryRows(rows, names, srcIndex);
   APP.rows = cleaned.rows;
+  APP.__dataVersion = (APP.__dataVersion || 0) + 1;
   APP.srcIndex = cleaned.srcIndex;
   APP.excludedSummaryRows = cleaned.excluded;
   APP.rawColumnNames = names;
@@ -5145,6 +5146,11 @@ function buildEverything(){
   APP.sort = {col:null, dir:1}; APP.page = 0; APP.search = ''; $('tableSearch').value = '';
   renderTable();
   buildInsights();
+  try{
+    if(typeof window.__instantDashSmartChartsRefresh === 'function'){
+      window.__instantDashSmartChartsRefresh();
+    }
+  }catch(_){ }
 }
 
 /* =====================================================================
@@ -7076,7 +7082,7 @@ function boot(){if(!$('smartDataVerification')){var h=$('smartChartHint');if(h){
 (function(){
 'use strict';
 /*
- InstantDash v1.12.01 — Final Verified Universal AI Chart Engine
+ InstantDash v1.12.02 — Final Verified Universal AI Chart Engine
  - All genuine numeric measures are available in every parameter dropdown.
  - Semantic AI-style analysis recommends, but never restricts, choices.
  - Handles ordinary tabular data and statement-style financial sheets.
@@ -7369,7 +7375,7 @@ function bind(){
 bind();
 var last='', timer=0;
 function watch(){
- var a=app(),rows=a&&Array.isArray(a.rows)?a.rows.length:0,filtered=a&&Array.isArray(a.filtered)?a.filtered.length:0,cols=a&&Array.isArray(a.columns)?a.columns.length:0,sheet=a&&a.activeSheet||'',keys=a&&a.rows&&a.rows[0]?Object.keys(a.rows[0]).join('¦'):'',sig=[rows,filtered,cols,sheet,keys].join('|');
+ var a=app(),rows=a&&Array.isArray(a.rows)?a.rows.length:0,filtered=a&&Array.isArray(a.filtered)?a.filtered.length:0,cols=a&&Array.isArray(a.columns)?a.columns.length:0,sheet=a&&a.activeSheet||'',file=a&&a.fileName||'',ver=a&&a.__dataVersion||0,keys=a&&a.rows&&a.rows[0]?Object.keys(a.rows[0]).join('¦'):'',sample=a&&a.rows&&a.rows[0]?Object.keys(a.rows[0]).slice(0,12).map(function(k){return String(a.rows[0][k])}).join('¦'):'',sig=[ver,file,rows,filtered,cols,sheet,keys,sample].join('|');
  if(sig!==last){last=sig;clearTimeout(timer);timer=setTimeout(refresh,30)}
 }
 setTimeout(refresh,80);[200,500,1000,2000,4000,7000].forEach(function(ms){setTimeout(watch,ms)});
