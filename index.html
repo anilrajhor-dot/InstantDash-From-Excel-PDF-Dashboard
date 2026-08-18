@@ -1120,7 +1120,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 </style>
 
 
-<meta name="instantdash-build" content="v1.13.05-stable-chart-fix">
+<meta name="instantdash-build" content="v1.13.06-stable-chart-fix">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -1165,7 +1165,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.13.05</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.13.06</span>
   </div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -1364,7 +1364,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 <div class="section" id="smartChartsSection">
       <div class="section-head">
         <h2>Interactive Charts</h2>
-        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.13.05 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
+        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.13.06 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
       </div>
       <section class="ai-dashboard-charts" id="aiDashboardCharts" aria-label="AI generated charts">
         <div class="ai-dashboard-head">
@@ -7592,7 +7592,16 @@ function model(){
  });
  ms=uniqMs;
 
- var aiMeasures=ms.filter(function(m){return m.kind!=='identifier'&&m.kind!=='category'});
+ /* v1.13.06 — reconcile the manual catalogue with the same live columns
+    already used by the automatic multi-chart engine. If automatic charts can
+    render a numeric field, that field must be selectable manually as well. */
+ var liveCols=appColumnCatalogue(d);
+ liveCols.forEach(function(m){
+   var usable=m && m.name && m.kind!=='category' && m.kind!=='time' &&
+     (m.type==='number' || Number(m.ratio)>=.20 || m.kind==='identifier');
+   if(usable && !ms.some(function(x){return x.name===m.name})) ms.push(m);
+ });
+ var aiMeasures=ms.filter(function(m){return m.kind!=='identifier'&&m.kind!=='category'&&m.kind!=='time'});
  var ds=dimensions({rows:discoveryRows,all:discoveryRows,cols:d.cols});
 
  /* If row-based dimensions are unavailable, use APP column roles. */
@@ -7620,7 +7629,7 @@ function demo(){
 }
 var state={model:null,type:'bar',groupBy:'',params:[],selected:0};
 function getModel(){var m=model();return (m.hasApp||m.rows.length)?m:demo()}
-function opts(){return state.model.measures.map(function(m){return m.name})}
+function opts(){return (state.model.aiMeasures||state.model.measures).filter(function(m){return m.kind!=='category'&&m.kind!=='time'}).map(function(m){return m.name})}
 function choose(){
  var o=opts(), rec=state.model.ai&&state.model.ai[0];
  var valid=state.params.filter(function(p){return o.indexOf(p)>=0}).filter(function(p,i,a){return a.indexOf(p)===i});
@@ -7720,7 +7729,7 @@ function bind(){
      if(e.value){state.params=state.params.map(function(p,i){return i!==idx&&p===e.value?'':p});}
    }
    state.selected=0;sync();draw();
-   /* v1.13.05 — keep the independent parameter renderer synchronised.
+   /* v1.13.06 — keep the independent parameter renderer synchronised.
       This is deliberately called after the normal renderer so manual
       selections always produce a chart even if the AI renderer has no model. */
    try{ if(window.__instantDashParameterFallback && typeof window.__instantDashParameterFallback.redraw==='function') window.__instantDashParameterFallback.redraw(); }catch(_){}
@@ -7741,6 +7750,7 @@ function watch(){
 setTimeout(refresh,80);[200,500,1000,2000,4000,7000].forEach(function(ms){setTimeout(watch,ms)});
 setInterval(watch,700);
 window.__instantDashSmartChartsRefresh=refresh;
+setTimeout(function(){try{if(window.__instantDashParameterFallback) refresh();}catch(_){ }},750);
 })();
 </script>
 
@@ -7970,15 +7980,15 @@ window.__instantDashAIMultiChartsRefresh=render;
     var a=$('app'), empty=$('emptyState'), file=$('fileName');
     if(a&&!a.hidden){
       resultStrip();
-      /* v1.13.05 — NEVER use app height as a navigation trigger.
+      /* v1.13.06 — NEVER use app height as a navigation trigger.
          Chart rendering changes page height repeatedly and the old watcher
          therefore kept scrolling the iPhone viewport up/down. */
       var live=window.__INSTANTDASH_APP__||{};
       var sig=(file&&file.textContent||'')+'|'+(live.__dataVersion||0)+'|'+(live.fileName||'');
       if(sig!==last){
         last=sig;
-        if(window.__instantDashUserUploadComplete && !a.dataset.v11305AutoScrolled){
-          a.dataset.v11305AutoScrolled='1';
+        if(window.__instantDashUserUploadComplete && !a.dataset.v11306AutoScrolled){
+          a.dataset.v11306AutoScrolled='1';
           setTimeout(function(){goResults();},180);
         }
       }
@@ -8130,7 +8140,7 @@ window.__instantDashAIMultiChartsRefresh=render;
 <script id="instantdash-v11304-parameter-engine-fallback">
 (function(){
 'use strict';
-/* v1.13.05 FINAL FALLBACK
+/* v1.13.06 FINAL FALLBACK
    Purpose: guarantee that uploaded columns remain selectable even if the
    semantic/AI layer reports zero parameters. This module reads APP.rows
    directly and is deliberately independent of AI classification.
@@ -8153,7 +8163,12 @@ function fields(){
    if(vals.length<1)return;
    var nums=vals.map(num).filter(isFinite),ratio=nums.length/vals.length,uniq=new Set(vals.map(String)).size;
    if(isTime(n)) { if(uniq>=2&&uniq<=100)dims.push({name:n,kind:'time',unique:uniq}); return; }
-   if(ratio>=.20){
+   var categoricalName=/(^|[^a-z])(name|state|district|branch|category|segment|type|class|group|channel|region|zone|mid|code|account|acct|pan|mobile|phone|email|pincode|key)([^a-z]|$)/i.test(String(n||''));
+   /* A low-cardinality field such as Mid (0 / Blank / P) is a dimension,
+      even when some values can be parsed as numbers. */
+   if(categoricalName && uniq>=2 && uniq<=36){
+     dims.push({name:n,kind:'cat',unique:uniq});
+   } else if(ratio>=.20){
      measures.push({name:n,agg:isId(n)?'count':'sum',identifier:isId(n),ratio:ratio});
    } else if(uniq>=2&&uniq<=100){
      dims.push({name:n,kind:'cat',unique:uniq});
@@ -8167,7 +8182,8 @@ function ensureOptions(){
    var s=$(id);if(!s)return;var current=s.value;
    /* Only rebuild when the live dropdown has no real field options. */
    var real=[].slice.call(s.options||[]).filter(function(o){return o.value});
-   if(real.length===f.measures.length)return;
+   var same=real.length===f.measures.length && real.every(function(o,i){return f.measures[i]&&o.value===f.measures[i].name});
+   if(same)return;
    s.innerHTML='<option value="">None</option>';
    f.measures.forEach(function(m){var o=document.createElement('option');o.value=m.name;o.textContent=m.name+(m.identifier?' · Count':'');s.appendChild(o)});
    if(current&&f.measures.some(function(m){return m.name===current}))s.value=current;
@@ -8232,8 +8248,8 @@ function redraw(){
 }
 function bindFallback(){
  ['smartChartType','smartParam1','smartParam2','smartParam3','smartGroupBy'].forEach(function(id){
-   var e=$(id); if(!e || e.dataset.v11305Fallback==='1') return;
-   e.dataset.v11305Fallback='1';
+   var e=$(id); if(!e || e.dataset.v11306Fallback==='1') return;
+   e.dataset.v11306Fallback='1';
    e.addEventListener('change',function(){ setTimeout(redraw,0); },false);
    e.addEventListener('input',function(){ setTimeout(redraw,0); },false);
  });
@@ -8241,8 +8257,9 @@ function bindFallback(){
 function bootFallback(){
  ensureOptions(); bindFallback(); redraw();
 }
-setTimeout(bootFallback,80);
-setTimeout(bootFallback,500);
+setTimeout(bootFallback,120);
+setTimeout(bootFallback,600);
+setTimeout(bootFallback,1400);
 setTimeout(bootFallback,1200);
 var observer=window.MutationObserver?new MutationObserver(function(){bindFallback();}):null;
 if(observer && document.body) observer.observe(document.body,{childList:true,subtree:true});
@@ -8250,8 +8267,8 @@ window.__instantDashParameterFallback={fields:fields,refresh:tick,redraw:redraw,
 })();
 </script>
 
-<style id="instantdash-v11305-stability">
-/* v1.13.05 — stable iPhone chart interaction */
+<style id="instantdash-v11306-stability">
+/* v1.13.06 — stable iPhone chart interaction */
 #smartChartsSection,#smartChartCanvas,#smartChartCanvas svg{scroll-margin-top:12px;}
 #smartChartCanvas{min-height:360px;overflow:hidden;position:relative;}
 #smartChartCanvas select{touch-action:manipulation;}
