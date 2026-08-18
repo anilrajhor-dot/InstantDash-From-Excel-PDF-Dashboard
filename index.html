@@ -1131,7 +1131,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 </style>
 
 
-<meta name="instantdash-build" content="v1.13.13-parameter-bridge-fix">
+<meta name="instantdash-build" content="v1.13.14-identifier-protection">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -1375,7 +1375,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 <div class="section" id="smartChartsSection">
       <div class="section-head">
         <h2>Interactive Charts</h2>
-        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.13.13 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
+        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.13.14 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
       </div>
       <section class="ai-dashboard-charts" id="aiDashboardCharts" aria-label="AI generated charts">
         <div class="ai-dashboard-head">
@@ -7683,7 +7683,7 @@ function demo(){
 }
 var state={model:null,type:'bar',groupBy:'',params:[],selected:0};
 function getModel(){var m=model();return (m.hasApp||m.rows.length)?m:demo()}
-/* v1.13.13 — single-source parameter recovery. If the host parser exposes
+/* v1.13.14 — single-source parameter recovery. If the host parser exposes
    rows/columns before the semantic catalogue is ready, build a conservative
    live catalogue immediately. This prevents the Advisor from saying
    'No usable parameters' while the automatic chart engine can already plot.
@@ -7722,8 +7722,10 @@ function emergencyCatalogue(m){
     if(!time && (c.role==='dimension'||c.role==='highdim'||(nums.length===0&&unique<=100)) && unique>=2 && unique<=100){
       dims.push({name:name,kind:'cat',unique:unique,score:(unique<=15?40:20)});
     }
-    if(!time && (id || nums.length>0 || c.type==='number'||c.type==='numeric')){
-      measures.push({name:name,type:'number',kind:id?'identifier':'measure',agg:id?'count':'sum',ratio:ratio,unique:unique,numeric:nums.length,display:niceName(name)});
+    /* Keep identifiers in the semantic catalogue for data-quality/context
+       purposes, but never expose them as quantitative chart parameters. */
+    if(!time && !id && (nums.length>0 || c.type==='number'||c.type==='numeric')){
+      measures.push({name:name,type:'number',kind:'measure',agg:'sum',ratio:ratio,unique:unique,numeric:nums.length,display:niceName(name)});
     }
   });
   var bridge=chartBridgeCatalogue(m);
@@ -7742,12 +7744,15 @@ function ensureCatalogue(m){
 }
 function opts(){
  var ms=state.model&&Array.isArray(state.model.measures)?state.model.measures:[];
- /* v1.13.13 — manual selectors must use the actual numeric evidence, not only
+ /* v1.13.14 — manual selectors use genuine measures, not identifiers or account numbers, while preserving mixed numeric measures
     the AI semantic kind. A numeric field can be temporarily classified as a
     category when it contains blanks/mixed values; it must still be selectable. */
  var out=ms.filter(function(m){
    if(!m||!m.name||m.kind==='time')return false;
-   if(m.kind==='identifier')return true;
+   /* Identifiers (account numbers, SR NO, customer IDs, codes, etc.) are
+      never quantitative parameters. They may be counted or inspected, but
+      must not be summed and must not drive a misleading value chart. */
+   if(m.kind==='identifier'||m.identifier||isId(m.name))return false;
    if(m.kind!=='category')return true;
    return Number(m.numeric)>0 || Number(m.ratio)>=.20 || Number(m.numericRatio)>=.20 || m.type==='number';
  }).map(function(m){return m.name});
@@ -8304,7 +8309,7 @@ window.__instantDashAIMultiChartsRefresh=render;
 <script id="instantdash-v11304-parameter-engine-fallback">
 (function(){
 'use strict';
-/* v1.13.13 FINAL FALLBACK
+/* v1.13.14 FINAL FALLBACK
    Purpose: guarantee that uploaded columns remain selectable even if the
    semantic/AI layer reports zero parameters. This module reads APP.rows
    directly and is deliberately independent of AI classification.
@@ -8327,13 +8332,18 @@ function fields(){
    if(vals.length<1)return;
    var nums=vals.map(num).filter(isFinite),ratio=nums.length/vals.length,uniq=new Set(vals.map(String)).size;
    if(isTime(n)) { if(uniq>=2&&uniq<=100)dims.push({name:n,kind:'time',unique:uniq}); return; }
-   var categoricalName=/(^|[^a-z])(name|state|district|branch|category|segment|type|class|group|channel|region|zone|mid|code|account|acct|pan|mobile|phone|email|pincode|key)([^a-z]|$)/i.test(String(n||''));
-   /* A low-cardinality field such as Mid (0 / Blank / P) is a dimension,
-      even when some values can be parsed as numbers. */
-   if(categoricalName && uniq>=2 && uniq<=36){
+   var idField=isId(n);
+   var categoricalName=/(^|[^a-z])(name|state|district|branch|category|segment|type|class|group|channel|region|zone|mid)([^a-z]|$)/i.test(String(n||''));
+   /* Account numbers, SR NO, customer IDs and similar fields are identifiers,
+      even when every value is numeric. Never use them as chart measures. */
+   if(idField){
+     if(uniq>=2&&uniq<=100) dims.push({name:n,kind:'cat',unique:uniq,identifier:true});
+   } else if(categoricalName && uniq>=2 && uniq<=36){
+     /* A low-cardinality field such as Mid (0 / Blank / P) is a dimension,
+        even when some values can be parsed as numbers. */
      dims.push({name:n,kind:'cat',unique:uniq});
    } else if(ratio>=.20){
-     measures.push({name:n,agg:isId(n)?'count':'sum',identifier:isId(n),ratio:ratio});
+     measures.push({name:n,agg:'sum',identifier:false,ratio:ratio});
    } else if(uniq>=2&&uniq<=100){
      dims.push({name:n,kind:'cat',unique:uniq});
    }
