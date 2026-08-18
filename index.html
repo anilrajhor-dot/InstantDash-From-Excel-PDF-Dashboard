@@ -1120,7 +1120,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 </style>
 
 
-<meta name="instantdash-build" content="v1.12.09-ai-multi-chart-dashboard">
+<meta name="instantdash-build" content="v1.12.10-ai-multi-chart-dashboard">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style></head>
 <body class="" style="overflow: hidden;">
@@ -1133,7 +1133,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.12.09</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.12.10</span>
   </div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -1307,7 +1307,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 <div class="section" id="smartChartsSection">
       <div class="section-head">
         <h2>Interactive Charts</h2>
-        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.12.09 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
+        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.12.10 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
       </div>
       <section class="ai-dashboard-charts" id="aiDashboardCharts" aria-label="AI generated charts">
         <div class="ai-dashboard-head">
@@ -1577,7 +1577,7 @@ function hideLoader(){ $('loader').classList.remove('on'); }
 // This is especially important on iPhone/iPad where the native file picker
 // returns to the exact scroll position from which the file was selected.
 function scrollToResults(){
-  const target = $('aiDashboardCharts') || $('smartChartsSection') || $('smartResultStrip') || $('app');
+  const target = $('app') || $('smartResultStrip') || $('smartChartsSection') || $('aiDashboardCharts');
   const host = $('pageScroll');
   if (!target) return;
   setTimeout(() => {
@@ -7184,7 +7184,7 @@ function boot(){if(!$('smartDataVerification')){var h=$('smartChartHint');if(h){
 (function(){
 'use strict';
 /*
- InstantDash v1.12.09 — AI Multi-Chart Intelligence
+ InstantDash v1.12.10 — AI Multi-Chart Intelligence
  - All genuine numeric measures are available in every parameter dropdown.
  - Semantic AI-style analysis recommends, but never restricts, choices.
  - Handles ordinary tabular data and statement-style financial sheets.
@@ -7286,7 +7286,7 @@ function dimensions(d){
  return out;
 }
 /* ------------------------------------------------------------------
-   v1.12.09 — AI CHART INTELLIGENCE
+   v1.12.10 — AI CHART INTELLIGENCE
    Local, deterministic semantic reasoning. It does not send the file
    anywhere. It scores field names, values, cardinality, time structure,
    scale and relationships, then selects a chart that fits the evidence.
@@ -7628,6 +7628,9 @@ function makeConfig(s){
  var t=s.type, isLine=(t==='line'||t==='area'), isPie=(t==='pie'||t==='donut'), isH=(t==='hbar'), isStack=(t==='stacked');
  var vals=(ds.values||[]).map(function(v){var x=Number(v);return isFinite(x)?x:0});
  var labels=(ds.labels||[]).map(function(v){return String(v)});
+ if(!vals.length || !labels.length){
+   throw new Error('No chartable values');
+ }
  var bg=isPie?labels.map(function(_,i){return palette[i%palette.length]}):'rgba(245,179,1,.22)';
  var dataset={
    label:niceName(s.measure),
@@ -7688,9 +7691,23 @@ function chartTypeOptions(current){
  return '<option value="bar"'+(current==='bar'?' selected':'')+'>Bar</option><option value="hbar"'+(current==='hbar'?' selected':'')+'>Horizontal Bar</option><option value="line"'+(current==='line'?' selected':'')+'>Line</option><option value="area"'+(current==='area'?' selected':'')+'>Area</option><option value="pie"'+(current==='pie'?' selected':'')+'>Pie</option><option value="donut"'+(current==='donut'?' selected':'')+'>Donut</option>';
 }
 function redrawAICard(s,card){
- var old=charts[s.id];if(old){try{old.destroy()}catch(_){} }
- var canvas=card.querySelector('canvas');if(window.Chart&&canvas)charts[s.id]=new Chart(canvas.getContext('2d'),makeConfig(s));
- var sub=card.querySelector('.ai-chart-sub');if(sub)sub.textContent=(s.group?'AI selected '+niceName(s.type==='hbar'?'horizontal bar':s.type)+' chart grouped by '+niceName(s.group):'AI selected '+niceName(s.type)+' chart for '+niceName(s.measure))+'.';
+ var old=charts[s.id];
+ if(old){try{old.destroy()}catch(_){} delete charts[s.id];}
+ var wrap=card.querySelector('.ai-chart-wrap');
+ if(!wrap)return;
+ // Always replace the canvas node. This avoids Safari/Chart.js retaining
+ // the previous canvas context after a chart-type change.
+ wrap.innerHTML='<canvas></canvas>';
+ var canvas=wrap.querySelector('canvas');
+ var sub=card.querySelector('.ai-chart-sub');
+ if(sub)sub.textContent=(s.group?'AI selected '+niceName(s.type==='hbar'?'horizontal bar':s.type)+' chart grouped by '+niceName(s.group):'AI selected '+niceName(s.type)+' chart for '+niceName(s.measure))+'.';
+ if(!window.Chart||!canvas)return;
+ try{
+   charts[s.id]=new Chart(canvas.getContext('2d'),makeConfig(s));
+ }catch(err){
+   wrap.innerHTML='<div class="ai-chart-render-error" style="height:100%;min-height:220px;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;color:var(--muted);font:600 11px Poppins,sans-serif">Chart could not be rendered. Please try another chart type.</div>';
+   console.error('InstantDash automatic chart render error',err);
+ }
 }
 function render(){
  var grid=$('aiChartGrid');if(!grid)return;Object.keys(charts).forEach(function(k){try{charts[k].destroy()}catch(_){}});charts={};
@@ -7738,7 +7755,13 @@ function watch(){
  }
 }
 window.__instantDashUserUploadComplete=window.__instantDashUserUploadComplete||false;
-function boot(){var ov=$('aiChartOverlay');if(ov){$('aiOverlayClose').onclick=closeExpand;ov.addEventListener('click',function(e){if(e.target===ov)closeExpand()});document.addEventListener('keydown',function(e){if(e.key==='Escape')closeExpand()})}watch();setInterval(watch,700)}
+function boot(){
+  // Always start on the upload screen. A real upload will reveal the results.
+  window.__instantDashUserUploadComplete=false;
+  var empty=$('emptyState'), appEl=$('app');
+  if(empty) empty.hidden=false;
+  if(appEl) appEl.hidden=true;
+  var ov=$('aiChartOverlay');if(ov){$('aiOverlayClose').onclick=closeExpand;ov.addEventListener('click',function(e){if(e.target===ov)closeExpand()});document.addEventListener('keydown',function(e){if(e.key==='Escape')closeExpand()})}watch();setInterval(watch,700)}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 window.__instantDashAIMultiChartsRefresh=render;
 })();
@@ -7795,7 +7818,12 @@ window.__instantDashAIMultiChartsRefresh=render;
     if(a&&!a.hidden){
       resultStrip();
       var sig=(file&&file.textContent||'')+'|'+(a.offsetHeight||0);
-      if(sig!==last){last=sig;setTimeout(function(){goResults();},180);}
+      if(sig!==last){
+        last=sig;
+        if(window.__instantDashUserUploadComplete){
+          setTimeout(function(){goResults();},180);
+        }
+      }
     }
   }
   setInterval(watch,300);watch();
