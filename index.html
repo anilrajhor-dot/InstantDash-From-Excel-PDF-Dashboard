@@ -1096,7 +1096,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 </style>
 
 
-<meta name="instantdash-build" content="v1.12.04-final-verified">
+<meta name="instantdash-build" content="v1.12.05-final-verified">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style></head>
 <body class="" style="overflow: hidden;">
@@ -1109,7 +1109,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.12.04</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.12.05</span>
   </div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -1283,7 +1283,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 <div class="section" id="smartChartsSection">
       <div class="section-head">
         <h2>Interactive Charts</h2>
-        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.12.04 FINAL</span><span class="hint" id="smartChartHint">Choose one of the 3–4 data views below; only the selected chart is displayed.</span>
+        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.12.05 FINAL</span><span class="hint" id="smartChartHint">Choose one of the 3–4 data views below; only the selected chart is displayed.</span>
       </div>
       <div class="smart-chart-shell" id="smartChartsRoot">
         <!-- v1.11.14 — chart intelligence: max 4 data types, latest-period composition, touch-safe details -->
@@ -7122,7 +7122,7 @@ function boot(){if(!$('smartDataVerification')){var h=$('smartChartHint');if(h){
 (function(){
 'use strict';
 /*
- InstantDash v1.12.04 — Final Verified Universal AI Chart Engine
+ InstantDash v1.12.05 — Parameter-Accurate Chart Engine
  - All genuine numeric measures are available in every parameter dropdown.
  - Semantic AI-style analysis recommends, but never restricts, choices.
  - Handles ordinary tabular data and statement-style financial sheets.
@@ -7283,7 +7283,7 @@ function inferCategories(ms,d){
 }
 function model(){
  var d=dataset();
- /* v1.12.04 — parameter discovery must be based on the COMPLETE uploaded
+ /* v1.12.05 — parameter discovery must be based on the COMPLETE uploaded
     dataset, not on the currently filtered rows and not only on columns that
     happen to have a 70% numeric ratio. Every genuine numeric measure in the
     uploaded file must be available in every parameter dropdown. */
@@ -7369,6 +7369,14 @@ function aggregate(){
 function seriesData(){
  var a=aggregate(), seen={};
  var ps=state.params.filter(function(p){if(!p||seen[p])return false;seen[p]=1;return true});
+ /* Pie/Donut is a composition chart. When a grouping field is selected,
+    the slices must represent that grouping for ONE selected measure. The
+    previous engine ignored groupBy for Pie/Donut and summed every selected
+    parameter across the entire dataset, which could make different choices
+    appear to show the same figures. */
+ if((state.type==='pie'||state.type==='donut') && state.groupBy && ps.length){
+   ps=[ps[0]];
+ }
  return {labels:a.labels,rows:a.rows,series:ps.map(function(p){return {name:p,values:a.rows.map(function(gr){var vals=gr.map(function(r){return num(r[p])}).filter(isFinite);return vals.length?vals.reduce(function(x,y){return x+y},0):NaN})}})};
 }
 function detail(i,d){
@@ -7419,11 +7427,17 @@ function drawPie(wrap,d,donut){
 function draw(){
  var wrap=$('smartChartCanvas');if(!wrap)return;
  var valid=state.model.dimensions.map(function(x){return x.name});if(state.groupBy&&valid.indexOf(state.groupBy)<0)state.groupBy='';
+ /* Pie/Donut should never silently compare several measures against each
+    other when a grouping dimension is selected. Keep one measure and make
+    the grouping explicit so changing Parameter 1 changes the actual slices. */
+ if((state.type==='pie'||state.type==='donut')&&state.groupBy&&state.params[0]){
+   state.params[1]=''; state.params[2]='';
+ }
  var d=seriesData();
  if(!d.series.length){wrap.innerHTML='<div style="padding:30px;color:var(--muted)">Select at least one numeric parameter.</div>';return}
  var title=$('smartChartTitle'),sub=$('smartChartSubtitle');
  if(title)title.textContent=d.series.map(function(s){return s.name}).join(' + ');
- if(sub)sub.textContent=(state.type==='pie'||state.type==='donut')&&d.series.length>1?'Composition of selected parameters':(state.groupBy?'Grouped by '+state.groupBy:'Overall')+(state.model.statement?' · statement data':'');
+ if(sub)sub.textContent=(state.type==='pie'||state.type==='donut')?(state.groupBy?'Share of '+d.series[0].name+' by '+state.groupBy:'Composition of '+d.series.map(function(s){return s.name}).join(' + ')):(state.groupBy?'Grouped by '+state.groupBy:'Overall')+(state.model.statement?' · statement data':'');
  if(state.type==='pie'||state.type==='donut')drawPie(wrap,d,state.type==='donut');else drawCartesian(wrap,d,state.type);
  detail(state.selected<d.labels.length?state.selected:0,d);
 }
@@ -7431,7 +7445,20 @@ function refresh(){
  state.model=getModel();choose();sync();draw();
 }
 function bind(){
- ['smartChartType','smartParam1','smartParam2','smartParam3','smartGroupBy'].forEach(function(id){var e=$(id);if(!e)return;e.addEventListener('change',function(){if(id==='smartChartType')state.type=e.value;else if(id==='smartGroupBy')state.groupBy=e.value;else state.params[id==='smartParam1'?0:id==='smartParam2'?1:2]=e.value;state.selected=0;sync();draw()})});
+ ['smartChartType','smartParam1','smartParam2','smartParam3','smartGroupBy'].forEach(function(id){var e=$(id);if(!e)return;e.addEventListener('change',function(){
+   if(id==='smartChartType'){
+     state.type=e.value;
+     if((state.type==='pie'||state.type==='donut')&&state.groupBy){state.params[1]='';state.params[2]='';}
+   }else if(id==='smartGroupBy'){
+     state.groupBy=e.value;
+     if((state.type==='pie'||state.type==='donut')&&state.groupBy){state.params[1]='';state.params[2]='';}
+   }else{
+     var idx=id==='smartParam1'?0:id==='smartParam2'?1:2;
+     state.params[idx]=e.value;
+     if(e.value){state.params=state.params.map(function(p,i){return i!==idx&&p===e.value?'':p});}
+   }
+   state.selected=0;sync();draw();
+ })});
  var r=$('smartResetBtn');if(r)r.onclick=function(){state={model:null,type:'bar',groupBy:'',params:[],selected:0};refresh()};
 }
 bind();
