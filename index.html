@@ -1151,7 +1151,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 </style>
 
 
-<meta name="instantdash-build" content="v1.13.21-data-isolation-and-chart-polish">
+<meta name="instantdash-build" content="v1.13.22-data-isolation-and-chart-polish">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -1205,7 +1205,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.13.21</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.13.22</span>
   </div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -1404,7 +1404,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 <div class="section" id="smartChartsSection">
       <div class="section-head">
         <h2>Interactive Charts</h2>
-        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.13.21 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
+        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.13.22 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
       </div>
       <section class="ai-dashboard-charts" id="aiDashboardCharts" aria-label="AI generated charts">
         <div class="ai-dashboard-head">
@@ -1608,7 +1608,7 @@ Charts on screen: Row count by Central Bank of India – Q1FY27.</pre></div>
 const CONFIG = {
   BUILD_VERSION: '1.13.20',
   APP_NAME: 'InstantDash',
-  VERSION: 'v1.13.21',
+  VERSION: 'v1.13.22',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -2126,7 +2126,7 @@ async function handleFile(file){
     return showFatal('That file type isn’t supported. Choose an .xlsx, .xls or .csv, or a text-based .pdf file.');
   }
 
-  // v1.13.21 — every upload gets a unique transaction token. Any older
+  // v1.13.22 — every upload gets a unique transaction token. Any older
   // asynchronous read is ignored if the user selects another file before it
   // finishes. This prevents an earlier workbook from repopulating AI cards,
   // charts or management insights after a new workbook has been selected.
@@ -8169,7 +8169,7 @@ function boot(){
   var ov=$('aiChartOverlay');if(ov){$('aiOverlayClose').onclick=closeExpand;ov.addEventListener('click',function(e){if(e.target===ov)closeExpand()});document.addEventListener('keydown',function(e){if(e.key==='Escape')closeExpand()})}watch();setInterval(watch,700)}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 
-/* v1.13.21 — hard-refresh every data-dependent intelligence surface after a new upload.
+/* v1.13.22 — hard-refresh every data-dependent intelligence surface after a new upload.
    This deliberately rebuilds from APP.rows/APP.columns and never carries semantic state
    from the previous workbook. */
 window.__instantDashHardRefreshAll=function(reason){
@@ -8650,6 +8650,101 @@ window.__instantDashParameterFallback={fields:fields,refresh:tick,redraw:redraw,
   // Final data-isolation guard: a delayed renderer may only operate on the
   // currently committed dataset. It never navigates or changes the dataset.
   window.__instantDashDataIdentity=function(){var a=window.__INSTANTDASH_APP__||window.APP||{};return {token:a.__loadToken||0,version:a.__dataVersion||0,file:a.fileName||'',sheet:a.activeSheet||'',rows:Array.isArray(a.rows)?a.rows.length:0};};
+})();
+</script>
+
+<script id="instantdash-v11322-live-parameter-engine">
+(function(){
+  'use strict';
+  var lastSig='';
+  function app(){return window.__INSTANTDASH_APP__||window.APP||null}
+  function $(id){return document.getElementById(id)}
+  function num(v){
+    if(typeof v==='number'&&isFinite(v))return v;
+    if(typeof v==='string'){
+      var x=Number(v.replace(/[₹$€£¥₩₽,%]/g,'').replace(/,/g,'').trim());
+      return isFinite(x)?x:NaN;
+    }
+    return NaN;
+  }
+  function idName(n){
+    return /(^|[\s_\-.])(id|ids|uid|guid|uuid|code|codes|invoice|inv|ref|reference|sku|serial|barcode|phone|mobile|contact|pan|pincode|pin|ifsc|micr|customer[\s_-]*(id|no|number)|agent[\s_-]*(id|no|number)|branch[\s_-]*(code|id|no|number)|settlement[\s_-]*ac|saving[\s_-]*ac|sr[\s_-]*no|s[\s_-]*no|account[\s_-]*(no|number)|acct[\s_-]*(no|number)|default[\s_-]*account)([\s_\-.]|$)/i.test(String(n||''));
+  }
+  function timeName(n,c){
+    var t=String(c&&c.type||'').toLowerCase();
+    if(t==='date'||(c&&c.role==='time'))return true;
+    /* Only treat a name as time when it is not an authoritative numeric measure.
+       This deliberately keeps fields such as NO_OF_WORKING_DAYS selectable. */
+    if(t==='number'||t==='numeric'||(c&&c.role==='measure'))return false;
+    return /(^|[^a-z])(date|month|period|quarter|year|fy|week)([^a-z]|$)/i.test(String(n||''));
+  }
+  function live(){
+    var a=app();
+    var rs=a&&Array.isArray(a.rows)?a.rows:[];
+    var cols=a&&Array.isArray(a.columns)?a.columns:[];
+    if(!rs.length)return {rows:[],measures:[],dims:[],file:a&&a.fileName||'',sheet:a&&a.activeSheet||''};
+    var names=[],seen={};
+    rs.forEach(function(r){if(!r||typeof r!=='object')return;Object.keys(r).forEach(function(k){if(k&&!seen[k]){seen[k]=1;names.push(k)}})});
+    cols.forEach(function(c){if(c&&c.name&&!seen[c.name]){seen[c.name]=1;names.push(c.name)}});
+    var measures=[],dims=[];
+    names.forEach(function(n){
+      var c=cols.find(function(x){return x&&String(x.name)===String(n)})||{};
+      var vals=rs.map(function(r){return r?r[n]:null}).filter(function(v){return v!==null&&v!==undefined&&String(v).trim()!==''});
+      if(!vals.length)return;
+      var nums=vals.map(num).filter(isFinite), ratio=nums.length/Math.max(1,vals.length), unique=new Set(vals.map(String)).size;
+      var authoritative=String(c.type||'').toLowerCase()==='number'||String(c.type||'').toLowerCase()==='numeric'||c.role==='measure';
+      var time=timeName(n,c), id=idName(n)||c.role==='identifier';
+      if(!time&&!id&&(authoritative||ratio>=.20)) measures.push({name:String(n),ratio:ratio,numeric:nums.length,unique:unique});
+      else if(!time&&unique>=2&&unique<=100&&(c.role==='dimension'||c.role==='highdim'||nums.length===0)) dims.push({name:String(n),unique:unique});
+    });
+    /* Prefer useful quantitative fields. */
+    measures.sort(function(a,b){
+      function score(x){var n=x.name.toLowerCase(),s=x.numeric+x.ratio*100;if(/amount|value|total|revenue|sales|commission|profit|count|qty|quantity|deposit|withdraw|transaction|share|balance|volume|ekyc/i.test(n))s+=80;return s}
+      return score(b)-score(a);
+    });
+    dims.sort(function(a,b){return a.unique-b.unique});
+    return {rows:rs,measures:measures,dims:dims,file:a.fileName||'',sheet:a.activeSheet||''};
+  }
+  function fillSelect(id,items,current){
+    var s=$(id);if(!s)return;
+    var keep=current||s.value||'';
+    s.innerHTML='<option value="">None</option>';
+    items.forEach(function(x){var o=document.createElement('option');o.value=x.name;o.textContent=x.name;s.appendChild(o)});
+    s.value=items.some(function(x){return x.name===keep})?keep:'';
+  }
+  function apply(){
+    var f=live();
+    if(!f.rows.length)return;
+    fillSelect('smartParam1',f.measures);
+    fillSelect('smartParam2',f.measures);
+    fillSelect('smartParam3',f.measures);
+    fillSelect('smartGroupBy',f.dims);
+    var p1=$('smartParam1');
+    if(p1&&!p1.value&&f.measures.length)p1.value=f.measures[0].name;
+    var p2=$('smartParam2'),p3=$('smartParam3');
+    if(p2&&p2.value===p1.value)p2.value='';
+    if(p3&&(p3.value===p1.value||p3.value===p2.value))p3.value='';
+    var ai=$('smartAiSummary');
+    if(ai){
+      ai.innerHTML='<span class="smart-ai-badge">AI ADVISOR</span> '+
+        (f.measures.length?'AI found <b>'+f.measures.length+'</b> usable quantitative parameters from the current file.':'No numeric parameters were found in the current file.')+
+        '<div class="id-live-source"><b>LIVE SOURCE</b> '+String(f.file||'Current file')+' · '+String(f.sheet||'Current sheet')+' · '+f.rows.length.toLocaleString()+' rows</div>';
+    }
+    var hint=$('smartChartHint');
+    if(hint)hint.textContent=f.measures.length?'LIVE DATA — '+f.rows.length.toLocaleString()+' rows · '+f.measures.length+' parameters available':'LIVE DATA — '+f.rows.length.toLocaleString()+' rows · no quantitative parameters found';
+    var no=$('smartNoParameters');if(no)no.hidden=!!f.measures.length;
+    var v=$('smartDataVerification');if(v)v.innerHTML='<b>Verified live data</b><span>'+f.measures.length+' chart parameters · '+f.dims.length+' grouping fields · '+f.file+'</span>';
+    if(window.__instantDashParameterFallback&&typeof window.__instantDashParameterFallback.redraw==='function')window.__instantDashParameterFallback.redraw();
+  }
+  function watch(){
+    var a=app();if(!a||!Array.isArray(a.rows)||!a.rows.length)return;
+    var sig=[a.__dataVersion||0,a.fileName||'',a.activeSheet||'',a.rows.length,(a.columns||[]).length,Object.keys(a.rows[0]||{}).join('|')].join('¦');
+    if(sig!==lastSig){lastSig=sig;setTimeout(apply,50);setTimeout(apply,500);setTimeout(apply,1500)}
+  }
+  window.__instantDashLiveParameterEngine={refresh:apply,fields:live};
+  setInterval(watch,500);
+  setTimeout(watch,100);
+  setTimeout(watch,1000);
 })();
 </script>
 </body></html>
