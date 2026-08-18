@@ -1151,7 +1151,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 </style>
 
 
-<meta name="instantdash-build" content="v1.13.26-pdf-header-aware">
+<meta name="instantdash-build" content="v1.13.27-pdf-header-aware">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -1215,7 +1215,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.13.26</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.13.27</span>
   </div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -1414,7 +1414,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 <div class="section" id="smartChartsSection">
       <div class="section-head">
         <h2>Interactive Charts</h2>
-        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.13.26 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
+        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.13.27 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
       </div>
       <section class="ai-dashboard-charts" id="aiDashboardCharts" aria-label="AI generated charts">
         <div class="ai-dashboard-head">
@@ -1453,6 +1453,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
             <label>Parameter 1 <select id="smartParam1"></select></label>
             <label>Parameter 2 <select id="smartParam2"></select></label>
             <label>Parameter 3 <select id="smartParam3"></select></label>
+            <label>Parameter 4 <select id="smartParam4"></select></label>
           </div>
         </div>
         <div class="smart-chart-card">
@@ -1618,7 +1619,7 @@ Charts on screen: Row count by Central Bank of India – Q1FY27.</pre></div>
 const CONFIG = {
   BUILD_VERSION: '1.13.26',
   APP_NAME: 'InstantDash',
-  VERSION: 'v1.13.26',
+  VERSION: 'v1.13.27',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -1906,234 +1907,128 @@ function wireIngest(){
 }
 
 async function parsePdfToWorkbook(file){
-  /*
-   * InstantDash v1.13.26 — robust PDF table engine.
-   *
-   * The previous PDF rescue still depended on coordinate clusters to decide
-   * how many value columns existed.  That is fragile because PDF.js may split
-   * header text and numeric cells differently from browser to browser.
-   *
-   * This version uses two independent signals:
-   *   1) the visible table header to recover the real period names; and
-   *   2) the ordered numeric cells on each table row to recover the values.
-   *
-   * We NEVER invent "Value 1" when a financial period header is available.
-   * Generic Value N names are retained only as a last-resort label for a PDF
-   * whose table genuinely has no recoverable period headings.
-   */
+  /* InstantDash v1.13.27 — financial PDF engine.
+     Key rule: never turn a recoverable financial period into "Value N".
+     Key rule: preserve dash/blank cells so a missing period cannot shift the
+     following number into the wrong column. */
   const pdfjs = await import('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs');
-  pdfjs.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs';
+  pdfjs.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs';
+  const data=new Uint8Array(await file.arrayBuffer());
+  const pdf=await pdfjs.getDocument({data}).promise;
+  const pages=[]; let extractedChars=0;
+  const clean=s=>String(s||'').replace(/[\u00a0\u200b]/g,' ').replace(/\s+/g,' ').trim();
+  const isNumberToken=s=>{const t=clean(s).replace(/[₹$€£¥₩]/g,'');return /^\(?[-+]?\d[\d,]*(?:\.\d+)?%?\)?$/.test(t)};
+  const isBlankCell=s=>/^(?:-|–|—|−|n\/a|na)$/i.test(clean(s));
+  const numberValue=s=>{let t=clean(s).replace(/[₹$€£¥₩,]/g,'');const pct=/%$/.test(t);t=t.replace(/%$/,'');const neg=/^\(.*\)$/.test(t);t=t.replace(/^\(|\)$/g,'');const n=Number(t);if(!Number.isFinite(n))return null;return neg?-n:n};
 
-  const data = new Uint8Array(await file.arrayBuffer());
-  const pdf = await pdfjs.getDocument({data}).promise;
-  const pages = [];
-  let extractedChars = 0;
-
-  const cleanToken = s => String(s || '')
-    .replace(/[\u00a0\u200b]/g,' ')
-    .replace(/\s+/g,' ')
-    .trim();
-
-  const isNumberToken = s => {
-    const t = cleanToken(s).replace(/[₹$€£¥₩]/g,'');
-    return /^\(?[-+]?\d[\d,]*(?:\.\d+)?%?\)?$/.test(t);
-  };
-
-  const numberValue = s => {
-    let t = cleanToken(s).replace(/[₹$€£¥₩,]/g,'');
-    const pct = /%$/.test(t);
-    t = t.replace(/%$/,'');
-    const negative = /^\(.*\)$/.test(t);
-    t = t.replace(/^\(|\)$/g,'');
-    const n = Number(t);
-    if (!Number.isFinite(n)) return null;
-    return negative ? -n : n;
-  };
-
-  for (let pageNo=1; pageNo<=pdf.numPages; pageNo++){
-    const page = await pdf.getPage(pageNo);
-    const content = await page.getTextContent();
-    const items = content.items
-      .filter(x => x.str && cleanToken(x.str))
-      .map(x => ({
-        x: Number(x.transform && x.transform[4]) || 0,
-        y: Number(x.transform && x.transform[5]) || 0,
-        str: cleanToken(x.str),
-        w: Math.max(3, Number(x.width) || 0)
-      }));
-
-    extractedChars += items.reduce((n,x)=>n+x.str.length,0);
-    if (!items.length) continue;
-
-    const lineMap=[];
-    for (const item of items){
-      let line=lineMap.find(l=>Math.abs(l.y-item.y)<=2.5);
-      if(!line){ line={y:item.y,items:[]}; lineMap.push(line); }
-      line.items.push(item);
-    }
-    lineMap.sort((a,b)=>b.y-a.y);
-
-    const lines=lineMap.map(l=>{
-      l.items.sort((a,b)=>a.x-b.x);
-      const text=l.items.map(i=>i.str).join(' ').replace(/\s+/g,' ').trim();
-      const nums=l.items.filter(i=>isNumberToken(i.str));
-      return {y:l.y,items:l.items,text,nums};
-    });
-
+  for(let pageNo=1;pageNo<=pdf.numPages;pageNo++){
+    const page=await pdf.getPage(pageNo),content=await page.getTextContent();
+    const items=content.items.filter(x=>x.str&&clean(x.str)).map(x=>({
+      x:Number(x.transform&&x.transform[4])||0,
+      y:Number(x.transform&&x.transform[5])||0,
+      str:clean(x.str), w:Math.max(3,Number(x.width)||0)
+    }));
+    extractedChars+=items.reduce((n,x)=>n+x.str.length,0); if(!items.length)continue;
+    const lm=[];
+    for(const item of items){let line=lm.find(l=>Math.abs(l.y-item.y)<=2.5);if(!line){line={y:item.y,items:[]};lm.push(line)}line.items.push(item)}
+    lm.sort((a,b)=>b.y-a.y);
+    const lines=lm.map(l=>{l.items.sort((a,b)=>a.x-b.x);return {y:l.y,items:l.items,text:l.items.map(i=>i.str).join(' ').replace(/\s+/g,' ').trim()}});
     pages.push({pageNo,lines});
   }
+  if(extractedChars<20||!pages.some(p=>p.lines.length))throw new Error('This PDF appears to be scanned or image-only. A text-based PDF is required for table extraction.');
 
-  if(extractedChars<20 || !pages.some(p=>p.lines.length)){
-    throw new Error('This PDF appears to be scanned or image-only. A text-based PDF is required for table extraction.');
+  function normDate(d){const m=String(d||'').match(/(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{2,4})/);if(!m)return d;let y=+m[3];if(y<100)y+=2000;return String(m[1]).padStart(2,'0')+'-'+String(m[2]).padStart(2,'0')+'-'+y}
+  function labelDate(prefix,date,kind){
+    const d=normDate(date); const p=d.split('-');
+    if(kind==='year') return 'Year ended '+d;
+    if(kind==='prev') return 'Preceding quarter ended '+d;
+    if(kind==='corresponding') return 'Corresponding quarter ended '+d;
+    return 'Quarter ended '+d;
   }
-
-  /* ---------------------- period/header recovery ---------------------- */
-  function normaliseDate(d){
-    const m=String(d||'').match(/(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})/);
-    if(!m)return d;
-    let y=Number(m[3]); if(y<100)y+=2000;
-    return String(m[1]).padStart(2,'0')+'-'+String(m[2]).padStart(2,'0')+'-'+y;
-  }
-  function periodNamesFromBlock(block){
-    const t=block.replace(/\s+/g,' ').trim();
-    const found=[];
-    const add=(name,date)=>{ if(date && !found.some(x=>x.date===date)) found.push({name,date}); };
-    let m;
-    m=t.match(/3\s+months?\s+period\s+ended\s+(\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2,4})/i);
-    if(m)add('Quarter ended '+normaliseDate(m[1]),normaliseDate(m[1]));
-    m=t.match(/Preceding\s+3\s+months?\s+ended\s+(\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2,4})/i);
-    if(m)add('Preceding quarter ended '+normaliseDate(m[1]),normaliseDate(m[1]));
-    m=t.match(/Corresponding\s+3\s+months?\s+ended\s+in\s+the\s+previous\s+year\s+(\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2,4})/i);
-    if(m)add('Corresponding quarter ended '+normaliseDate(m[1]),normaliseDate(m[1]));
-    m=t.match(/Year\s+ended\s+(\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2,4})/i);
-    if(m)add('Year ended '+normaliseDate(m[1]),normaliseDate(m[1]));
-    return found.map(x=>x.name);
-  }
-
-  function findTableHeader(page){
-    const lines=page.lines;
-    for(let i=0;i<Math.min(lines.length,45);i++){
-      const window=lines.slice(i,Math.min(lines.length,i+10)).map(x=>x.text).join(' ');
-      if(/3\s+months?\s+period/i.test(window) && /year\s+ended/i.test(window)){
-        return {index:i, names:periodNamesFromBlock(window), block:window};
+  function recoverPeriods(page){
+    /* Do not depend on PDF.js preserving visual line breaks. Search the full
+       page text after "Particulars" and accept dates separated by arbitrary
+       whitespace. */
+    const text=page.lines.map(l=>l.text).join(' ').replace(/\s+/g,' ').trim();
+    const start=text.search(/\bParticulars\b/i); if(start<0)return [];
+    const block=text.slice(start,start+1800);
+    const out=[];
+    function add(name,date){if(date&&!out.some(x=>x.date===date&&x.name===name))out.push({name,date})}
+    let m=m=null;
+    m=block.match(/3\s+months?\s+period\s+ended\s+(\d{1,2}[\/.\-]\d{1,2}[\/.\-]\d{2,4})/i);if(m)add(labelDate('',m[1],'current'),normDate(m[1]));
+    m=block.match(/Preceding\s+3\s+months?\s+ended\s+(\d{1,2}[\/.\-]\d{1,2}[\/.\-]\d{2,4})/i);if(m)add(labelDate('',m[1],'prev'),normDate(m[1]));
+    m=block.match(/Corresponding\s+3\s+months?\s+ended\s+in\s+the\s+previous\s+year\s+(\d{1,2}[\/.\-]\d{1,2}[\/.\-]\d{2,4})/i);if(m)add(labelDate('',m[1],'corresponding'),normDate(m[1]));
+    m=block.match(/Year\s+ended\s+(\d{1,2}[\/.\-]\d{1,2}[\/.\-]\d{2,4})/i);if(m)add(labelDate('',m[1],'year'),normDate(m[1]));
+    /* Fallback for a layout where the words are fragmented: use the first
+       four slash-separated dates in the header block, but preserve the
+       duplicate year-end date because it belongs to two different headings. */
+    if(out.length<2){
+      const ds=block.match(/\b\d{1,2}[\/.\-]\d{1,2}[\/.\-]\d{2,4}\b/g)||[];
+      const uniq=[];ds.forEach(d=>{const nd=normDate(d);if(!uniq.includes(nd))uniq.push(nd)});
+      if(uniq.length>=3){
+        const names=['Quarter ended ','Preceding quarter ended ','Corresponding quarter ended ','Year ended '];
+        const seq=[normDate(ds[0]),normDate(ds[1]),normDate(ds[2]),normDate(ds[3]||ds[1])];
+        return seq.map((d,i)=>({name:names[i]+d,date:d}));
       }
     }
+    return out;
+  }
+  function headerFor(page){
+    const periods=recoverPeriods(page);
+    if(periods.length>=2)return periods;
     return null;
   }
 
-  /* -------------------------- row extraction -------------------------- */
-  const allRows=[];
-  const globalPeriods=[];
-  const pageTables=[];
-
+  const allRows=[],globalPeriods=[],pageTables=[];
   for(const page of pages){
-    const header=findTableHeader(page);
-    if(!header) continue;
-    const periods=header.names;
-    periods.forEach(x=>{if(!globalPeriods.includes(x))globalPeriods.push(x)});
-    const startAt=header.index+1;
-    let tableRows=0;
-
-    for(let i=startAt;i<page.lines.length;i++){
-      const line=page.lines[i];
-      const text=line.text;
-      if(!text) continue;
-
-      /* A new major report section can begin on the same page. */
-      if(i>startAt && /^(?:Notes?\b|Management's? Discussion|Independent Auditor|For S\.R\.|For & on behalf)/i.test(text)) break;
-
-      /* Use only right-side/tabular numeric cells. Small row numbers such as
-         "1." or "4." are intentionally excluded by requiring the numeric
-         token to have a meaningful numeric value OR to sit in the repeated
-         table-value region. */
-      const numericItems=line.items.filter(it=>isNumberToken(it.str));
-      if(numericItems.length<2) continue;
-
-      /* The table header tells us how many quantitative columns belong to the
-         row. Take the RIGHTMOST periodCount numeric cells. This deliberately
-         ignores row numbering such as "1.", "2.", "3." and labels such as
-         "99acres" without relying on a fixed page coordinate. */
-      const periodCount=Math.max(2,Math.min(8,periods.length||4));
-      const valueItems=numericItems.length>periodCount
-        ? numericItems.slice(-periodCount)
-        : numericItems.slice();
-      if(valueItems.length<2) continue;
-
-      const first=valueItems[0];
-      let label=line.items.filter(it=>it.x<first.x-2).map(it=>it.str).join(' ').replace(/\s+/g,' ').trim();
-      if(!label) continue;
-
-      /* Remove accidental row numbering from the beginning of labels. */
-      label=label.replace(/^\d+[.)]\s*/,'').replace(/^[a-z][.)]\s+/i,'').trim();
-      if(!label || /^(page|note|annexure|independent auditor|auditor's report)\b/i.test(label)) continue;
-
-      const values=valueItems.map(it=>numberValue(it.str)).filter(v=>v!==null);
-      if(values.length<2) continue;
-
-      /* Financial tables in this PDF have four ordered value columns. If a
-         row has fewer cells, pad it to the known width instead of shifting
-         later values into the wrong period. */
-      allRows.push({
-        pageNo:page.pageNo,
-        section:'Financial table',
-        Description:label,
-        values,
-        periods
-      });
-      tableRows++;
+    const hp=headerFor(page); if(!hp)continue;
+    const periods=hp.map(x=>x.name); periods.forEach(x=>{if(!globalPeriods.includes(x))globalPeriods.push(x)});
+    const periodCount=Math.min(8,Math.max(2,periods.length));
+    let rowsOnPage=0;
+    /* Locate the actual table header, not merely the first page. */
+    let startAt=0;
+    for(let i=0;i<Math.min(page.lines.length,60);i++){
+      if(/\bParticulars\b/i.test(page.lines[i].text)){startAt=i+1;break}
     }
-    if(tableRows) pageTables.push({page:page.pageNo,periods,rows:tableRows});
+    for(let i=startAt;i<page.lines.length;i++){
+      const line=page.lines[i],text=line.text;if(!text)continue;
+      if(i>startAt&&/^(?:Notes?\b|Management's? Discussion|Independent Auditor|For S\.R\.|For & on behalf)/i.test(text))break;
+      /* IMPORTANT: include dash placeholders as cells. Otherwise a row such
+         as "(721.22) 161.53 - 51,675.06" becomes three values and the final
+         number is wrongly assigned to the third period. */
+      const cells=line.items.filter(it=>isNumberToken(it.str)||isBlankCell(it.str));
+      if(cells.length<2)continue;
+      const valueCells=cells.length>periodCount?cells.slice(-periodCount):cells.slice();
+      if(valueCells.length<2)continue;
+      const first=valueCells[0];
+      let label=line.items.filter(it=>it.x<first.x-2).map(it=>it.str).join(' ').replace(/\s+/g,' ').trim();
+      label=label.replace(/^\d+[.)]\s*/,'').replace(/^[a-z][.)]\s+/i,'').trim();
+      if(!label||/^(page|note|annexure|independent auditor|auditor's report)\b/i.test(label))continue;
+      const values=valueCells.map(it=>isBlankCell(it.str)?null:numberValue(it.str));
+      if(values.filter(v=>v!==null).length<1)continue;
+      allRows.push({pageNo:page.pageNo,section:'Financial table',Description:label,values,periods}); rowsOnPage++;
+    }
+    if(rowsOnPage)pageTables.push({page:page.pageNo,periods,rows:rowsOnPage});
   }
+  if(!allRows.length)throw new Error('The PDF contains text, but no reliable financial table rows were detected. The dashboard has not analysed the PDF to avoid misleading results.');
 
-  if(!allRows.length){
-    throw new Error('The PDF contains text, but no reliable financial table rows were detected. The dashboard has not analysed the PDF to avoid misleading results.');
-  }
+  /* The financial statement header is the authority for the number of value
+     columns. Prefer the strongest recovered header width over row widths. */
+  let maxVals=globalPeriods.length;
+  if(maxVals<2){const counts={};allRows.forEach(r=>counts[r.values.length]=(counts[r.values.length]||0)+1);maxVals=+Object.keys(counts).sort((a,b)=>counts[b]-counts[a])[0]||0}
+  maxVals=Math.min(8,Math.max(2,maxVals));
+  let valueNames=globalPeriods.slice(0,maxVals);
+  const fallbacks=['Quarter ended','Preceding quarter ended','Corresponding quarter ended','Year ended'];
+  while(valueNames.length<maxVals)valueNames.push((fallbacks[valueNames.length]||'Period '+(valueNames.length+1)));
 
-  /* Use the most common table width. This avoids a single odd line or note
-     changing the number of quantitative columns for the whole PDF. */
-  const widthCounts={};
-  allRows.forEach(r=>{const n=r.values.length;widthCounts[n]=(widthCounts[n]||0)+1;});
-  const maxVals=Number(Object.keys(widthCounts).sort((a,b)=>widthCounts[b]-widthCounts[a]||Number(b)-Number(a))[0])||0;
-
-  /* For this class of financial-results PDFs the authoritative header has four
-     periods. Recover those names even when PDF.js places each header phrase on
-     separate visual lines. */
-  let valueNames=[];
-  if(globalPeriods.length>=maxVals){
-    valueNames=globalPeriods.slice(0,maxVals);
-  }else{
-    // Collect periods page-by-page, preserving their order and de-duplicating.
-    const candidates=[];
-    pageTables.forEach(t=>t.periods.forEach(x=>{if(!candidates.includes(x))candidates.push(x)}));
-    valueNames=candidates.slice(0,maxVals);
-  }
-
-  /* Last resort only: neutral names. For a normal financial-results PDF this
-     branch is NOT used because the table header above supplies real periods. */
-  while(valueNames.length<maxVals)valueNames.push('Value '+(valueNames.length+1));
-
-  const header=['Description',...valueNames];
-  const aoa=[header];
-  for(const r of allRows){
-    const vals=r.values||[];
-    const row=[r.Description];
-    for(let i=0;i<maxVals;i++) row.push(vals[i]==null?'':vals[i]);
-    aoa.push(row);
-  }
-
+  const header=['Description',...valueNames],aoa=[header];
+  allRows.forEach(r=>{const vals=r.values||[];aoa.push([r.Description,...Array.from({length:maxVals},(_,i)=>vals[i]===undefined?'':vals[i])])});
   const ws=XLSX.utils.aoa_to_sheet(aoa);
   ws['!autofilter']={ref:`A1:${XLSX.utils.encode_col(header.length-1)}${aoa.length}`};
-  ws['!instantdash_pdf_meta']={
-    pages:pdf.numPages,
-    extractedRows:allRows.length,
-    valueColumns:maxVals,
-    valueNames,
-    tables:pageTables,
-    extraction:'header-aware-ordered-financial-table-v4'
-  };
-
+  ws['!instantdash_pdf_meta']={pages:pdf.numPages,extractedRows:allRows.length,valueColumns:maxVals,valueNames,tables:pageTables,extraction:'period-header-plus-placeholder-aware-financial-table-v5'};
   return {SheetNames:['PDF_Data'],Sheets:{PDF_Data:ws},__pdfMeta:ws['!instantdash_pdf_meta']};
 }
+
 
 function scoreWorkbookSheet(ws){
   if(!ws || !ws['!ref']) return {score:-Infinity, rows:0, cols:0, numeric:0, numericCols:0, header:-1};
@@ -2538,7 +2433,7 @@ async function rebuildFromAoa(){
   profileColumns(names);       // fills APP.columns
   coerceValues();              // converts text numbers/dates in place
 
-  // v1.13.26 — PDF semantic column bridge. The PDF parser supplies the
+  // v1.13.27 — PDF semantic column bridge. The PDF parser supplies the
   // authoritative period names it recovered from the table header. Re-assert
   // those fields as quantitative measures after coercion so the chart layer
   // cannot accidentally demote them because some rows contain blanks/dashes.
@@ -7925,7 +7820,7 @@ function choose(){
  var o=opts(), rec=state.model.ai&&state.model.ai[0];
  var valid=state.params.filter(function(p){return o.indexOf(p)>=0}).filter(function(p,i,a){return a.indexOf(p)===i});
  if(!valid.length)valid=rec?rec.params.slice(0,3):o.slice(0,3);
- state.params=valid.map(function(p){return o.indexOf(p)>=0?p:''});
+ state.params=valid.map(function(p){return o.indexOf(p)>=0?p:''}); while(state.params.length<4)state.params.push('');
  if(!state.groupBy||!state.model.dimensions.some(function(d){return d.name===state.groupBy})){
    var suggested=(rec&&rec.group)||state.model.defaultGroup||'';
    /* Do not force generic fields such as Mid/Code/Account as the automatic group.
@@ -7933,7 +7828,7 @@ function choose(){
    state.groupBy=(suggested && !/^(mid|code|account|acct|id|key)$/i.test(String(suggested).trim()))?suggested:'';
  }
  if(!state.type||state.type==='bar'&&rec)state.type=rec.type||'bar';
- if((state.type==='pie'||state.type==='donut')&&state.groupBy){state.params[1]='';state.params[2]='';}
+ if((state.type==='pie'||state.type==='donut')&&state.groupBy){state.params[1]='';state.params[2]='';state.params[3]='';}
 }
 function fill(id,values,current){
  var s=$(id);if(!s)return;s.innerHTML='';
@@ -7944,7 +7839,7 @@ function fill(id,values,current){
 function sync(){
  var o=opts();
  if(!o.length){ state.model=ensureCatalogue(state.model); o=opts(); }
- fill('smartParam1',o,state.params[0]);fill('smartParam2',o,state.params[1]);fill('smartParam3',o,state.params[2]);
+ fill('smartParam1',o,state.params[0]);fill('smartParam2',o,state.params[1]);fill('smartParam3',o,state.params[2]);fill('smartParam4',o,state.params[3]);
  fill('smartGroupBy',state.model.dimensions.map(function(d){return d.name}),state.groupBy);
  var t=$('smartChartType');if(t)t.value=state.type;
  var h=$('smartChartHint');
@@ -7960,11 +7855,11 @@ function renderAI(){
  box.innerHTML='';
  var idFields=state.model.measures.filter(function(m){return m.kind==='identifier'}).map(function(m){return m.name});
  if(idFields.length){var note=document.createElement('div');note.className='smart-ai-note';note.innerHTML='<b>Identifier protection:</b> '+esc(idFields.slice(0,8).join(', '))+(idFields.length>8?' and more':'')+' will be counted, not summed. This prevents misleading charts from account numbers, IDs and codes.';box.appendChild(note)}
- rec.forEach(function(r){var b=document.createElement('button');b.type='button';b.className='smart-ai-rec';b.innerHTML='<strong>'+esc(r.title)+'</strong><span>'+esc(r.params.join(' · '))+' · '+esc(r.type==='hbar'?'Horizontal Bar':r.type.charAt(0).toUpperCase()+r.type.slice(1))+(r.group?' · by '+r.group:'')+'</span><span>'+esc(r.why)+'</span>';b.onclick=function(){state.params=r.params.slice(0,3);state.type=r.type;state.groupBy=r.group||'';state.selected=0;sync();draw()};box.appendChild(b)});
+ rec.forEach(function(r){var b=document.createElement('button');b.type='button';b.className='smart-ai-rec';b.innerHTML='<strong>'+esc(r.title)+'</strong><span>'+esc(r.params.join(' · '))+' · '+esc(r.type==='hbar'?'Horizontal Bar':r.type.charAt(0).toUpperCase()+r.type.slice(1))+(r.group?' · by '+r.group:'')+'</span><span>'+esc(r.why)+'</span>';b.onclick=function(){state.params=r.params.slice(0,4);state.type=r.type;state.groupBy=r.group||'';state.selected=0;sync();draw()};box.appendChild(b)});
 }
 function renderTypes(){
  var box=$('smartDataTypes');if(!box)return;box.innerHTML='';
- (state.model.categories||[]).forEach(function(c){var b=document.createElement('button');b.type='button';b.className='smart-type-btn';b.textContent=c.name;b.title='Suggested only — does not restrict parameters';b.onclick=function(){state.params=(c.params||[]).slice(0,3);choose();sync();draw()};box.appendChild(b)});
+ (state.model.categories||[]).forEach(function(c){var b=document.createElement('button');b.type='button';b.className='smart-type-btn';b.textContent=c.name;b.title='Suggested only — does not restrict parameters';b.onclick=function(){state.params=(c.params||[]).slice(0,4);choose();sync();draw()};box.appendChild(b)});
 }
 function label(v){
  if(v instanceof Date)return v.toLocaleDateString('en-IN',{month:'short',year:'numeric'});
@@ -8015,15 +7910,15 @@ function refresh(){
  choose();sync();draw();
 }
 function bind(){
- ['smartChartType','smartParam1','smartParam2','smartParam3','smartGroupBy'].forEach(function(id){var e=$(id);if(!e)return;e.addEventListener('change',function(){
+ ['smartChartType','smartParam1','smartParam2','smartParam3','smartParam4','smartGroupBy'].forEach(function(id){var e=$(id);if(!e)return;e.addEventListener('change',function(){
    if(id==='smartChartType'){
      state.type=e.value;
-     if((state.type==='pie'||state.type==='donut')&&state.groupBy){state.params[1]='';state.params[2]='';}
+     if((state.type==='pie'||state.type==='donut')&&state.groupBy){state.params[1]='';state.params[2]='';state.params[3]='';}
    }else if(id==='smartGroupBy'){
      state.groupBy=e.value;
-     if((state.type==='pie'||state.type==='donut')&&state.groupBy){state.params[1]='';state.params[2]='';}
+     if((state.type==='pie'||state.type==='donut')&&state.groupBy){state.params[1]='';state.params[2]='';state.params[3]='';}
    }else{
-     var idx=id==='smartParam1'?0:id==='smartParam2'?1:2;
+     var idx=id==='smartParam1'?0:id==='smartParam2'?1:id==='smartParam3'?2:3;
      state.params[idx]=e.value;
      if(e.value){state.params=state.params.map(function(p,i){return i!==idx&&p===e.value?'':p});}
    }
@@ -8586,7 +8481,7 @@ function ensureOptions(){
    if(direct.length){f.measures=direct;f.rs=rs;}
  }
  if(!f.measures.length)return false;
- ['smartParam1','smartParam2','smartParam3'].forEach(function(id){
+ ['smartParam1','smartParam2','smartParam3','smartParam4'].forEach(function(id){
    var s=$(id);if(!s)return;var current=s.value;
    /* v1.13.17: the live classification is authoritative. Rebuild whenever
       the dropdown contains a stale/non-measure field, not only when it is empty. */
@@ -8613,12 +8508,12 @@ function ensureOptions(){
  }
  var v=$('smartDataVerification');if(v&&f.rs.length)v.innerHTML='<b>Verified live data</b><span>'+f.measures.length+' chart parameters · '+f.dims.length+' grouping fields · direct column catalogue</span>';
  var no=$('smartNoParameters');if(no)no.hidden=true;
- // v1.13.26 — PDF files with several extracted numeric columns start with a
+ // v1.13.27 — PDF files with several extracted numeric columns start with a
  // useful multi-parameter view instead of leaving secondary selectors blank.
  var a3=app();
  if(a3 && a3.workbook && a3.workbook.__pdfMeta){
    var chosen=f.measures.slice(0,3).map(function(m){return m.name});
-   ['smartParam1','smartParam2','smartParam3'].forEach(function(id,idx){var s=$(id);if(s && !s.value && chosen[idx]) s.value=chosen[idx];});
+   ['smartParam1','smartParam2','smartParam3','smartParam4'].forEach(function(id,idx){var s=$(id);if(s && !s.value && chosen[idx]) s.value=chosen[idx];});
    var gg=$('smartGroupBy');
    if(gg && !gg.value){ var d=f.dims.find(function(x){return String(x.name).toLowerCase()==='description';}) || f.dims[0]; if(d) gg.value=d.name; }
  }
@@ -8724,7 +8619,7 @@ function redraw(){
  var f=fields(); if(f.measures.length) renderFallback();
 }
 function bindFallback(){
- ['smartChartType','smartParam1','smartParam2','smartParam3','smartGroupBy'].forEach(function(id){
+ ['smartChartType','smartParam1','smartParam2','smartParam3','smartParam4','smartGroupBy'].forEach(function(id){
    var e=$(id); if(!e || e.dataset.v11306Fallback==='1') return;
    e.dataset.v11306Fallback='1';
    e.addEventListener('change',function(){ setTimeout(redraw,0); },false);
