@@ -1146,7 +1146,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 </style>
 
 
-<meta name="instantdash-build" content="v1.13.19-chart-parameter-recovery">
+<meta name="instantdash-build" content="v1.13.20-data-isolation-and-chart-polish">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -1180,6 +1180,15 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 #aiExecutiveCards .exec-info{border-left:4px solid #557}
 </style>
 
+
+<style id="instantdash-v11320-polish">
+.id-live-source{margin-top:8px;display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border:1px solid #eadfce;border-radius:999px;background:#fffaf0;color:#71695f;font-size:10px;font-weight:700;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.id-live-source b{color:#a45a1b;font-size:9px;letter-spacing:.08em}
+.id-chart-visual{background:radial-gradient(circle at 82% 10%,rgba(245,179,1,.18),transparent 34%),linear-gradient(180deg,#fffdf8 0%,#ffffff 72%)!important}
+.id-chart-visual svg text{font-family:Poppins,-apple-system,BlinkMacSystemFont,sans-serif}
+.id-chart-note{font-size:10.5px!important}
+@media(max-width:600px){.id-live-source{max-width:100%;font-size:9px}.id-chart-visual{height:325px}}
+</style>
 </head>
 <body class="" style="overflow: hidden;">
 <div id="pageScroll">
@@ -1191,7 +1200,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.13.19</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.13.20</span>
   </div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -1390,7 +1399,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 <div class="section" id="smartChartsSection">
       <div class="section-head">
         <h2>Interactive Charts</h2>
-        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.13.19 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
+        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.13.20 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
       </div>
       <section class="ai-dashboard-charts" id="aiDashboardCharts" aria-label="AI generated charts">
         <div class="ai-dashboard-head">
@@ -1591,9 +1600,9 @@ Charts on screen: Row count by Central Bank of India – Q1FY27.</pre></div>
    CONFIG — the knobs worth turning. See "How to Customize" in the notes.
    --------------------------------------------------------------------- */
 const CONFIG = {
-  BUILD_VERSION: '1.13.19',
+  BUILD_VERSION: '1.13.20',
   APP_NAME: 'InstantDash',
-  VERSION: 'v1.13.19',
+  VERSION: 'v1.13.20',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -1638,7 +1647,8 @@ const APP = {
   page: 0,
   search: '',
   dark: false,
-  excludedSummaryRows: 0
+  excludedSummaryRows: 0,
+  __loadToken: 0
 };
 
 // v1.11.14: make the live application state available to diagnostic modules.
@@ -2107,10 +2117,20 @@ function chooseBestWorkbookSheet(wb){
 async function handleFile(file){
   const name = file.name || 'workbook';
   if (!/\.(xlsx|xlsm|xls|csv|txt|pdf)$/i.test(name)){
-    return showFatal('That file type isn’t supported. Choose an .xlsx, .xls, .csv or text-based .pdf file.');
+    return showFatal('That file type isn’t supported. Choose an .xlsx, .xls or .csv, or a text-based .pdf file.');
   }
+
+  // v1.13.20 — every upload gets a unique transaction token. Any older
+  // asynchronous read is ignored if the user selects another file before it
+  // finishes. This prevents an earlier workbook from repopulating AI cards,
+  // charts or management insights after a new workbook has been selected.
+  const loadToken = ++APP.__loadToken;
+  window.__instantDashCurrentLoadToken = loadToken;
+  $('app').hidden = true;
+  $('emptyState').hidden = true;
   showLoader('ANALYSING… ' + name, 'Reading and calculating your dashboard locally on this device.');
   await nextFrame();
+  if(loadToken !== APP.__loadToken) return;
 
   try {
     let wb;
@@ -2119,9 +2139,11 @@ async function handleFile(file){
         showLoader('Reading PDF ' + name, 'Extracting table text locally on your device.');
         wb = await parsePdfToWorkbook(file);
       } catch (err) {
+        if(loadToken !== APP.__loadToken) return;
         hideLoader();
         return showFatal(err && err.message ? err.message : 'That PDF could not be read. Try a text-based PDF with selectable table text.');
       }
+      if(loadToken !== APP.__loadToken) return;
     } else {
       const buf = await file.arrayBuffer();
       try {
@@ -2129,6 +2151,7 @@ async function handleFile(file){
         // into real Date objects instead of numbers like 45321.
         wb = XLSX.read(new Uint8Array(buf), {type:'array', cellDates:true, cellNF:false, cellText:false});
       } catch (err) {
+        if(loadToken !== APP.__loadToken) return;
         hideLoader();
         const msg = /password|encrypt/i.test(err && err.message || '')
           ? 'That workbook is password-protected. Remove the password in Excel and try again.'
@@ -2137,20 +2160,38 @@ async function handleFile(file){
       }
     }
 
+    if(loadToken !== APP.__loadToken) return;
     if (!wb || !wb.SheetNames || !wb.SheetNames.length){
       hideLoader(); return showFatal('That workbook has no sheets in it.');
     }
 
+    if(loadToken !== APP.__loadToken) return;
+
+    // Clear every previous dataset-dependent object before committing the new
+    // workbook. The old dashboard remains in memory only until this point and
+    // is hidden from the user while the new file is being analysed.
     APP.workbook = wb;
     APP.fileName = name;
     APP.sheetNames = wb.SheetNames.slice();
+    APP.activeSheet = '';
+    APP.aoa = []; APP.columns = []; APP.rows = []; APP.filtered = [];
+    APP.filters = {}; APP.search = ''; APP.sort = {col:null,dir:1}; APP.page = 0;
+    APP.excludedSummaryRows = 0;
+    try{ APP.charts.forEach(c=>{ if(c&&c.instance) c.instance.destroy(); }); }catch(_){}
+    APP.charts = []; APP.chartSeq = 0;
+    invalidateAnalysisCaches();
+    // Clear stale AI/management render targets immediately. The new build will
+    // populate them from APP.rows only after the new workbook is committed.
+    ['aiExecutiveCards','aiDashboardCharts','managementInsightsGrid','execMeasuresList','execAttentionList','execCoverageList'].forEach(function(id){
+      var node=$(id); if(node) node.innerHTML='';
+    });
 
     // Pick the most useful data sheet, not simply the first non-empty sheet.
     // Index / Contents / Notes sheets often contain only text while the actual
     // KPI table is on a later worksheet.
     let pick = chooseBestWorkbookSheet(wb);
     buildSheetSelector(pick);
-    await loadSheet(pick, true);
+    await loadSheet(pick, true, loadToken);
     // Do not leave the user at the upload control after analysis.
     window.__instantDashUserUploadComplete=true;
     scrollToResults();
@@ -2179,9 +2220,12 @@ function buildSheetSelector(active){
 }
 
 /* Reads one sheet into APP.aoa, detects the header row, then builds rows. */
-async function loadSheet(sheetName, autoHeader){
+async function loadSheet(sheetName, autoHeader, loadToken){
+  loadToken = loadToken || APP.__loadToken;
+  if(loadToken !== APP.__loadToken) return;
   showLoader('Reading sheet “' + sheetName + '”…');
   await nextFrame();
+  if(loadToken !== APP.__loadToken) return;
   try {
     const ws = APP.workbook.Sheets[sheetName];
     APP.activeSheet = sheetName;
@@ -2215,6 +2259,7 @@ async function loadSheet(sheetName, autoHeader){
       hideLoader(); return showFatal('The sheet “' + sheetName + '” has no data in it.');
     }
 
+    if(loadToken !== APP.__loadToken) return;
     APP.aoa = aoa;
     if (autoHeader){
       APP.headerRow = detectHeaderRow(aoa);
@@ -8429,7 +8474,11 @@ function ensureOptions(){
  var hint=$('smartChartHint');
  if(hint){var text=hint.textContent||'';if(/0 parameters available|0 chart parameters|No usable parameters/i.test(text))hint.textContent='LIVE DATA — '+f.rs.length.toLocaleString()+' rows · '+f.measures.length+' parameters available in every dropdown · unified live-column catalogue active'}
  var ai=document.getElementById('smartAiSummary');
- if(ai && f.measures.length){ai.innerHTML='<span class="smart-ai-badge">AI ADVISOR</span> AI found '+f.measures.length+' usable quantitative parameter'+(f.measures.length===1?'':'s')+' from the live loaded columns. Dimensions and identifiers are kept out of the measure list.';}
+ if(ai && f.measures.length){
+   var a2=app(), source=(a2&&a2.fileName?a2.fileName:'Current file'), sheet=(a2&&a2.activeSheet?' · '+a2.activeSheet:'');
+   ai.innerHTML='<span class="smart-ai-badge">AI ADVISOR</span> AI found '+f.measures.length+' usable quantitative parameter'+(f.measures.length===1?'':'s')+' from the live loaded columns. Dimensions and identifiers are kept out of the measure list.'+
+     '<div class="id-live-source"><b>LIVE SOURCE</b> '+esc(source)+esc(sheet)+' · '+f.rs.length.toLocaleString()+' rows</div>';
+ }
  var v=$('smartDataVerification');if(v&&f.rs.length)v.innerHTML='<b>Verified live data</b><span>'+f.measures.length+' chart parameters · '+f.dims.length+' grouping fields · direct column catalogue</span>';
  var no=$('smartNoParameters');if(no)no.hidden=true;
  return true;
@@ -8458,16 +8507,23 @@ function renderFallback(){
  if(type==='histogram'||type==='scatter'){type='bar';reason='This view needs a different data structure — Bar is shown instead.';}
  var typeSelect=$('smartChartType');if(typeSelect&&typeSelect.value!==type)typeSelect.value=type;
  var series=ps.map(function(p){var m=f.measures.find(function(x){return x.name===p})||{agg:'sum'};return{name:p,agg:m.agg,values:gs.map(function(g){return vals(g.rows,p,m.agg)})};});
- var max=0;series.forEach(function(s){s.values.forEach(function(v){if(v>max)max=v})});max=max||1;
+ var max=0;series.forEach(function(s){s.values.forEach(function(v){if(isFinite(v)&&v>max)max=v})});
+ var hasPositive=series.some(function(s){return s.values.some(function(v){return isFinite(v)&&v>0})});
+ if(!hasPositive){
+   wrap.innerHTML='<div class="id-chart-empty"><div class="id-chart-empty-icon">◌</div><b>No positive values to plot</b><span>The selected parameter is present in the loaded data, but every plotted value is zero or blank for the current grouping.</span></div>'+(reason?'<div class="id-chart-note warn">'+esc(reason)+'</div>':'')+'<div class="id-chart-note">'+f.rs.length.toLocaleString()+' loaded rows · change Parameter or Group by to explore another view.</div>';
+   return;
+ }
+ max=max||1;
  var total=series[0]?series[0].values.reduce(function(a,b){return a+b},0):0;
  var colors=['#F5B301','#E2582B','#2E86AB','#3FB07A','#8E5BC9','#D95F8A'];
  var w=760,h=390,left=68,right=28,bottom=64,top=28,plotW=w-left-right,plotH=h-top-bottom;
  function compact(v){
-   var n=Math.abs(Number(v)||0), sign=v<0?'-':'';
+   var raw=Number(v)||0,n=Math.abs(raw),sign=raw<0?'-':'';
+   if(n<=1.000001 && n>0) return sign+(n*100).toFixed(n===1?0:1)+'%';
    if(n>=10000000)return sign+'₹'+(n/10000000).toFixed(n>=100000000?1:2)+'Cr';
    if(n>=100000)return sign+'₹'+(n/100000).toFixed(n>=1000000?1:2)+'L';
    if(n>=1000)return sign+(n/1000).toFixed(n>=10000?1:2)+'K';
-   return sign+Number(n).toLocaleString('en-IN',{maximumFractionDigits:0});
+   return sign+Number(raw).toLocaleString('en-IN',{maximumFractionDigits:n<10?2:0});
  }
  function niceLabel(v){var t=String(v==null?'':v);return t.length>15?t.slice(0,14)+'…':t;}
  function escAttr(s){return esc(s).replace(/"/g,'&quot;');}
@@ -8555,5 +8611,14 @@ window.__instantDashParameterFallback={fields:fields,refresh:tick,redraw:redraw,
 #smartChartsSection,#smartChartCanvas,#smartChartCanvas svg{scroll-margin-top:12px;}
 #smartChartCanvas{min-height:360px;overflow:hidden;position:relative;}
 #smartChartCanvas select{touch-action:manipulation;}
+
+.id-chart-empty{height:100%;min-height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:28px;border-radius:15px;background:radial-gradient(circle at 50% 35%,rgba(245,179,1,.14),transparent 42%),#fffdf8;color:#24201b}.id-chart-empty-icon{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;background:#fff1c2;color:#b66b00;font-size:28px;margin-bottom:10px}.id-chart-empty b{font-size:16px}.id-chart-empty span{max-width:360px;margin-top:7px;color:#777066;font-size:11px;line-height:1.45}
 </style>
+<script id="instantdash-v11320-final-guard">
+(function(){
+  // Final data-isolation guard: a delayed renderer may only operate on the
+  // currently committed dataset. It never navigates or changes the dataset.
+  window.__instantDashDataIdentity=function(){var a=window.__INSTANTDASH_APP__||window.APP||{};return {token:a.__loadToken||0,version:a.__dataVersion||0,file:a.fileName||'',sheet:a.activeSheet||'',rows:Array.isArray(a.rows)?a.rows.length:0};};
+})();
+</script>
 </body></html>
