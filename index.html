@@ -1104,7 +1104,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 .ai-chart-card-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start;margin-bottom:8px}
 .ai-chart-card-head h4{margin:0;font-size:14px;line-height:1.3}
 .ai-chart-card-head p{margin:3px 0 0;color:var(--muted);font-size:10px;line-height:1.35}
-.ai-chart-expand{border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:9px;padding:7px 9px;font:800 10px Poppins,sans-serif;cursor:pointer;white-space:nowrap}
+.ai-chart-expand{border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:9px;padding:7px 9px;font:800 10px Poppins,sans-serif;cursor:pointer;white-space:nowrap}.ai-chart-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end}.ai-chart-type{border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:9px;padding:7px 8px;font:700 10px Poppins,sans-serif;max-width:128px;min-height:32px}.ai-chart-type:focus{outline:2px solid var(--accent);outline-offset:1px}.ai-chart-mode-note{margin-top:6px;font-size:9px;color:var(--muted)}
 .ai-chart-wrap{height:260px;position:relative;border:1px solid var(--border);border-radius:12px;background:var(--card);padding:7px}
 .ai-chart-wrap canvas{width:100%!important;height:100%!important;display:block}
 .ai-chart-foot{margin-top:7px;font-size:10px;color:var(--muted);line-height:1.35}
@@ -1120,7 +1120,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 </style>
 
 
-<meta name="instantdash-build" content="v1.12.07-ai-multi-chart-dashboard">
+<meta name="instantdash-build" content="v1.12.08-ai-multi-chart-dashboard">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style></head>
 <body class="" style="overflow: hidden;">
@@ -1133,7 +1133,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.12.07</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.12.08</span>
   </div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -1307,7 +1307,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 <div class="section" id="smartChartsSection">
       <div class="section-head">
         <h2>Interactive Charts</h2>
-        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.12.07 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
+        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.12.08 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
       </div>
       <section class="ai-dashboard-charts" id="aiDashboardCharts" aria-label="AI generated charts">
         <div class="ai-dashboard-head">
@@ -7183,7 +7183,7 @@ function boot(){if(!$('smartDataVerification')){var h=$('smartChartHint');if(h){
 (function(){
 'use strict';
 /*
- InstantDash v1.12.07 — AI Multi-Chart Intelligence
+ InstantDash v1.12.08 — AI Multi-Chart Intelligence
  - All genuine numeric measures are available in every parameter dropdown.
  - Semantic AI-style analysis recommends, but never restricts, choices.
  - Handles ordinary tabular data and statement-style financial sheets.
@@ -7285,7 +7285,7 @@ function dimensions(d){
  return out;
 }
 /* ------------------------------------------------------------------
-   v1.12.06 — AI CHART INTELLIGENCE
+   v1.12.08 — AI CHART INTELLIGENCE
    Local, deterministic semantic reasoning. It does not send the file
    anywhere. It scores field names, values, cardinality, time structure,
    scale and relationships, then selects a chart that fits the evidence.
@@ -7590,7 +7590,7 @@ window.__instantDashSmartChartsRefresh=refresh;
 })();
 </script>
 
-<script id="instantdash-v11207-ai-multi-chart-js">
+<script id="instantdash-v11208-ai-multi-chart-js">
 (function(){
 'use strict';
 var $=function(id){return document.getElementById(id)};
@@ -7614,41 +7614,42 @@ function aggregate(rs,group,measure){var map={};rs.forEach(function(r){var v=n(r
 function histogram(rs,measure){var vals=rs.map(function(r){return n(r[measure])}).filter(isFinite);if(!vals.length)return {labels:[],values:[]};var min=Math.min.apply(Math,vals),max=Math.max.apply(Math,vals);if(min===max)return {labels:[niceName(measure)],values:[vals.length]};var bins=Math.min(8,Math.max(4,Math.round(Math.sqrt(vals.length))));var step=(max-min)/bins,map=new Array(bins).fill(0);vals.forEach(function(v){var i=Math.min(bins-1,Math.floor((v-min)/step));map[i]++});return {labels:map.map(function(_,i){var a=min+i*step,b=i===bins-1?max:min+(i+1)*step;return a.toLocaleString('en-IN',{maximumFractionDigits:0})+'–'+b.toLocaleString('en-IN',{maximumFractionDigits:0})}),values:map,time:false,group:''}}
 function chartType(m,group){var x=norm(m.name);if(group&&group.kind==='time')return 'line';if(/growth|rate|ratio|margin|percentage|percent|share|yield/.test(x)&&group)return 'line';return 'bar'}
 function makeSpecs(){var rs=rows();if(!rs.length)return [];var ms=getMeasures(rs),gs=getGroups(rs),g=gs[0]||null,specs=[];ms.slice(0,4).forEach(function(m,i){var data=g?aggregate(rs,g.name,m.name):histogram(rs,m.name);var type=chartType(m,g);specs.push({id:'ai-'+i,measure:m.name,group:g?g.name:'',type:type,data:data,title:niceName(m.name),subtitle:g?'AI selected '+niceName(type)+' chart grouped by '+niceName(g.name):'AI selected a distribution because no reliable grouping field was found.',foot:g?'Each bar/point is calculated from '+rs.length.toLocaleString()+' loaded rows.':'Distribution of '+niceName(m.name)+' across '+rs.length.toLocaleString()+' loaded rows.'})});return specs}
-function makeConfig(s){
- var ds=s.data, isLine=s.type==='line';
- return {
-  type:s.type,
-  data:{
-   labels:ds.labels,
-   datasets:[{
-    label:niceName(s.measure),
-    data:ds.values,
-    borderWidth:2,
-    tension:.28,
-    fill:isLine,
-    backgroundColor:'rgba(245,179,1,.22)',
-    borderColor:'#F5B301',
-    pointRadius:isLine?3:0,
-    pointHoverRadius:5
-   }]
-  },
-  options:{
-   responsive:true,
-   maintainAspectRatio:false,
-   animation:false,
-   plugins:{
-    legend:{display:true,labels:{font:{family:'Poppins',size:10}}},
-    tooltip:{callbacks:{label:function(ctx){return niceName(s.measure)+': '+Number(ctx.raw||0).toLocaleString('en-IN',{maximumFractionDigits:2})}}}
-   },
-   scales:{
-    x:{ticks:{autoSkip:true,maxTicksLimit:10,font:{family:'Poppins',size:9}},grid:{display:false}},
-    y:{beginAtZero:true,ticks:{font:{family:'Poppins',size:9},callback:function(v){return Number(v).toLocaleString('en-IN',{notation:'compact',maximumFractionDigits:1})}},grid:{color:'rgba(14,14,16,.08)'}}
-   }
-  }
- };
+function chartJsType(s){
+ var t=s.type;
+ if(t==='donut')return 'doughnut';
+ return t==='hbar'?'bar':t==='area'?'line':t;
 }
-function render(){var grid=$('aiChartGrid');if(!grid)return;Object.keys(charts).forEach(function(k){try{charts[k].destroy()}catch(_){}});charts={};var specs=makeSpecs();grid.innerHTML='';if(!specs.length){grid.innerHTML='<div class="ai-empty">No reliable numeric parameters were detected for automatic chart creation. Use the manual parameter selectors below.</div>';return}var sub=$('aiDashboardSub');if(sub)sub.textContent='AI identified '+specs.length+' key parameter'+(specs.length>1?'s':'')+' and created a separate chart for each. The charts use the actual selected measure and never combine unrelated figures.';specs.forEach(function(s){var card=document.createElement('article');card.className='ai-chart-card';card.innerHTML='<div class="ai-chart-card-head"><div><h4>'+esc(niceName(s.title))+'</h4><p>'+esc(s.subtitle)+'</p></div><button type="button" class="ai-chart-expand">⛶ Expand</button></div><div class="ai-chart-wrap"><canvas></canvas></div><div class="ai-chart-foot">'+esc(s.foot)+'</div>';grid.appendChild(card);var canvas=card.querySelector('canvas');if(window.Chart)charts[s.id]=new Chart(canvas.getContext('2d'),makeConfig(s));card.querySelector('.ai-chart-expand').addEventListener('click',function(){openExpand(s)});card.querySelector('.ai-chart-wrap').addEventListener('click',function(e){if(e.target.tagName==='CANVAS')openExpand(s)});});}
-function openExpand(s){var ov=$('aiChartOverlay'),cv=$('aiOverlayCanvas');if(!ov||!cv||!window.Chart)return;$('aiOverlayTitle').textContent=niceName(s.title);$('aiOverlaySub').textContent=s.subtitle;ov.classList.add('open');ov.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';if(overlayChart)overlayChart.destroy();overlayChart=new Chart(cv.getContext('2d'),makeConfig(s))}
+function makeConfig(s){
+ var ds=s.data||{labels:[],values:[]}, t=s.type, isLine=t==='line'||t==='area', isPie=t==='pie'||t==='donut', isH=t==='hbar';
+ var bg=isPie?ds.labels.map(function(_,i){return palette[i%palette.length]}):'rgba(245,179,1,.22)';
+ var dataset={label:niceName(s.measure),data:ds.values,borderWidth:isPie?1:2,tension:.28,fill:t==='area',backgroundColor:bg,borderColor:'#F5B301',pointRadius:isLine?3:0,pointHoverRadius:5};
+ if(isPie){dataset.borderColor='rgba(255,255,255,.7)';dataset.borderWidth=1}
+ var cfg={type:chartJsType(s),data:{labels:ds.labels,datasets:[dataset]},options:{responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{display:true,position:isPie?'right':'top',labels:{font:{family:'Poppins',size:10}}},tooltip:{callbacks:{label:function(ctx){var v=Number(ctx.raw||0);if(isPie){var total=(ds.values||[]).reduce(function(a,b){return a+(isFinite(Number(b))?Number(b):0)},0);var pct=total?((v/total)*100).toFixed(1):'0.0';return niceName(s.measure)+': '+v.toLocaleString('en-IN',{maximumFractionDigits:2})+' ('+pct+'%)'}return niceName(s.measure)+': '+v.toLocaleString('en-IN',{maximumFractionDigits:2})}}}},scales:isPie?{}:{x:{ticks:{autoSkip:true,maxTicksLimit:10,font:{family:'Poppins',size:9}},grid:{display:false}},y:{beginAtZero:true,ticks:{font:{family:'Poppins',size:9},callback:function(v){return Number(v).toLocaleString('en-IN',{notation:'compact',maximumFractionDigits:1})}},grid:{color:'rgba(14,14,16,.08)'}}}}};
+ if(isH){cfg.options.indexAxis='y';cfg.options.scales.x={beginAtZero:true,ticks:{font:{family:'Poppins',size:9},callback:function(v){return Number(v).toLocaleString('en-IN',{notation:'compact',maximumFractionDigits:1})}},grid:{color:'rgba(14,14,16,.08)'}};cfg.options.scales.y={ticks:{font:{family:'Poppins',size:9}},grid:{display:false}}}
+ return cfg;
+}
+function chartTypeOptions(current){
+ return '<option value="bar"'+(current==='bar'?' selected':'')+'>Bar</option><option value="hbar"'+(current==='hbar'?' selected':'')+'>Horizontal Bar</option><option value="line"'+(current==='line'?' selected':'')+'>Line</option><option value="area"'+(current==='area'?' selected':'')+'>Area</option><option value="pie"'+(current==='pie'?' selected':'')+'>Pie</option><option value="donut"'+(current==='donut'?' selected':'')+'>Donut</option>';
+}
+function redrawAICard(s,card){
+ var old=charts[s.id];if(old){try{old.destroy()}catch(_){} }
+ var canvas=card.querySelector('canvas');if(window.Chart&&canvas)charts[s.id]=new Chart(canvas.getContext('2d'),makeConfig(s));
+ var sub=card.querySelector('.ai-chart-sub');if(sub)sub.textContent=(s.group?'AI selected '+niceName(s.type==='hbar'?'horizontal bar':s.type)+' chart grouped by '+niceName(s.group):'AI selected '+niceName(s.type)+' chart for '+niceName(s.measure))+'.';
+}
+function render(){
+ var grid=$('aiChartGrid');if(!grid)return;Object.keys(charts).forEach(function(k){try{charts[k].destroy()}catch(_){}});charts={};
+ var specs=makeSpecs();grid.innerHTML='';if(!specs.length){grid.innerHTML='<div class="ai-empty">No reliable numeric parameters were detected for automatic chart creation. Use the manual parameter selectors below.</div>';return}
+ var sub=$('aiDashboardSub');if(sub)sub.textContent='AI identified '+specs.length+' key parameter'+(specs.length>1?'s':'')+' and created a separate chart for each. Change the chart type of any automatic chart without changing its parameter or underlying data.';
+ specs.forEach(function(s){
+  var card=document.createElement('article');card.className='ai-chart-card';
+  card.innerHTML='<div class="ai-chart-card-head"><div><h4>'+esc(niceName(s.title))+'</h4><p class="ai-chart-sub">'+esc(s.subtitle)+'</p></div><div class="ai-chart-actions"><label style="font-size:9px;color:var(--muted);font-weight:800">Chart <select class="ai-chart-type" aria-label="Change chart type for '+esc(niceName(s.title))+'">'+chartTypeOptions(s.type)+'</select></label><button type="button" class="ai-chart-expand">⛶ Expand</button></div></div><div class="ai-chart-wrap"><canvas></canvas></div><div class="ai-chart-foot">'+esc(s.foot)+'</div>';
+  grid.appendChild(card);redrawAICard(s,card);
+  card.querySelector('.ai-chart-type').addEventListener('change',function(e){s.type=e.target.value;redrawAICard(s,card)});
+  card.querySelector('.ai-chart-expand').addEventListener('click',function(){openExpand(s)});
+  card.querySelector('.ai-chart-wrap').addEventListener('click',function(e){if(e.target.tagName==='CANVAS')openExpand(s)});
+ });
+}
+function openExpand(s){var ov=$('aiChartOverlay'),cv=$('aiOverlayCanvas');if(!ov||!cv||!window.Chart)return;$('aiOverlayTitle').textContent=niceName(s.title)+' · '+niceName(s.type==='hbar'?'Horizontal Bar':s.type);$('aiOverlaySub').textContent=s.subtitle+' · Parameter: '+niceName(s.measure);ov.classList.add('open');ov.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';if(overlayChart)overlayChart.destroy();overlayChart=new Chart(cv.getContext('2d'),makeConfig(s))}
 function closeExpand(){var ov=$('aiChartOverlay');if(!ov)return;ov.classList.remove('open');ov.setAttribute('aria-hidden','true');if(overlayChart){overlayChart.destroy();overlayChart=null}document.body.style.overflow=''}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 function watch(){var a=app(),sig=a?[a.__dataVersion||0,a.fileName||'',(a.rows||[]).length,(a.columns||[]).length,a.activeSheet||''].join('|'):'';if(sig&&sig!==lastSig){lastSig=sig;setTimeout(render,220);setTimeout(function(){try{var host=$('pageScroll'),target=$('aiDashboardCharts');if(host&&target){var hr=host.getBoundingClientRect(),tr=target.getBoundingClientRect();host.scrollTo({top:Math.max(0,host.scrollTop+tr.top-hr.top-12),behavior:'smooth'})}}catch(_){scrollToResults&&scrollToResults()}},520)}}
