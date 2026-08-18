@@ -1150,7 +1150,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 </style>
 
 
-<meta name="instantdash-build" content="v13.29 FINAL-pdf-header-aware">
+<meta name="instantdash-build" content="v13.30 FINAL-pdf-dimension-aware">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -1214,7 +1214,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v13.29 FINAL</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v13.30 FINAL</span>
   </div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -1413,7 +1413,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 <div class="section" id="smartChartsSection">
       <div class="section-head">
         <h2>Interactive Charts</h2>
-        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v13.29 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
+        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v13.30 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
       </div>
       <section class="ai-dashboard-charts" id="aiDashboardCharts" aria-label="AI generated charts">
         <div class="ai-dashboard-head">
@@ -1618,7 +1618,7 @@ Charts on screen: Row count by Central Bank of India – Q1FY27.</pre></div>
 const CONFIG = {
   BUILD_VERSION: '1.13.26',
   APP_NAME: 'InstantDash',
-  VERSION: 'v13.29 FINAL',
+  VERSION: 'v13.30 FINAL',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -1927,7 +1927,7 @@ async function loadPdfJs(){
 }
 
 async function parsePdfToWorkbook(file){
-  /* v13.29 FINAL — universal PDF ingestion.
+  /* v13.30 FINAL — universal PDF ingestion.
      Design goals: browser-safe PDF.js loading, no dependency on ES modules or
      cross-origin workers, preservation of empty/dash cells, real header names
      when recoverable, and a generic table fallback for non-financial PDFs. */
@@ -2083,13 +2083,13 @@ async function handleFile(file){
     return showFatal('That file type isn’t supported. Choose an .xlsx, .xls or .csv, or a text-based .pdf file.');
   }
 
-  // v13.29 FINAL — every upload gets a unique transaction token. Any older
+  // v13.30 FINAL — every upload gets a unique transaction token. Any older
   // asynchronous read is ignored if the user selects another file before it
   // finishes. This prevents an earlier workbook from repopulating AI cards,
   // charts or management insights after a new workbook has been selected.
   const loadToken = ++APP.__loadToken;
   window.__instantDashCurrentLoadToken = loadToken;
-  /* v13.29 FINAL — hard-reset selector state at the START of every upload. */
+  /* v13.30 FINAL — hard-reset selector state at the START of every upload. */
   try{ if(typeof state!=='undefined') state={model:null,type:'bar',groupBy:'',params:[],selected:0}; }catch(_){ }
   try{ if(window.__instantDashParameterFallback && typeof window.__instantDashParameterFallback.reset==='function') window.__instantDashParameterFallback.reset(); }catch(_){ }
   $('app').hidden = true;
@@ -2454,7 +2454,7 @@ async function rebuildFromAoa(){
   profileColumns(names);       // fills APP.columns
   coerceValues();              // converts text numbers/dates in place
 
-  // v13.29 FINAL — PDF semantic column bridge. The PDF parser supplies the
+  // v13.30 FINAL — PDF semantic column bridge. The PDF parser supplies the
   // authoritative period names it recovered from the table header. Re-assert
   // those fields as quantitative measures after coercion so the chart layer
   // cannot accidentally demote them because some rows contain blanks/dashes.
@@ -2488,7 +2488,7 @@ async function rebuildFromAoa(){
     }
   }
   buildEverything();
-  /* v13.29 FINAL — rehydrate the independent chart-selector engine AFTER the
+  /* v13.30 FINAL — rehydrate the independent chart-selector engine AFTER the
      new dataset is committed. Its original boot timers run only once, so a
      second upload could otherwise leave the previous file's dropdown options
      visible. */
@@ -7470,9 +7470,14 @@ function statementTransform(d){
 }
 function dataset(){
  var d=rawData();
+ /* v13.30: keep PDF rows native; do not transpose them through the generic
+    statement transform, because PDF periods are measures and Description is
+    the natural grouping field. */
+ var pdfMeta=(app()&&app().__pdfMeta)||null;
+ if(pdfMeta) return {rows:d.rows,all:d.all,cols:d.cols,statement:false,pdf:true};
  var st=statementTransform(d);
  if(st)return st;
- return {rows:d.rows,all:d.all,cols:d.cols,statement:false};
+ return {rows:d.rows,all:d.all,cols:d.cols,statement:false,pdf:false};
 }
 function dimensions(d){
  var rows=d.rows||[], names=namesFromRows(rows),out=[],seen={};
@@ -7671,9 +7676,12 @@ function model(){
  var discoveryRows=(d.all&&d.all.length)?d.all:(d.rows||[]);
  var names=namesFromRows(discoveryRows);
  var profiles=names.map(function(n){return parameterProfile(n,discoveryRows,d.cols)});
+ var pdfMeta=(app()&&app().__pdfMeta)||null;
+ var pdfNames=(pdfMeta&&Array.isArray(pdfMeta.valueNames))?pdfMeta.valueNames:[];
  var ms=profiles.filter(function(m){
-   return !isTime(m.name,meta(d.cols,m.name)) && (
-     m.kind==='identifier' || m.kind==='category' ||
+   var isPdfMeasure=pdfNames.indexOf(m.name)>=0;
+   return (isPdfMeasure || !isTime(m.name,meta(d.cols,m.name))) && (
+     m.kind==='identifier' || m.kind==='category' || isPdfMeasure ||
      (m.numeric>0 && m.ratio>=.20)
    );
  });
@@ -7742,6 +7750,16 @@ function model(){
  });
  var aiMeasures=ms.filter(function(m){return m.kind!=='identifier'&&m.kind!=='category'&&m.kind!=='time'});
  var ds=dimensions({rows:discoveryRows,all:discoveryRows,cols:d.cols});
+ /* v13.30: make Description/Particulars an explicit PDF dimension. */
+ if(pdfMeta){
+   var pdfLabel=/^(description|particulars|item|details|particular)$/i;
+   var pDim=namesFromRows(discoveryRows).find(function(n){return pdfLabel.test(String(n).trim())});
+   if(pDim && !ds.some(function(x){return x.name===pDim})){
+     var pv=discoveryRows.map(function(r){return r[pDim]}).filter(function(v){return v!==null&&v!==undefined&&String(v).trim()!==''});
+     var pu=new Set(pv.map(String)).size;
+     if(pu>=2) ds.unshift({name:pDim,kind:'cat',unique:pu,score:220});
+   }
+ }
  var bridgeDims=chartBridgeCatalogue(d).dimensions;
  bridgeDims.forEach(function(x){if(!ds.some(function(y){return y.name===x.name}))ds.push(x)});
 
@@ -7759,7 +7777,8 @@ function model(){
  }
  var cats=inferCategories(aiMeasures,{rows:discoveryRows,all:discoveryRows,cols:d.cols});
  var ai=recommendations(aiMeasures,ds,{rows:discoveryRows,all:discoveryRows,cols:d.cols});
- var group=ds.find(function(x){return x.kind==='time'})||ds[0];
+ var group=pdfMeta ? ds.find(function(x){return /^(description|particulars|item|details|particular)$/i.test(String(x.name).trim())}) : null;
+ if(!group) group=ds.find(function(x){return x.kind==='time'})||ds[0];
  return {rows:d.rows,all:discoveryRows,measures:ms,aiMeasures:aiMeasures,dimensions:ds,categories:cats,ai:ai,
          defaultGroup:group?group.name:'',statement:!!d.statement,statementLabel:d.statementLabel||'',
          usingDemo:false,hasApp:!!app()};
@@ -7859,11 +7878,13 @@ function opts(){
 }
 function choose(){
  var o=opts(), rec=state.model.ai&&state.model.ai[0];
+ var isPdf=!!(app()&&app().__pdfMeta);
  var valid=state.params.filter(function(p){return o.indexOf(p)>=0}).filter(function(p,i,a){return a.indexOf(p)===i});
- if(!valid.length)valid=rec?rec.params.slice(0,3):o.slice(0,3);
+ if(!valid.length)valid=isPdf?o.slice(0,4):(rec?rec.params.slice(0,3):o.slice(0,3));
+ else if(isPdf && valid.length<4) valid=o.slice(0,4);
  state.params=valid.map(function(p){return o.indexOf(p)>=0?p:''}); while(state.params.length<4)state.params.push('');
  if(!state.groupBy||!state.model.dimensions.some(function(d){return d.name===state.groupBy})){
-   var suggested=(rec&&rec.group)||state.model.defaultGroup||'';
+   var suggested=(isPdf&&state.model.defaultGroup)||((rec&&rec.group)||state.model.defaultGroup)||'';
    /* Do not force generic fields such as Mid/Code/Account as the automatic group.
       They remain available in the manual Group By dropdown. */
    state.groupBy=(suggested && !/^(mid|code|account|acct|id|key)$/i.test(String(suggested).trim()))?suggested:'';
@@ -8183,7 +8204,7 @@ function boot(){
   var ov=$('aiChartOverlay');if(ov){$('aiOverlayClose').onclick=closeExpand;ov.addEventListener('click',function(e){if(e.target===ov)closeExpand()});document.addEventListener('keydown',function(e){if(e.key==='Escape')closeExpand()})}watch();setInterval(watch,700)}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 
-/* v13.29 FINAL — hard-refresh every data-dependent intelligence surface after a new upload.
+/* v13.30 FINAL — hard-refresh every data-dependent intelligence surface after a new upload.
    This deliberately rebuilds from APP.rows/APP.columns and never carries semantic state
    from the previous workbook. */
 window.__instantDashHardRefreshAll=function(reason){
@@ -8196,7 +8217,7 @@ window.__instantDashHardRefreshAll=function(reason){
       source.classList.toggle('stale',!live);
       text.textContent=live?((a.fileName||'Current workbook')+' · '+(a.activeSheet||'Current sheet')+' · '+a.rows.length.toLocaleString()+' rows · '+a.columns.length+' columns'): 'No current dataset is committed yet';
     }
-    /* v13.29 FINAL — rehydrate ALL chart-selector engines after upload.
+    /* v13.30 FINAL — rehydrate ALL chart-selector engines after upload.
        The manual selector scripts boot before a file is loaded, so their
        first pass quite correctly sees zero rows. Previously that empty state
        was never re-run after APP.rows/APP.columns were populated, leaving
@@ -8334,7 +8355,7 @@ window.__instantDashAIMultiChartsRefresh=render;
 <script id="instantdash-v11323-universal-executive-js">
 (function(){
   'use strict';
-  /* v13.29 FINAL — UNIVERSAL EXECUTIVE INTELLIGENCE
+  /* v13.30 FINAL — UNIVERSAL EXECUTIVE INTELLIGENCE
      Uses ONLY the currently committed APP.rows/APP.columns. No financial
      vocabulary is assumed. The summary adapts to banking, sales, HR,
      manufacturing, service, loan, SHG, generic Excel/CSV and PDF tables.
@@ -8551,7 +8572,7 @@ function ensureOptions(){
  }
  var v=$('smartDataVerification');if(v&&f.rs.length)v.innerHTML='<b>Verified live data</b><span>'+f.measures.length+' chart parameters · '+f.dims.length+' grouping fields · direct column catalogue</span>';
  var no=$('smartNoParameters');if(no)no.hidden=true;
- // v13.29 FINAL — PDF files with several extracted numeric columns start with a
+ // v13.30 FINAL — PDF files with several extracted numeric columns start with a
  // useful multi-parameter view instead of leaving secondary selectors blank.
  var a3=app();
  if(a3 && a3.__pdfMeta){
