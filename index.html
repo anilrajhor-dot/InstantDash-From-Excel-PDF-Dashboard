@@ -1375,7 +1375,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 <div class="section" id="smartChartsSection">
       <div class="section-head">
         <h2>Interactive Charts</h2>
-        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.13.11 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
+        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.13.12 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
       </div>
       <section class="ai-dashboard-charts" id="aiDashboardCharts" aria-label="AI generated charts">
         <div class="ai-dashboard-head">
@@ -7598,6 +7598,14 @@ function model(){
  appCat.forEach(function(m){
    if(!ms.some(function(x){return x.name===m.name})) ms.push(m);
  });
+ /* v1.13.12 — authoritative bridge from the already-rendered automatic charts.
+    If the automatic engine has a usable y/series field, expose that exact field
+    to the manual parameter selector. This prevents two parameter engines from
+    disagreeing about the same loaded dataset. */
+ var bridge=chartBridgeCatalogue(d);
+ bridge.measures.forEach(function(m){
+   if(!ms.some(function(x){return x.name===m.name})) ms.push(m);
+ });
 
  /* Final value-level safety net for plain objects with no column metadata. */
  if(!ms.length){
@@ -7647,6 +7655,8 @@ function model(){
  });
  var aiMeasures=ms.filter(function(m){return m.kind!=='identifier'&&m.kind!=='category'&&m.kind!=='time'});
  var ds=dimensions({rows:discoveryRows,all:discoveryRows,cols:d.cols});
+ var bridgeDims=chartBridgeCatalogue(d).dimensions;
+ bridgeDims.forEach(function(x){if(!ds.some(function(y){return y.name===x.name}))ds.push(x)});
 
  /* If row-based dimensions are unavailable, use APP column roles. */
  if(!ds.length){
@@ -7673,11 +7683,29 @@ function demo(){
 }
 var state={model:null,type:'bar',groupBy:'',params:[],selected:0};
 function getModel(){var m=model();return (m.hasApp||m.rows.length)?m:demo()}
-/* v1.13.11 — single-source parameter recovery. If the host parser exposes
+/* v1.13.12 — single-source parameter recovery. If the host parser exposes
    rows/columns before the semantic catalogue is ready, build a conservative
    live catalogue immediately. This prevents the Advisor from saying
    'No usable parameters' while the automatic chart engine can already plot.
 */
+function chartBridgeCatalogue(m){
+  var a=app(), out=[], dims=[], seenM={}, seenD={};
+  var charts=a&&Array.isArray(a.charts)?a.charts:[];
+  charts.forEach(function(c){
+    if(!c)return;
+    ['y','series'].forEach(function(k){
+      var v=c[k];
+      if(typeof v==='string'&&v&&v!==c.x&&!seenM[v]){seenM[v]=1;out.push({name:v,type:'number',kind:'measure',agg:'sum',ratio:1,unique:0,numeric:1,display:niceName(v)})}
+    });
+    if(typeof c.x==='string'&&c.x&&c.type!=='histogram'&&c.type!=='scatter'&&!isId(c.x)&&!isTime(c.x,{} )&&!seenD[c.x]){
+      seenD[c.x]=1;dims.push({name:c.x,kind:'cat',unique:0,score:20});
+    }
+    if(typeof c.series==='string'&&c.series&&!isId(c.series)&&!seenD[c.series]){
+      seenD[c.series]=1;dims.push({name:c.series,kind:'cat',unique:0,score:15});
+    }
+  });
+  return {measures:out,dimensions:dims};
+}
 function emergencyCatalogue(m){
   var a=app(), rows=(a&&Array.isArray(a.filtered)&&a.filtered.length?a.filtered:(a&&Array.isArray(a.rows)?a.rows:[]));
   if(!rows.length) rows=(m&&m.rows)||[];
@@ -7698,6 +7726,9 @@ function emergencyCatalogue(m){
       measures.push({name:name,type:'number',kind:id?'identifier':'measure',agg:id?'count':'sum',ratio:ratio,unique:unique,numeric:nums.length,display:niceName(name)});
     }
   });
+  var bridge=chartBridgeCatalogue(m);
+  bridge.measures.forEach(function(x){if(!measures.some(function(y){return y.name===x.name}))measures.push(x)});
+  bridge.dimensions.forEach(function(x){if(!dims.some(function(y){return y.name===x.name}))dims.push(x)});
   return {rows:rows,measures:measures,dimensions:dims};
 }
 function ensureCatalogue(m){
@@ -7715,7 +7746,12 @@ function choose(){
  var valid=state.params.filter(function(p){return o.indexOf(p)>=0}).filter(function(p,i,a){return a.indexOf(p)===i});
  if(!valid.length)valid=rec?rec.params.slice(0,3):o.slice(0,3);
  state.params=valid.map(function(p){return o.indexOf(p)>=0?p:''});
- if(!state.groupBy||!state.model.dimensions.some(function(d){return d.name===state.groupBy}))state.groupBy=(rec&&rec.group)||state.model.defaultGroup||'';
+ if(!state.groupBy||!state.model.dimensions.some(function(d){return d.name===state.groupBy})){
+   var suggested=(rec&&rec.group)||state.model.defaultGroup||'';
+   /* Do not force generic fields such as Mid/Code/Account as the automatic group.
+      They remain available in the manual Group By dropdown. */
+   state.groupBy=(suggested && !/^(mid|code|account|acct|id|key)$/i.test(String(suggested).trim()))?suggested:'';
+ }
  if(!state.type||state.type==='bar'&&rec)state.type=rec.type||'bar';
  if((state.type==='pie'||state.type==='donut')&&state.groupBy){state.params[1]='';state.params[2]='';}
 }
@@ -8244,7 +8280,7 @@ window.__instantDashAIMultiChartsRefresh=render;
 <script id="instantdash-v11304-parameter-engine-fallback">
 (function(){
 'use strict';
-/* v1.13.11 FINAL FALLBACK
+/* v1.13.12 FINAL FALLBACK
    Purpose: guarantee that uploaded columns remain selectable even if the
    semantic/AI layer reports zero parameters. This module reads APP.rows
    directly and is deliberately independent of AI classification.
