@@ -1120,7 +1120,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 </style>
 
 
-<meta name="instantdash-build" content="v1.12.11-ai-multi-chart-dashboard">
+<meta name="instantdash-build" content="v1.13.00-ai-multi-chart-dashboard">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -1143,6 +1143,17 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 }
 </style>
 
+
+<style id="instantdash-v11300-executive">
+#aiExecutiveCards .exec-card{border:1px solid var(--border);border-radius:14px;padding:13px;background:var(--card)}
+#aiExecutiveCards .exec-label{font:800 10px Poppins,sans-serif;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+#aiExecutiveCards .exec-title{font:900 14px/1.3 Poppins,sans-serif;margin-top:4px}
+#aiExecutiveCards .exec-body{font-size:11px;line-height:1.5;margin-top:6px}
+#aiExecutiveCards .exec-positive{border-left:4px solid #2e9d58}
+#aiExecutiveCards .exec-warning{border-left:4px solid #d9822b}
+#aiExecutiveCards .exec-info{border-left:4px solid #557}
+</style>
+
 </head>
 <body class="" style="overflow: hidden;">
 <div id="pageScroll">
@@ -1154,7 +1165,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v1.12.11</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v1.13.00</span>
   </div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -1216,7 +1227,20 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
       </div>
     </div>
 
-    <div class="card toolbar no-print">
+    
+<section id="aiExecutiveIntelligence" class="card no-print" style="margin:0 0 16px;">
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+    <div>
+      <div style="font:900 17px/1.2 Poppins,sans-serif">🤖 AI Executive Intelligence</div>
+      <div style="margin-top:4px;color:var(--muted);font-size:11px">AI-generated management summary, key movements, relationships and attention areas based on the loaded data.</div>
+    </div>
+    <button id="aiExecutiveRefresh" class="btn primary" type="button">ANALYSE DATA</button>
+  </div>
+  <div id="aiExecutiveStatus" style="margin-top:12px;color:var(--muted);font-size:11px">Run analysis after completing Data Health Check.</div>
+  <div id="aiExecutiveCards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:12px"></div>
+</section>
+
+<div class="card toolbar no-print">
       <span class="file-name">📄 <span id="fileName">Central_Bank_of_India_Q1FY27_Excel.xlsx</span></span>
       <span class="meta" id="fileMeta">8 rows · 1 columns · sheet “Index”</span>
       <div class="spacer"></div>
@@ -1340,7 +1364,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 <div class="section" id="smartChartsSection">
       <div class="section-head">
         <h2>Interactive Charts</h2>
-        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.12.11 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
+        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v1.13.00 FINAL</span><span class="hint" id="smartChartHint">AI maps your uploaded fields to the most relevant chart automatically; change any parameter from the dropdowns.</span>
       </div>
       <section class="ai-dashboard-charts" id="aiDashboardCharts" aria-label="AI generated charts">
         <div class="ai-dashboard-head">
@@ -2397,6 +2421,7 @@ async function rebuildFromAoa(){
   var healthBanner = $('postUploadHealth');
   if(healthBanner) healthBanner.hidden = false;
   toast('Data loaded — check data health before reviewing charts');
+  setTimeout(function(){if(window.__instantDashRunExecutiveAI)window.__instantDashRunExecutiveAI();},700);
   scrollToHealthFirst();
 }
 
@@ -7237,7 +7262,7 @@ function boot(){if(!$('smartDataVerification')){var h=$('smartChartHint');if(h){
 (function(){
 'use strict';
 /*
- InstantDash v1.12.11 — AI Multi-Chart Intelligence
+ InstantDash v1.13.00 — AI Multi-Chart Intelligence
  - All genuine numeric measures are available in every parameter dropdown.
  - Semantic AI-style analysis recommends, but never restricts, choices.
  - Handles ordinary tabular data and statement-style financial sheets.
@@ -7339,7 +7364,7 @@ function dimensions(d){
  return out;
 }
 /* ------------------------------------------------------------------
-   v1.12.11 — AI CHART INTELLIGENCE
+   v1.13.00 — AI CHART INTELLIGENCE
    Local, deterministic semantic reasoning. It does not send the file
    anywhere. It scores field names, values, cardinality, time structure,
    scale and relationships, then selects a chart that fits the evidence.
@@ -7915,6 +7940,109 @@ window.__instantDashAIMultiChartsRefresh=render;
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',wirePostUploadHealth);
   else wirePostUploadHealth();
   window.__instantDashWirePostUploadHealth=wirePostUploadHealth;
+})();
+</script>
+
+
+<script id="instantdash-v11300-executive-js">
+(function(){
+  function app(){return window.__INSTANTDASH_APP__||window.APP||{}}
+  function rows(){var a=app();return Array.isArray(a.rows)?a.rows:[]}
+  function cols(){var a=app();return Array.isArray(a.columns)?a.columns:[]}
+  function num(v){
+    if(typeof v==='number')return isFinite(v)?v:null;
+    if(v===null||v===undefined||String(v).trim()==='')return null;
+    var s=String(v).replace(/[%₹,$€£,\s]/g,'');
+    var n=Number(s);return isFinite(n)?n:null;
+  }
+  function nice(s){return String(s||'').replace(/[_\-]+/g,' ').replace(/\b\w/g,function(x){return x.toUpperCase()})}
+  function timeLike(n){
+    return /(date|month|year|quarter|period|fy|financial.?year|week|day|time)/i.test(String(n))
+  }
+  function values(n){return rows().map(function(r){return num(r[n])}).filter(function(v){return v!==null})}
+  function measures(){
+    var rs=rows(), out=[];
+    if(!rs.length)return out;
+    var names=Object.keys(rs[0]||{});
+    names.forEach(function(n){
+      if(timeLike(n))return;
+      var v=values(n);
+      if(v.length<2 || v.length/rs.length<.65)return;
+      var uniq=new Set(v.map(String)).size;
+      if(uniq<2)return;
+      var low=String(n).toLowerCase();
+      var type=/[%]|percent|rate|margin|ratio|growth|achievement|yield|occupancy|satisfaction|sla/.test(low)?'percentage':
+              /count|number|orders|customers|cases|units|visits|transactions|employees|tasks|applications/.test(low)?'count':
+              /days|hours|time|duration|lead|turnaround/.test(low)?'duration':'amount';
+      var avg=v.reduce(function(a,b){return a+b},0)/v.length;
+      var min=Math.min.apply(Math,v),max=Math.max.apply(Math,v);
+      var first=v[0],last=v[v.length-1],change=first!==0?(last-first)/Math.abs(first):0;
+      var score=(type==='amount'?3:2)+(uniq>3?1:0)+(/revenue|profit|pat|sales|cost|expense|deposit|advance|target|actual|production|recovery|risk|npa|cash|budget/i.test(low)?3:0);
+      out.push({name:n,type:type,values:v,avg:avg,min:min,max:max,first:first,last:last,change:change,score:score});
+    });
+    return out.sort(function(a,b){return b.score-a.score})
+  }
+  function findTime(){
+    var ns=Object.keys(rows()[0]||{}); return ns.find(timeLike)||null
+  }
+  function findCategory(){
+    var rs=rows(),ns=Object.keys(rs[0]||{});
+    for(var i=0;i<ns.length;i++){
+      var n=ns[i]; if(timeLike(n))continue;
+      var vals=rs.map(function(r){return r[n]}).filter(function(v){return v!==null&&v!==undefined&&String(v)!==''});
+      var numeric=vals.filter(function(v){return num(v)!==null}).length/Math.max(1,vals.length);
+      var u=new Set(vals.map(String)).size;
+      if(numeric<.65 && u>=2 && u<=40)return n;
+    }
+    return null
+  }
+  function cards(){
+    var m=measures(), t=findTime(), c=findCategory(), out=[];
+    if(!m.length)return out;
+    var top=m.slice(0,6);
+    top.slice(0,4).forEach(function(x){
+      if(Math.abs(x.change)>=.08){
+        out.push({kind:x.change>0?'positive':'warning',label:'KEY MOVEMENT',title:nice(x.name),
+          body:(x.change>0?'Increased ':'Decreased ')+Math.abs(x.change*100).toFixed(1)+'% from the first available value to the latest available value.'});
+      }
+    });
+    var target=m.find(function(x){return /target|budget|plan|planned/i.test(x.name)});
+    var actual=m.find(function(x){return /actual|achieved|completed|produced|realised|realized/i.test(x.name)&&(!target||x.name!==target.name)});
+    if(target&&actual){
+      var gap=actual.avg-target.avg;
+      out.unshift({kind:gap>=0?'positive':'warning',label:'TARGET VS ACTUAL',
+        title:nice(actual.name)+' vs '+nice(target.name),
+        body:(gap>=0?'Average actual is ':'Average actual is ')+Math.abs(gap).toLocaleString('en-IN',{maximumFractionDigits:2})+(gap>=0?' above ':' below ')+nice(target.name)+'.'});
+    }
+    var rising=top.filter(function(x){return x.change>0.15}).slice(0,2);
+    if(rising.length) out.push({kind:'positive',label:'POSITIVE TREND',title:nice(rising[0].name),
+      body:'Strong movement detected; consider reviewing the period-by-period trend chart for the drivers.'});
+    var falling=top.filter(function(x){return x.change<-0.15}).slice(0,2);
+    if(falling.length) out.push({kind:'warning',label:'ATTENTION',title:nice(falling[0].name),
+      body:'A material decline was detected; review the underlying category or time period before drawing conclusions.'});
+    if(t) out.push({kind:'info',label:'DATA STRUCTURE',title:'Time series detected',
+      body:'AI identified '+nice(t)+' as a likely time dimension and will prioritise trend charts.'});
+    else if(c) out.push({kind:'info',label:'DATA STRUCTURE',title:'Category comparison detected',
+      body:'AI identified '+nice(c)+' as a likely grouping field and will prioritise comparison charts.'});
+    return out.slice(0,6)
+  }
+  function render(){
+    var box=document.getElementById('aiExecutiveCards'), status=document.getElementById('aiExecutiveStatus');
+    if(!box)return;
+    var m=measures(), cs=cards();
+    box.innerHTML='';
+    if(!m.length){status.textContent='No analysable measures found on the current data sheet.';return}
+    status.textContent='AI analysed '+m.length+' measures from '+rows().length+' rows. Recommendations are local and based on the loaded data.';
+    cs.forEach(function(x){
+      var d=document.createElement('div'); d.className='exec-card exec-'+x.kind;
+      d.innerHTML='<div class="exec-label">'+x.label+'</div><div class="exec-title">'+x.title+'</div><div class="exec-body">'+x.body+'</div>';
+      box.appendChild(d)
+    })
+  }
+  window.__instantDashRunExecutiveAI=render;
+  document.addEventListener('click',function(e){
+    if(e.target && e.target.id==='aiExecutiveRefresh')render()
+  });
 })();
 </script>
 
