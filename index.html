@@ -818,14 +818,51 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 .id-sticky-nav{pointer-events:none!important;touch-action:none!important;}
 .id-sticky-nav button{pointer-events:auto!important;touch-action:manipulation!important;}
 </style>
-<style id="instantdash-v143-stable-layout-fix">
-/* v13.43 FINAL — preserve the existing layout while preventing viewport/layout jumps. */
-.topbar{position:sticky!important;top:0!important;z-index:1000!important;min-height:52px;overflow:visible!important;}
-#share{display:inline-flex!important;visibility:visible!important;opacity:1!important;position:relative!important;z-index:1002!important;}
-#topShareBtn{display:inline-flex!important;visibility:visible!important;opacity:1!important;position:relative!important;z-index:1003!important;}
-.ai-dashboard-charts,.ai-chart-card,.ai-chart-wrap{overflow-anchor:none!important;}
-.ai-chart-wrap{contain:layout paint;min-height:260px;}
-@media(max-width:700px){.topbar{position:sticky!important;top:0!important;align-items:center!important;}#share{order:2!important;margin-left:0!important}.id-health-btn{order:3!important}.spacer{display:none!important}.privacy{order:4!important}.icon-btn{order:5!important}}
+<style id="instantdash-v144-stable-layout-fix">
+/* v13.44 FINAL — stable viewport: no sticky reflow, no scroll anchoring jumps. */
+html,body{overflow-anchor:none!important;}
+.topbar{
+  position:relative!important;
+  top:auto!important;
+  z-index:1000!important;
+  min-height:52px;
+  overflow:visible!important;
+  transform:none!important;
+}
+#share,#topShareBtn{
+  display:inline-flex!important;
+  visibility:visible!important;
+  opacity:1!important;
+  position:relative!important;
+  z-index:1003!important;
+}
+.ai-dashboard-charts,.ai-chart-card,.ai-chart-wrap,.ai-chart-svg-host{
+  overflow-anchor:none!important;
+}
+.ai-chart-wrap{
+  contain:layout paint;
+  min-height:280px!important;
+  height:280px!important;
+  position:relative!important;
+}
+.ai-chart-svg-host{
+  width:100%!important;
+  height:100%!important;
+  min-height:280px!important;
+  display:block!important;
+}
+@media(max-width:700px){
+  .topbar{
+    position:relative!important;
+    top:auto!important;
+    align-items:center!important;
+  }
+  #share{order:2!important;margin-left:0!important;}
+  .id-health-btn{order:3!important;}
+  .spacer{display:none!important;}
+  .privacy{order:4!important;}
+  .icon-btn{order:5!important;}
+}
 </style>
 
 <style id="instantdash-v148-share-css">
@@ -1161,7 +1198,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 </style>
 
 
-<meta name="instantdash-build" content="v13.43 FINAL-stable-layout-chart-fix">
+<meta name="instantdash-build" content="v13.44 FINAL-stable-layout-chart-fix">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -1230,7 +1267,7 @@ select{max-width:100%;text-overflow:ellipsis;overflow:hidden}
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v13.43 FINAL</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v13.44 FINAL</span>
   </div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -1465,7 +1502,7 @@ select{max-width:100%;text-overflow:ellipsis;overflow:hidden}
 <div class="section" id="smartChartsSection">
       <div class="section-head">
         <h2>Interactive Charts</h2>
-        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v13.43 FINAL</span><span class="hint" id="smartChartHint">LIVE DATA — 12 rows · 8 parameters available in every dropdown</span><div id="smartDataVerification" class="smart-data-verification"><b>Verified live data</b><span>8 business KPI parameters · 0 grouping fields · current file only</span></div>
+        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v13.44 FINAL</span><span class="hint" id="smartChartHint">LIVE DATA — 12 rows · 8 parameters available in every dropdown</span><div id="smartDataVerification" class="smart-data-verification"><b>Verified live data</b><span>8 business KPI parameters · 0 grouping fields · current file only</span></div>
       </div>
       <section class="ai-dashboard-charts" id="aiDashboardCharts" aria-label="AI generated charts"><div class="ai-dashboard-head"><div><h3 style="margin:0;font-size:16px">AI-generated key charts</h3><p id="aiDashboardSub" style="margin:4px 0 12px;color:var(--muted);font-size:11px">AI automatically created 4 key charts from the loaded data. These charts are independent of the manual parameter selector below.</p></div></div><div class="ai-chart-grid" id="aiChartGrid"><article class="ai-chart-card"><div class="ai-chart-card-head"><div><h4>Audit Cost</h4><p class="ai-chart-sub">AI selected Line chart grouped by Audit Period.</p></div><div class="ai-chart-actions"><label style="font-size:9px;color:var(--muted);font-weight:800">Chart <select class="ai-chart-type" aria-label="Change chart type for Audit Cost"><option value="bar">Bar</option><option value="hbar">Horizontal Bar</option><option value="line" selected="">Line</option><option value="area">Area</option><option value="stacked">Stacked Bar</option><option value="pie">Pie</option><option value="donut">Donut</option></select></label><button type="button" class="ai-chart-expand">⛶ Expand</button></div></div><div class="ai-chart-wrap"><div class="ai-chart-render-error" style="height:100%;min-height:220px;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;color:var(--muted);font:600 11px Poppins,sans-serif">Unable to draw this chart. The data is still available in the manual chart selector.</div></div><div class="ai-chart-touch-detail">Tap a bar or point to see the exact figure.</div><div class="ai-chart-foot">Each bar/point is calculated from 12 loaded rows.</div></article><article class="ai-chart-card"><div class="ai-chart-card-head"><div><h4>Audits Planned</h4><p class="ai-chart-sub">AI selected Line chart grouped by Audit Period.</p></div><div class="ai-chart-actions"><label style="font-size:9px;color:var(--muted);font-weight:800">Chart <select class="ai-chart-type" aria-label="Change chart type for Audits Planned"><option value="bar">Bar</option><option value="hbar">Horizontal Bar</option><option value="line" selected="">Line</option><option value="area">Area</option><option value="stacked">Stacked Bar</option><option value="pie">Pie</option><option value="donut">Donut</option></select></label><button type="button" class="ai-chart-expand">⛶ Expand</button></div></div><div class="ai-chart-wrap"><div class="ai-chart-render-error" style="height:100%;min-height:220px;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;color:var(--muted);font:600 11px Poppins,sans-serif">Unable to draw this chart. The data is still available in the manual chart selector.</div></div><div class="ai-chart-touch-detail">Tap a bar or point to see the exact figure.</div><div class="ai-chart-foot">Each bar/point is calculated from 12 loaded rows.</div></article><article class="ai-chart-card"><div class="ai-chart-card-head"><div><h4>Audits Completed</h4><p class="ai-chart-sub">AI selected Line chart grouped by Audit Period.</p></div><div class="ai-chart-actions"><label style="font-size:9px;color:var(--muted);font-weight:800">Chart <select class="ai-chart-type" aria-label="Change chart type for Audits Completed"><option value="bar">Bar</option><option value="hbar">Horizontal Bar</option><option value="line" selected="">Line</option><option value="area">Area</option><option value="stacked">Stacked Bar</option><option value="pie">Pie</option><option value="donut">Donut</option></select></label><button type="button" class="ai-chart-expand">⛶ Expand</button></div></div><div class="ai-chart-wrap"><div class="ai-chart-render-error" style="height:100%;min-height:220px;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;color:var(--muted);font:600 11px Poppins,sans-serif">Unable to draw this chart. The data is still available in the manual chart selector.</div></div><div class="ai-chart-touch-detail">Tap a bar or point to see the exact figure.</div><div class="ai-chart-foot">Each bar/point is calculated from 12 loaded rows.</div></article><article class="ai-chart-card"><div class="ai-chart-card-head"><div><h4>Audit Findings</h4><p class="ai-chart-sub">AI selected Line chart grouped by Audit Period.</p></div><div class="ai-chart-actions"><label style="font-size:9px;color:var(--muted);font-weight:800">Chart <select class="ai-chart-type" aria-label="Change chart type for Audit Findings"><option value="bar">Bar</option><option value="hbar">Horizontal Bar</option><option value="line" selected="">Line</option><option value="area">Area</option><option value="stacked">Stacked Bar</option><option value="pie">Pie</option><option value="donut">Donut</option></select></label><button type="button" class="ai-chart-expand">⛶ Expand</button></div></div><div class="ai-chart-wrap"><div class="ai-chart-render-error" style="height:100%;min-height:220px;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;color:var(--muted);font:600 11px Poppins,sans-serif">Unable to draw this chart. The data is still available in the manual chart selector.</div></div><div class="ai-chart-touch-detail">Tap a bar or point to see the exact figure.</div><div class="ai-chart-foot">Each bar/point is calculated from 12 loaded rows.</div></article></div></section>
 
@@ -1735,9 +1772,9 @@ Charts on screen: Total Audit Cost by month; Audits Planned vs Audit Cost; Distr
    CONFIG — the knobs worth turning. See "How to Customize" in the notes.
    --------------------------------------------------------------------- */
 const CONFIG = {
-  BUILD_VERSION: '1.13.41',
+  BUILD_VERSION: '1.13.44',
   APP_NAME: 'InstantDash',
-  VERSION: 'v13.41 FINAL',
+  VERSION: 'v13.44 FINAL',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -1804,40 +1841,9 @@ function hideLoader(){ $('loader').classList.remove('on'); }
 // v1.12.06 — after a successful upload, take the user straight to the result.
 // This is especially important on iPhone/iPad where the native file picker
 // returns to the exact scroll position from which the file was selected.
-function scrollToResults(){
-  const target = $('app') || $('smartResultStrip') || $('smartChartsSection') || $('aiDashboardCharts');
-  const host = $('pageScroll');
-  if (!target) return;
-  setTimeout(() => {
-    try{
-      if(host){
-        const hostRect=host.getBoundingClientRect();
-        const rect=target.getBoundingClientRect();
-        const y=Math.max(0, host.scrollTop + (rect.top-hostRect.top) - 12);
-        host.scrollTo({top:y, behavior:'auto'});
-      }else{
-        const y=Math.max(0, target.getBoundingClientRect().top + window.scrollY - 14);
-        window.scrollTo({top:y, behavior:'auto'});
-      }
-    }catch(_){ try{target.scrollIntoView({behavior:'auto',block:'start'});}catch(__){} }
-  }, 180);
-}
+function scrollToResults(){ /* v13.44: viewport remains where the user left it. */ }
 
-function scrollToHealthFirst(){
-  const target = $('postUploadHealth') || $('app');
-  const host = $('pageScroll');
-  if(!target) return;
-  setTimeout(() => {
-    try{
-      if(host){
-        const hr=host.getBoundingClientRect(), tr=target.getBoundingClientRect();
-        host.scrollTo({top:Math.max(0,host.scrollTop+(tr.top-hr.top)-10),behavior:'auto'});
-      }else{
-        target.scrollIntoView({behavior:'auto',block:'start'});
-      }
-    }catch(_){ try{target.scrollIntoView({behavior:'auto',block:'start'});}catch(__){} }
-  },180);
-}
+function scrollToHealthFirst(){ /* v13.44: viewport remains where the user left it. */ }
 
 function nextFrame(){ return new Promise(r => requestAnimationFrame(()=>requestAnimationFrame(r))); }
 
@@ -2046,7 +2052,7 @@ async function loadPdfJs(){
 }
 
 async function parsePdfToWorkbook(file){
-  /* v13.41 FINAL — universal PDF ingestion.
+  /* v13.44 FINAL — universal PDF ingestion.
      Design goals: browser-safe PDF.js loading, no dependency on ES modules or
      cross-origin workers, preservation of empty/dash cells, real header names
      when recoverable, and a generic table fallback for non-financial PDFs. */
@@ -2231,7 +2237,7 @@ async function handleFile(file){
     return showFatal('That file type isn’t supported. Choose an .xlsx, .xls or .csv, or a text-based .pdf file.');
   }
 
-  // v13.41 FINAL — every upload gets a unique transaction token. Any older
+  // v13.44 FINAL — every upload gets a unique transaction token. Any older
   // asynchronous read is ignored if the user selects another file before it finishes.
   const loadToken = ++APP.__loadToken;
   window.__instantDashCurrentLoadToken = loadToken;
@@ -2597,7 +2603,7 @@ async function rebuildFromAoa(){
   profileColumns(names);       // fills APP.columns
   coerceValues();              // converts text numbers/dates in place
 
-  // v13.41 FINAL — PDF semantic column bridge. The PDF parser supplies the
+  // v13.44 FINAL — PDF semantic column bridge. The PDF parser supplies the
   // authoritative period names it recovered from the table header. Re-assert
   // those fields as quantitative measures after coercion so the chart layer
   // cannot accidentally demote them because some rows contain blanks/dashes.
@@ -5731,7 +5737,7 @@ function wireRest(){
       applyFiltersAndRedraw();
       auditDashboardState('shared-state-restore');
       setTheme(!!shared.dark);
-      /* v13.41 FINAL — restore the user's chart/KPI selection as part of the
+      /* v13.44 FINAL — restore the user's chart/KPI selection as part of the
          shared dashboard state. The data and the semantic selector catalogue
          are reconstructed first; then the saved choices are applied only when
          they still belong to the restored dataset. */
@@ -6246,7 +6252,7 @@ function wireRest(){
     let html='<!doctype html>\n'+document.documentElement.outerHTML;
     html=html.replace('</head>',bootstrap+'</head>');
     const safeName=String(APP.fileName||'Dashboard').replace(/[^a-z0-9._-]+/gi,'_').replace(/^_+|_+$/g,'')||'Dashboard';
-    const f=new File([html],`InstantDash_${safeName}_v13.43_Dashboard.html`,{type:'text/html'});
+    const f=new File([html],`InstantDash_${safeName}_v13.44_Dashboard.html`,{type:'text/html'});
     if(wasOpen){
       panel.classList.add('is-open');
       panel.setAttribute('aria-hidden','false');
@@ -6285,7 +6291,7 @@ function wireRest(){
           return;
         }
       }
-      await navigator.share({title:'InstantDash Dashboard v13.43 FINAL',files:[f]});
+      await navigator.share({title:'InstantDash Dashboard v13.44 FINAL',files:[f]});
       setNote('Dashboard file shared successfully: '+f.name);
     }catch(err){
       if(err&&err.name==='AbortError') return;
@@ -6294,7 +6300,7 @@ function wireRest(){
   }
   async function copyShare(e){
     if(e){e.preventDefault();e.stopPropagation();}
-    const text='InstantDash Dashboard v13.43 FINAL — interactive management dashboard.';
+    const text='InstantDash Dashboard v13.44 FINAL — interactive management dashboard.';
     try{
       if(navigator.clipboard&&navigator.clipboard.writeText){
         await navigator.clipboard.writeText(text);
@@ -8427,7 +8433,9 @@ function watch(){
  if(sig&&sig!==lastSig){
    var had=!!lastSig;
    lastSig=sig;
-   setTimeout(render,220);
+   setTimeout(render,350);
+    setTimeout(function(){try{render()}catch(_){ }},900);
+    setTimeout(function(){try{render()}catch(_){ }},1800);
    // v13.43: never auto-scroll after data/chart rendering. User controls the viewport.
  }
 }
@@ -8441,7 +8449,7 @@ function boot(){
   var ov=$('aiChartOverlay');if(ov){$('aiOverlayClose').onclick=closeExpand;ov.addEventListener('click',function(e){if(e.target===ov)closeExpand()});document.addEventListener('keydown',function(e){if(e.key==='Escape')closeExpand()})}watch();setInterval(watch,700)}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 
-/* v13.43 FINAL — hard-refresh every data-dependent intelligence surface after a new upload.
+/* v13.44 FINAL — hard-refresh every data-dependent intelligence surface after a new upload.
    This deliberately rebuilds from APP.rows/APP.columns and never carries semantic state
    from the previous workbook. */
 window.__instantDashHardRefreshAll=function(reason){
@@ -8454,7 +8462,7 @@ window.__instantDashHardRefreshAll=function(reason){
       source.classList.toggle('stale',!live);
       text.textContent=live?((a.fileName||'Current workbook')+' · '+(a.activeSheet||'Current sheet')+' · '+a.rows.length.toLocaleString()+' rows · '+a.columns.length+' columns'): 'No current dataset is committed yet';
     }
-    /* v13.41 FINAL — rehydrate ALL chart-selector engines after upload.
+    /* v13.44 FINAL — rehydrate ALL chart-selector engines after upload.
        The manual selector scripts boot before a file is loaded, so their
        first pass quite correctly sees zero rows. Previously that empty state
        was never re-run after APP.rows/APP.columns were populated, leaving
@@ -8590,7 +8598,7 @@ window.__instantDashAIMultiChartsRefresh=render;
 <script id="instantdash-v11323-universal-executive-js">
 (function(){
   'use strict';
-  /* v13.41 FINAL — UNIVERSAL EXECUTIVE INTELLIGENCE
+  /* v13.44 FINAL — UNIVERSAL EXECUTIVE INTELLIGENCE
      Uses ONLY the currently committed APP.rows/APP.columns. No financial
      vocabulary is assumed. The summary adapts to banking, sales, HR,
      manufacturing, service, loan, SHG, generic Excel/CSV and PDF tables.
@@ -8812,7 +8820,7 @@ function ensureOptions(){
  }
  var v=$('smartDataVerification');if(v&&f.rs.length)v.innerHTML='<b>Verified live data</b><span>'+f.measures.length+' chart parameters · '+f.dims.length+' grouping fields · direct column catalogue</span>';
  var no=$('smartNoParameters');if(no)no.hidden=true;
- // v13.41 FINAL — PDF files with several extracted numeric columns start with a
+ // v13.44 FINAL — PDF files with several extracted numeric columns start with a
  // useful multi-parameter view instead of leaving secondary selectors blank.
  var a3=app();
  if(a3 && a3.__pdfMeta){
@@ -8980,7 +8988,7 @@ window.__instantDashParameterFallback={
 <script id="instantdash-v11333-kpi-intelligence-final-guard">
 (function(){
   'use strict';
-  /* v13.41 FINAL — KPI INTELLIGENCE ENGINE
+  /* v13.44 FINAL — KPI INTELLIGENCE ENGINE
      Final authority for the visible chart selectors.
      Goals:
        1) current upload only;
@@ -9136,7 +9144,7 @@ window.__instantDashParameterFallback={
 <script id="instantdash-v1136-state-authority">
 (function(){
   'use strict';
-  /* v13.41 FINAL — one authoritative semantic state per dataset.
+  /* v13.44 FINAL — one authoritative semantic state per dataset.
      This layer does not invent columns; it only validates selector values
      against the live current dataset before allowing them to persist. */
   function app(){return window.__INSTANTDASH_APP__||window.APP||null}
