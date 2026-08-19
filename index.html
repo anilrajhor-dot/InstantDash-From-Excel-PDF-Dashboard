@@ -1150,7 +1150,7 @@ main{display:block!important;height:auto!important;min-height:0!important;overfl
 </style>
 
 
-<meta name="instantdash-build" content="v13.39 FINAL-share-engine">
+<meta name="instantdash-build" content="v13.40 FINAL-share-engine">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -1219,7 +1219,7 @@ select{max-width:100%;text-overflow:ellipsis;overflow:hidden}
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v13.39 FINAL</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v13.40 FINAL</span>
   </div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -1418,7 +1418,7 @@ select{max-width:100%;text-overflow:ellipsis;overflow:hidden}
 <div class="section" id="smartChartsSection">
       <div class="section-head">
         <h2>Interactive Charts</h2>
-        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v13.39 FINAL</span><span class="hint" id="smartChartHint">LIVE DATA — 367 rows · 27 parameters available in every dropdown</span><div id="smartDataVerification" class="smart-data-verification"><b>Verified live data</b><span>24 business KPI parameters · 4 grouping fields · current file only</span></div>
+        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v13.40 FINAL</span><span class="hint" id="smartChartHint">LIVE DATA — 367 rows · 27 parameters available in every dropdown</span><div id="smartDataVerification" class="smart-data-verification"><b>Verified live data</b><span>24 business KPI parameters · 4 grouping fields · current file only</span></div>
       </div>
       <section class="ai-dashboard-charts" id="aiDashboardCharts" aria-label="AI generated charts"></section>
 
@@ -2033,9 +2033,9 @@ Charts on screen: Total Total Txn Count by day; Total Total Txn Count by SSA; Sh
    CONFIG — the knobs worth turning. See "How to Customize" in the notes.
    --------------------------------------------------------------------- */
 const CONFIG = {
-  BUILD_VERSION: '1.13.38',
+  BUILD_VERSION: '1.13.40',
   APP_NAME: 'InstantDash',
-  VERSION: 'v13.39 FINAL',
+  VERSION: 'v13.40 FINAL',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -2344,7 +2344,7 @@ async function loadPdfJs(){
 }
 
 async function parsePdfToWorkbook(file){
-  /* v13.39 FINAL — universal PDF ingestion.
+  /* v13.40 FINAL — universal PDF ingestion.
      Design goals: browser-safe PDF.js loading, no dependency on ES modules or
      cross-origin workers, preservation of empty/dash cells, real header names
      when recoverable, and a generic table fallback for non-financial PDFs. */
@@ -2529,7 +2529,7 @@ async function handleFile(file){
     return showFatal('That file type isn’t supported. Choose an .xlsx, .xls or .csv, or a text-based .pdf file.');
   }
 
-  // v13.39 FINAL — every upload gets a unique transaction token. Any older
+  // v13.40 FINAL — every upload gets a unique transaction token. Any older
   // asynchronous read is ignored if the user selects another file before it finishes.
   const loadToken = ++APP.__loadToken;
   window.__instantDashCurrentLoadToken = loadToken;
@@ -2896,7 +2896,7 @@ async function rebuildFromAoa(){
   profileColumns(names);       // fills APP.columns
   coerceValues();              // converts text numbers/dates in place
 
-  // v13.39 FINAL — PDF semantic column bridge. The PDF parser supplies the
+  // v13.40 FINAL — PDF semantic column bridge. The PDF parser supplies the
   // authoritative period names it recovered from the table header. Re-assert
   // those fields as quantitative measures after coercion so the chart layer
   // cannot accidentally demote them because some rows contain blanks/dashes.
@@ -6030,7 +6030,7 @@ function wireRest(){
       applyFiltersAndRedraw();
       auditDashboardState('shared-state-restore');
       setTheme(!!shared.dark);
-      /* v13.39 FINAL — restore the user's chart/KPI selection as part of the
+      /* v13.40 FINAL — restore the user's chart/KPI selection as part of the
          shared dashboard state. The data and the semantic selector catalogue
          are reconstructed first; then the saved choices are applied only when
          they still belong to the restored dataset. */
@@ -6584,7 +6584,7 @@ function wireRest(){
           return;
         }
       }
-      await navigator.share({title:'InstantDash Dashboard v13.39 FINAL',files:[f]});
+      await navigator.share({title:'InstantDash Dashboard v13.40 FINAL',files:[f]});
       setNote('Dashboard file shared successfully: '+f.name);
     }catch(err){
       if(err&&err.name==='AbortError') return;
@@ -6593,7 +6593,7 @@ function wireRest(){
   }
   async function copyShare(e){
     if(e){e.preventDefault();e.stopPropagation();}
-    const text='InstantDash Dashboard v13.39 FINAL — interactive management dashboard.';
+    const text='InstantDash Dashboard v13.40 FINAL — interactive management dashboard.';
     try{
       if(navigator.clipboard&&navigator.clipboard.writeText){
         await navigator.clipboard.writeText(text);
@@ -8641,34 +8641,57 @@ function makeConfig(s){
 function chartTypeOptions(current){
  return '<option value="bar"'+(current==='bar'?' selected':'')+'>Bar</option><option value="hbar"'+(current==='hbar'?' selected':'')+'>Horizontal Bar</option><option value="line"'+(current==='line'?' selected':'')+'>Line</option><option value="area"'+(current==='area'?' selected':'')+'>Area</option><option value="stacked"'+(current==='stacked'?' selected':'')+'>Stacked Bar</option><option value="pie"'+(current==='pie'?' selected':'')+'>Pie</option><option value="donut"'+(current==='donut'?' selected':'')+'>Donut</option>';
 }
-function redrawAICard(s,card){
- /* v1.13.09: automatically replace chart types that are not meaningful for
-    the current data instead of leaving a blank/error state. */
- var labels=(s.data&&s.data.labels)||[], values=(s.data&&s.data.values)||[], autoReason='';
- if((s.type==='pie'||s.type==='donut') && labels.length<2){s.type='bar';autoReason='Donut/Pie needs grouped categories; switched to Bar for this data.';}
- else if((s.type==='line'||s.type==='area') && labels.length<2){s.type='bar';autoReason='Line/Area needs at least two points; switched to Bar for this data.';}
- else if(s.type==='stacked' && !s.seriesCount && s.seriesCount!==0){/* single-series automatic charts use Bar */}
- if(s.type==='stacked' && (!s.seriesCount || s.seriesCount<2)){s.type='bar';autoReason='Stacked Bar needs multiple series; switched to Bar for this data.';}
- var old=charts[s.id];
- if(old){try{old.destroy()}catch(_){} delete charts[s.id];}
- var wrap=card.querySelector('.ai-chart-wrap');
- if(!wrap)return;
- // Always replace the canvas node. This avoids Safari/Chart.js retaining
- // the previous canvas context after a chart-type change.
- wrap.innerHTML='<canvas></canvas>';
- var canvas=wrap.querySelector('canvas');
- var sub=card.querySelector('.ai-chart-sub');
- var selector=card.querySelector('.ai-chart-type');if(selector)selector.value=s.type;
- if(sub)sub.textContent=(autoReason?autoReason+' ':'')+(s.group?'AI selected '+niceName(s.type==='hbar'?'horizontal bar':s.type)+' chart grouped by '+niceName(s.group):'AI selected '+niceName(s.type)+' chart for '+niceName(s.measure))+'.';
- if(!window.Chart||!canvas)return;
- s.detailEl=card.querySelector('.ai-chart-touch-detail');
- if(s.detailEl)s.detailEl.textContent='Tap a bar or point to see the exact figure.';
- try{
-   charts[s.id]=new Chart(canvas.getContext('2d'),makeConfig(s));
- }catch(err){
-   wrap.innerHTML='<div class="ai-chart-render-error" style="height:100%;min-height:220px;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;color:var(--muted);font:600 11px Poppins,sans-serif">Chart could not be rendered. Please try another chart type.</div>';
-   console.error('InstantDash automatic chart render error',err);
+function drawNativeAIChart(s,canvas){
+ var ds=s.data||{labels:[],values:[]}, labels=(ds.labels||[]).map(String), vals=(ds.values||[]).map(function(v){var x=Number(v);return isFinite(x)?x:0});
+ if(!canvas||!labels.length||!vals.length) throw new Error('No chartable values');
+ var wrap=canvas.parentElement, rect=wrap.getBoundingClientRect(), w=Math.max(280,Math.floor(rect.width-14)), h=Math.max(220,Math.floor(rect.height-14));
+ var dpr=Math.max(1,Math.min(2,window.devicePixelRatio||1)); canvas.width=Math.floor(w*dpr);canvas.height=Math.floor(h*dpr);canvas.style.width=w+'px';canvas.style.height=h+'px';
+ var ctx=canvas.getContext('2d'); if(!ctx) throw new Error('Canvas unavailable'); ctx.setTransform(dpr,0,0,dpr,0,0); ctx.clearRect(0,0,w,h);
+ var type=s.type, pie=(type==='pie'||type==='donut'), line=(type==='line'||type==='area'), horiz=(type==='hbar'), stacked=(type==='stacked');
+ var palette2=palette||['#F5B301','#E2582B','#2E86AB','#3FB07A','#8E5BC9','#D9455F','#0E9AA7','#B0793E'];
+ var text='#5f574e', grid='#e8dfd2', accent=palette2[(parseInt(String(s.id||'ai-0').split('-').pop(),10)||0)%palette2.length];
+ ctx.font='600 10px Poppins,Arial,sans-serif';ctx.fillStyle=text;ctx.textAlign='center';ctx.textBaseline='middle';
+ var max=Math.max.apply(null,vals.map(function(v){return Math.abs(v)})); if(!isFinite(max)||max<=0)max=1;
+ if(pie){
+   var cx=w/2,cy=h/2,r=Math.min(w,h)*.31,total=vals.reduce(function(a,b){return a+Math.max(0,b)},0)||1,angle=-Math.PI/2;
+   vals.forEach(function(v,i){var part=Math.max(0,v)/total, a2=angle+part*Math.PI*2;ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,angle,a2);ctx.closePath();ctx.fillStyle=palette2[i%palette2.length];ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();angle=a2;});
+   if(type==='donut'){ctx.beginPath();ctx.arc(cx,cy,r*.58,0,Math.PI*2);ctx.fillStyle='#fffdf8';ctx.fill();}
+   var lx=Math.min(w-115,cx+r+18), ly=Math.max(18,cy-r*.8);ctx.textAlign='left';
+   labels.slice(0,10).forEach(function(l,i){ctx.fillStyle=palette2[i%palette2.length];ctx.fillRect(lx,ly+i*19,9,9);ctx.fillStyle=text;ctx.fillText(label(l),lx+15,ly+i*19+5);});
+   return;
  }
+ var left=horiz?48:42,right=18,top=18,bottom=48,plotW=w-left-right,plotH=h-top-bottom;
+ ctx.strokeStyle=grid;ctx.lineWidth=1;
+ for(var gy=0;gy<=4;gy++){var yy=top+plotH-gy*plotH/4;ctx.beginPath();ctx.moveTo(left,yy);ctx.lineTo(left+plotW,yy);ctx.stroke();ctx.fillStyle=text;ctx.textAlign='right';ctx.fillText((max*gy/4).toLocaleString('en-IN',{notation:'compact',maximumFractionDigits:1}),left-6,yy);}
+ if(horiz){
+   var nbar=Math.min(labels.length,12), gap=6,bh=Math.max(10,(plotH-gap*(nbar-1))/nbar);
+   var items=vals.map(function(v,i){return {v:v,l:labels[i],i:i}}).sort(function(a,b){return b.v-a.v}).slice(0,nbar);
+   items.forEach(function(it,j){var y=top+j*(bh+gap),bw=Math.max(0,it.v/max*plotW);ctx.fillStyle=palette2[it.i%palette2.length];ctx.fillRect(left,y,bw,bh);ctx.fillStyle=text;ctx.textAlign='right';ctx.fillText(label(it.l),left-6,y+bh/2);ctx.textAlign='left';ctx.fillText(Number(it.v).toLocaleString('en-IN',{notation:'compact',maximumFractionDigits:1}),left+bw+5,y+bh/2);});
+ }else if(line){
+   var pts=[], count=labels.length; vals.forEach(function(v,i){var x=left+(count===1?plotW/2:i*plotW/(count-1)),y=top+plotH-(v/max)*plotH;pts.push([x,y]);});
+   if(type==='area'){ctx.beginPath();pts.forEach(function(p,i){if(i)ctx.lineTo(p[0],p[1]);else ctx.moveTo(p[0],p[1]);});ctx.lineTo(pts[pts.length-1][0],top+plotH);ctx.lineTo(pts[0][0],top+plotH);ctx.closePath();ctx.fillStyle=accent+'33';ctx.fill();}
+   ctx.beginPath();pts.forEach(function(p,i){if(i)ctx.lineTo(p[0],p[1]);else ctx.moveTo(p[0],p[1]);});ctx.strokeStyle=accent;ctx.lineWidth=3;ctx.stroke();
+   pts.forEach(function(p,i){ctx.beginPath();ctx.arc(p[0],p[1],4,0,Math.PI*2);ctx.fillStyle=accent;ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();});
+   labels.forEach(function(l,i){if(i<12){var x=left+(count===1?plotW/2:i*plotW/(count-1));ctx.fillStyle=text;ctx.textAlign='center';ctx.fillText(label(l),x,top+plotH+22);}});
+ }else{
+   var count2=Math.min(labels.length,12), bw=Math.max(8,(plotW-(count2-1)*7)/count2);
+   var items2=vals.map(function(v,i){return {v:v,l:labels[i],i:i}}).slice(0,count2);
+   items2.forEach(function(it,i){var x=left+i*(bw+7),bh=Math.max(0,(it.v/max)*plotH),y=top+plotH-bh;ctx.fillStyle=palette2[it.i%palette2.length];ctx.fillRect(x,y,bw,bh);ctx.fillStyle=text;ctx.textAlign='center';ctx.fillText(label(it.l),x+bw/2,top+plotH+22);});
+ }
+}
+function redrawAICard(s,card){
+ var labels=(s.data&&s.data.labels)||[], values=(s.data&&s.data.values)||[], autoReason='';
+ if((s.type==='pie'||s.type==='donut')&&labels.length<2){s.type='bar';autoReason='Pie/Donut needs grouped categories; Bar is shown instead.';}
+ else if((s.type==='line'||s.type==='area')&&labels.length<2){s.type='bar';autoReason='Line/Area needs at least two points; Bar is shown instead.';}
+ else if(s.type==='stacked'){s.type='bar';autoReason='Stacked view requires multiple series; Bar is shown for this automatic chart.';}
+ var old=charts[s.id];if(old){try{old.destroy()}catch(_){}delete charts[s.id];}
+ var wrap=card.querySelector('.ai-chart-wrap');if(!wrap)return;
+ wrap.innerHTML='<canvas></canvas>';var canvas=wrap.querySelector('canvas');
+ var sub=card.querySelector('.ai-chart-sub'),selector=card.querySelector('.ai-chart-type');if(selector)selector.value=s.type;
+ if(sub)sub.textContent=(autoReason?autoReason+' ':'')+(s.group?'AI selected '+niceName(s.type)+' chart grouped by '+niceName(s.group):'AI selected a total chart for '+niceName(s.measure))+'.';
+ s.detailEl=card.querySelector('.ai-chart-touch-detail');if(s.detailEl)s.detailEl.textContent='Tap a bar or point to see the exact figure.';
+ try{drawNativeAIChart(s,canvas);canvas.addEventListener('click',function(e){var r=canvas.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;if(s.detailEl)s.detailEl.textContent=niceName(s.measure)+' · '+(s.data.labels[0]||'Selected')+' · '+Number(s.data.values[0]||0).toLocaleString('en-IN',{maximumFractionDigits:2});});}
+ catch(err){wrap.innerHTML='<div class="ai-chart-render-error" style="height:100%;min-height:220px;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;color:var(--muted);font:600 11px Poppins,sans-serif">Unable to draw this chart. The data is still available in the manual chart selector.</div>';console.error('InstantDash native AI chart error',err);}
 }
 function render(){
  var host=$('aiDashboardCharts');if(!host)return;
@@ -8694,7 +8717,7 @@ function render(){
   card.querySelector('.ai-chart-wrap').addEventListener('click',function(e){if(e.target.tagName==='CANVAS')openExpand(s)});
  });
 }
-function openExpand(s){var ov=$('aiChartOverlay'),cv=$('aiOverlayCanvas');if(!ov||!cv||!window.Chart)return;$('aiOverlayTitle').textContent=niceName(s.title)+' · '+niceName(s.type==='hbar'?'Horizontal Bar':s.type);$('aiOverlaySub').textContent=s.subtitle+' · Parameter: '+niceName(s.measure);ov.classList.add('open');ov.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';if(overlayChart)overlayChart.destroy();overlayChart=new Chart(cv.getContext('2d'),makeConfig(s))}
+function openExpand(s){var ov=$('aiChartOverlay'),cv=$('aiOverlayCanvas');if(!ov||!cv)return;$('aiOverlayTitle').textContent=niceName(s.title)+' · '+niceName(s.type==='hbar'?'Horizontal Bar':s.type);$('aiOverlaySub').textContent=s.subtitle+' · Parameter: '+niceName(s.measure);ov.classList.add('open');ov.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';requestAnimationFrame(function(){try{drawNativeAIChart(s,cv)}catch(e){console.warn('InstantDash expanded chart failed',e)}})}
 function closeExpand(){var ov=$('aiChartOverlay');if(!ov)return;ov.classList.remove('open');ov.setAttribute('aria-hidden','true');if(overlayChart){overlayChart.destroy();overlayChart=null}document.body.style.overflow=''}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 function watch(){
@@ -8728,7 +8751,7 @@ function boot(){
   var ov=$('aiChartOverlay');if(ov){$('aiOverlayClose').onclick=closeExpand;ov.addEventListener('click',function(e){if(e.target===ov)closeExpand()});document.addEventListener('keydown',function(e){if(e.key==='Escape')closeExpand()})}watch();setInterval(watch,700)}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 
-/* v13.39 FINAL — hard-refresh every data-dependent intelligence surface after a new upload.
+/* v13.40 FINAL — hard-refresh every data-dependent intelligence surface after a new upload.
    This deliberately rebuilds from APP.rows/APP.columns and never carries semantic state
    from the previous workbook. */
 window.__instantDashHardRefreshAll=function(reason){
@@ -8741,7 +8764,7 @@ window.__instantDashHardRefreshAll=function(reason){
       source.classList.toggle('stale',!live);
       text.textContent=live?((a.fileName||'Current workbook')+' · '+(a.activeSheet||'Current sheet')+' · '+a.rows.length.toLocaleString()+' rows · '+a.columns.length+' columns'): 'No current dataset is committed yet';
     }
-    /* v13.39 FINAL — rehydrate ALL chart-selector engines after upload.
+    /* v13.40 FINAL — rehydrate ALL chart-selector engines after upload.
        The manual selector scripts boot before a file is loaded, so their
        first pass quite correctly sees zero rows. Previously that empty state
        was never re-run after APP.rows/APP.columns were populated, leaving
@@ -8880,7 +8903,7 @@ window.__instantDashAIMultiChartsRefresh=render;
 <script id="instantdash-v11323-universal-executive-js">
 (function(){
   'use strict';
-  /* v13.39 FINAL — UNIVERSAL EXECUTIVE INTELLIGENCE
+  /* v13.40 FINAL — UNIVERSAL EXECUTIVE INTELLIGENCE
      Uses ONLY the currently committed APP.rows/APP.columns. No financial
      vocabulary is assumed. The summary adapts to banking, sales, HR,
      manufacturing, service, loan, SHG, generic Excel/CSV and PDF tables.
@@ -9102,7 +9125,7 @@ function ensureOptions(){
  }
  var v=$('smartDataVerification');if(v&&f.rs.length)v.innerHTML='<b>Verified live data</b><span>'+f.measures.length+' chart parameters · '+f.dims.length+' grouping fields · direct column catalogue</span>';
  var no=$('smartNoParameters');if(no)no.hidden=true;
- // v13.39 FINAL — PDF files with several extracted numeric columns start with a
+ // v13.40 FINAL — PDF files with several extracted numeric columns start with a
  // useful multi-parameter view instead of leaving secondary selectors blank.
  var a3=app();
  if(a3 && a3.__pdfMeta){
@@ -9270,7 +9293,7 @@ window.__instantDashParameterFallback={
 <script id="instantdash-v11333-kpi-intelligence-final-guard">
 (function(){
   'use strict';
-  /* v13.39 FINAL — KPI INTELLIGENCE ENGINE
+  /* v13.40 FINAL — KPI INTELLIGENCE ENGINE
      Final authority for the visible chart selectors.
      Goals:
        1) current upload only;
@@ -9426,7 +9449,7 @@ window.__instantDashParameterFallback={
 <script id="instantdash-v1136-state-authority">
 (function(){
   'use strict';
-  /* v13.39 FINAL — one authoritative semantic state per dataset.
+  /* v13.40 FINAL — one authoritative semantic state per dataset.
      This layer does not invent columns; it only validates selector values
      against the live current dataset before allowing them to persist. */
   function app(){return window.__INSTANTDASH_APP__||window.APP||null}
