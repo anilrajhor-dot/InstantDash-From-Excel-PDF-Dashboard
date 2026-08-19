@@ -1090,6 +1090,12 @@ html,body{overflow-anchor:none!important;}
 .id-health-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.id-health-group-title{grid-column:1/-1;padding:6px 2px 2px;font:900 12px/1.2 Poppins,-apple-system,sans-serif;letter-spacing:.03em;color:var(--text)}.id-health-item{border:1px solid var(--border);border-radius:14px;padding:13px;background:var(--card-2)}.id-health-item .row{display:flex;align-items:center;gap:8px;font-weight:850;font-size:12.5px}.id-health-item .detail{margin-top:5px;color:var(--muted);font-size:11.5px;line-height:1.45}.id-health-item.ok{border-left:4px solid #2fbd72}.id-health-item.warn{border-left:4px solid #f5b301}.id-health-item.bad{border-left:4px solid #ef5535}
 .id-health-foot{margin-top:14px;padding:12px 14px;border-radius:12px;background:var(--card-2);color:var(--muted);font-size:11px;line-height:1.5}.id-health-actions{display:flex;gap:9px;margin-top:14px}.id-health-actions button{flex:1;border:1px solid var(--border);background:var(--card-2);color:var(--text);border-radius:11px;padding:10px;font-weight:800;cursor:pointer}.id-health-actions .primary{background:var(--accent);color:#111;border-color:var(--accent)}
 @media(max-width:520px){#share{margin-left:0}.id-health-btn{margin:7px 0 0;padding:9px 11px;font-size:11px}.topbar{flex-wrap:wrap}.id-health-overlay{padding:10px}.id-health-card{padding:16px;border-radius:18px}.id-health-grid{grid-template-columns:1fr}.id-health-head h3{font-size:22px}.id-health-score .big{font-size:29px}}
+<style id="instantdash-v145-chart-polish">
+/* v13.45 — attractive management-chart bars */
+.chart-card canvas{filter:saturate(1.08)}
+.ai-chart-svg-host svg rect{filter:drop-shadow(0 3px 5px rgba(30,25,15,.10))}
+.ai-chart-svg-host svg text{font-variant-numeric:tabular-nums}
+</style>
 </style>
 <!-- InstantDash v1.11.14: direct iPhone-safe Diagnose binding -->
 <!-- InstantDash v1.11.14: inline self-contained Diagnose handler for iOS Safari -->
@@ -1198,7 +1204,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v13.44 FINAL-stable-layout-chart-fix">
+<meta name="instantdash-build" content="v13.45 FINAL">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -1267,7 +1273,7 @@ select{max-width:100%;text-overflow:ellipsis;overflow:hidden}
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v13.44 FINAL</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v13.45 FINAL</span>
   </div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -1502,7 +1508,7 @@ select{max-width:100%;text-overflow:ellipsis;overflow:hidden}
 <div class="section" id="smartChartsSection">
       <div class="section-head">
         <h2>Interactive Charts</h2>
-        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v13.44 FINAL</span><span class="hint" id="smartChartHint">LIVE DATA — 12 rows · 8 parameters available in every dropdown</span><div id="smartDataVerification" class="smart-data-verification"><b>Verified live data</b><span>8 business KPI parameters · 0 grouping fields · current file only</span></div>
+        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v13.45 FINAL</span><span class="hint" id="smartChartHint">LIVE DATA — 12 rows · 8 parameters available in every dropdown</span><div id="smartDataVerification" class="smart-data-verification"><b>Verified live data</b><span>8 business KPI parameters · 0 grouping fields · current file only</span></div>
       </div>
       <section class="ai-dashboard-charts" id="aiDashboardCharts" aria-label="AI generated charts"><div class="ai-dashboard-head"><div><h3 style="margin:0;font-size:16px">AI-generated key charts</h3><p id="aiDashboardSub" style="margin:4px 0 12px;color:var(--muted);font-size:11px">AI automatically created 4 key charts from the loaded data. These charts are independent of the manual parameter selector below.</p></div></div><div class="ai-chart-grid" id="aiChartGrid"><article class="ai-chart-card"><div class="ai-chart-card-head"><div><h4>Audit Cost</h4><p class="ai-chart-sub">AI selected Line chart grouped by Audit Period.</p></div><div class="ai-chart-actions"><label style="font-size:9px;color:var(--muted);font-weight:800">Chart <select class="ai-chart-type" aria-label="Change chart type for Audit Cost"><option value="bar">Bar</option><option value="hbar">Horizontal Bar</option><option value="line" selected="">Line</option><option value="area">Area</option><option value="stacked">Stacked Bar</option><option value="pie">Pie</option><option value="donut">Donut</option></select></label><button type="button" class="ai-chart-expand">⛶ Expand</button></div></div><div class="ai-chart-wrap"><div class="ai-chart-render-error" style="height:100%;min-height:220px;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;color:var(--muted);font:600 11px Poppins,sans-serif">Unable to draw this chart. The data is still available in the manual chart selector.</div></div><div class="ai-chart-touch-detail">Tap a bar or point to see the exact figure.</div><div class="ai-chart-foot">Each bar/point is calculated from 12 loaded rows.</div></article><article class="ai-chart-card"><div class="ai-chart-card-head"><div><h4>Audits Planned</h4><p class="ai-chart-sub">AI selected Line chart grouped by Audit Period.</p></div><div class="ai-chart-actions"><label style="font-size:9px;color:var(--muted);font-weight:800">Chart <select class="ai-chart-type" aria-label="Change chart type for Audits Planned"><option value="bar">Bar</option><option value="hbar">Horizontal Bar</option><option value="line" selected="">Line</option><option value="area">Area</option><option value="stacked">Stacked Bar</option><option value="pie">Pie</option><option value="donut">Donut</option></select></label><button type="button" class="ai-chart-expand">⛶ Expand</button></div></div><div class="ai-chart-wrap"><div class="ai-chart-render-error" style="height:100%;min-height:220px;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;color:var(--muted);font:600 11px Poppins,sans-serif">Unable to draw this chart. The data is still available in the manual chart selector.</div></div><div class="ai-chart-touch-detail">Tap a bar or point to see the exact figure.</div><div class="ai-chart-foot">Each bar/point is calculated from 12 loaded rows.</div></article><article class="ai-chart-card"><div class="ai-chart-card-head"><div><h4>Audits Completed</h4><p class="ai-chart-sub">AI selected Line chart grouped by Audit Period.</p></div><div class="ai-chart-actions"><label style="font-size:9px;color:var(--muted);font-weight:800">Chart <select class="ai-chart-type" aria-label="Change chart type for Audits Completed"><option value="bar">Bar</option><option value="hbar">Horizontal Bar</option><option value="line" selected="">Line</option><option value="area">Area</option><option value="stacked">Stacked Bar</option><option value="pie">Pie</option><option value="donut">Donut</option></select></label><button type="button" class="ai-chart-expand">⛶ Expand</button></div></div><div class="ai-chart-wrap"><div class="ai-chart-render-error" style="height:100%;min-height:220px;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;color:var(--muted);font:600 11px Poppins,sans-serif">Unable to draw this chart. The data is still available in the manual chart selector.</div></div><div class="ai-chart-touch-detail">Tap a bar or point to see the exact figure.</div><div class="ai-chart-foot">Each bar/point is calculated from 12 loaded rows.</div></article><article class="ai-chart-card"><div class="ai-chart-card-head"><div><h4>Audit Findings</h4><p class="ai-chart-sub">AI selected Line chart grouped by Audit Period.</p></div><div class="ai-chart-actions"><label style="font-size:9px;color:var(--muted);font-weight:800">Chart <select class="ai-chart-type" aria-label="Change chart type for Audit Findings"><option value="bar">Bar</option><option value="hbar">Horizontal Bar</option><option value="line" selected="">Line</option><option value="area">Area</option><option value="stacked">Stacked Bar</option><option value="pie">Pie</option><option value="donut">Donut</option></select></label><button type="button" class="ai-chart-expand">⛶ Expand</button></div></div><div class="ai-chart-wrap"><div class="ai-chart-render-error" style="height:100%;min-height:220px;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;color:var(--muted);font:600 11px Poppins,sans-serif">Unable to draw this chart. The data is still available in the manual chart selector.</div></div><div class="ai-chart-touch-detail">Tap a bar or point to see the exact figure.</div><div class="ai-chart-foot">Each bar/point is calculated from 12 loaded rows.</div></article></div></section>
 
@@ -1772,9 +1778,9 @@ Charts on screen: Total Audit Cost by month; Audits Planned vs Audit Cost; Distr
    CONFIG — the knobs worth turning. See "How to Customize" in the notes.
    --------------------------------------------------------------------- */
 const CONFIG = {
-  BUILD_VERSION: '1.13.44',
+  BUILD_VERSION: '1.13.45',
   APP_NAME: 'InstantDash',
-  VERSION: 'v13.44 FINAL',
+  VERSION: 'v13.45 FINAL',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -1847,19 +1853,28 @@ function scrollToHealthFirst(){ /* v13.44: viewport remains where the user left 
 
 function nextFrame(){ return new Promise(r => requestAnimationFrame(()=>requestAnimationFrame(r))); }
 
-// Number formatting with thousands separators; compacts very large values.
+// v13.45 — Indian-number formatting: do not silently convert amounts to M/B.
 function fmtNum(n){
   if (n == null || !isFinite(n)) return '—';
-  const a = Math.abs(n);
-  if (a >= 1e9)  return (n/1e9).toFixed(2).replace(/\.00$/,'') + 'B';
-  if (a >= 1e6)  return (n/1e6).toFixed(2).replace(/\.00$/,'') + 'M';
-  if (a >= 1000) return Math.round(n).toLocaleString();
-  if (Number.isInteger(n)) return n.toLocaleString();
-  return Number(n.toFixed(2)).toLocaleString();
+  return Number.isInteger(n)
+    ? n.toLocaleString('en-IN')
+    : Number(n.toFixed(2)).toLocaleString('en-IN');
+}
+function isMoneyField(name){
+  const s=String(name||'').toLowerCase().replace(/[^a-z0-9]+/g,' ');
+  if (/\b(rate|ratio|margin|percentage|percent|share|growth|change|yoy|mom|qoq|count|number|qty|quantity|days?|months?|years?)\b/.test(s)) return false;
+  return /\b(amount|amt|revenue|sales|turnover|profit|income|expense|cost|cash|deposit|loan|asset|liabilit(?:y|ies)|commission|fee|balance|budget|target|actual|price|value|capital|investment|salary|wages|premium|tax|gst|interest|emi|outstanding|purchase|stock|debt|debtor|creditor|receivable|payable|expenditure|saving|savings)\b/.test(s);
+}
+function fmtMoney(n){
+  if (n == null || !isFinite(n)) return '—';
+  const v=Number(n);
+  return '₹' + (Number.isInteger(v) ? v.toLocaleString('en-IN') : Number(v.toFixed(2)).toLocaleString('en-IN'));
+}
+function fmtByField(n,name){
+  return isMoneyField(name) ? fmtMoney(n) : fmtNum(n);
 }
 function fmtFull(n){
-  if (n == null || !isFinite(n)) return '—';
-  return Number.isInteger(n) ? n.toLocaleString() : Number(n.toFixed(2)).toLocaleString();
+  return fmtNum(n);
 }
 function fmtDate(d){
   if (!(d instanceof Date) || isNaN(d)) return '—';
@@ -3432,13 +3447,13 @@ function drawChart(spec){
         callbacks:{ label: (c) => {
           const raw = c.parsed && typeof c.parsed.y === 'number' ? c.parsed.y : (typeof c.parsed === 'number' ? c.parsed : c.raw);
           const lbl = c.dataset.label ? c.dataset.label + ': ' : '';
-          return lbl + (typeof raw === 'number' ? fmtFull(raw) : raw);
+          return lbl + (typeof raw === 'number' ? fmtByField(raw, spec.y || spec.value || spec.x) : raw);
         }}
       }
     },
     scales:{
       x:{ ticks:{color:th.muted, font:{size:10}, maxRotation:50, autoSkip:true, maxTicksLimit:14}, grid:{color:th.grid, drawBorder:false} },
-      y:{ ticks:{color:th.muted, font:{size:10}, callback:(v) => fmtNum(v)}, grid:{color:th.grid, drawBorder:false}, beginAtZero:true }
+      y:{ ticks:{color:th.muted, font:{size:10}, callback:(v) => fmtByField(v, spec.y || spec.value || spec.x)}, grid:{color:th.grid, drawBorder:false}, beginAtZero:true }
     }
   };
 
@@ -3456,10 +3471,10 @@ function drawChart(spec){
       data = {datasets:[{label:`${spec.y} vs ${spec.x}`, data:pts, backgroundColor:P[0]+'cc', pointRadius:3, pointHoverRadius:5}]};
       options = deep(common, {
         scales:{
-          x:{type:'linear', ticks:{color:th.muted, font:{size:10}, callback:(v)=>fmtNum(v)}, grid:{color:th.grid}, title:{display:true, text:spec.x, color:th.muted}},
-          y:{ticks:{color:th.muted, font:{size:10}, callback:(v)=>fmtNum(v)}, grid:{color:th.grid}, beginAtZero:false, title:{display:true, text:spec.y, color:th.muted}}
+          x:{type:'linear', ticks:{color:th.muted, font:{size:10}, callback:(v)=>fmtByField(v, spec.x)}, grid:{color:th.grid}, title:{display:true, text:spec.x, color:th.muted}},
+          y:{ticks:{color:th.muted, font:{size:10}, callback:(v)=>fmtByField(v, spec.y)}, grid:{color:th.grid}, beginAtZero:false, title:{display:true, text:spec.y, color:th.muted}}
         },
-        plugins:{tooltip:{callbacks:{label:(c)=>`${spec.x}: ${fmtFull(c.parsed.x)} · ${spec.y}: ${fmtFull(c.parsed.y)}`}}}
+        plugins:{tooltip:{callbacks:{label:(c)=>`${spec.x}: ${fmtByField(c.parsed.x,spec.x)} · ${spec.y}: ${fmtByField(c.parsed.y,spec.y)}`}}}
       });
       const r = correlation(pts);
       if (note) note.textContent = `${pts.length.toLocaleString()} points${pts.length < rows.length ? ' (sampled)' : ''}${r === null ? '' : ' · correlation r = ' + r.toFixed(2)}.`;
@@ -3478,7 +3493,7 @@ function drawChart(spec){
           cutout: spec.type === 'donut' ? '58%' : 0,
           plugins:{
             legend:{display:true, position:'right', labels:{color:th.text, font:{size:11}, boxWidth:12, padding:10}},
-            tooltip:{callbacks:{label:(c)=>`${c.label}: ${fmtFull(c.parsed)} (${total ? (c.parsed/total*100).toFixed(1) : 0}%)`}}
+            tooltip:{callbacks:{label:(c)=>`${c.label}: ${fmtByField(c.parsed, spec.y || spec.value || spec.x)} (${total ? (c.parsed/total*100).toFixed(1) : 0}%)`}}
           }
         });
         delete options.scales;   // circular charts have no x/y axes
@@ -3486,8 +3501,10 @@ function drawChart(spec){
         kind = (spec.type === 'line' || spec.type === 'area') ? 'line' : 'bar';
         data = {labels:res.labels, datasets:res.series.map((s, i) => ({
           label:s.label, data:s.data,
-          backgroundColor: kind === 'line' ? P[i % P.length] + (spec.type === 'area' ? '33' : 'ff') : P[i % P.length],
-          borderColor:P[i % P.length], borderWidth: kind === 'line' ? 2 : 0,
+          backgroundColor: kind === 'line'
+            ? P[i % P.length] + (spec.type === 'area' ? '33' : 'ff')
+            : (res.labels.length > 1 ? res.labels.map((_,j)=>P[(j + i) % P.length]) : P[i % P.length]),
+          borderColor:P[i % P.length], borderWidth: kind === 'line' ? 2 : 1.2,
           fill: spec.type === 'area', tension:0.3,
           pointRadius: res.labels.length > 40 ? 0 : 3, pointHoverRadius:5,
           borderRadius: kind === 'bar' ? 4 : 0, borderSkipped:false,
@@ -3497,10 +3514,10 @@ function drawChart(spec){
           indexAxis: spec.type === 'hbar' ? 'y' : 'x',
           plugins:{legend:{display: multi, position:'bottom', labels:{color:th.text, font:{size:11}, boxWidth:12}}},
           scales: spec.type === 'hbar'
-            ? {x:{ticks:{color:th.muted, font:{size:10}, callback:(v)=>fmtNum(v)}, grid:{color:th.grid}, beginAtZero:true, stacked},
+            ? {x:{ticks:{color:th.muted, font:{size:10}, callback:(v)=>fmtByField(v, spec.y || spec.value || spec.x)}, grid:{color:th.grid}, beginAtZero:true, stacked},
                y:{ticks:{color:th.muted, font:{size:10}}, grid:{display:false}, stacked}}
             : {x:{ticks:{color:th.muted, font:{size:10}, maxRotation:50, autoSkip:true, maxTicksLimit:14}, grid:{color:th.grid}, stacked},
-               y:{ticks:{color:th.muted, font:{size:10}, callback:(v)=>fmtNum(v)}, grid:{color:th.grid}, beginAtZero:true, stacked}}
+               y:{ticks:{color:th.muted, font:{size:10}, callback:(v)=>fmtByField(v, spec.y || spec.value || spec.x)}, grid:{color:th.grid}, beginAtZero:true, stacked}}
         });
       }
 
@@ -3554,7 +3571,7 @@ function buildKPIs(){
   rankMeasures().slice(0, 3).forEach((c, i) => {
     let sum = 0, n = 0;
     for (let r = 0; r < rows.length; r++){ const v = rows[r][c.name]; if (typeof v === 'number' && isFinite(v)){ sum += v; n++; } }
-    cards.push({val: fmtNum(sum), lbl: 'Total ' + c.name, sub: 'Average ' + fmtFull(n ? sum/n : 0), alt: i === 1});
+    cards.push({val: fmtByField(sum,c.name), lbl: 'Total ' + c.name, sub: 'Average ' + fmtByField(n ? sum/n : 0,c.name), alt: i === 1});
   });
 
   const topDim = rankDimensions()[0];
@@ -3767,7 +3784,7 @@ function renderTable(){
     const v = r[c.name];
     if (v === null || v === undefined || v === '') return '<td style="color:var(--muted)">—</td>';
     if (v instanceof Date) return `<td>${esc(fmtDate(v))}</td>`;
-    if (typeof v === 'number') return `<td class="num">${esc(fmtFull(v))}</td>`;
+    if (typeof v === 'number') return `<td class="num">${esc(fmtByField(v,c.name))}</td>`;
     if (typeof v === 'boolean') return `<td>${v ? 'Yes' : 'No'}</td>`;
     const s = String(v);
     return `<td title="${esc(s)}">${esc(s.length > 60 ? s.slice(0,60) + '…' : s)}</td>`;
@@ -3899,7 +3916,7 @@ function buildManagementSummaryCards(){
     for(const r of rows){const v=r[c.name];if(typeof v==='number'&&isFinite(v)){n++;mn=Math.min(mn,v);mx=Math.max(mx,v);}}
     if(!n)return;
     const metric=miMetricValue(rows,c.name), aggLabel=miAggMode(c.name)==='avg'?'Average':'Total';
-    cards.push(`<div class="management-summary-card"><div class="msc-label">${esc(c.name)}</div><div class="msc-value">${fmtNum(metric)}</div><div class="msc-sub">${aggLabel} · range ${fmtFull(mn)}–${fmtFull(mx)}</div></div>`);
+    cards.push(`<div class="management-summary-card"><div class="msc-label">${esc(c.name)}</div><div class="msc-value">${fmtByField(metric,c.name)}</div><div class="msc-sub">${aggLabel} · range ${fmtByField(mn,c.name)}–${fmtByField(mx,c.name)}</div></div>`);
   });
   grid.innerHTML=cards.join('');
   const mb=$('summaryMovementBtn');
@@ -5403,7 +5420,7 @@ function buildExecutiveCockpit(){
       if(rateLike(c.name)){
         return `<div class="exec-measure"><b title="${esc(c.name)}">${esc(c.name)}</b><strong>${fmtFull(avg)}</strong><span>average across ${n.toLocaleString()} records · total not applicable</span></div>`;
       }
-      return `<div class="exec-measure"><b title="${esc(c.name)}">${esc(c.name)}</b><strong>${fmtNum(sum)}</strong><span>total · avg ${fmtFull(avg)}</span></div>`;
+      return `<div class="exec-measure"><b title="${esc(c.name)}">${esc(c.name)}</b><strong>${fmtByField(sum,c.name)}</strong><span>total · avg ${fmtByField(avg,c.name)}</span></div>`;
     }).join('') : `<div class="exec-measure"><b>No numeric measures</b><span>Counts and distributions are still available.</span></div>`;
   }
 
@@ -6252,7 +6269,7 @@ function wireRest(){
     let html='<!doctype html>\n'+document.documentElement.outerHTML;
     html=html.replace('</head>',bootstrap+'</head>');
     const safeName=String(APP.fileName||'Dashboard').replace(/[^a-z0-9._-]+/gi,'_').replace(/^_+|_+$/g,'')||'Dashboard';
-    const f=new File([html],`InstantDash_${safeName}_v13.44_Dashboard.html`,{type:'text/html'});
+    const f=new File([html],`InstantDash_${safeName}_v13.45_Dashboard.html`,{type:'text/html'});
     if(wasOpen){
       panel.classList.add('is-open');
       panel.setAttribute('aria-hidden','false');
@@ -6268,7 +6285,7 @@ function wireRest(){
       a.href=url;a.download=f.name;a.rel='noopener';a.style.display='none';
       document.body.appendChild(a);a.click();a.remove();
       setTimeout(()=>URL.revokeObjectURL(url),5000);
-      setNote('Dashboard HTML saved as '+f.name+'. Open Files and share that file.');
+      setNote('Saved ONE dashboard HTML file: '+f.name+'. No text side-file is created by InstantDash.');
     }catch(err){
       setNote('Could not create the dashboard file. Please try again.');
     }
@@ -6291,8 +6308,8 @@ function wireRest(){
           return;
         }
       }
-      await navigator.share({title:'InstantDash Dashboard v13.44 FINAL',files:[f]});
-      setNote('Dashboard file shared successfully: '+f.name);
+      await navigator.share({title:'InstantDash Dashboard v13.45 FINAL',files:[f]});
+      setNote('Dashboard HTML shared successfully: '+f.name);
     }catch(err){
       if(err&&err.name==='AbortError') return;
       setNote('File sharing was not completed. Tap “Save dashboard HTML”, then share the saved file from Files.');
@@ -6300,7 +6317,7 @@ function wireRest(){
   }
   async function copyShare(e){
     if(e){e.preventDefault();e.stopPropagation();}
-    const text='InstantDash Dashboard v13.44 FINAL — interactive management dashboard.';
+    const text='InstantDash Dashboard v13.45 FINAL — interactive management dashboard.';
     try{
       if(navigator.clipboard&&navigator.clipboard.writeText){
         await navigator.clipboard.writeText(text);
@@ -7603,8 +7620,8 @@ function num(v){
  }
  return NaN;
 }
-function fmt(v){return isFinite(v)?Number(v).toLocaleString('en-IN',{maximumFractionDigits:2}):'—'}
-function short(v){if(!isFinite(v))return '—';var a=Math.abs(v);if(a>=1e7)return (v/1e7).toFixed(1)+'Cr';if(a>=1e5)return (v/1e5).toFixed(1)+'L';if(a>=1e3)return (v/1e3).toFixed(1)+'K';return fmt(v)}
+function fmt(v,name){return isMoneyField(name)?fmtMoney(v):fmtNum(v)}
+function short(v){if(!isFinite(v))return '—';return fmt(v)}
 function norm(v){return String(v==null?'':v).toLowerCase().replace(/[^a-z0-9]+/g,'')}
 function app(){return window.__INSTANTDASH_APP__||window.APP||null}
 function rawData(){
@@ -8310,8 +8327,8 @@ function makeConfig(s){
        legend:{display:true,position:isPie?'right':'top',labels:{font:{family:'Poppins',size:10},usePointStyle:true,padding:12}},
        tooltip:{callbacks:{label:function(ctx){
          var v=Number(ctx.raw||0);
-         if(isPie){var total=vals.reduce(function(a,b){return a+(isFinite(b)?b:0)},0);var pct=total?((v/total)*100).toFixed(1):'0.0';return niceName(s.measure)+': '+v.toLocaleString('en-IN',{maximumFractionDigits:2})+' ('+pct+'%)';}
-         return niceName(s.measure)+': '+v.toLocaleString('en-IN',{maximumFractionDigits:2});
+         if(isPie){var total=vals.reduce(function(a,b){return a+(isFinite(b)?b:0)},0);var pct=total?((v/total)*100).toFixed(1):'0.0';return niceName(s.measure)+': '+fmtByField(v,s.measure)+' ('+pct+'%)';}
+         return niceName(s.measure)+': '+fmtByField(v,s.measure);
        }}}
      },
      onClick:function(evt,active){
@@ -8321,7 +8338,7 @@ function makeConfig(s){
          var el=active[0], idx=el.index;
          var label=(labels[idx]!==undefined?labels[idx]:'');
          var value=(vals[idx]!==undefined?vals[idx]:0);
-         s.detailEl.textContent=niceName(s.measure)+' · '+label+' · '+Number(value).toLocaleString('en-IN',{maximumFractionDigits:2});
+         s.detailEl.textContent=niceName(s.measure)+' · '+label+' · '+fmtByField(value,s.measure);
        }catch(_){ }
      },
    }
@@ -8331,11 +8348,11 @@ function makeConfig(s){
  }else{
    cfg.options.scales={
      x:{ticks:{autoSkip:true,maxTicksLimit:10,font:{family:'Poppins',size:9}},grid:{display:false}},
-     y:{beginAtZero:true,ticks:{font:{family:'Poppins',size:9},callback:function(v){return Number(v).toLocaleString('en-IN',{notation:'compact',maximumFractionDigits:1})}},grid:{color:'rgba(14,14,16,.08)'}}
+     y:{beginAtZero:true,ticks:{font:{family:'Poppins',size:9},callback:function(v){return fmtByField(v,s.measure)}},grid:{color:'rgba(14,14,16,.08)'}}
    };
    if(isH){
      cfg.options.indexAxis='y';
-     cfg.options.scales.x={beginAtZero:true,ticks:{font:{family:'Poppins',size:9},callback:function(v){return Number(v).toLocaleString('en-IN',{notation:'compact',maximumFractionDigits:1})}},grid:{color:'rgba(14,14,16,.08)'}};
+     cfg.options.scales.x={beginAtZero:true,ticks:{font:{family:'Poppins',size:9},callback:function(v){return fmtByField(v,s.measure)}},grid:{color:'rgba(14,14,16,.08)'}};
      cfg.options.scales.y={ticks:{font:{family:'Poppins',size:9}},grid:{display:false}};
    }
    if(isStack){
@@ -8360,7 +8377,7 @@ function drawNativeAIChart(s,canvas){
  var max=Math.max.apply(null,vals.map(function(v){return Math.abs(v)})); if(!isFinite(max)||max<=0)max=1;
  var escA=function(x){return String(x==null?'':x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');};
  var short=function(x,n){x=String(x==null?'':x);return x.length>n?x.slice(0,n-1)+'…':x;};
- var fmt=function(v){return Number(v||0).toLocaleString('en-IN',{notation:'compact',maximumFractionDigits:1});};
+ var fmt=function(v){return isMoneyField(s.measure)?fmtMoney(v):fmtNum(v);};
  var svg=['<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+w+' '+h+'" width="100%" height="100%" preserveAspectRatio="none" style="display:block;touch-action:manipulation;font-family:Poppins,Arial,sans-serif">'];
  svg.push('<rect x="0" y="0" width="'+w+'" height="'+h+'" rx="12" fill="#fffdf8"/>');
  if(pie){
@@ -8374,8 +8391,8 @@ function drawNativeAIChart(s,canvas){
    if(horiz){var n=Math.min(labels.length,12),gap=6,bh=Math.max(10,(plotH-gap*(n-1))/n);var items=vals.map(function(v,i){return {v:v,l:labels[i],i:i};}).sort(function(a,b){return b.v-a.v}).slice(0,n);items.forEach(function(it,j){var y=top+j*(bh+gap),bw=Math.max(1,it.v/max*plotW);svg.push('<rect x="'+left+'" y="'+y+'" width="'+bw+'" height="'+Math.max(2,bh)+'" rx="7" fill="'+colors[it.i%colors.length]+'"><title>'+escA(it.l)+' · '+escA(fmt(it.v))+'</title></rect><text x="'+(left-7)+'" y="'+(y+bh*.65)+'" text-anchor="end" font-size="9" font-weight="700" fill="#5f574e">'+escA(short(it.l,16))+'</text><text x="'+(left+bw+6)+'" y="'+(y+bh*.65)+'" font-size="9" font-weight="800" fill="#24201b">'+escA(fmt(it.v))+'</text>');});
    } else if(line){
      var n2=Math.min(labels.length,16),pts=[];for(var i=0;i<n2;i++){var x=left+(n2===1?plotW/2:i*plotW/(n2-1)),y=top+plotH-(vals[i]/max)*plotH;pts.push([x,y]);}
-     if(type==='area'&&pts.length){var d='M '+pts[0][0]+' '+(top+plotH)+' L '+pts.map(function(p){return p[0]+' '+p[1];}).join(' L ')+' L '+pts[pts.length-1][0]+' '+(top+plotH)+' Z';svg.push('<path d="'+d+'" fill="#F5B301" opacity=".16"/>');}
-     if(pts.length){svg.push('<polyline points="'+pts.map(function(p){return p[0]+','+p[1];}).join(' ')+'" fill="none" stroke="#F5B301" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>');pts.forEach(function(p,i){svg.push('<circle cx="'+p[0]+'" cy="'+p[1]+'" r="4" fill="#F5B301" stroke="#fff" stroke-width="2"><title>'+escA(labels[i])+' · '+escA(fmt(vals[i]))+'</title></circle>');});}
+     if(type==='area'&&pts.length){var d='M '+pts[0][0]+' '+(top+plotH)+' L '+pts.map(function(p){return p[0]+' '+p[1];}).join(' L ')+' L '+pts[pts.length-1][0]+' '+(top+plotH)+' Z';svg.push('<path d="'+d+'" fill="'+colors[0]+'" opacity=".16"/>');}
+     if(pts.length){svg.push('<polyline points="'+pts.map(function(p){return p[0]+','+p[1];}).join(' ')+'" fill="none" stroke="'+colors[0]+'" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>');pts.forEach(function(p,i){svg.push('<circle cx="'+p[0]+'" cy="'+p[1]+'" r="4" fill="'+colors[0]+'" stroke="#fff" stroke-width="2"><title>'+escA(labels[i])+' · '+escA(fmt(vals[i]))+'</title></circle>');});}
      labels.slice(0,n2).forEach(function(l,i){var x=left+(n2===1?plotW/2:i*plotW/(n2-1));svg.push('<text x="'+x+'" y="'+(top+plotH+25)+'" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">'+escA(short(l,14))+'</text>');});
    } else {
      var n3=Math.min(labels.length,12),bw=Math.max(8,(plotW-(n3-1)*8)/n3);for(var j=0;j<n3;j++){var bh=Math.max(1,(Math.max(0,vals[j])/max)*plotH),x=left+j*(bw+8),y=top+plotH-bh;svg.push('<rect x="'+x+'" y="'+y+'" width="'+bw+'" height="'+bh+'" rx="7" fill="'+colors[j%colors.length]+'"><title>'+escA(labels[j])+' · '+escA(fmt(vals[j]))+'</title></rect><text x="'+(x+bw/2)+'" y="'+(y-7)+'" text-anchor="middle" font-size="9" font-weight="800" fill="#24201b">'+escA(fmt(vals[j]))+'</text><text x="'+(x+bw/2)+'" y="'+(top+plotH+25)+'" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">'+escA(short(labels[j],14))+'</text>');}
@@ -8398,7 +8415,7 @@ function redrawAICard(s,card){
  var sub=card.querySelector('.ai-chart-sub'),selector=card.querySelector('.ai-chart-type');if(selector)selector.value=s.type;
  if(sub)sub.textContent=(autoReason?autoReason+' ':'')+(s.group?'AI selected '+niceName(s.type)+' chart grouped by '+niceName(s.group):'AI selected a total chart for '+niceName(s.measure))+'.';
  s.detailEl=card.querySelector('.ai-chart-touch-detail');if(s.detailEl)s.detailEl.textContent='Tap a bar or point to see the exact figure.';
- try{drawNativeAIChart(s,canvas);canvas.addEventListener('click',function(e){var r=canvas.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;if(s.detailEl)s.detailEl.textContent=niceName(s.measure)+' · '+(s.data.labels[0]||'Selected')+' · '+Number(s.data.values[0]||0).toLocaleString('en-IN',{maximumFractionDigits:2});});}
+ try{drawNativeAIChart(s,canvas);canvas.addEventListener('click',function(e){var r=canvas.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;if(s.detailEl)s.detailEl.textContent=niceName(s.measure)+' · '+(s.data.labels[0]||'Selected')+' · '+fmtByField(Number(s.data.values[0]||0),s.measure);});}
  catch(err){wrap.innerHTML='<div class="ai-chart-render-error" style="height:100%;min-height:220px;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;color:var(--muted);font:600 11px Poppins,sans-serif">Unable to draw this chart. The data is still available in the manual chart selector.</div>';console.error('InstantDash native AI chart error',err);}
 }
 function render(){
@@ -8874,8 +8891,8 @@ function renderFallback(){
  function compact(v){
    var raw=Number(v)||0,n=Math.abs(raw),sign=raw<0?'-':'';
    if(n<=1.000001 && n>0) return sign+(n*100).toFixed(n===1?0:1)+'%';
-   if(n>=10000000)return sign+'₹'+(n/10000000).toFixed(n>=100000000?1:2)+'Cr';
-   if(n>=100000)return sign+'₹'+(n/100000).toFixed(n>=1000000?1:2)+'L';
+   if(n>=10000000)return sign+'₹'+n.toLocaleString('en-IN',{maximumFractionDigits:0});
+   if(n>=1000)return sign+'₹'+n.toLocaleString('en-IN',{maximumFractionDigits:0});
    if(n>=1000)return sign+(n/1000).toFixed(n>=10000?1:2)+'K';
    return sign+Number(raw).toLocaleString('en-IN',{maximumFractionDigits:n<10?2:0});
  }
