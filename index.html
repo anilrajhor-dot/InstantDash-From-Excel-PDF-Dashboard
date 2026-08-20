@@ -1204,7 +1204,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v16.3 FINAL">
+<meta name="instantdash-build" content="v17.0 FINAL">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2049,7 +2049,7 @@ body{
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v16.3 FINAL</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v17.0 FINAL</span>
   </div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -7092,7 +7092,7 @@ function wireRest(){
     const json=JSON.stringify(state,replacer).replace(/</g,'\u003c');
     const bootstrap='<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__='+json+';<\/script>';
     let html='<!doctype html>\n'+document.documentElement.outerHTML;
-    /* v16.3 — stale-state protection: a saved dashboard contains exactly
+    /* v17.0 — stale-state protection: a saved dashboard contains exactly
        one snapshot, generated from the CURRENT live APP state. */
     html=html.replace(/<script\b[^>]*id=["']instantdash-shared-state["'][^>]*>[\s\S]*?<\/script>/gi,'');
     html=html.replace('</head>',bootstrap+'</head>');
@@ -7136,7 +7136,7 @@ function wireRest(){
           return;
         }
       }
-      await navigator.share({title:'InstantDash Dashboard v16.3 FINAL',files:[f]});
+      await navigator.share({title:'InstantDash Dashboard v17.0 FINAL',files:[f]});
       setNote('Dashboard HTML shared successfully: '+f.name);
     }catch(err){
       if(err&&err.name==='AbortError') return;
@@ -7145,7 +7145,7 @@ function wireRest(){
   }
   async function copyShare(e){
     if(e){e.preventDefault();e.stopPropagation();}
-    const text='InstantDash Dashboard v16.3 FINAL — interactive management dashboard.';
+    const text='InstantDash Dashboard v17.0 FINAL — interactive management dashboard.';
     try{
       if(navigator.clipboard&&navigator.clipboard.writeText){
         await navigator.clipboard.writeText(text);
@@ -12586,6 +12586,153 @@ window.__instantDashDataFingerprint=function(){try{var a=window.APP||{},r=Array.
 (function(){
 function show(){var name=(window.APP&&window.APP.fileName)||'No file loaded',a=document.querySelector('.brand')||document.getElementById('appName');if(!a)return;var b=document.getElementById('idV163Source');if(!b){b=document.createElement('span');b.id='idV163Source';b.className='id-v163-source';a.appendChild(b)}b.innerHTML='<span class="id-v163-source-dot"></span><span title="'+String(name).replace(/"/g,'&quot;')+'">Data: '+String(name).replace(/</g,'&lt;')+'</span>'}
 var last='';setInterval(function(){var n=(window.APP&&window.APP.fileName)||'';if(n!==last){last=n;show()}},700);document.addEventListener('DOMContentLoaded',function(){setTimeout(show,700)});
+})();
+</script>
+
+
+<style id="instantdash-v170-extensible-kpi">
+.id-v170-wrap{margin-top:14px}
+.id-v170-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;box-shadow:var(--shadow)}
+.id-v170-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.id-v170-head h2{margin:0;font-size:16px}
+.id-v170-note{font-size:10px;color:var(--muted);line-height:1.45}
+.id-v170-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-top:10px}
+.id-v170-item{border:1px solid var(--border);border-radius:11px;padding:10px;background:var(--card-2)}
+.id-v170-item h4{margin:0;font-size:11px}
+.id-v170-item p{margin:4px 0 0;font-size:9.5px;color:var(--muted);line-height:1.4}
+.id-v170-tag{display:inline-block;margin-top:7px;padding:3px 7px;border-radius:999px;border:1px solid var(--border);font-size:8.5px;font-weight:800}
+.id-v170-tag.new{color:var(--accent)}
+.id-v170-tag.known{color:var(--ok)}
+.id-v170-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.id-v170-actions button{border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:9px;padding:8px 10px;font-size:10px;font-weight:800;cursor:pointer}
+@media(max-width:850px){.id-v170-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.id-v170-grid{grid-template-columns:1fr}}
+</style>
+<script id="instantdash-v170-extensible-kpi">
+(function(){
+'use strict';
+
+window.InstantDashExtensibleKPI = {
+  version:'17.0',
+  aliases:[
+    [/mean time to detect|mttd/i,'Mean Time to Detect','Time','Lower is better','Cybersecurity'],
+    [/mean time to respond|mttr/i,'Mean Time to Respond','Time','Lower is better','Cybersecurity'],
+    [/vulnerabilit(y|ies)/i,'Vulnerabilities','Number','Lower is better','Cybersecurity'],
+    [/phishing rate/i,'Phishing Rate','%','Lower is better','Cybersecurity'],
+    [/security incident/i,'Security Incidents','Number','Lower is better','Cybersecurity'],
+    [/first pass yield|fpy/i,'First Pass Yield','%','Higher is better','Quality / Manufacturing'],
+    [/overall equipment effectiveness|oee/i,'Overall Equipment Effectiveness','%','Higher is better','Manufacturing'],
+    [/purchase price variance|ppv/i,'Purchase Price Variance','₹','Lower is better','Procurement'],
+    [/supplier rejection rate/i,'Supplier Rejection Rate','%','Lower is better','Procurement'],
+    [/customer effort score|ces/i,'Customer Effort Score','Score','Lower is better','Customer Service'],
+    [/average handle time|aht/i,'Average Handle Time','Time','Lower is better','Customer Service'],
+    [/occupancy rate/i,'Occupancy Rate','%','Higher is better','Hospitality / Real Estate'],
+    [/average daily rate|adr/i,'Average Daily Rate','₹','Higher is better','Hospitality'],
+    [/revpar/i,'Revenue per Available Room','₹','Higher is better','Hospitality'],
+    [/cart abandonment|abandonment rate/i,'Cart Abandonment Rate','%','Lower is better','E-commerce'],
+    [/return on ad spend|roas/i,'Return on Ad Spend','Ratio','Higher is better','Marketing'],
+    [/employee net promoter score|enps/i,'Employee NPS','Score','Higher is better','HR'],
+    [/time to hire/i,'Time to Hire','Days','Lower is better','HR'],
+    [/fund utilisation|fund utilization/i,'Fund Utilisation Rate','%','Higher is better','Government / NGO'],
+    [/grievance resolution/i,'Grievance Resolution Rate','%','Higher is better','Government'],
+    [/case closure rate/i,'Case Closure Rate','%','Higher is better','Legal'],
+    [/average resolution days/i,'Average Resolution Days','Days','Lower is better','Legal']
+  ]
+};
+
+function getRows(){
+  var a=window.APP||window.__INSTANTDASH_APP__||{};
+  if(Array.isArray(a.filtered)&&a.filtered.length)return a.filtered;
+  if(Array.isArray(a.rows))return a.rows;
+  return [];
+}
+function getCols(){
+  var r=getRows();return r.length?Object.keys(r[0]):[];
+}
+function norm(s){return String(s||'').toLowerCase().replace(/[_\-\/]+/g,' ').replace(/[^a-z0-9%₹ ]+/g,' ').replace(/\s+/g,' ').trim()}
+function isDateLike(name){
+  return /date|period|month|year|time stamp|timestamp|created|updated|id$|^id$|code$|number$|serial/i.test(name);
+}
+function knownMatch(col){
+  var reg=Array.isArray(window.InstantDashKPIRegistry)?window.InstantDashKPIRegistry:[];
+  var c=norm(col);
+  for(var i=0;i<reg.length;i++){
+    var k=reg[i], arr=[k.name].concat(String(k.aliases||'').split('|'));
+    for(var j=0;j<arr.length;j++){
+      var n=norm(arr[j]);
+      if(c===n || (n.length>=8 && c.indexOf(n)>=0)) return k;
+    }
+  }
+  return null;
+}
+function aliasMatch(col){
+  var c=String(col||'');
+  for(var i=0;i<window.InstantDashExtensibleKPI.aliases.length;i++){
+    var x=window.InstantDashExtensibleKPI.aliases[i];
+    if(x[0].test(c)) return {name:x[1],unit:x[2],direction:x[3],category:x[4]};
+  }
+  return null;
+}
+function infer(col,rows){
+  var vals=rows.map(function(r){return r[col]}).filter(function(v){return v!==null&&v!==undefined&&String(v).trim()!==''});
+  if(!vals.length)return null;
+  var nums=vals.map(function(v){return Number(String(v).replace(/[,₹$%]/g,''))}).filter(Number.isFinite);
+  var numericRatio=nums.length/vals.length;
+  var pct=/rate|ratio|margin|percentage|%|share|coverage|utili[sz]ation|achievement|growth/i.test(col);
+  var amount=/amount|cost|revenue|income|expense|sales|value|price|budget|spend|profit|saving|salary|wage|fund|grant|purchase/i.test(col);
+  var time=/time|days?|duration|age|turnaround|tat|latency/i.test(col);
+  var count=/count|number|cases?|incidents?|findings?|orders?|customers?|employees?|beneficiaries|leads|tickets?|audits?/i.test(col);
+  if(numericRatio<0.75)return null;
+  var unit=pct?'%':amount?'Value':time?'Time':count?'Number':'Number';
+  var direction=pct?'Higher is better':amount?'Context':time?'Lower is better':count?'Context':'Context';
+  return {name:col,unit:unit,direction:direction,category:'Newly discovered',numericRatio:numericRatio};
+}
+function discover(){
+  var r=getRows(),c=getCols(),known=[],fresh=[],unknown=[];
+  c.forEach(function(col){
+    if(isDateLike(col))return;
+    var k=knownMatch(col);
+    if(k){known.push({name:k.name||col,col:col,unit:k.unit||'',direction:k.direction||'',category:k.category||'Known KPI'});return}
+    var a=aliasMatch(col);
+    if(a){fresh.push({name:a.name,col:col,unit:a.unit,direction:a.direction,category:a.category,confidence:'High'});return}
+    var u=infer(col,r);
+    if(u)unknown.push({name:u.name,col:col,unit:u.unit,direction:u.direction,category:u.category,confidence:u.numericRatio>=.9?'Medium':'Review'});
+  });
+  return {known:known,fresh:fresh,unknown:unknown};
+}
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function ensure(){
+  var anchor=document.getElementById('aiAdvanced47')||document.querySelector('main');
+  if(!anchor)return;
+  var p=document.getElementById('idV170Extensible');
+  if(p)return p;
+  p=document.createElement('section');p.id='idV170Extensible';p.className='section id-v170-wrap';
+  p.innerHTML='<div class="id-v170-card"><div class="id-v170-head"><h2>🧩 Extensible KPI Intelligence</h2><span class="id-v170-note">Known KPIs + newly discovered measures · current file only</span></div><div id="idV170Summary" class="id-v170-note" style="margin-top:7px"></div><div id="idV170Grid" class="id-v170-grid"></div><div class="id-v170-actions"><button type="button" id="idV170Refresh">↻ Re-scan current file</button><button type="button" id="idV170All">Show all discovered measures</button></div><div id="idV170AllBox"></div></div>';
+  if(anchor.id==='aiAdvanced47')anchor.parentNode.insertBefore(p,anchor);else anchor.appendChild(p);
+  return p;
+}
+function render(){
+  var p=ensure();if(!p)return;
+  var d=discover(),items=d.fresh.concat(d.unknown);
+  document.getElementById('idV170Summary').innerHTML=
+    '<b>'+d.known.length+'</b> known KPI matches · <b>'+d.fresh.length+'</b> recognised new KPI patterns · <b>'+d.unknown.length+'</b> data-driven measures not previously defined.';
+  var show=items.slice(0,12);
+  document.getElementById('idV170Grid').innerHTML=show.map(function(x){
+    return '<div class="id-v170-item"><h4>'+esc(x.name)+'</h4><p>Source column: <b>'+esc(x.col)+'</b><br>Category: '+esc(x.category)+' · Unit: '+esc(x.unit)+' · '+esc(x.direction)+'</p><span class="id-v170-tag '+(x.confidence==='High'?'new':'')+'">'+esc(x.confidence||'Discovered')+'</span></div>';
+  }).join('');
+  document.getElementById('idV170Refresh').onclick=render;
+  document.getElementById('idV170All').onclick=function(){
+    document.getElementById('idV170AllBox').innerHTML='<div class="id-v170-grid" style="margin-top:10px">'+items.map(function(x){return '<div class="id-v170-item"><h4>'+esc(x.name)+'</h4><p>'+esc(x.col)+' · '+esc(x.category)+' · '+esc(x.unit)+'</p></div>'}).join('')+'</div>';
+  };
+}
+var last='';
+setInterval(function(){
+  try{
+    var a=window.APP||{},r=getRows(),sig=[a.__dataVersion||0,a.fileName||'',r.length,getCols().join('|')].join('¦');
+    if(sig!==last){last=sig;setTimeout(render,120)}
+  }catch(e){}
+},800);
+document.addEventListener('DOMContentLoaded',function(){setTimeout(render,1000)});
 })();
 </script>
 
