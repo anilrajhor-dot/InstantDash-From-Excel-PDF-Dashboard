@@ -12545,4 +12545,54 @@ setInterval(wire,500);
 })();
 </script>
 
+
+<style id="instantdash-v170-askme-answer-visibility">
+/* The answer was being generated, but its inherited dark text colour
+   was almost invisible on the dark Ask Executive AI panel on iPhone. */
+#askExecutive48 .ai48-answer,
+#askExecutive48 #ai48Answer{
+  color:#f7f3eb!important;
+  background:#202126!important;
+  opacity:1!important;
+  visibility:visible!important;
+  display:block!important;
+  border-color:#3a3c44!important;
+}
+#askExecutive48 .ai48-answer b,
+#askExecutive48 #ai48Answer b,
+#askExecutive48 .ai48-answer strong,
+#askExecutive48 #ai48Answer strong{
+  color:#ffffff!important;
+}
+#askExecutive48 .ai48-evidence,
+#askExecutive48 #ai48Answer .ai48-evidence,
+#askExecutive48 .ai48-status{
+  color:#c9c5bd!important;
+}
+#askExecutive48 .ai48-answer.busy,
+#askExecutive48 #ai48Answer.busy{
+  color:#f7f3eb!important;
+}
+#askExecutive48 h1,#askExecutive48 h2,#askExecutive48 h3,
+#askExecutive48 .ai48-title{
+  color:#f7f3eb!important;
+}
+</style>
+<script id="instantdash-v170-askme-answer-visibility-js">
+(function(){
+"use strict";
+function fix(){
+  var a=document.getElementById("ai48Answer");
+  if(!a)return;
+  a.style.setProperty("color","#f7f3eb","important");
+  a.style.setProperty("opacity","1","important");
+  a.style.setProperty("visibility","visible","important");
+  a.style.setProperty("display","block","important");
+}
+document.addEventListener("DOMContentLoaded",fix);
+window.addEventListener("load",function(){setTimeout(fix,100);setTimeout(fix,500);});
+setInterval(fix,700);
+})();
+</script>
+
 </body></html>
