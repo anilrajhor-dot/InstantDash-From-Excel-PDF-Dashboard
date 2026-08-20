@@ -1204,7 +1204,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v16.2 FINAL">
+<meta name="instantdash-build" content="v16.3 FINAL">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2049,7 +2049,7 @@ body{
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v16.2 FINAL</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v16.3 FINAL</span>
   </div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -7069,7 +7069,9 @@ function wireRest(){
         version:APP.__dataVersion||0,
         fileName:APP.fileName||'',
         sheet:APP.activeSheet||'',
-        rows:Array.isArray(APP.rows)?APP.rows.length:0
+        rows:Array.isArray(APP.rows)?APP.rows.length:0,
+        columns:Array.isArray(APP.rawColumnNames)?APP.rawColumnNames.slice():[],
+        fingerprint:(window.__instantDashDataFingerprint ? window.__instantDashDataFingerprint() : '')
       },
       /* v13.37 — preserve PDF semantics when a generated PDF dashboard is reopened. */
       pdfMeta:APP.__pdfMeta||null
@@ -7090,6 +7092,9 @@ function wireRest(){
     const json=JSON.stringify(state,replacer).replace(/</g,'\u003c');
     const bootstrap='<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__='+json+';<\/script>';
     let html='<!doctype html>\n'+document.documentElement.outerHTML;
+    /* v16.3 — stale-state protection: a saved dashboard contains exactly
+       one snapshot, generated from the CURRENT live APP state. */
+    html=html.replace(/<script\b[^>]*id=["']instantdash-shared-state["'][^>]*>[\s\S]*?<\/script>/gi,'');
     html=html.replace('</head>',bootstrap+'</head>');
     const safeName=String(APP.fileName||'Dashboard').replace(/[^a-z0-9._-]+/gi,'_').replace(/^_+|_+$/g,'')||'Dashboard';
     const f=new File([html],`InstantDash_${safeName}_v16.2_Dashboard.html`,{type:'text/html'});
@@ -7131,7 +7136,7 @@ function wireRest(){
           return;
         }
       }
-      await navigator.share({title:'InstantDash Dashboard v16.2 FINAL',files:[f]});
+      await navigator.share({title:'InstantDash Dashboard v16.3 FINAL',files:[f]});
       setNote('Dashboard HTML shared successfully: '+f.name);
     }catch(err){
       if(err&&err.name==='AbortError') return;
@@ -7140,7 +7145,7 @@ function wireRest(){
   }
   async function copyShare(e){
     if(e){e.preventDefault();e.stopPropagation();}
-    const text='InstantDash Dashboard v16.2 FINAL — interactive management dashboard.';
+    const text='InstantDash Dashboard v16.3 FINAL — interactive management dashboard.';
     try{
       if(navigator.clipboard&&navigator.clipboard.writeText){
         await navigator.clipboard.writeText(text);
@@ -12560,6 +12565,27 @@ document.addEventListener('DOMContentLoaded',function(){setTimeout(render,1000)}
   }
   document.addEventListener('DOMContentLoaded',function(){setTimeout(addGuard,1100)});
   setInterval(addGuard,1500);
+})();
+</script>
+
+
+<script id="instantdash-v163-fingerprint">
+(function(){
+'use strict';
+function stable(v){if(v instanceof Date)return v.toISOString();if(v===null||v===undefined)return '';if(typeof v==='number'&&!Number.isFinite(v))return '';if(typeof v==='object'){if(Array.isArray(v))return v.map(stable);var o={};Object.keys(v).sort().forEach(function(k){o[k]=stable(v[k])});return o}return String(v)}
+function hash(s){var h=2166136261;for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h+=((h<<1)+(h<<4)+(h<<7)+(h<<8)+(h<<24))}return(h>>>0).toString(16)}
+window.__instantDashDataFingerprint=function(){try{var a=window.APP||{},r=Array.isArray(a.rows)?a.rows:[],c=Array.isArray(a.rawColumnNames)?a.rawColumnNames:Object.keys(r[0]||{}),sample=[];if(r.length){sample.push(r[0]);if(r.length>1)sample.push(r[Math.floor(r.length/2)]);if(r.length>2)sample.push(r[r.length-1])}return hash(JSON.stringify({file:a.fileName||'',sheet:a.activeSheet||'',rows:r.length,cols:c,sample:sample.map(stable)}))}catch(e){return ''}}
+})();
+</script>
+
+
+<style id="instantdash-v163-source-badge">
+.id-v163-source{display:inline-flex;align-items:center;gap:5px;margin-left:8px;padding:4px 8px;border:1px solid var(--border);border-radius:999px;background:var(--card-2);font-size:9px;font-weight:800;max-width:230px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;vertical-align:middle}.id-v163-source-dot{width:6px;height:6px;border-radius:50%;background:var(--ok);flex:0 0 auto}
+</style>
+<script id="instantdash-v163-source-badge-js">
+(function(){
+function show(){var name=(window.APP&&window.APP.fileName)||'No file loaded',a=document.querySelector('.brand')||document.getElementById('appName');if(!a)return;var b=document.getElementById('idV163Source');if(!b){b=document.createElement('span');b.id='idV163Source';b.className='id-v163-source';a.appendChild(b)}b.innerHTML='<span class="id-v163-source-dot"></span><span title="'+String(name).replace(/"/g,'&quot;')+'">Data: '+String(name).replace(/</g,'&lt;')+'</span>'}
+var last='';setInterval(function(){var n=(window.APP&&window.APP.fileName)||'';if(n!==last){last=n;show()}},700);document.addEventListener('DOMContentLoaded',function(){setTimeout(show,700)});
 })();
 </script>
 
