@@ -13177,326 +13177,107 @@ setInterval(wire,500);
 })();
 </script>
 
-
-
-<!-- InstantDash v17.7 FINAL — REQUESTED-ONLY PATCH
-     Preserves the existing dashboard UI and all existing features.
-     Adds only: dark-mode text visibility, expanded Ask-Me question coverage,
-     stronger data-grounded answers, reliable chart touch selection and speech. -->
-<style id="instantdash-requested-only-visibility">
-/* Dark mode: make existing dashboard data readable without changing layout. */
-html.theme-dark .snapshot-card strong,
-body.dark .snapshot-card strong,
-html.theme-dark .snapshot-card p,
-body.dark .snapshot-card p,
-html.theme-dark .id-touch-value strong,
-body.dark .id-touch-value strong,
-html.theme-dark .id-chart-note,
-body.dark .id-chart-note,
-html.theme-dark .ai-chart-touch-detail,
-body.dark .ai-chart-touch-detail,
-html.theme-dark .smart-detail,
-body.dark .smart-detail{
-  color:var(--text)!important;
-}
-html.theme-dark .id-chart-note,
-body.dark .id-chart-note,
-html.theme-dark .ai-chart-touch-detail,
-body.dark .ai-chart-touch-detail{
-  background:var(--card-2)!important;
-  border-color:var(--border)!important;
-}
-html.theme-dark .snapshot-card,
-body.dark .snapshot-card{color:var(--text)!important}
-
-/* Keep newly added Ask-Me buttons in the existing visual language. */
-#askExecutive48 .ai48-questions{max-height:42vh;overflow-y:auto!important;overflow-x:hidden!important}
-#askExecutive48 .ai48-q{flex:1 1 auto;min-width:0}
-</style>
-<script id="instantdash-requested-only-ai-touch-speak">
+<script id="instantdash-surgical-v18-ai-only">
 (function(){
 'use strict';
+/* SURGICAL PATCH ONLY: preserve the v17.7 UI and all existing features. */
 
-/* ---------- Common data helpers ---------- */
-function IDapp(){return window.__INSTANTDASH_APP__||window.APP||{};}
-function IDrows(){var a=IDapp();return Array.isArray(a.filtered)&&a.filtered.length?a.filtered:(Array.isArray(a.rows)?a.rows:[]);}
-function IDnum(v){
-  if(typeof v==='number'&&isFinite(v))return v;
-  if(v===null||v===undefined||String(v).trim()==='')return NaN;
-  var n=Number(String(v).replace(/[₹$€£¥₩₽,%\s]/g,'').replace(/,/g,''));
-  return isFinite(n)?n:NaN;
-}
-function IDfmt(v){var n=IDnum(v);if(!isFinite(n))return String(v??'');return n.toLocaleString('en-IN',{maximumFractionDigits:2});}
-function IDesc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
-function IDpct(v){return (v>=0?'+':'')+Number(v).toFixed(1)+'%';}
-function IDcols(rs){return rs.length?Object.keys(rs[0]):[];}
-function IDnumeric(rs,k){return rs.map(function(r){return IDnum(r[k]);}).filter(isFinite);}
-function IDfindCol(cols,re){return cols.find(function(k){return re.test(String(k));})||null;}
-function IDisID(k){return /(^|[^a-z])(id|code|account|acct|serial|sno|sr\s*no|phone|mobile|email|pan|gst|aadhaar|pincode|key)([^a-z]|$)/i.test(String(k));}
-function IDgroupCols(rs){
-  var cols=IDcols(rs),out=[];
-  cols.forEach(function(k){
-    if(IDisID(k)||/(date|time|period|month|quarter|year|fy|week|timestamp)/i.test(k))return;
-    var vals=rs.map(function(r){return r[k];}).filter(function(v){return v!==null&&v!==undefined&&String(v).trim()!=='';});
-    var u={};vals.forEach(function(v){u[String(v)]=1;});
-    var n=Object.keys(u).length;
-    if(vals.length>=2&&n>=2&&n<=50&&n<=Math.max(100,rs.length*.5))out.push(k);
-  });
-  return out;
-}
-function IDmeasures(rs){
-  var out=[];IDcols(rs).forEach(function(k){
-    if(IDisID(k)||/(date|time|period|month|quarter|year|fy|week|timestamp)/i.test(k))return;
-    var v=IDnumeric(rs,k);if(v.length>=Math.max(2,Math.ceil(rs.length*.35)))out.push({k:k,v:v});
-  });return out;
-}
-function IDmean(v){return v.length?v.reduce(function(a,b){return a+b;},0)/v.length:NaN;}
-function IDcorr(a,b){
-  var n=Math.min(a.length,b.length);if(n<4)return NaN;
-  var aa=a.slice(0,n),bb=b.slice(0,n),ma=IDmean(aa),mb=IDmean(bb),s1=0,s2=0,s3=0;
-  for(var i=0;i<n;i++){var x=aa[i]-ma,y=bb[i]-mb;s1+=x*y;s2+=x*x;s3+=y*y;}
-  return s2&&s3?s1/Math.sqrt(s2*s3):NaN;
-}
-function IDdirection(k){
-  return /expense|cost|drop.?out|attrition|complaint|delay|downtime|npa|arrear|error|reject|failure|loss|defect|turnaround|pending/i.test(String(k))?'lower':'higher';
-}
-function IDbestMetric(ms, q){
-  var target=ms.find(function(x){return /achievement|completion|attainment|target|performance|rate|volume|transaction|sales|revenue|profit|productivity/i.test(x.k);});
-  return target||ms[0];
-}
-function IDgroupRank(rs,group,metric,descending){
-  var b={};rs.forEach(function(r){var g=String(r[group]??'').trim(),v=IDnum(r[metric.k]);if(!g||!isFinite(v))return;(b[g]||(b[g]={s:0,n:0}));b[g].s+=v;b[g].n++;});
-  return Object.keys(b).map(function(k){return{k:k,v:b[k].s/b[k].n,n:b[k].n};}).sort(function(a,b){return descending?b.v-a.v:a.v-b.v;});
-}
+function IDA(){return window.__INSTANTDASH_APP__||window.APP||{};}
+function IDRows(){var a=IDA();if(Array.isArray(a.filtered)&&a.filtered.length)return a.filtered.slice();return Array.isArray(a.rows)?a.rows.slice():[];}
+function IDNum(v){if(typeof v==='number'&&isFinite(v))return v;if(v==null||String(v).trim()==='')return NaN;var n=Number(String(v).replace(/[₹$€£¥₩₽,%\s]/g,'').replace(/,/g,''));return isFinite(n)?n:NaN;}
+function IDTxt(v){return String(v==null?'':v).toLowerCase().replace(/[_\-\/]+/g,' ').replace(/\s+/g,' ').trim();}
+function IDEsc(v){return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function IDFmt(v,k){if(!isFinite(v))return '—';var s=Number(v).toLocaleString('en-IN',{maximumFractionDigits:2});return /amount|revenue|sales|income|profit|cost|expense|expenditure|value|turnover|cash|asset|debt|budget|transaction|txn|commission|payable|volume/i.test(String(k))?'₹'+s:s;}
+function IDPct(a,b){return Math.abs(a)>1e-12?((b-a)/Math.abs(a))*100:(Math.abs(b)<1e-12?0:null);}
+function IDDate(k){return /(^|\s)(date|datetime|time|period|month|quarter|week|year|fy|financial year|timestamp|reporting period)(\s|$)/i.test(IDTxt(k));}
+function IDIdentifier(k){return /(^|\s)(id|identifier|code|account|acct|a\/c|ac\s*no|account\s*(no|number)|settlement\s*ac|saving\s*ac|serial|s\s*no|sr\s*no|phone|mobile|email|pan|gst|aadhaar|pincode|pin|key)(\s|$)/i.test(IDTxt(k));}
+function IDTarget(k){return /target|goal|budget|plan|planned|benchmark|standard|norm|expected|assigned target/i.test(IDTxt(k));}
+function IDActual(k){return /actual|achieved|achievement|attained|result|performance|completed|completion|done|realised|realized/i.test(IDTxt(k));}
+function IDExpense(k){return /expense|expenditure|cost|spend|salary|wage|rent|electric|travel|stationery|overhead|admin|operating cost|operating expense|interest cost|finance cost/i.test(IDTxt(k));}
+function IDPositive(k){return /revenue|sales|income|profit|transaction|txn|volume|business|collection|recovery|achievement|completion|completed|attendance|enrol|enrollment|productivity|output/i.test(IDTxt(k));}
+function IDDrop(k){return /drop.?out|attrition|abandon|withdraw|incomplete|rejection|reject|failed|failure/i.test(IDTxt(k));}
+function IDCols(rs){return rs.length?Object.keys(rs[0]):[];}
+function IDMeasures(rs){var out=[];IDCols(rs).forEach(function(k){if(IDDate(k)||IDIdentifier(k))return;var vals=rs.map(function(r){return IDNum(r[k]);}).filter(isFinite);if(vals.length>=Math.max(2,Math.ceil(rs.length*.35)))out.push({k:k,v:vals});});return out;}
+function IDGroups(rs){var out=[];IDCols(rs).forEach(function(k){if(IDDate(k)||IDIdentifier(k))return;var vals=rs.map(function(r){return r[k];}).filter(function(v){return v!=null&&String(v).trim()!=='';});var u={};vals.forEach(function(v){u[String(v)]=1});var n=Object.keys(u).length;if(n>=2&&n<=50&&vals.length>=Math.max(2,Math.ceil(rs.length*.2)))out.push({k:k,n:n});});return out;}
+function IDFind(ms,q,patterns){var ql=IDTxt(q),best=null,score=0;ms.forEach(function(m){var n=IDTxt(m.k),s=0;if(ql.indexOf(n)>=0)s+=100;patterns.forEach(function(p){if(p.test(n))s+=15});if(s>score){score=s;best=m;}});return best;}
+function IDBase(k){return IDTxt(k).replace(/target|actual|achieved|achievement|attained|result|performance|completed|completion|done|realised|realized|goal|planned|plan|budget|benchmark|standard|expected/g,'').replace(/[^a-z0-9]+/g,' ').trim();}
+function IDPair(rs,ms){var ts=ms.filter(function(m){return IDTarget(m.k)}),as=ms.filter(function(m){return IDActual(m.k)&&!IDTarget(m.k)}),out=[];as.forEach(function(a){var ab=IDBase(a.k),t=ts.find(function(x){var tb=IDBase(x.k);return ab&&tb&&(ab.indexOf(tb)>=0||tb.indexOf(ab)>=0);});if(t)out.push({a:a,t:t});});return out;}
+function IDRank(rs,g,m,low){var b={};rs.forEach(function(r){var key=String(r[g]??'').trim(),v=IDNum(r[m.k]);if(!key||!isFinite(v))return;if(!b[key])b[key]={s:0,n:0};b[key].s+=v;b[key].n++;});return Object.keys(b).map(function(k){return {g:k,v:b[k].s/b[k].n,n:b[k].n};}).sort(function(a,b){return low?a.v-b.v:b.v-a.v;});}
+function IDMetric(ms,q){var ql=IDTxt(q);return IDFind(ms,q,[/transaction|txn|volume|business|sales|revenue|income|profit|achievement|completion|attendance|enrol|drop.?out|expense|cost|expenditure|target|actual|npa|complaint|recovery|collection|productivity/])||ms.find(function(m){return IDPositive(m.k)&&ql.indexOf('best')>=0;})||ms[0];}
+function IDMoves(ms){return ms.map(function(m){var a=m.v[0],b=m.v[m.v.length-1],p=IDPct(a,b);return {m:m,a:a,b:b,p:p};}).filter(function(x){return x.p!==null;}).sort(function(a,b){return Math.abs(b.p)-Math.abs(a.p);});}
+function IDQuestions(){return ['Which region is best overall?','Which region is worst overall?','Which KPI needs attention?','What is worse?','How can we improve?','Why was the target not achieved?','What are the reasons for the variation?','How can we control expenses?','How can we increase transactions?','How can we reduce drop-outs?','Which district is best?','Which district needs attention?','What are the biggest performance gaps?'];}
 
-/* ---------- Data-grounded Ask-Me engine ---------- */
-function IDanswer(q){
-  var rs=IDrows(),cols=IDcols(rs),ms=IDmeasures(rs),ql=String(q||'').toLowerCase().replace(/[?.,]/g,' ').replace(/\s+/g,' ').trim();
-  if(!rs.length)return '<b>No live dataset was found.</b><br>Please load a file first.';
-  if(!ms.length)return '<b>No numeric KPI fields were found.</b><br>The current file has no usable numeric measures.';
-
-  var target=IDfindCol(cols,/target|budget|plan|goal|benchmark/i);
-  var actual=IDfindCol(cols,/actual|achiev|attain|achievement/i);
-  var gap=IDfindCol(cols,/gap|variance|shortfall|surplus|difference/i);
-  var achievement=IDfindCol(cols,/achievement\s*%|attainment\s*%|achievement|attainment/i);
-  var groupCols=IDgroupCols(rs);
-  var region=groupCols.find(function(k){return /region|zone|circle|area|location/i.test(k);});
-  var district=groupCols.find(function(k){return /district/i.test(k);});
-  var metric=IDbestMetric(ms,ql);
-  var named=ms.find(function(x){return ql.indexOf(x.k.toLowerCase().replace(/[^a-z0-9]+/g,' ').trim())>=0;});
-
-  if(/why was the target not achieved|target not achieved|why.*target|reason.*target|not achieving target|shortfall/.test(ql)){
-    if(target&&actual){
-      var tv=IDmean(IDnumeric(rs,target)),av=IDmean(IDnumeric(rs,actual)),g=av-tv;
-      var pct=tv?g/tv*100:NaN;
-      return '<b>Target assessment</b><br>Average target: <b>'+IDfmt(tv)+'</b><br>Average actual: <b>'+IDfmt(av)+'</b><br>Gap: <b>'+IDfmt(g)+'</b> ('+IDpct(pct)+').<br><br><b>Possible reasons to investigate:</b> compare the weakest region/district, the largest adverse KPI movements and the strongest data-supported drivers below. The dataset does not by itself prove causation.';
-    }
-    if(achievement){var av2=IDmean(IDnumeric(rs,achievement));return '<b>Achievement review</b><br>Average achievement is <b>'+IDfmt(av2)+'%</b>. The file does not contain a clearly paired target and actual field, so the precise reason for the gap cannot be established from the data alone.<br><br>Review the lowest-performing groups and related operational KPIs.';}
-    return '<b>Target cannot be diagnosed reliably from the current file.</b><br>A paired target/actual or achievement field is required to quantify the shortfall.';
-  }
-
-  if(/reasons? for the variation|why.*variation|reason.*variation|cause.*variation|drivers? of variation|variation/.test(ql)){
-    var base=named||metric, baseVals=IDnumeric(rs,base.k),rels=[];
-    ms.forEach(function(m){if(m.k===base.k)return;var r=IDcorr(IDnumeric(rs,base.k),IDnumeric(rs,m.k));if(isFinite(r))rels.push({k:m.k,r:r});});
-    rels.sort(function(a,b){return Math.abs(b.r)-Math.abs(a.r);});
-    var lines=rels.slice(0,4).map(function(x){return '<b>'+IDesc(x.k)+'</b>: correlation '+Number(x.r).toFixed(2);});
-    return '<b>Possible drivers of variation in '+IDesc(base.k)+'</b><br>'+(lines.length?lines.join('<br>'):'No sufficiently strong numeric relationship could be calculated.')+'<br><br><b>Important:</b> these are relationships in the loaded records, not proof of causation. Validate the strongest relationships against operational facts and group-level performance.';
-  }
-
-  if(/control expenses?|reduce expenses?|expense control|cost control|how can we control/.test(ql)){
-    var expenses=ms.filter(function(m){return /expense|cost|spend|overhead|admin|operating/i.test(m.k);});
-    if(!expenses.length)expenses=ms.filter(function(m){return /amount|value|payment/i.test(m.k);}).slice(0,4);
-    var el=expenses.map(function(m){var v=m.v,a=v[0],b=v[v.length-1],p=a?((b-a)/Math.abs(a))*100:0;return{k:m.k,p:p,a:a,b:b};}).sort(function(a,b){return b.p-a.p;});
-    var eg=groupCols.find(function(k){return /region|district|branch|zone|department|category|type/i.test(k);});
-    var text=el.slice(0,4).map(function(x){return '<b>'+IDesc(x.k)+'</b>: '+IDfmt(x.a)+' → '+IDfmt(x.b)+' ('+IDpct(x.p)+')';}).join('<br>');
-    if(eg&&expenses[0]){var r=IDgroupRank(rs,eg,expenses[0],false).slice(0,3);text+=(text?'<br><br>':'')+'Lowest-cost '+IDesc(eg)+' groups on '+IDesc(expenses[0].k)+': '+r.map(function(x){return IDesc(x.k)+' — '+IDfmt(x.v);}).join('; ')+'.';}
-    return '<b>Expense-control focus</b><br>'+(text||'No clearly named expense/cost measure was found.')+'<br><br><b>Management action:</b> investigate the largest increases first, compare them with activity/volume, identify high-cost groups, and set measurable limits or approval controls. The file alone cannot establish whether an expense is unnecessary.';
-  }
-
-  if(/increase transactions?|more transactions?|grow transactions?/.test(ql)){
-    var tm=ms.find(function(m){return /transaction|volume|count|business|sales|activity|turnover/i.test(m.k);})||metric;
-    var g=groupCols.find(function(k){return /region|district|branch|zone|area|location/i.test(k);});
-    if(g){var rr=IDgroupRank(rs,g,tm,true);return '<b>Transaction-growth focus</b><br>Use <b>'+IDesc(tm.k)+'</b> as the activity measure. Highest '+IDesc(g)+' groups: '+rr.slice(0,3).map(function(x){return IDesc(x.k)+' — '+IDfmt(x.v);}).join('; ')+'.<br>Lowest groups: '+rr.slice(-3).reverse().map(function(x){return IDesc(x.k)+' — '+IDfmt(x.v);}).join('; ')+'.<br><br>Study what the stronger groups are doing and apply the transferable practices to weaker groups; confirm capacity and quality before scaling.';}
-    return '<b>Transaction-growth focus</b><br>The file does not contain a clear region/district grouping. The most relevant activity measure is <b>'+IDesc(tm.k)+'</b>. Compare its trend with the operational drivers available in the dataset.';
-  }
-
-  if(/reduce drop.?outs?|drop.?out|attrition/.test(ql)){
-    var dm=ms.find(function(m){return /drop.?out|attrition|withdraw|left|exit/i.test(m.k);});
-    var cm=ms.find(function(m){return /completion|attendance|retention|continuation/i.test(m.k);});
-    var dg=groupCols.find(function(k){return /region|district|branch|zone|area|location/i.test(k);});
-    var ans='<b>Drop-out reduction focus</b><br>'+(dm?'<b>'+IDesc(dm.k)+'</b> is the direct drop-out measure.':'No direct drop-out field was found.')+' '+(cm?'Use <b>'+IDesc(cm.k)+'</b> as a supporting indicator.':'Use completion/attendance/retention if available.')+'<br>';
-    if(dg&&dm){var dr=IDgroupRank(rs,dg,dm,false);ans+='Highest drop-out groups: '+dr.slice(0,3).map(function(x){return IDesc(x.k)+' — '+IDfmt(x.v);}).join('; ')+'.<br>';}
-    return ans+'<br>Review the characteristics and operational practices of high drop-out groups, identify the stage where losses occur, and set a measurable recovery target. The data does not prove the reason without case-level evidence.';
-  }
-
-  if(/which (region|district).*best|best.*(region|district)|which is best overall/.test(ql)){
-    var gbest=/district/.test(ql)?district:region||district||groupCols[0];
-    if(!gbest)return '<b>No region/district field was identified in the current data.</b>';
-    var m=achievement?{k:achievement,v:IDnumeric(rs,achievement)}:metric;
-    var rank=IDgroupRank(rs,gbest,m,true);
-    return rank.length?'<b>Best '+IDesc(gbest)+': '+IDesc(rank[0].k)+'</b><br>'+IDesc(m.k)+' averages <b>'+IDfmt(rank[0].v)+(achievement?'%':'')+'</b> across '+rank[0].n+' populated records.<br><br><b>Top 5:</b><br>'+rank.slice(0,5).map(function(x,i){return (i+1)+'. '+IDesc(x.k)+' — '+IDfmt(x.v)+(achievement?'%':'');}).join('<br>'):'<b>Insufficient data to rank the groups.</b>';
-  }
-  if(/which (region|district).*worst|worst.*(region|district)|what is worse/.test(ql)){
-    var gworst=/district/.test(ql)?district:region||district||groupCols[0];
-    if(!gworst)return '<b>No region/district field was identified in the current data.</b>';
-    var mw=achievement?{k:achievement,v:IDnumeric(rs,achievement)}:metric;
-    var lower=IDdirection(mw.k)==='lower';
-    var rankw=IDgroupRank(rs,gworst,mw,!lower);
-    return rankw.length?'<b>Worst '+IDesc(gworst)+': '+IDesc(rankw[0].k)+'</b><br>'+IDesc(mw.k)+' averages <b>'+IDfmt(rankw[0].v)+(achievement?'%':'')+'</b>. Ranking direction is based on the KPI name; validate against the business target.':'<b>Insufficient data to rank the groups.</b>';
-  }
-
-  if(/which kpi needs attention|biggest performance gaps?|what is worse|attention/.test(ql)){
-    var adv=ms.map(function(m){var v=m.v,a=v[0],b=v[v.length-1],p=a?((b-a)/Math.abs(a))*100:0;var bad=IDdirection(m.k)==='lower'?-p:p;return{k:m.k,p:p,bad:bad,a:a,b:b};}).sort(function(a,b){return b.bad-a.bad;});
-    return '<b>Priority performance gaps</b><br>'+adv.slice(0,5).map(function(x){return '<b>'+IDesc(x.k)+'</b>: '+IDfmt(x.a)+' → '+IDfmt(x.b)+' ('+IDpct(x.p)+')';}).join('<br>')+'<br><br>Focus first on movements that are adverse for the KPI’s likely direction and verify them against targets and operational drivers.';
-  }
-
-  if(/how can we improve|improve|improvement|what should management do/.test(ql)){
-    var adv2=ms.map(function(m){var a=m.v[0],b=m.v[m.v.length-1],p=a?((b-a)/Math.abs(a))*100:0;return{k:m.k,p:p};}).sort(function(a,b){return Math.abs(b.p)-Math.abs(a.p);});
-    return '<b>How to improve</b><br>1. Prioritise the largest adverse KPI movement: <b>'+IDesc(adv2[0].k)+'</b> ('+IDpct(adv2[0].p)+').<br>2. Compare the weakest region/district with the strongest group to identify transferable practices.<br>3. Check the target, related activity and cost measures before assigning an action.<br>4. Set one measurable action, owner and review date.<br><br>These recommendations are based on the current file and do not establish causation.';
-  }
-
-  if(/reasons?|why|how can|improve|control|increase|reduce/.test(ql)&&named){
-    var vv=named.v,a=vv[0],b=vv[vv.length-1],p=a?((b-a)/Math.abs(a))*100:0;
-    return '<b>'+IDesc(named.k)+'</b>: '+IDfmt(a)+' → '+IDfmt(b)+' ('+IDpct(p)+').<br><br>Review the related numeric measures and the strongest group differences in the loaded data to identify possible operational drivers. The relationship does not by itself establish causation.';
-  }
-
-  if(named){
-    var total=named.v.reduce(function(a,b){return a+b;},0),avg=IDmean(named.v);
-    return '<b>'+IDesc(named.k)+'</b><br>Total: '+IDfmt(total)+'<br>Average: '+IDfmt(avg)+'<br>Latest populated value: '+IDfmt(named.v[named.v.length-1])+'.';
-  }
-  return '<b>I can analyse the current file.</b><br>Ask about a KPI, target achievement, reasons for variation, expense control, transactions, drop-outs, best/worst region or district, performance gaps, or how to improve.';
+function IDAnswer(q){
+ var rs=IDRows();if(!rs.length)return '<b>No live dataset is loaded.</b><br>Please upload a file first.';
+ var ms=IDMeasures(rs);if(!ms.length)return '<b>No usable numeric KPI fields were found.</b>';
+ var ql=IDTxt(q), moves=IDMoves(ms), pairs=IDPair(rs,ms);
+ var metric=IDMetric(ms,q);
+ if(/target.*not|not.*target|target.*achiev|achiev.*target|why.*target|target.*miss|shortfall/.test(ql)){
+   if(pairs.length){return '<b>Why was the target not achieved?</b><br>'+pairs.slice(0,6).map(function(p){var av=p.a.v.reduce(function(x,y){return x+y},0)/p.a.v.length,tv=p.t.v.reduce(function(x,y){return x+y},0)/p.t.v.length,g=av-tv;var pct=tv?g/Math.abs(tv)*100:0;return '<b>'+IDEsc(p.a.k)+'</b>: actual '+IDFmt(av,p.a.k)+' vs target '+IDFmt(tv,p.t.k)+'; gap '+IDFmt(g,p.a.k)+' ('+(pct>=0?'+':'')+pct.toFixed(1)+'%). '+(g>=0?'Target is met/above target; investigate whether the target basis remains appropriate.':'Target shortfall. Review volume, conversion/completion, capacity, productivity and the weakest groups in the data.')+'<br>';}).join('<br>');}
+   return '<b>Target analysis</b><br>No clearly paired Target/Actual fields were found. Ask for a specific KPI and I will compare its available target, actual, trend and group performance.';
+ }
+ if(/control.*expense|expense.*control|reduce.*expense|cost.*control|control.*cost|expenditure/.test(ql)){
+   var ex=ms.filter(function(m){return IDExpense(m.k);}).sort(function(a,b){return Math.abs((IDPct(b.v[0],b.v[b.v.length-1])||0))-Math.abs((IDPct(a.v[0],a.v[a.v.length-1])||0));});
+   if(ex.length)return '<b>How can we control expenses?</b><br>'+ex.slice(0,5).map(function(m){var a=m.v[0],b=m.v[m.v.length-1],p=IDPct(a,b)||0;return '<b>'+IDEsc(m.k)+'</b>: '+IDFmt(a,m.k)+' → '+IDFmt(b,m.k)+' ('+(p>=0?'+':'')+p.toFixed(1)+'%). '+(p>0?'Investigate the increase and control the largest cost driver.':'Monitor whether the reduction is sustainable.');}).join('<br><br>')+'<br><br><b>Management action:</b> compare each expense with the activity/volume it supports, identify the largest variance, set an owner and a measurable monthly control limit.';
+   return '<b>No clearly identifiable expense/cost field was found.</b>';
+ }
+ if(/increase.*transaction|transaction.*increase|more.*transaction|txn/.test(ql)){
+   var tm=ms.find(function(m){return /transaction|txn|volume|business/i.test(m.k);})||metric;var a=tm.v[0],b=tm.v[tm.v.length-1],p=IDPct(a,b)||0;return '<b>How can we increase transactions?</b><br><b>'+IDEsc(tm.k)+'</b> moved from '+IDFmt(a,tm.k)+' to '+IDFmt(b,tm.k)+' ('+(p>=0?'+':'')+p.toFixed(1)+'%). Focus on the weakest region/district, active-user coverage, transaction frequency, service availability and conversion of eligible customers. Use the group comparison below to target interventions.';
+ }
+ if(/drop.?out|attrition|abandon|incomplete/.test(ql)){
+   var dm=ms.find(function(m){return IDDrop(m.k);})||ms.find(function(m){return /completion|attendance|approved|completed/i.test(m.k);});if(dm){var a2=dm.v[0],b2=dm.v[dm.v.length-1],p2=IDPct(a2,b2)||0;return '<b>How can we reduce drop-outs?</b><br>Monitor <b>'+IDEsc(dm.k)+'</b> ( '+IDFmt(a2,dm.k)+' → '+IDFmt(b2,dm.k)+'; '+(p2>=0?'+':'')+p2.toFixed(1)+'% ). Identify where the drop-out/incompletion rate is highest, examine stage-wise leakage and contact those cases early. Set a recovery target and review the same groups next period.';}
+ }
+ if(/best.*region|region.*best|overall.*best/.test(ql)||/worst.*region|region.*worst/.test(ql)){
+   var rg=IDGroups(rs).find(function(g){return /region|zone|area|state|territory|circle/i.test(g.k);});if(rg){var low=/worst/.test(ql),rank=IDRank(rs,rg.k,metric,low);if(rank.length)return '<b>'+(low?'Worst':'Best')+' Region: '+IDEsc(rank[0].g)+'</b><br>'+IDEsc(metric.k)+' averages '+IDFmt(rank[0].v,metric.k)+' across '+rank[0].n+' records.<br><br><b>Comparison:</b><br>'+rank.slice(0,5).map(function(x,i){return (i+1)+'. '+IDEsc(x.g)+' — '+IDFmt(x.v,metric.k);}).join('<br>');}
+ }
+ if(/best.*district|district.*best|district.*attention|district.*needs/.test(ql)){
+   var dg=IDGroups(rs).find(function(g){return /district/i.test(g.k);});if(dg){var low2=/attention|needs/.test(ql),rank2=IDRank(rs,dg.k,metric,low2);if(rank2.length)return '<b>'+IDEsc(low2?'District needing attention':'Best District')+': '+IDEsc(rank2[0].g)+'</b><br>'+IDEsc(metric.k)+' averages '+IDFmt(rank2[0].v,metric.k)+' across '+rank2[0].n+' records.<br><br>'+rank2.slice(0,5).map(function(x,i){return (i+1)+'. '+IDEsc(x.g)+' — '+IDFmt(x.v,metric.k);}).join('<br>');}
+ }
+ if(/kpi.*attention|attention|worse|performance gap|biggest.*gap|important issues|3 most important/.test(ql)){
+   var adverse=moves.filter(function(x){return IDExpense(x.m.k)?x.p>0:x.p<0;});var list=(adverse.length?adverse:moves).slice(0,5);return '<b>Priority performance gaps</b><br>'+list.map(function(x,i){return (i+1)+'. <b>'+IDEsc(x.m.k)+'</b>: '+IDFmt(x.a,x.m.k)+' → '+IDFmt(x.b,x.m.k)+' ('+(x.p>=0?'+':'')+x.p.toFixed(1)+'%).';}).join('<br>')+'<br><br>These are priority signals from the loaded data; review the underlying operational drivers before concluding the cause.';
+ }
+ if(/variation|reason.*variation|why.*change|cause/.test(ql)){
+   var g=IDGroups(rs).filter(function(x){return /region|district|branch|zone|area|state|location|circle|territory/i.test(x.k);});var out='<b>Reasons for the variation — evidence from the file</b><br><b>'+IDEsc(metric.k)+'</b>: '+IDFmt(metric.v[0],metric.k)+' → '+IDFmt(metric.v[metric.v.length-1],metric.k)+' ('+(IDPct(metric.v[0],metric.v[metric.v.length-1])||0).toFixed(1)+'%).';if(g.length){var rr=IDRank(rs,g[0].k,metric,false);out+='<br><br><b>Group differences in '+IDEsc(g[0].k)+':</b><br>'+rr.slice(0,5).map(function(x,i){return (i+1)+'. '+IDEsc(x.g)+' — '+IDFmt(x.v,metric.k);}).join('<br>');}return out+'<br><br>Likely drivers to investigate are mix/volume, group-level operating practices, productivity and unusually weak or strong units. The data signals do not by themselves prove causation.';
+ }
+ if(/improv|how can we improve|what should/.test(ql)){
+   var imp=moves.slice(0,5);return '<b>How can we improve?</b><br>'+imp.map(function(x){var bad=IDExpense(x.m.k)?x.p>0:x.p<0;return '<b>'+IDEsc(x.m.k)+'</b>: '+(bad?'Investigate the decline/increase as appropriate, identify the driver, set a measurable recovery target and assign ownership.':'Confirm that the favourable movement is sustained and replicate the practices of stronger groups.');}).join('<br><br>');
+ }
+ if(/going well|positive|favourable/.test(ql)){var pos=moves.find(function(x){return IDPositive(x.m.k)?x.p>0:x.p<0;});return pos?'<b>What is going well?</b><br>'+IDEsc(pos.m.k)+' moved from '+IDFmt(pos.a,pos.m.k)+' to '+IDFmt(pos.b,pos.m.k)+' ('+(pos.p>=0?'+':'')+pos.p.toFixed(1)+'%).':'<b>No clear favourable movement was identified.</b>';}
+ if(/changed|change|trend|movement|compare/.test(ql)){return '<b>Key changes</b><br>'+moves.slice(0,7).map(function(x){return '<b>'+IDEsc(x.m.k)+'</b>: '+IDFmt(x.a,x.m.k)+' → '+IDFmt(x.b,x.m.k)+' ('+(x.p>=0?'+':'')+x.p.toFixed(1)+'%).';}).join('<br>');}
+ if(/executive summary|summary|management/.test(ql)){return '<b>Executive summary</b><br>'+moves.slice(0,5).map(function(x){return '<b>'+IDEsc(x.m.k)+'</b>: '+IDFmt(x.a,x.m.k)+' → '+IDFmt(x.b,x.m.k)+' ('+(x.p>=0?'+':'')+x.p.toFixed(1)+'%).';}).join('<br>')+'<br><br>Management should prioritise the adverse movements, compare them with targets and operational drivers, and assign measurable actions.';}
+ var c=IDFind(ms,q,[/target|actual|achievement|performance|completion|sales|revenue|business|transaction|expense|cost|profit|income|volume/]);if(c){var av=c.v.reduce(function(a,b){return a+b},0)/c.v.length;return '<b>'+IDEsc(c.k)+'</b><br>Average: '+IDFmt(av,c.k)+' across '+c.v.length+' populated observations. Latest: '+IDFmt(c.v[c.v.length-1],c.k)+'. Ask for its trend, target gap, best/worst region or improvement plan.';}
+ return '<b>I can analyse the current loaded dataset.</b><br>Ask about targets, variations, reasons, expenses, transactions, drop-outs, regions, districts, performance gaps or any KPI.';
 }
 
-/* Replace only the Ask-Me execution function; the existing panel remains. */
-function IDshow(q){
-  var o=document.getElementById('ai48Answer'),i=document.getElementById('ai48Input');if(!o)return;
-  q=String(q!==undefined?q:(i?i.value:'')).trim();o.classList.add('show');o.classList.remove('busy');
-  if(!q){o.innerHTML='<b>Please type a question.</b><br>Ask about targets, variations, expenses, transactions, drop-outs or performance.';return;}
-  try{o.innerHTML=IDanswer(q)+'<div class="ai48-evidence">Based only on the currently loaded/filtered dataset. Relationships are signals to investigate, not proof of causation.</div>';}
-  catch(e){console.error(e);o.innerHTML='<b>Ask Me could not analyse that question.</b><br>Please try a KPI or one of the management questions.';}
+function IDInstallAsk(){
+ var p=document.getElementById('askExecutive48');if(!p)return;
+ var qs=IDQuestions(),wrap=p.querySelector('.ai48-questions');if(wrap){
+   var existing={};wrap.querySelectorAll('.ai48-q').forEach(function(b){existing[IDTxt(b.textContent)]=1;});
+   qs.forEach(function(q){if(!existing[IDTxt(q)]){var b=document.createElement('button');b.type='button';b.className='ai48-q';b.textContent=q;wrap.appendChild(b);}});
+ }
+ var input=document.getElementById('ai48Input'),ask=document.getElementById('ai48Ask'),out=document.getElementById('ai48Answer');if(!input||!ask||!out)return;
+ if(!p.dataset.surgicalAsk){
+   p.dataset.surgicalAsk='1';
+   var nb=ask.cloneNode(true);ask.parentNode.replaceChild(nb,ask);ask=nb;
+   nb.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();out.innerHTML=IDAnswer(input.value||'');out.classList.add('show');},true);
+   var ni=input.cloneNode(true);input.parentNode.replaceChild(ni,input);input=ni;
+   input.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();e.stopImmediatePropagation();out.innerHTML=IDAnswer(input.value||'');out.classList.add('show');}},true);
+ }
+ p.querySelectorAll('.ai48-q').forEach(function(b){if(b.dataset.surgicalQ)return;b.dataset.surgicalQ='1';var nb=b.cloneNode(true);b.parentNode.replaceChild(nb,b);nb.dataset.surgicalQ='1';nb.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();var i=document.getElementById('ai48Input'),o=document.getElementById('ai48Answer');if(i)i.value=nb.textContent.trim();if(o){o.innerHTML=IDAnswer(nb.textContent.trim());o.classList.add('show');}},true);});
 }
-window.__instantDashAskMeAnswer=IDshow;
-window.__instantDashAskMeFinal177=IDshow;
 
-/* Add the management questions requested earlier. No other controls are changed. */
-var extraQuestions=[
- 'Which region is best overall?',
- 'Which region is worst overall?',
- 'Which KPI needs attention?',
- 'What is worse?',
- 'How can we improve?',
- 'Why was the target not achieved?',
- 'What are the reasons for the variation?',
- 'How can we control expenses?',
- 'How can we increase transactions?',
- 'How can we reduce drop-outs?',
- 'Which district is best?',
- 'Which district needs attention?',
- 'What are the biggest performance gaps?'
-];
-function addQuestions(){
-  var box=document.querySelector('#askExecutive48 .ai48-questions');
-  if(!box)return;
-  extraQuestions.forEach(function(text){
-    if([].some.call(box.querySelectorAll('.ai48-q'),function(b){return b.textContent.trim().toLowerCase()===text.toLowerCase();}))return;
-    var b=document.createElement('button');b.type='button';b.className='ai48-q';b.textContent=text;b.setAttribute('data-requested-question','1');
-    b.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();var i=document.getElementById('ai48Input');if(i)i.value=text;IDshow(text);},true);
-    box.appendChild(b);
-  });
+/* AI chart touch: use the existing SVG and its <title> data; no visual changes. */
+function IDSpeak(text){try{if(!('speechSynthesis' in window))return;window.speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(String(text).replace(/<[^>]+>/g,' '));u.lang=(navigator.language||'en-IN');u.rate=.92;u.pitch=1;window.speechSynthesis.speak(u);}catch(e){}}
+function IDChartShape(el){while(el&&el!==document.body){if(el.querySelector&&el.querySelector(':scope > title'))return el;el=el.parentElement;}return null;}
+function IDChartHit(e){var t=e.target;if(!t)return;var svg=t.closest&&t.closest('.ai-chart-card svg, #aiChartOverlay svg');if(!svg)return;var shape=IDChartShape(t);if(!shape)return;var title=shape.querySelector(':scope > title');if(!title)return;var raw=title.textContent.trim();if(!raw)return;var parts=raw.split(/\s*[·•:]\s*/),label=parts[0]||'Selected',value=parts.slice(1).join(' · ')||'';var card=svg.closest('.ai-chart-card');var d=card&&card.querySelector('.ai-chart-touch-detail');if(d){d.textContent=(svg.closest('#aiChartOverlay')?'Selected: ':'')+label+(value?' · '+value:'');d.classList.add('show');}IDSpeak('Chart value. '+label+'. '+(value?'The figure is '+value+'.':'Selected chart item.'));
 }
-function wireExistingQuestions(){
-  var box=document.querySelector('#askExecutive48 .ai48-questions');
-  if(!box)return;
-  var input=document.getElementById('ai48Input');
-  box.querySelectorAll('.ai48-q').forEach(function(b){
-    if(b.dataset.requestedQuestionWire)return;
-    b.dataset.requestedQuestionWire='1';
-    b.addEventListener('click',function(e){
-      e.preventDefault();
-      e.stopImmediatePropagation();
-      var text=b.textContent.trim();
-      if(input)input.value=text;
-      IDshow(text);
-    },true);
-  });
-  if(input&&!input.dataset.requestedQuestionKey){
-    input.dataset.requestedQuestionKey='1';
-    input.addEventListener('keydown',function(e){
-      if(e.key==='Enter'){e.preventDefault();e.stopImmediatePropagation();IDshow(input.value);}
-    },true);
-  }
-}
-addQuestions();
-wireExistingQuestions();
-[100,300,700,1500,3000].forEach(function(ms){setTimeout(function(){addQuestions();wireExistingQuestions();},ms);});
+function IDWireCharts(){document.querySelectorAll('.ai-chart-card svg, #aiChartOverlay svg').forEach(function(svg){if(svg.dataset.surgicalTouch)return;svg.dataset.surgicalTouch='1';svg.addEventListener('click',IDChartHit,true);svg.addEventListener('touchend',function(e){IDChartHit(e);},true);});}
 
-/* ---------- Reliable touch -> exact figure -> speech ---------- */
-var lastText='',lastAt=0;
-function speak(text){
-  text=String(text||'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();if(!text||!('speechSynthesis' in window))return;
-  var now=Date.now();if(text===lastText&&now-lastAt<700)return;lastText=text;lastAt=now;
-  try{window.speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(text);u.lang='en-IN';u.rate=.92;window.speechSynthesis.speak(u);}catch(e){}
-}
-window.__instantDashSpeakTouch=speak;
-function showDetail(host,text){if(!host)return;host.textContent=text;host.classList.add('show');}
-function titleText(el){var t=el&&el.querySelector?el.querySelector('title'):null;return t?t.textContent.trim():'';}
-function handleSVG(el,e){
-  var text=titleText(el);if(!text)return false;
-  var card=el.closest&&el.closest('.ai-chart-card');
-  var detail=card&&card.querySelector('.ai-chart-touch-detail');
-  if(!detail)detail=document.getElementById('smartChartDetail');
-  showDetail(detail,text);
-  speak(text.replace(/\s*·\s*/g,'. '));
-  return true;
-}
-function canvasChart(canvas){try{return window.Chart&&Chart.getChart?Chart.getChart(canvas):null;}catch(e){return null;}}
-function handleCanvas(canvas,e){
-  var chart=canvasChart(canvas);if(!chart)return false;
-  var t=e.changedTouches&&e.changedTouches[0];var cx=t?t.clientX:e.clientX,cy=t?t.clientY:e.clientY;if(!isFinite(cx)||!isFinite(cy))return false;
-  var rect=canvas.getBoundingClientRect(),x=cx-rect.left,y=cy-rect.top;
-  var els=chart.getDatasetMeta?[]:[];
-  try{
-    (chart.data.datasets||[]).forEach(function(ds,di){
-      var meta=chart.getDatasetMeta(di);(meta.data||[]).forEach(function(el,idx){
-        if(!el||typeof el.getProps!=='function')return;
-        var pr=el.getProps(['x','y','base','width','height'],true),hit=false;
-        if(isFinite(pr.width)&&isFinite(pr.height)&&pr.width>0){var left=pr.x-pr.width/2,right=pr.x+pr.width/2,top=Math.min(pr.y,pr.base),bottom=Math.max(pr.y,pr.base);hit=x>=left-8&&x<=right+8&&y>=top-8&&y<=bottom+8;}
-        else {var dx=x-pr.x,dy=y-pr.y;hit=Math.sqrt(dx*dx+dy*dy)<=18;}
-        if(hit&&!els.length)els.push({el:el,di:di,idx:idx});
-      });
-    });
-  }catch(err){return false;}
-  if(!els.length)return false;
-  var hit=els[0],ds=chart.data.datasets[hit.di]||{},label=(chart.data.labels||[])[hit.idx]??'Selected',v=(ds.data||[])[hit.idx];if(v&&typeof v==='object')v=v.y??v.x??v.r??'';
-  var text=(ds.label?ds.label+' · ':'')+label+' · '+IDfmt(v);
-  var card=canvas.closest&&canvas.closest('.ai-chart-card');var detail=card&&card.querySelector('.ai-chart-touch-detail');
-  showDetail(detail,text);speak(text.replace(/\s*·\s*/g,'. '));return true;
-}
-function wireCharts(){
-  document.querySelectorAll('canvas').forEach(function(cv){
-    if(cv.dataset.requestedTouchSpeak)return;cv.dataset.requestedTouchSpeak='1';
-    cv.addEventListener('touchend',function(e){if(handleCanvas(cv,e)){e.preventDefault();e.stopPropagation();}}, {passive:false,capture:true});
-    cv.addEventListener('click',function(e){handleCanvas(cv,e);},true);
-  });
-  document.querySelectorAll('#smartChartCanvas [data-fallback],#smartChartCanvas .sc-hit,#smartChartCanvas svg circle,#smartChartCanvas svg rect,#smartChartCanvas svg path,.ai-chart-card svg circle,.ai-chart-card svg rect,.ai-chart-card svg path').forEach(function(el){
-    if(el.dataset.requestedTouchSpeak)return;el.dataset.requestedTouchSpeak='1';
-    var h=function(e){
-      var done=false;
-      if(el.hasAttribute('data-fallback')){
-        /* Existing click handler already calculates the exact figure. We also read the SVG title immediately for speech. */
-        var tt=titleText(el);if(tt){var d=document.getElementById('smartChartDetail');showDetail(d,tt);speak(tt.replace(/\s*·\s*/g,'. '));done=true;}
-      }else done=handleSVG(el,e);
-      if(done&&e.type==='touchend'){e.preventDefault();e.stopPropagation();}
-    };
-    el.addEventListener('touchend',h,{passive:false,capture:true});el.addEventListener('click',h,true);
-  });
-  /* Stop the existing chart-expand touch fallback when the user actually touched a data item. */
-  var sc=document.getElementById('smartChartCanvas');
-  if(sc&&!sc.dataset.requestedExpandGuard){sc.dataset.requestedExpandGuard='1';sc.addEventListener('touchend',function(e){var t=e.target;if(t&&t.closest&&(t.closest('[data-fallback],.sc-hit'))){e.preventDefault();e.stopPropagation();}},true);}
-}
-wireCharts();
-[100,300,700,1500,3000].forEach(function(ms){setTimeout(wireCharts,ms);});
-if(window.MutationObserver)new MutationObserver(wireCharts).observe(document.body,{childList:true,subtree:true});
+/* Dark mode readability only: text colour, no geometry/layout changes. */
+function IDContrast(){if(!document.documentElement.classList.contains('theme-dark'))return;var css=document.getElementById('instantdash-surgical-contrast');if(css)return;css=document.createElement('style');css.id='instantdash-surgical-contrast';css.textContent='html.theme-dark .ai-chart-card .ai-chart-touch-detail,html.theme-dark .ai-chart-card .ai-chart-foot,html.theme-dark .ai-chart-card h4,html.theme-dark .ai-chart-card .ai-chart-sub,html.theme-dark .ai-dashboard-charts p,html.theme-dark .ai-dashboard-charts text{color:var(--text)!important;}';document.head.appendChild(css);}
+
+function boot(){IDInstallAsk();IDWireCharts();IDContrast();}
+boot();document.addEventListener('DOMContentLoaded',boot);window.addEventListener('load',function(){[100,500,1200,2500].forEach(function(t){setTimeout(boot,t);});});if(window.MutationObserver)new MutationObserver(boot).observe(document.body,{childList:true,subtree:true});
 })();
 </script>
 
