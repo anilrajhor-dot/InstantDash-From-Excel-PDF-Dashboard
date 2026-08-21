@@ -1203,7 +1203,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v18.2 FINAL">
+<meta name="instantdash-build" content="v18.4 OFFLINE">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2058,7 +2058,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v18.2 MASTER';
+      s.textContent='v18.4 MASTER';
       b.appendChild(s);
     }
   }
@@ -2084,7 +2084,7 @@ body{
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v18.2 FINAL</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v18.4 OFFLINE</span>
   <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v18.2 MASTER</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash" data-v174="1">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -6443,7 +6443,7 @@ function wireRest(){
 }
 
 (function start(){
-  if (typeof XLSX === 'undefined' || typeof Chart === 'undefined'){
+  if (!window.__INSTANTDASH_SHARED_STATE__ && (typeof XLSX === 'undefined' || typeof Chart === 'undefined')){
     document.getElementById('dropZone').insertAdjacentHTML('afterbegin',
       '<div class="alert">The chart and spreadsheet libraries didn’t load. Connect to the internet once so they can be cached, then reload this page.</div>');
   }
@@ -11656,20 +11656,7 @@ window.addEventListener('load',function(){setTimeout(render,700)});
    test build. */
 #id-v142-clean-start-badge{display:none}
 </style>
-<script id="instantdash-v142-clean-start">
-(function(){
-  'use strict';
-  /* A distributed build must never boot with a prior workbook. */
-  try{
-    if(window.__INSTANTDASH_SHARED_STATE__){
-      delete window.__INSTANTDASH_SHARED_STATE__;
-    }
-  }catch(_){}
-  /* Keep Ask AI and Advanced Analysis explicitly tied to the active load. */
-  window.__instantDashV142Build = 'v14.2';
-  window.__instantDashCleanStart = true;
-})();
-</script>
+
 
 
 <style id="instantdash-v143-executive-brief">
@@ -12556,7 +12543,7 @@ setInterval(fix,700);
   function snapshot(){
     var a=window.APP||window.__INSTANTDASH_APP__||{};
     return {
-      version:'v18.2 FINAL',
+      version:'v18.4 OFFLINE',
       fileName:a.fileName||'InstantDash Dashboard',
       rows:Array.isArray(a.rows)?a.rows:[],
       columns:Array.isArray(a.columns)?a.columns:[],
@@ -13786,6 +13773,113 @@ body.ai48-open::before{display:none!important;}
     setTimeout(dashboardFirst,300);
     setTimeout(dashboardFirst,1200);
   });
+})();
+</script>
+
+
+<style id="instantdash-v184-offline-shared">
+/* v18.4 — shared dashboards remain usable when CDN libraries are unavailable */
+#smartChartsSection,#smartChartsRoot,#smartChartCanvas{
+  display:block!important;visibility:visible!important;opacity:1!important;
+}
+#smartChartCanvas{min-height:380px!important;}
+.id-offline-chart{width:100%;min-height:360px;background:var(--card,#fff);border-radius:16px;}
+.id-offline-chart svg{width:100%;height:auto;display:block;}
+.id-offline-chart-note{font-size:11px;color:var(--muted,#6e6a63);padding:8px 4px 0;}
+</style>
+<script id="instantdash-v184-offline-shared-js">
+(function(){
+'use strict';
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function num(v){if(typeof v==='number')return isFinite(v)?v:NaN;var n=Number(String(v??'').replace(/,/g,''));return isFinite(n)?n:NaN;}
+function money(v){
+  if(!isFinite(v))return '—';
+  return '₹'+Math.round(v).toLocaleString('en-IN');
+}
+function offlineSharedBoot(){
+  try{
+    var sh=window.__INSTANTDASH_SHARED_STATE__;
+    if(!sh || !Array.isArray(sh.rows) || !sh.rows.length)return;
+
+    var A=window.APP||window.__INSTANTDASH_APP__;
+    if(!A)return;
+
+    /* Rehydrate the embedded shared dataset if the normal Chart.js boot failed. */
+    if(!Array.isArray(A.rows)||!A.rows.length){
+      A.fileName=sh.fileName||'Shared dashboard';
+      A.sheetNames=Array.isArray(sh.sheetNames)?sh.sheetNames:[];
+      A.activeSheet=sh.activeSheet||A.sheetNames[0]||'';
+      A.headerRow=Number.isFinite(sh.headerRow)?sh.headerRow:0;
+      A.rows=sh.rows.slice();
+      A.filtered=A.rows.slice();
+      A.columns=Array.isArray(sh.columns)?sh.columns.slice():[];
+      A.rawColumnNames=Object.keys(A.rows[0]||{});
+      A.filters={};
+    }
+
+    var app=document.getElementById('app'), empty=document.getElementById('emptyState');
+    if(empty)empty.hidden=true;
+    if(app)app.hidden=false;
+
+    var fn=document.getElementById('fileName'), fm=document.getElementById('fileMeta');
+    if(fn)fn.textContent=A.fileName||sh.fileName||'Shared dashboard';
+    if(fm)fm.textContent=(A.rows.length||sh.rows.length).toLocaleString()+' rows · '+(A.columns.length||Object.keys(A.rows[0]||{}).length)+' columns';
+
+    var src=document.getElementById('idV163Source');
+    if(src){
+      var name=A.fileName||sh.fileName||'Shared dashboard';
+      src.innerHTML='<span class="id-v163-source-dot"></span><span title="'+esc(name)+'">Data: '+esc(name)+'</span>';
+    }
+
+    var sec=document.getElementById('smartChartsSection');
+    var root=document.getElementById('smartChartsRoot');
+    var canvas=document.getElementById('smartChartCanvas');
+    if(sec)sec.style.display='block';
+    if(root)root.style.display='block';
+    if(!canvas)return;
+
+    var rows=A.filtered&&A.filtered.length?A.filtered:A.rows;
+    var keys=Object.keys(rows[0]||{});
+    var nums=keys.filter(function(k){
+      return rows.some(function(r){return isFinite(num(r[k]));});
+    });
+    if(nums.length<1)return;
+
+    var latest=nums[0], previous=nums.length>1?nums[1]:null;
+    var items=rows.map(function(r){
+      return {label:String(r.Description||r[keys[0]]||'Value'),a:num(r[latest]),b:previous==null?NaN:num(r[previous])};
+    }).filter(function(x){return isFinite(x.a);});
+    items.sort(function(x,y){return Math.abs(y.a)-Math.abs(x.a);});
+    items=items.slice(0,8);
+
+    var max=1;
+    items.forEach(function(x){max=Math.max(max,Math.abs(x.a),isFinite(x.b)?Math.abs(x.b):0);});
+    var W=760,H=Math.max(360,items.length*38+100), left=250,right=25,top=42,rowH=34,plotW=W-left-right;
+    var svg=['<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Offline shared dashboard chart">'];
+    svg.push('<text x="'+left+'" y="22" font-size="16" font-weight="800" fill="currentColor">Top movements — shared dashboard data</text>');
+    items.forEach(function(x,i){
+      var y=top+i*rowH, av=Math.max(2,Math.abs(x.a)/max*(plotW*.42));
+      var bv=isFinite(x.b)?Math.max(2,Math.abs(x.b)/max*(plotW*.42)):0;
+      var base=left+plotW*.52;
+      var aX=x.a>=0?base:base-av, bX=x.b>=0?base:base-bv;
+      svg.push('<text x="'+(left-8)+'" y="'+(y+17)+'" text-anchor="end" font-size="10" font-weight="650" fill="currentColor">'+esc(x.label.slice(0,42))+'</text>');
+      svg.push('<rect x="'+bX+'" y="'+y+'" width="'+bv+'" height="10" rx="5" fill="#E2582B"></rect>');
+      svg.push('<rect x="'+aX+'" y="'+(y+14)+'" width="'+av+'" height="10" rx="5" fill="#F5B301"></rect>');
+      svg.push('<text x="'+(left+plotW-2)+'" y="'+(y+22)+'" text-anchor="end" font-size="9" fill="currentColor">'+esc(money(x.a))+'</text>');
+    });
+    svg.push('<line x1="'+base+'" y1="'+(top-8)+'" x2="'+base+'" y2="'+(top+items.length*rowH-8)+'" stroke="#d8cfbf" stroke-width="1"></line>');
+    svg.push('</svg>');
+    canvas.innerHTML='<div class="id-offline-chart">'+svg.join('')+'</div><div class="id-offline-chart-note">Offline chart view: embedded shared data is available even when Chart.js/SheetJS CDN libraries cannot load. Yellow = latest period; orange = preceding period.</div>';
+
+    var hint=document.getElementById('smartChartHint');
+    if(hint)hint.textContent='LIVE SHARED DATA · '+rows.length+' rows · offline chart view';
+    var ver=document.querySelector('.sub');
+    if(ver)ver.textContent='Excel / CSV / PDF → Dashboard · v18.4 OFFLINE';
+  }catch(e){console.error('InstantDash v18.4 offline shared boot',e);}
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',offlineSharedBoot);
+else offlineSharedBoot();
+window.addEventListener('load',function(){setTimeout(offlineSharedBoot,100);setTimeout(offlineSharedBoot,700);});
 })();
 </script>
 
