@@ -3833,7 +3833,7 @@ function showFatal(msg){
    ===================================================================== */
 
 // Column names that almost always mean "this is an identifier, not a measure"
-const ID_NAME_RE = /(^|[\s_\-.])(id|ids|uid|guid|uuid|code|codes|invoice|inv|ref|reference|sku|serial|barcode|phone|mobile|contact|email|mail|account|acct|pan|gst|aadhaar|zip|pincode|postcode|key|hash|url|link)([\s_\-.]|$)/i;
+const ID_NAME_RE = /(^|[\s_\-.])(id|ids|uid|guid|uuid|code|codes|invoice|inv|ref|reference|sku|serial|barcode|phone|mobile|contact|email|mail|account|acct|ac\s*no|account\s*(no|number)|settlement\s*ac|saving\s*ac|pan|gst|aadhaar|zip|pincode|postcode|key|hash|url|link)([\s_\-.]|$)/i;
 const DATE_NAME_RE = /(date|dt|day|month|year|period|time|timestamp|created|updated|joined|dob|birth|due|start|end|from|to)/i;
 const BOOL_TRUE = new Set(['true','yes','y','1','t']);
 const BOOL_FALSE = new Set(['false','no','n','0','f']);
@@ -9139,7 +9139,7 @@ function n(v){if(typeof v==='number'&&isFinite(v))return v;if(typeof v==='string
 function norm(s){return String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'')}
 function label(s){var x=String(s==null?'':s);return x.length>28?x.slice(0,26)+'…':x}
 function niceName(s){return String(s||'').replace(/[_\-]+/g,' ').replace(/\s+/g,' ').trim().replace(/\b\w/g,function(c){return c.toUpperCase()})}
-function isId(name){return /(^|[^a-z])(id|code|account|acct|serial|sno|sr\s*no|phone|mobile|email|pan|gst|aadhaar|pincode|key)([^a-z]|$)/i.test(String(name||''))}
+function isId(name){return /(^|[^a-z])(id|code|account|acct|ac\s*no|account\s*(no|number)|settlement\s*ac|saving\s*ac|serial|sno|sr\s*no|phone|mobile|email|pan|gst|aadhaar|pincode|key)([^a-z]|$)/i.test(String(name||''))}
 function isTime(name,c){var x=String(name||'');return !!(c&&((String(c.type||'').toLowerCase()==='date')||c.role==='time'))||/(^|[^a-z])(date|month|period|quarter|year|fy|week|timestamp)([^a-z]|$)/i.test(x)}
 function col(name){return cols().find(function(c){return String(c.name||'')===String(name)})||{name:name,type:'',role:''}}
 function uniqueValues(rs,name){var a=[],seen={};(rs||[]).forEach(function(r){var v=r[name];if(v==null||v==='')return;var k=String(v);if(!seen[k]){seen[k]=1;a.push(v)}});return a}
@@ -10531,7 +10531,7 @@ function isDateLike(k){
   return /(^|[^a-z])(date|time|period|month|year|quarter|week|fy|timestamp)([^a-z]|$)/i.test(String(k));
 }
 function isIdLike(k){
-  return /(^|[^a-z])(id|code|account|acct|serial|sno|sr\s*no|phone|mobile|email|pan|gst|aadhaar|key)([^a-z]|$)/i.test(String(k));
+  return /(^|[^a-z])(id|code|account|acct|ac\s*no|account\s*(no|number)|settlement\s*ac|saving\s*ac|serial|sno|sr\s*no|phone|mobile|email|pan|gst|aadhaar|key)([^a-z]|$)/i.test(String(k));
 }
 function num(v){
   if(typeof v==='number'&&isFinite(v))return v;
@@ -10722,7 +10722,7 @@ var last='';
 function A(){return window.__INSTANTDASH_APP__||window.APP||{}}
 function R(){var a=A();return Array.isArray(a.filtered)&&a.filtered.length?a.filtered:(Array.isArray(a.rows)?a.rows:[])}
 function dateLike(k){return /(^|[^a-z])(date|time|period|month|year|quarter|week|fy|timestamp)([^a-z]|$)/i.test(String(k))}
-function idLike(k){return /(^|[^a-z])(id|code|account|acct|serial|sno|sr\s*no|phone|mobile|email|pan|gst|aadhaar|key)([^a-z]|$)/i.test(String(k))}
+function idLike(k){return /(^|[^a-z])(id|code|account|acct|ac\s*no|account\s*(no|number)|settlement\s*ac|saving\s*ac|serial|sno|sr\s*no|phone|mobile|email|pan|gst|aadhaar|key)([^a-z]|$)/i.test(String(k))}
 function n(v){if(typeof v==='number'&&isFinite(v))return v;if(v==null||String(v).trim()==='')return NaN;var x=Number(String(v).replace(/[₹$€£¥₩₽,%\s]/g,'').replace(/,/g,''));return isFinite(x)?x:NaN}
 function money(k){return /amount|revenue|sales|income|profit|cost|expense|loan|value|turnover|cash|asset|debt|price|budget/i.test(String(k))}
 function rate(k){return /%|rate|ratio|margin|yield|growth|completion|attendance|pass|dropout/i.test(String(k))}
@@ -13139,7 +13139,7 @@ function isDateKey(k){
   return /(^|[^a-z])(date|time|period|month|year|quarter|week|fy|timestamp)([^a-z]|$)/i.test(String(k));
 }
 function isIdKey(k){
-  return /(^|[^a-z])(id|code|account|acct|serial|sno|sr\s*no|phone|mobile|email|pan|gst|aadhaar|key)([^a-z]|$)/i.test(String(k));
+  return /(^|[^a-z])(id|code|account|acct|ac\s*no|account\s*(no|number)|settlement\s*ac|saving\s*ac|serial|sno|sr\s*no|phone|mobile|email|pan|gst|aadhaar|key)([^a-z]|$)/i.test(String(k));
 }
 function moneyKey(k){
   return /amount|revenue|sales|income|profit|cost|expense|loan|value|turnover|cash|asset|debt|price|budget/i.test(String(k));
@@ -13338,7 +13338,7 @@ function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'
 function fmt(n,k){if(!isFinite(n))return '—';var pct=/%|percent|percentage|rate|ratio/i.test(String(k));return (pct?Number(n).toLocaleString('en-IN',{maximumFractionDigits:2})+'%':Number(n).toLocaleString('en-IN',{maximumFractionDigits:2}));}
 function pct(a,b){return Math.abs(a)>1e-12?((b-a)/Math.abs(a))*100:(Math.abs(b)<1e-12?0:null);}
 function dateKey(k){return /(^| )(date|datetime|timestamp|period|month|quarter|week|year|fy|financial year|reporting period)( |$)/i.test(txt(k));}
-function idKey(k){return /(^| )(id|identifier|code|account|acct|a\/c|serial|s no|sr no|phone|mobile|email|pan|gst|aadhaar|pincode|pin|key)( |$)/i.test(txt(k));}
+function idKey(k){return /(^| )(id|identifier|code|account|acct|a\/c|ac\s*no|account\s*(no|number)|settlement\s*ac|saving\s*ac|serial|s no|sr no|phone|mobile|email|pan|gst|aadhaar|pincode|pin|key)( |$)/i.test(txt(k));}
 function targetKey(k){return /target|goal|budget|plan|planned|benchmark|standard|norm|expected|assigned target|achievement target/i.test(txt(k));}
 function actualKey(k){return /actual|achieved|achievement|attained|result|performance|completed|completion|done|realised|realized/i.test(txt(k));}
 function expenseKey(k){return /expense|expenditure|cost|spend|salary|wage|rent|electric|travel|stationery|overhead|admin|operating cost|operating expense|interest cost|finance cost/i.test(txt(k));}
@@ -13645,6 +13645,181 @@ document.addEventListener('touchend',function(e){
  var el=document.elementFromPoint(t.clientX,t.clientY); if(!el)return;
  var x=target({target:el}); if(x)showSvg(x.svg,x.shape);
 },true);
+})();
+</script>
+
+<style id="instantdash-final-surgical-repair">
+/* FINAL SURGICAL REPAIR — no layout redesign, no feature removal. */
+html.theme-dark body .snapshot-card strong,
+html.theme-dark body .snapshot-card p,
+html.theme-dark body .snapshot-card .mi-evidence-item,
+html.theme-dark body .management-insights .mi-card,
+html.theme-dark body .management-insights .mi-card p,
+html.theme-dark body .management-insights .mi-card li,
+html.theme-dark body .management-insights .mi-card .finding,
+html.theme-dark body .ai47-card,
+html.theme-dark body .ai47-card .ai47-title,
+html.theme-dark body .ai47-card .ai47-text,
+html.theme-dark body .ai47-card .ai47-action,
+html.theme-dark body .id-v1400-card,
+html.theme-dark body .id-v1400-card .id-v1400-title,
+html.theme-dark body .id-v1400-card .id-v1400-text,
+html.theme-dark body .id-v1400-card .id-v1400-list li{
+  color:var(--text)!important;
+}
+html.theme-dark body .snapshot-card p,
+html.theme-dark body .id-v1400-card .id-v1400-note,
+html.theme-dark body .management-insights .mi-empty{color:var(--muted)!important}
+html.theme-dark body .snapshot-card.priority strong,
+html.theme-dark body .snapshot-card.positive strong,
+html.theme-dark body .snapshot-card.context strong,
+html.theme-dark body .snapshot-card.action strong{color:var(--text)!important}
+</style>
+<script id="instantdash-final-surgical-repair-js">
+(function(){
+'use strict';
+
+/* ---------- Shared helpers ---------- */
+function IA(){return window.__INSTANTDASH_APP__||window.APP||{};}
+function IR(){var a=IA();return Array.isArray(a.filtered)&&a.filtered.length?a.filtered:(Array.isArray(a.rows)?a.rows:[]);}
+function IN(v){if(typeof v==='number'&&isFinite(v))return v;if(v==null||String(v).trim()==='')return NaN;var n=Number(String(v).replace(/[₹$€£¥₩₽,%\s]/g,'').replace(/,/g,''));return isFinite(n)?n:NaN;}
+function IX(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+function IT(s){return String(s==null?'':s).toLowerCase().replace(/[_\-\/]+/g,' ').replace(/\s+/g,' ').trim();}
+function accountField(k){return /(^|\s)(settlement\s*ac|saving\s*ac|savings?\s*ac|account|acct|a\s*\/\s*c|ac\s*no|account\s*(no|number)|sr\s*no|serial|id|code|pan|gst|aadhaar|mobile|phone|email|ifsc|micr)(\s|$)/i.test(String(k||''));}
+function numFields(rs){var ks=rs[0]?Object.keys(rs[0]):[],out=[];ks.forEach(function(k){if(accountField(k)||/(^|\s)(date|month|period|quarter|year|fy|week|timestamp)(\s|$)/i.test(k))return;var v=rs.map(function(r){return IN(r[k]);}).filter(isFinite);if(v.length>=Math.max(2,Math.ceil(rs.length*.35)))out.push({k:k,v:v});});return out;}
+function avg(m){return m.v.reduce(function(a,b){return a+b},0)/m.v.length;}
+function trend(m){if(!m.v.length)return null;var a=m.v[0],b=m.v[m.v.length-1];return {a:a,b:b,p:Math.abs(a)>1e-12?(b-a)/Math.abs(a)*100:0};}
+function fmtI(v,k){if(!isFinite(v))return '—';var pct=/percent|percentage|rate|ratio|margin|yield|growth|achievement|completion/i.test(String(k));return Number(v).toLocaleString('en-IN',{maximumFractionDigits:2})+(pct?'%':'');}
+function groupsI(rs){var ks=rs[0]?Object.keys(rs[0]):[],out=[];ks.forEach(function(k){if(accountField(k)||/(date|month|period|quarter|year|fy|week|timestamp)/i.test(k))return;var vals=rs.map(function(r){return r[k];}).filter(function(v){return v!=null&&String(v).trim()!=='';});var u={};vals.forEach(function(v){u[String(v)]=1});var n=Object.keys(u).length;if(n>=2&&n<=40&&vals.length>=Math.max(2,Math.ceil(rs.length*.2)))out.push(k);});return out;}
+function findM(ms,q,rx){var best=null,score=-1,nq=IT(q);ms.forEach(function(m){var n=IT(m.k),s=0;if(nq.indexOf(n)>=0)s+=100;if(rx&&rx.some(function(r){return r.test(n)}))s+=20;if(s>score){score=s;best=m;}});return best;}
+function ranked(rs,g,m,low){var b={};rs.forEach(function(r){var key=String(r[g]==null?'':r[g]).trim();var v=IN(r[m.k]);if(!key||!isFinite(v))return;(b[key]||(b[key]={s:0,n:0}));b[key].s+=v;b[key].n++;});return Object.keys(b).map(function(k){return {g:k,v:b[k].s/b[k].n,n:b[k].n};}).sort(function(a,b){return low?a.v-b.v:b.v-a.v;});}
+function speakFinal(text){try{if(!('speechSynthesis' in window))return false;window.speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(String(text));u.lang='en-IN';u.rate=.94;u.pitch=1;window.speechSynthesis.speak(u);return true;}catch(e){return false;}}
+
+/* ---------- Ask Executive AI: keep the existing panel, replace only the unreliable answer bridge ---------- */
+function answerFinal(q){
+ var rs=IR(),ms=numFields(rs),ql=IT(q);
+ if(!rs.length)return '<b>No current dataset is loaded.</b><br>Please upload a file first.';
+ if(!ms.length)return '<b>No usable management measures were found.</b><br>Identifier/account fields are intentionally excluded from KPI analysis.';
+ var out='', m, z, gs, rr;
+ if(/3 most important|important issues|top issues|biggest performance gaps|performance gaps/.test(ql)){
+   var a=ms.map(function(x){var t=trend(x);return {m:x,t:t};}).filter(function(x){return x.t;}).sort(function(a,b){return Math.abs(b.t.p)-Math.abs(a.t.p);}).slice(0,5);
+   out='<b>Priority management issues</b><br>'+a.map(function(x,i){return (i+1)+'. <b>'+IX(x.m.k)+'</b>: '+fmtI(x.t.a,x.m.k)+' → '+fmtI(x.t.b,x.m.k)+' ('+(x.t.p>=0?'+':'')+x.t.p.toFixed(1)+'%).';}).join('<br>');
+ } else if(/going well|positive|favourable|good/.test(ql)){
+   var g=ms.map(function(x){return {m:x,t:trend(x)};}).filter(function(x){return x.t&&x.t.p>0;}).sort(function(a,b){return b.t.p-a.t.p;}).slice(0,5);
+   out='<b>What is going well</b><br>'+(g.length?g.map(function(x){return '• <b>'+IX(x.m.k)+'</b>: +'+x.t.p.toFixed(1)+'%.';}).join('<br>'):'No clearly favourable movement was identified in the loaded data.');
+ } else if(/changed|what changed|trend|movement/.test(ql)){
+   var c=ms.map(function(x){return {m:x,t:trend(x)};}).filter(function(x){return x.t;}).sort(function(a,b){return Math.abs(b.t.p)-Math.abs(a.t.p);}).slice(0,8);
+   out='<b>What changed?</b><br>'+c.map(function(x){return '• <b>'+IX(x.m.k)+'</b>: '+fmtI(x.t.a,x.m.k)+' → '+fmtI(x.t.b,x.m.k)+' ('+(x.t.p>=0?'+':'')+x.t.p.toFixed(1)+'%).';}).join('<br>');
+ } else if(/executive summary|summary/.test(ql)){
+   var s=ms.map(function(x){return {m:x,t:trend(x)};}).filter(function(x){return x.t;}).sort(function(a,b){return Math.abs(b.t.p)-Math.abs(a.t.p);}).slice(0,5);
+   out='<b>Executive summary</b><br>'+s.map(function(x){return '• <b>'+IX(x.m.k)+'</b>: '+fmtI(x.t.a,x.m.k)+' → '+fmtI(x.t.b,x.m.k)+' ('+(x.t.p>=0?'+':'')+x.t.p.toFixed(1)+'%).';}).join('<br>')+'<br><br>Management should validate the largest movements against target and operational drivers before taking corrective action.';
+ } else if(/best.*(region|district|branch|area|zone)|which.*(region|district|branch).*best/.test(ql)){
+   gs=groupsI(rs);var gg=gs.find(function(k){return /region|district|branch|zone|area|state|circle|location/i.test(k);})||gs[0];m=findM(ms,ql,[/achievement|completion|performance|transaction|volume|sales|revenue|business|actual|result/])||ms[0];
+   if(gg&&m){rr=ranked(rs,gg,m,false);out='<b>Best '+IX(gg)+': '+IX(rr[0].g)+'</b><br>'+IX(m.k)+' average: '+fmtI(rr[0].v,m.k)+' across '+rr[0].n+' records.<br><br><b>Comparison:</b><br>'+rr.slice(0,5).map(function(x,i){return (i+1)+'. '+IX(x.g)+' — '+fmtI(x.v,m.k);}).join('<br>');}
+ } else if(/worst.*(region|district|branch|area|zone)|which.*(region|district|branch).*worst|needs attention|what is worse/.test(ql)){
+   gs=groupsI(rs);var gg2=gs.find(function(k){return /region|district|branch|zone|area|state|circle|location/i.test(k);})||gs[0];m=findM(ms,ql,[/achievement|completion|performance|transaction|volume|sales|revenue|business|actual|result/])||ms[0];
+   if(gg2&&m){rr=ranked(rs,gg2,m,true);out='<b>Needs attention — '+IX(gg2)+': '+IX(rr[0].g)+'</b><br>'+IX(m.k)+' average: '+fmtI(rr[0].v,m.k)+' across '+rr[0].n+' records.<br><br><b>Comparison:</b><br>'+rr.slice(0,5).map(function(x,i){return (i+1)+'. '+IX(x.g)+' — '+fmtI(x.v,m.k);}).join('<br>');}
+ } else if(/which kpi needs attention|how can we improve|improve/.test(ql)){
+   var im=ms.map(function(x){return {m:x,t:trend(x)};}).filter(function(x){return x.t;}).sort(function(a,b){return a.t.p-b.t.p;}).slice(0,5);
+   out='<b>How can we improve?</b><br>'+im.map(function(x){return '• <b>'+IX(x.m.k)+'</b>: '+(x.t.p>=0?'+':'')+x.t.p.toFixed(1)+'% movement.';}).join('<br>')+'<br><br><b>Management focus:</b> identify the driver behind the weakest movement, compare the weakest groups with stronger peers, assign an owner and set a measurable recovery target.';
+ } else if(/target.*not|why.*target|not.*achiev|miss.*target|shortfall/.test(ql)){
+   var tm=ms.filter(function(x){return /target|goal|budget|plan|benchmark|standard|norm|expected/i.test(x.k);}), am=ms.filter(function(x){return /actual|achieved|achievement|attained|result|performance|completed|completion|done|realised|realized/i.test(x.k)&&!/target/i.test(x.k);});
+   if(tm.length&&am.length){out='<b>Why was the target not achieved?</b><br>';am.slice(0,5).forEach(function(a){var t=tm.find(function(x){var an=IT(a.k).replace(/actual|achieved|achievement|attained|result|performance|completed|completion|done|realised|realized/g,'').trim(),tn=IT(x.k).replace(/target|goal|budget|plan|planned|benchmark|standard|norm|expected/g,'').trim();return an&&tn&&(an.indexOf(tn)>=0||tn.indexOf(an)>=0);});if(t){var av=avg(a),tv=avg(t),gap=av-tv;out+='<b>'+IX(a.k)+' vs '+IX(t.k)+'</b>: actual '+fmtI(av,a.k)+' against target '+fmtI(tv,t.k)+'; gap '+fmtI(gap,a.k)+' ('+(tv?((av-tv)/Math.abs(tv)*100).toFixed(1):'—')+'%).<br>';}});out+='<br><b>Important:</b> the dataset shows the gap, but does not by itself prove the operational reason. Review volume, productivity, conversion, capacity, mix and process records behind the weakest result.';}
+   else out='<b>Why was the target not achieved?</b><br>No explicit target/actual pair could be identified confidently in this file. Review the target field, actual result, volume, productivity, conversion and operational constraints.';
+ } else if(/reasons? for (the )?variation|why.*variation|reason.*variation|cause|driver|explain.*change/.test(ql)){
+   m=findM(ms,ql,[/target|actual|achievement|performance|completion|sales|revenue|business|transaction|expense|cost|profit|income/])||ms[0];z=trend(m);gs=groupsI(rs).filter(function(k){return /region|district|branch|zone|area|state|circle|location/i.test(k);});
+   out='<b>Variation analysis — '+IX(m.k)+'</b><br>'+(z?'Overall movement: '+fmtI(z.a,m.k)+' → '+fmtI(z.b,m.k)+' ('+(z.p>=0?'+':'')+z.p.toFixed(1)+'%).<br><br>':'');
+   if(gs.length){rr=ranked(rs,gs[0],m,false);out+='<b>Group-level signals:</b><br>'+rr.slice(0,5).map(function(x,i){return (i+1)+'. '+IX(x.g)+' — '+fmtI(x.v,m.k)+' ('+x.n+' records)';}).join('<br>')+'<br><br>';}
+   out+='<b>Possible reasons to investigate:</b> volume/mix changes, weaker-performing groups, productivity or conversion differences, process bottlenecks, and unusual period movements. These are data-supported investigation points, not proof of causation.';
+ } else if(/control.*expense|reduce.*expense|cut.*cost|expense.*control|cost.*control|where.*expense|spend/.test(ql)){
+   var em=ms.filter(function(x){return /expense|expenditure|cost|spend|salary|wage|rent|travel|stationery|overhead|admin|operating/i.test(x.k);}).map(function(x){return {m:x,t:x.v.reduce(function(a,b){return a+b},0)};}).sort(function(a,b){return b.t-a.t;});
+   out='<b>How can we control expenses?</b><br>'+(em.length?'<b>Largest identified cost heads:</b><br>'+em.slice(0,6).map(function(x){return '• '+IX(x.m.k)+': '+fmtI(x.t,x.m.k);}).join('<br>'):'No clearly named expense/cost fields were found.')+'<br><br><b>Management actions:</b> focus on the largest controllable heads, compare high-cost groups/periods with efficient peers, investigate abnormal increases, eliminate avoidable leakage, and set measurable limits/owners. The data shows where cost is concentrated; it cannot prove why without operational records.';
+ } else if(/increase.*transaction|grow.*transaction|more.*transaction|transaction.*increase/.test(ql)){
+   m=findM(ms,ql,[/transaction|business|sales|volume|customer|application|lead|order|footfall|output/])||ms[0];z=trend(m);out='<b>How can we increase transactions?</b><br>'+IX(m.k)+' movement: '+(z?fmtI(z.a,m.k)+' → '+fmtI(z.b,m.k)+' ('+(z.p>=0?'+':'')+z.p.toFixed(1)+'%)':'not enough comparable values')+'.<br><br>Compare strong and weak regions/districts/branches, identify practices of stronger performers, remove process bottlenecks, improve customer/lead conversion where available, and set group-wise measurable targets.';
+ } else if(/drop.?out|attrition|abandon|withdraw|incomplete|reduce.*drop/.test(ql)){
+   m=ms.find(function(x){return /drop.?out|attrition|abandon|withdraw|incomplete|rejection|failed|failure/i.test(x.k);})||ms.find(function(x){return /completion/i.test(x.k);});out='<b>How can we reduce drop-outs?</b><br>'+(m?'Relevant field: <b>'+IX(m.k)+'</b>.':'No explicit drop-out field was found.')+'<br><br>Compare drop-out/completion rates across groups, identify where the process breaks, examine the weakest stages/locations and track recovery actions. The file can show concentration, but not the operational cause unless it is recorded.';
+ } else if(/district.*best|best.*district/.test(ql)){
+   gs=groupsI(rs);var dg=gs.find(function(k){return /district/i.test(k);})||gs[0];m=ms[0];if(dg&&m){rr=ranked(rs,dg,m,false);out='<b>Best district: '+IX(rr[0].g)+'</b><br>'+IX(m.k)+' average: '+fmtI(rr[0].v,m.k)+' across '+rr[0].n+' records.';}
+ } else if(/district.*attention|district.*worst|district.*needs/.test(ql)){
+   gs=groupsI(rs);var dg2=gs.find(function(k){return /district/i.test(k);})||gs[0];m=ms[0];if(dg2&&m){rr=ranked(rs,dg2,m,true);out='<b>District needing attention: '+IX(rr[0].g)+'</b><br>'+IX(m.k)+' average: '+fmtI(rr[0].v,m.k)+' across '+rr[0].n+' records.';}
+ } else {
+   m=findM(ms,ql,[/revenue|sales|income|expense|cost|profit|transaction|volume|target|achievement|completion|business|loan|deposit|recovery|customer|attendance/]);
+   if(m&&/average|mean|avg/.test(ql))out='<b>Average '+IX(m.k)+':</b> '+fmtI(avg(m),m.k)+' across '+m.v.length+' populated records.';
+   else if(m&&/total|sum|how much|how many|number/.test(ql))out='<b>Total '+IX(m.k)+':</b> '+fmtI(m.v.reduce(function(a,b){return a+b},0),m.k)+' across '+m.v.length+' populated records.';
+   else if(m&&/highest|max|maximum|largest/.test(ql))out='<b>Highest '+IX(m.k)+':</b> '+fmtI(Math.max.apply(Math,m.v),m.k);
+   else if(m&&/lowest|min|minimum|smallest/.test(ql))out='<b>Lowest '+IX(m.k)+':</b> '+fmtI(Math.min.apply(Math,m.v),m.k);
+   else out='<b>I can analyse the currently loaded file.</b><br>I could not find a sufficiently reliable match. Ask about targets, reasons for variation, expenses, transactions, drop-outs, regions/districts, performance gaps or any KPI/column in the current file.';
+ }
+ return out||'<b>No answer could be calculated from the current data.</b>';
+}
+function renderAskFinal(q){
+ var o=document.getElementById('ai48Answer'),i=document.getElementById('ai48Input');if(!o)return;
+ q=String(q!==undefined?q:(i?i.value:'')).trim();
+ if(i&&q)i.value=q;
+ o.classList.add('show');o.classList.remove('busy');
+ try{o.innerHTML=(q?answerFinal(q):'<b>Please type a question.</b><br>Example: “Why was the target not achieved?”')+'<div class="ai48-evidence">Based only on the currently loaded/filtered dataset. Account numbers and identifiers are excluded from KPI analysis. Where the data cannot establish a cause, the answer says so.</div>';o.style.color='var(--text)';o.style.opacity='1';o.style.visibility='visible';o.style.display='block';}
+ catch(e){o.innerHTML='<b>I could not analyse that question.</b><br>Please try again.';}
+}
+window.__instantDashAskMeAnswer=renderAskFinal;
+window.__instantDashAskMeFinal181=renderAskFinal;
+
+function wireAsk(){
+ var p=document.getElementById('askExecutive48');if(!p)return;
+ var input=document.getElementById('ai48Input'),ask=document.getElementById('ai48Ask');
+ if(input&&!input.dataset.surgical181){input.dataset.surgical181='1';input.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();renderAskFinal(input.value);}},true);}
+ if(ask&&!ask.dataset.surgical181){ask.dataset.surgical181='1';ask.addEventListener('click',function(e){e.preventDefault();e.stopImmediatePropagation();renderAskFinal(input?input.value:'');},true);}
+ p.querySelectorAll('.ai48-q').forEach(function(b){if(b.dataset.surgical181)return;b.dataset.surgical181='1';b.addEventListener('click',function(e){e.preventDefault();e.stopImmediatePropagation();var q=b.textContent.trim();if(input)input.value=q;renderAskFinal(q);},true);});
+}
+wireAsk();document.addEventListener('DOMContentLoaded',wireAsk);window.addEventListener('load',function(){setTimeout(wireAsk,100);setTimeout(wireAsk,500);});
+
+/* ---------- Touch + speak for AI-generated SVG charts and existing Chart.js charts ---------- */
+function chartSpeak(label,value,measure,reason){
+ var text=String(label||'Selected point')+' — '+String(measure||'Value')+' is '+String(value)+'. '+(reason||'This is the value represented by the selected chart point.');
+ speakFinal(text);
+ return text;
+}
+function showDetail(el,label,value,measure,reason){
+ var card=el&&el.closest?el.closest('.ai-chart-card,.chart-card,.smart-chart-card,.chart-card-shell'):null;
+ var detail=card&&card.querySelector?card.querySelector('.ai-chart-touch-detail,.smart-detail,.chart-detail'):null;
+ var text=chartSpeak(label,value,measure,reason);
+ if(detail){detail.textContent=String(measure||'Value')+' · '+String(label||'Selected')+' · '+String(value);}
+ var box=document.getElementById('idTouchSpeakBox');
+ if(box){var t=box.querySelector('.ts-title'),v=box.querySelector('.ts-value'),r=box.querySelector('.ts-reason');if(t)t.textContent='📊 Chart detail';if(v)v.innerHTML='<b>'+IX(label||'Selected')+'</b> · '+IX(String(value));if(r)r.textContent=reason||'Figure taken directly from the selected chart point.';box.classList.add('open');var sb=box.querySelector('.ts-speak');if(sb)sb.onclick=function(e){e.preventDefault();e.stopPropagation();speakFinal(text);};}
+}
+function svgPointAt(target){
+ var t=target;if(!t)return null;
+ var shape=t.closest?t.closest('rect,circle,path,polygon'):null;
+ var svg=t.closest?t.closest('svg'):null;
+ if(!svg)return null;
+ if(shape){var title=shape.querySelector('title');if(title){var raw=title.textContent.trim(),m=raw.match(/^(.*?)\s*[·•:]\s*(-?[\d,]+(?:\.\d+)?%?)$/);return {shape:shape,label:m?m[1].trim():'Selected point',value:m?m[2]:raw,measure:(svg.closest('.ai-chart-card')&&svg.closest('.ai-chart-card').querySelector('h4')?svg.closest('.ai-chart-card').querySelector('h4').textContent:'Chart value')};}}
+ return null;
+}
+function handleSVGEvent(e){
+ var p=svgPointAt(e.target);if(!p)return;
+ e.__instantDashChartHandled=true;
+ var svg=p.shape.closest('svg');
+ var reason='Figure taken directly from the selected AI-generated chart point.';
+ showDetail(svg,p.label,p.value,p.measure,reason);
+}
+/* Window capture runs before document-level legacy handlers, so the existing UI remains intact. */
+window.addEventListener('pointerup',function(e){if(e.pointerType==='mouse'&&e.button!==0)return;handleSVGEvent(e);},true);
+window.addEventListener('touchend',handleSVGEvent,true);
+window.addEventListener('click',function(e){if(e.__instantDashChartHandled)return;handleSVGEvent(e);},true);
+
+function canvasPoint(e){
+ var c=e.target&&e.target.closest?e.target.closest('canvas'):null;if(!c||!window.Chart||typeof Chart.getChart!=='function')return null;
+ var ch=Chart.getChart(c);if(!ch||!ch.data)return null;
+ var active=[];try{active=ch.getElementsAtEventForMode(e,'nearest',{intersect:true},true)||[];if(!active.length)active=ch.getElementsAtEventForMode(e,'nearest',{intersect:false},true)||[];}catch(_){return null;}
+ if(!active.length)return null;var a=active[0],idx=a.index,ds=ch.data.datasets[a.datasetIndex||0],val=ds&&ds.data?ds.data[idx]:null,label=ch.data.labels?ch.data.labels[idx]:idx;
+ return {c:c,label:label,value:val,measure:ds&&ds.label?ds.label:'Chart value'};
+}
+function handleCanvasEvent(e){var p=canvasPoint(e);if(!p)return;showDetail(p.c,p.label,p.value,p.measure,'Figure calculated from the selected chart point.');}
+window.addEventListener('pointerup',function(e){if(e.pointerType==='mouse'&&e.button!==0)return;handleCanvasEvent(e);},true);
+window.addEventListener('touchend',handleCanvasEvent,true);
+window.addEventListener('click',handleCanvasEvent,true);
+
+/* Ensure the existing chart-detail box itself can speak again. */
+document.addEventListener('click',function(e){var b=e.target&&e.target.closest?e.target.closest('#idTouchSpeakBox .ts-speak'):null;if(b){e.preventDefault();e.stopPropagation();var v=document.querySelector('#idTouchSpeakBox .ts-value');speakFinal(v?v.textContent:'Selected chart value');}},true);
 })();
 </script>
 </body></html>
