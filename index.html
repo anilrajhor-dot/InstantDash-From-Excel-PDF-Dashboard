@@ -13329,4 +13329,153 @@ setInterval(wire,500);
 })();
 </script>
 
+
+
+<style id="instantdash-v179-touch-voice-ai-questions">
+/* v17.9 — Touch + Voice + expanded Executive AI. Existing dashboard layout,
+   charts, filters, sharing and calculations are deliberately left intact. */
+.id179-touch-detail{margin-top:8px;padding:10px 12px;border:1px solid var(--border);border-radius:12px;background:var(--card-2);font-size:11px;line-height:1.5;display:none}
+.id179-touch-detail.show{display:block}
+.id179-touch-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:7px}
+.id179-touch-actions button{border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:999px;padding:6px 10px;font-size:10px;font-weight:800;cursor:pointer;touch-action:manipulation}
+.id179-touch-actions button.primary{background:var(--accent);border-color:var(--accent);color:#111}
+.id179-mic-btn{width:48px;min-width:48px;border:1px solid var(--accent);background:var(--accent);color:#111;border-radius:12px;font-size:18px;cursor:pointer;touch-action:manipulation}
+.id179-mic-btn.listening{background:#ef4444;color:#fff;border-color:#ef4444}
+.id179-voice-status{font-size:10px;color:var(--muted);margin-top:6px;min-height:14px}
+@media(max-width:600px){
+  .id179-touch-detail{font-size:11px}
+  .id179-touch-actions{display:grid;grid-template-columns:1fr 1fr}
+  .id179-touch-actions button{width:100%}
+}
+</style>
+<script id="instantdash-v179-touch-voice-ai-questions">
+(function(){
+'use strict';
+var Q=[
+ 'What are the 3 most important issues?',
+ 'What is going well?',
+ 'What changed?',
+ 'Give me an executive summary',
+ 'Which region is best overall?',
+ 'Which region is worst overall?',
+ 'Which KPI needs attention?',
+ 'What is worse?',
+ 'How can we improve?',
+ 'Which region improved the most?',
+ 'Which region declined the most?',
+ 'Compare the best and worst region'
+];
+function A(){return window.__INSTANTDASH_APP__||window.APP||{}}
+function rows(){var a=A();return Array.isArray(a.filtered)&&a.filtered.length?a.filtered:(Array.isArray(a.rows)?a.rows:[])}
+function n(v){if(typeof v==='number'&&isFinite(v))return v;if(v==null||String(v).trim()==='')return NaN;var x=Number(String(v).replace(/[₹$€£¥₩₽,%\s]/g,'').replace(/,/g,''));return isFinite(x)?x:NaN}
+function pct(k){return /%|rate|ratio|margin|growth|completion|attendance|pass|dropout|yield|achievement|coverage|satisfaction/i.test(String(k))}
+function money(k){return /amount|revenue|sales|income|profit|cost|expense|loan|value|turnover|cash|asset|debt|budget|price|fund/i.test(String(k))}
+function fmt(v,k){if(!isFinite(v))return '—';if(pct(k))return Number(v).toFixed(2)+'%';if(money(k))return '₹'+Number(v).toLocaleString('en-IN',{maximumFractionDigits:2});return Number(v).toLocaleString('en-IN',{maximumFractionDigits:2})}
+function fieldInfo(){
+ var rs=rows();if(!rs.length)return {cat:null,metrics:[]};
+ var keys=Object.keys(rs[0]||{}),cat=null,metrics=[];
+ keys.forEach(function(k){
+   var vals=rs.map(function(r){return n(r[k])}).filter(isFinite), text=rs.map(function(r){return r[k]}).filter(function(v){return v!=null&&String(v).trim()!==''}), u=new Set(text.map(String)).size;
+   var time=/(date|month|year|quarter|period|week|day|time|fy)/i.test(k), id=/(^|[^a-z])(id|code|account|serial|sno|phone|mobile|email|key)([^a-z]|$)/i.test(k);
+   if(!cat&&!time&&!id&&vals.length/Math.max(1,rs.length)<.65&&u>=2&&u<=40)cat=k;
+   if(!time&&!id&&vals.length>=Math.max(2,Math.ceil(rs.length*.5))&&u>=2)metrics.push({k:k,v:vals,avg:vals.reduce(function(a,b){return a+b},0)/vals.length});
+ });
+ metrics.sort(function(a,b){
+   var score=function(x){var s=0, q=String(x.k).toLowerCase();if(/performance|achievement|completion|attendance|pass|sales|revenue|profit|collection|recovery|output|productivity|feedback|score|improvement/.test(q))s+=5;if(/id|year|month|quarter|date/.test(q))s-=10;return s};return score(b)-score(a)
+ });
+ return {cat:cat,metrics:metrics};
+}
+function rank(cat,metric){
+ var rs=rows(),g={};if(!cat||!metric)return [];
+ rs.forEach(function(r){var group=String(r[cat]==null?'Blank':r[cat]);var v=n(r[metric.k]);if(!isFinite(v))return;(g[group]||(g[group]=[])).push(v)});
+ return Object.keys(g).map(function(k){var a=g[k];return {k:k,v:a.reduce(function(x,y){return x+y},0)/a.length,n:a.length}}).filter(function(x){return x.n}).sort(function(a,b){return b.v-a.v});
+}
+function enhancedAnswer(q){
+ var rs=rows(), fi=fieldInfo(), ql=String(q||'').toLowerCase().replace(/[?.,]/g,' ').replace(/\s+/g,' ').trim();
+ if(!rs.length)return '<b>No live dataset was found.</b><br>Please load a file first.';
+ var cat=fi.cat, metric=fi.metrics[0];
+ if(/region|branch|district|zone|state|area|location|circle|office/.test(ql)&&/best|highest|top|overall|performing/.test(ql)){
+   var r=rank(cat,metric);if(r.length){return '<b>Best '+cat+': '+r[0].k+'</b><br>'+metric.k+' averages <b>'+fmt(r[0].v,metric.k)+'</b> across '+r[0].n+' observations.<br><br><b>Top 3:</b><br>'+r.slice(0,3).map(function(x,i){return (i+1)+'. '+x.k+' — '+fmt(x.v,metric.k)}).join('<br>')+'<div class="ai48-evidence">Ranking is based only on the current dataset. The result does not establish why the region performed better.</div>'}
+ }
+ if(/region|branch|district|zone|state|area|location|circle|office/.test(ql)&&/worst|lowest|bottom|poor|weakest|declined/.test(ql)){
+   var r2=rank(cat,metric);if(r2.length){var rev=r2.slice().reverse();return '<b>Worst '+cat+': '+rev[0].k+'</b><br>'+metric.k+' averages <b>'+fmt(rev[0].v,metric.k)+'</b> across '+rev[0].n+' observations.<br><br><b>Bottom 3:</b><br>'+rev.slice(0,3).map(function(x,i){return (i+1)+'. '+x.k+' — '+fmt(x.v,metric.k)}).join('<br>')+'<div class="ai48-evidence">Ranking is based only on the current dataset. The result does not establish why the region underperformed.</div>'}
+ }
+ if(/compare.*best.*worst|best.*worst/.test(ql)&&cat&&metric){var rr=rank(cat,metric);if(rr.length>1)return '<b>Best vs worst '+cat+'</b><br>'+rr[0].k+' — '+fmt(rr[0].v,metric.k)+'<br>'+rr[rr.length-1].k+' — '+fmt(rr[rr.length-1].v,metric.k)+'<br><br>Difference: <b>'+fmt(rr[0].v-rr[rr.length-1].v,metric.k)+'</b>.'}
+ if(/which region improved|region improved|improved the most/.test(ql)&&cat&&metric){var rr2=rank(cat,metric),best=rr2.map(function(x){return x});return '<b>Current best '+cat+' on '+metric.k+':</b> '+(best[0]?best[0].k:'No reliable group')+' — '+(best[0]?fmt(best[0].v,metric.k):'—')+'.<div class="ai48-evidence">A true period-over-period regional improvement ranking requires a reliable time field; this answer is the current level ranking only.</div>'}
+ if(/which region declined|declined the most/.test(ql)&&cat&&metric){var rr3=rank(cat,metric);return '<b>Lowest current '+cat+' on '+metric.k+':</b> '+(rr3.length?rr3[rr3.length-1].k:'No reliable group')+' — '+(rr3.length?fmt(rr3[rr3.length-1].v,metric.k):'—')+'.<div class="ai48-evidence">A true decline ranking requires a reliable time field; the current answer is based on the latest loaded group levels.</div>'}
+ if(/which kpi needs attention|what is worse|worse|needs attention|attention/.test(ql)){
+   var scored=fi.metrics.map(function(m){var a=m.v[0],b=m.v[m.v.length-1],p=a?((b-a)/Math.abs(a))*100:0;var s=String(m.k).toLowerCase();var adverse=/cost|expense|error|complaint|defect|risk|npa|overdue|backlog|dropout|absence/.test(s);var favourable=/revenue|sales|income|profit|completion|attendance|collection|recovery|output|productivity|pass|satisfaction|improvement/.test(s);var attention=adverse?p>0:favourable?p<0:Math.abs(p)>5;return {m:m,p:p,a:a,b:b,attention:attention,abs:Math.abs(p)}}).filter(function(x){return x.attention}).sort(function(a,b){return b.abs-a.abs});
+   if(scored.length)return '<b>Priority KPI needing attention: '+scored[0].m.k+'</b><br>'+fmt(scored[0].a,scored[0].m.k)+' → '+fmt(scored[0].b,scored[0].m.k)+' ('+(scored[0].p>=0?'+':'')+scored[0].p.toFixed(1)+'%).<br><br>Review the operational drivers, target and related KPIs before deciding corrective action.';
+   return '<b>No clearly adverse KPI movement was identified.</b><br>Review the largest movements against targets and related operational measures.';
+ }
+ if(/3 most important|three most important|important issues|top issues/.test(ql)){
+   var mv=fi.metrics.map(function(m){var a=m.v[0],b=m.v[m.v.length-1],p=a?((b-a)/Math.abs(a))*100:0;return {m:m,a:a,b:b,p:p,abs:Math.abs(p)}}).sort(function(a,b){return b.abs-a.abs});
+   return '<b>Three most important movements</b><br>'+mv.slice(0,3).map(function(x,i){return (i+1)+'. <b>'+x.m.k+'</b>: '+fmt(x.a,x.m.k)+' → '+fmt(x.b,x.m.k)+' ('+(x.p>=0?'+':'')+x.p.toFixed(1)+'%).'}).join('<br>');
+ }
+ if(/executive summary|summary/.test(ql)){
+   var sm=fi.metrics.map(function(m){var a=m.v[0],b=m.v[m.v.length-1],p=a?((b-a)/Math.abs(a))*100:0;return {m:m,a:a,b:b,p:p,abs:Math.abs(p)}}).sort(function(a,b){return b.abs-a.abs})[0];
+   return '<b>Executive summary</b><br>'+(sm?'<b>'+sm.m.k+'</b> shows the largest relative movement: '+fmt(sm.a,sm.m.k)+' → '+fmt(sm.b,sm.m.k)+' ('+(sm.p>=0?'+':'')+sm.p.toFixed(1)+'%).':'No dominant movement identified.')+'<br><br>Management should validate the movement against targets and operational drivers.';
+ }
+ if(/going well|positive|favourable|good/.test(ql)){
+   var good=fi.metrics.map(function(m){var a=m.v[0],b=m.v[m.v.length-1],p=a?((b-a)/Math.abs(a))*100:0;var s=String(m.k).toLowerCase(),fav=/revenue|sales|income|profit|completion|attendance|collection|recovery|output|productivity|pass|satisfaction|improvement/.test(s);return {m:m,a:a,b:b,p:p,fav:fav&&p>0}}).filter(function(x){return x.fav}).sort(function(a,b){return b.p-a.p})[0];
+   return good?'<b>What is going well:</b> '+good.m.k+' improved '+(good.p>=0?'+':'')+good.p.toFixed(1)+'%, from '+fmt(good.a,good.m.k)+' to '+fmt(good.b,good.m.k)+'.':'No clearly favourable movement identified from the current numeric KPIs.';
+ }
+ if(/changed|change|trend|movement|compare/.test(ql)){
+   return '<b>Key changes</b><br>'+fi.metrics.map(function(m){var a=m.v[0],b=m.v[m.v.length-1],p=a?((b-a)/Math.abs(a))*100:0;return '<b>'+m.k+'</b>: '+fmt(a,m.k)+' → '+fmt(b,m.k)+' ('+(p>=0?'+':'')+p.toFixed(1)+'%)'}).slice(0,6).join('<br>');
+ }
+ if(/how can|improve|increase|reduce|better|recommend|action/.test(ql)){
+   var im=fi.metrics.map(function(m){var a=m.v[0],b=m.v[m.v.length-1],p=a?((b-a)/Math.abs(a))*100:0;return {m:m,a:a,b:b,p:p,abs:Math.abs(p)}}).sort(function(a,b){return b.abs-a.abs})[0];
+   return '<b>How can we improve?</b><br>'+(im?'Focus first on <b>'+im.m.k+'</b>, which moved '+fmt(im.a,im.m.k)+' → '+fmt(im.b,im.m.k)+' ('+(im.p>=0?'+':'')+im.p.toFixed(1)+'%). Identify the operational driver, compare with target/benchmark and assign one measurable action.':'No reliable improvement priority was identified.');
+ }
+ return '<b>I can analyse the current file.</b><br>Ask about a KPI, region, district, trend, best/worst performer, issues, improvement or executive summary.';
+}
+function speak(text){
+ try{if(!('speechSynthesis' in window))return;window.speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(String(text).replace(/<[^>]+>/g,' '));u.lang='en-IN';u.rate=.98;u.pitch=1;window.speechSynthesis.speak(u);}catch(e){console.warn('InstantDash speech failed',e)}
+}
+function wireQuestions(){
+ var p=document.getElementById('askExecutive48');if(!p)return false;
+ var qbox=p.querySelector('.ai48-questions');if(!qbox)return false;
+ if(qbox.dataset.v179==='1')return true;
+ qbox.innerHTML=Q.map(function(q){return '<button type="button" class="ai48-q">'+q+'</button>'}).join('');
+ qbox.querySelectorAll('.ai48-q').forEach(function(b){b.addEventListener('click',function(e){e.preventDefault();var i=document.getElementById('ai48Input');if(i){i.value=b.textContent}runEnhanced();})});
+ qbox.dataset.v179='1';
+ var input=document.getElementById('ai48Input'),row=input&&input.parentElement;
+ if(input&&row&&!row.querySelector('.id179-mic-btn')){
+   var mic=document.createElement('button');mic.type='button';mic.className='id179-mic-btn';mic.textContent='🎙️';mic.title='Speak your question';mic.setAttribute('aria-label','Speak your question');row.appendChild(mic);mic.addEventListener('click',function(){listen(mic,input)},true);
+ }
+ return true;
+}
+function runEnhanced(){
+ var i=document.getElementById('ai48Input'),o=document.getElementById('ai48Answer');if(!i||!o)return;
+ var q=i.value.trim();o.classList.add('show','busy');o.innerHTML='<b>Analysing current data…</b>';
+ setTimeout(function(){try{o.innerHTML=enhancedAnswer(q)+'<div class="id179-touch-actions"><button type="button" class="primary" id="id179SpeakAnswer">🔊 Speak answer</button><button type="button" id="id179StopAnswer">■ Stop</button></div><div class="ai48-evidence">Based only on the currently loaded dataset. No unsupported cause is presented as fact.</div>';o.classList.remove('busy');var sp=document.getElementById('id179SpeakAnswer');if(sp)sp.onclick=function(){speak(o.innerText||o.textContent||'')};var st=document.getElementById('id179StopAnswer');if(st)st.onclick=function(){try{speechSynthesis.cancel()}catch(e){}}}catch(e){o.innerHTML='<b>I could not complete that question.</b>';o.classList.remove('busy')}},30);
+}
+function listen(btn,input){
+ var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!SR){var st=document.getElementById('id179VoiceStatus');if(st)st.textContent='Voice input is not supported here. Use the iPhone keyboard microphone.';input.focus();return;}
+ if(btn.dataset.listening==='1'){try{btn.__rec&&btn.__rec.stop()}catch(e){}return;}
+ try{var r=new SR();btn.__rec=r;btn.dataset.listening='1';btn.textContent='⏹️';r.lang='en-IN';r.interimResults=false;r.continuous=false;r.onresult=function(ev){var t=ev.results[0][0].transcript||'';input.value=t;runEnhanced()};r.onerror=function(){btn.dataset.listening='';btn.textContent='🎙️'};r.onend=function(){btn.dataset.listening='';btn.textContent='🎙️'};r.start()}catch(e){btn.dataset.listening='';btn.textContent='🎙️'}
+}
+function chartTouch(){
+ document.querySelectorAll('.ai-chart-card').forEach(function(card){
+   if(card.dataset.v179touch==='1')return;card.dataset.v179touch='1';
+   var wrap=card.querySelector('.ai-chart-wrap');if(!wrap)return;
+   var detail=card.querySelector('.ai-chart-touch-detail');
+   if(!detail){detail=document.createElement('div');detail.className='ai-chart-touch-detail';wrap.parentNode.insertBefore(detail,wrap.nextSibling)}
+   function show(text){detail.textContent=text;detail.classList.add('show');var old=card.querySelector('.id179-touch-actions');if(old)old.remove();var tools=document.createElement('div');tools.className='id179-touch-actions';var sp=document.createElement('button');sp.className='primary';sp.textContent='🔊 Speak';sp.onclick=function(){speak(text)};var cl=document.createElement('button');cl.textContent='Hide';cl.onclick=function(){detail.classList.remove('show');tools.remove()};tools.appendChild(sp);tools.appendChild(cl);detail.parentNode.insertBefore(tools,detail.nextSibling)}
+   wrap.addEventListener('click',function(e){
+     var t=e.target, title=t&&t.querySelector?t.querySelector('title'):null;var own=t&&t.tagName==='title'?t:null;title=own||title;
+     if(title&&title.textContent){show(title.textContent);return}
+     var cv=wrap.querySelector('canvas');if(cv&&window.Chart&&Chart.getChart){var ch=Chart.getChart(cv);if(ch){var els=ch.getElementsAtEventForMode(e,'nearest',{intersect:true},true);if(els&&els.length){var el=els[0],ds=ch.data.datasets[el.datasetIndex||0],lab=(ch.data.labels||[])[el.index]||'',val=ds&&ds.data?ds.data[el.index]:'';show((ds&&ds.label?ds.label+' · ':'')+lab+' · '+val);}}}
+   },true);
+ });
+}
+function wireAsk(){
+ var b=document.getElementById('ai48Ask'),i=document.getElementById('ai48Input');if(!b||!i)return;
+ if(b.dataset.v179==='1')return;b.dataset.v179='1';b.onclick=function(e){if(e)e.preventDefault();runEnhanced()};i.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();runEnhanced()}});
+}
+function tick(){wireQuestions();wireAsk();chartTouch()}
+document.addEventListener('DOMContentLoaded',tick);window.addEventListener('load',function(){setTimeout(tick,300);setTimeout(tick,1200)});setInterval(tick,700);
+})();
+</script>
 </body></html>
