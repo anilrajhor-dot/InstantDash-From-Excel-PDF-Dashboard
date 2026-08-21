@@ -8996,7 +8996,51 @@ function redrawAICard(s,card){
  var sub=card.querySelector('.ai-chart-sub'),selector=card.querySelector('.ai-chart-type');if(selector)selector.value=s.type;
  if(sub)sub.textContent=(autoReason?autoReason+' ':'')+(s.group?'AI selected '+niceName(s.type)+' chart grouped by '+niceName(s.group):'AI selected a total chart for '+niceName(s.measure))+'.';
  s.detailEl=card.querySelector('.ai-chart-touch-detail');if(s.detailEl)s.detailEl.textContent='Tap a bar or point to see the exact figure.';
- try{drawNativeAIChart(s,canvas);canvas.addEventListener('click',function(e){var r=canvas.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;if(s.detailEl)s.detailEl.textContent=niceName(s.measure)+' · '+(s.data.labels[0]||'Selected')+' · '+fmtByField(Number(s.data.values[0]||0),s.measure);});}
+ try{
+  drawNativeAIChart(s,canvas);
+  var svg=canvas.querySelector('svg');
+  if(svg){
+    var touchTimer=null;
+    function explainTouchedPoint(e){
+      var target=e.target;
+      var node=target&&target.closest?target.closest('circle,rect,path'):null;
+      if(!node||!svg.contains(node))return;
+      var title=node.querySelector?node.querySelector('title'):null;
+      var txt=title?String(title.textContent||''):'';
+      if(!txt)return;
+      var sep=txt.lastIndexOf(' · ');
+      var labelValue=sep>=0?txt.slice(0,sep):txt;
+      var raw=sep>=0?txt.slice(sep+3):'';
+      var value=n(raw);
+      if(!isFinite(value)){
+        var labels=s.data&&s.data.labels?s.data.labels:[];
+        var idx=labels.indexOf(labelValue);
+        if(idx>=0)value=n(s.data.values[idx]);
+      }
+      if(s.detailEl){
+        s.detailEl.innerHTML='<b>'+esc(niceName(s.measure))+'</b><br>'+esc(labelValue)+' · <b>'+esc(fmtByField(value,s.measure))+'</b><br><span style="display:inline-block;margin-top:7px"><button type="button" class="id-chart-speak">🔊 Speak explanation</button></span>';
+        s.detailEl.classList.add('show');
+        if(typeof window.__instantDashChartExplainDirect==='function'){
+          window.__instantDashChartExplainDirect(s.measure,s.group,labelValue,value,'sum',s.detailEl);
+        }
+        var speak=s.detailEl.querySelector('.id-chart-speak');
+        if(speak&&typeof window.__instantDashSpeak==='function'){
+          speak.onclick=function(ev){
+            ev.preventDefault();ev.stopPropagation();
+            window.__instantDashSpeak('For '+niceName(s.measure)+' '+labelValue+', the value is '+fmtByField(value,s.measure)+'. The chart is grouped by '+niceName(s.group||'the selected category')+'.');
+          };
+        }
+      }
+      try{e.preventDefault()}catch(_){}
+    }
+    svg.addEventListener('click',explainTouchedPoint,true);
+    svg.addEventListener('pointerup',function(e){explainTouchedPoint(e)},true);
+    svg.addEventListener('touchend',function(e){
+      if(touchTimer)clearTimeout(touchTimer);
+      touchTimer=setTimeout(function(){explainTouchedPoint(e)},20);
+    },{passive:false});
+  }
+ }
  catch(err){wrap.innerHTML='<div class="ai-chart-render-error" style="height:100%;min-height:220px;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;color:var(--muted);font:600 11px Poppins,sans-serif">Unable to draw this chart. The data is still available in the manual chart selector.</div>';console.error('InstantDash native AI chart error',err);}
 }
 function render(){
