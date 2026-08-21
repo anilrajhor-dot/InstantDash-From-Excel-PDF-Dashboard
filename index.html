@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v17.6 FINAL","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">\n
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v17.7 FINAL","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">\n
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
@@ -1204,7 +1204,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v17.6 FINAL">
+<meta name="instantdash-build" content="v17.7 FINAL">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2059,7 +2059,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v17.6 MASTER';
+      s.textContent='v17.7 MASTER';
       b.appendChild(s);
     }
   }
@@ -2085,8 +2085,8 @@ body{
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v17.6 FINAL</span>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v17.6 MASTER</span></div>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v17.7 FINAL</span>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v17.7 MASTER</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
   <div class="spacer"></div>
@@ -2610,7 +2610,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v17.6',
+  VERSION: 'v17.7',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -12589,7 +12589,7 @@ setInterval(fix,700);
   function snapshot(){
     var a=window.APP||window.__INSTANTDASH_APP__||{};
     return {
-      version:'v17.6 FINAL',
+      version:'v17.7 FINAL',
       fileName:a.fileName||'InstantDash Dashboard',
       rows:Array.isArray(a.rows)?a.rows:[],
       columns:Array.isArray(a.columns)?a.columns:[],
@@ -12816,6 +12816,211 @@ window.addEventListener('load',function(){
   setTimeout(function(){resetStartup();wireLaunch();},100);
   setTimeout(function(){resetStartup();},500);
 });
+})();
+</script>
+
+
+<script id="instantdash-v177-askme-final-engine">
+(function(){
+'use strict';
+
+/*
+ v17.7 FINAL Ask Me engine.
+ This is deliberately self-contained. It does not depend on any of the
+ older Ask-Me IIFEs, Advanced AI renderers, category helpers, or cached
+ functions. It reads the current APP object directly and writes to the
+ existing #ai48Answer element.
+*/
+function app(){
+  return window.__INSTANTDASH_APP__ || window.APP || {};
+}
+function rows(){
+  var a=app();
+  if(Array.isArray(a.filtered) && a.filtered.length) return a.filtered;
+  return Array.isArray(a.rows) ? a.rows : [];
+}
+function num(v){
+  if(typeof v==='number' && isFinite(v)) return v;
+  if(v===null || v===undefined || String(v).trim()==='') return NaN;
+  var x=Number(String(v).replace(/[₹$€£¥₩₽,%\s]/g,'').replace(/,/g,''));
+  return isFinite(x)?x:NaN;
+}
+function isDateKey(k){
+  return /(^|[^a-z])(date|time|period|month|year|quarter|week|fy|timestamp)([^a-z]|$)/i.test(String(k));
+}
+function isIdKey(k){
+  return /(^|[^a-z])(id|code|account|acct|serial|sno|sr\s*no|phone|mobile|email|pan|gst|aadhaar|key)([^a-z]|$)/i.test(String(k));
+}
+function moneyKey(k){
+  return /amount|revenue|sales|income|profit|cost|expense|loan|value|turnover|cash|asset|debt|price|budget/i.test(String(k));
+}
+function fmt(v,k){
+  var n=Number(v);
+  if(moneyKey(k)) return '₹'+n.toLocaleString('en-IN',{maximumFractionDigits:2});
+  return n.toLocaleString('en-IN',{maximumFractionDigits:2});
+}
+function measures(rs){
+  if(!rs.length) return [];
+  var out=[];
+  Object.keys(rs[0]).forEach(function(k){
+    if(isDateKey(k)||isIdKey(k)) return;
+    var vals=rs.map(function(r){return num(r[k]);}).filter(isFinite);
+    if(vals.length>=Math.max(2,Math.ceil(rs.length*0.4)))
+      out.push({k:k,v:vals});
+  });
+  return out;
+}
+function groups(rs){
+  if(!rs.length) return [];
+  var out=[];
+  Object.keys(rs[0]).forEach(function(k){
+    if(isDateKey(k)) return;
+    var vals=rs.map(function(r){return r[k];}).filter(function(v){return v!==null&&v!==undefined&&String(v).trim()!=='';});
+    if(vals.length && vals.length<=Math.max(100,rs.length*.5)){
+      var u={};
+      vals.forEach(function(v){u[String(v)]=1;});
+      var n=Object.keys(u).length;
+      if(n>=2 && n<=50) out.push({k:k,n:n});
+    }
+  });
+  return out;
+}
+function answer(q){
+  var rs=rows();
+  if(!rs.length) return '<b>No live dataset was found.</b><br>Please load a file first.';
+  var ms=measures(rs);
+  if(!ms.length) return '<b>No numeric KPI fields were found.</b><br>The current file has no usable numeric measures.';
+  var ql=String(q||'').toLowerCase().replace(/[?.,]/g,' ').replace(/\s+/g,' ').trim();
+
+  var col=ms.find(function(x){
+    var n=x.k.toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+    return n && ql.indexOf(n)>=0;
+  });
+
+  if(/how many|how much|number of|no of|total/.test(ql) && col){
+    var total=col.v.reduce(function(a,b){return a+b;},0);
+    return '<b>Total '+col.k+':</b> '+fmt(total,col.k)+' across '+col.v.length+' populated records.';
+  }
+  if(/average|mean|avg/.test(ql) && col){
+    var av=col.v.reduce(function(a,b){return a+b;},0)/col.v.length;
+    return '<b>Average '+col.k+':</b> '+fmt(av,col.k)+' across '+col.v.length+' populated records.';
+  }
+  if(/highest|maximum|max|largest|peak/.test(ql) && col)
+    return '<b>Highest '+col.k+':</b> '+fmt(Math.max.apply(Math,col.v),col.k)+'.';
+  if(/lowest|minimum|min|smallest/.test(ql) && col)
+    return '<b>Lowest '+col.k+':</b> '+fmt(Math.min.apply(Math,col.v),col.k)+'.';
+
+  var moves=ms.map(function(x){
+    var a=x.v[0],b=x.v[x.v.length-1],p=a?((b-a)/Math.abs(a))*100:0;
+    return {x:x,a:a,b:b,p:p};
+  }).sort(function(a,b){return Math.abs(b.p)-Math.abs(a.p);});
+
+  if(/changed|change|trend|movement|compare/.test(ql)){
+    return '<b>Key changes</b><br>'+moves.slice(0,6).map(function(z){
+      return '<b>'+z.x.k+'</b>: '+fmt(z.a,z.x.k)+' → '+fmt(z.b,z.x.k)+' ('+(z.p>=0?'+':'')+z.p.toFixed(1)+'%).';
+    }).join('<br>');
+  }
+
+  if(/three|3|important|issue|concern|problem|focus|priority/.test(ql)){
+    return '<b>Top management movements</b><br>'+moves.slice(0,3).map(function(z,i){
+      return (i+1)+'. <b>'+z.x.k+'</b>: '+fmt(z.a,z.x.k)+' → '+fmt(z.b,z.x.k)+' ('+(z.p>=0?'+':'')+z.p.toFixed(1)+'%).';
+    }).join('<br>');
+  }
+
+  if(/going well|positive|favourable|good/.test(ql)){
+    var z=moves.find(function(x){
+      var positive=/revenue|sales|income|profit|completion|attendance|resolved|collection|output|productivity/i.test(x.x.k);
+      return positive ? x.p>0 : x.p<0;
+    });
+    return z
+      ? '<b>What is going well:</b> '+z.x.k+' moved from '+fmt(z.a,z.x.k)+' to '+fmt(z.b,z.x.k)+' ('+(z.p>=0?'+':'')+z.p.toFixed(1)+'%).'
+      : '<b>No clear favourable movement was identified.</b>';
+  }
+
+  if(/executive summary|summary|management/.test(ql)){
+    var s=moves[0];
+    return '<b>Executive summary</b><br>'+
+      (s ? '<b>'+s.x.k+'</b> shows the largest relative movement at '+(s.p>=0?'+':'')+s.p.toFixed(1)+'%.' : 'No dominant movement identified.')+
+      '<br>Review this movement alongside the related operational drivers.';
+  }
+
+  var gs=groups(rs);
+  if(/best|top|highest|performing|which/.test(ql) && gs.length){
+    var g=gs[0], metric=ms[0], bucket={};
+    rs.forEach(function(r){
+      var key=String(r[g.k]===undefined?'':r[g.k]);
+      var v=num(r[metric.k]);
+      if(key && isFinite(v)){
+        if(!bucket[key])bucket[key]={s:0,n:0};
+        bucket[key].s+=v; bucket[key].n++;
+      }
+    });
+    var rank=Object.keys(bucket).map(function(k){
+      return {k:k,v:bucket[k].s/bucket[k].n};
+    }).sort(function(a,b){return b.v-a.v;});
+    if(rank.length) return '<b>Best '+g.k+': '+rank[0].k+'</b><br>'+metric.k+' averages '+fmt(rank[0].v,metric.k)+' for this group.';
+  }
+
+  return '<b>I can analyse the current file.</b><br>Try “What changed?”, “What is going well?”, “Give me an executive summary”, “Which region is best?”, or name a KPI.';
+}
+
+function show(q){
+  var o=document.getElementById('ai48Answer');
+  var i=document.getElementById('ai48Input');
+  if(!o) return;
+  q=String(q!==undefined?q:(i?i.value:'')).trim();
+  o.classList.add('show');
+  o.classList.remove('busy');
+  if(!q){
+    o.innerHTML='<b>Please type a question.</b><br>For example: “What changed?”';
+    return;
+  }
+  try{
+    o.innerHTML=answer(q)+'<div class="ai48-evidence">Based only on the currently loaded dataset.</div>';
+  }catch(e){
+    o.innerHTML='<b>Ask Me could not analyse this question.</b><br>Please try “What changed?” or “Give me an executive summary”.';
+  }
+}
+
+window.__instantDashAskMeAnswer=show;
+window.__instantDashAskMeFinal177=show;
+
+function wire(){
+  var p=document.getElementById('askExecutive48');
+  if(!p)return;
+  var i=document.getElementById('ai48Input');
+  var b=document.getElementById('ai48Ask');
+  if(i && !i.dataset.v177){
+    i.dataset.v177='1';
+    i.addEventListener('keydown',function(e){
+      if(e.key==='Enter'){e.preventDefault();show(i.value);}
+    });
+  }
+  if(b && !b.dataset.v177){
+    b.dataset.v177='1';
+    b.disabled=false;
+    b.removeAttribute('disabled');
+    b.addEventListener('click',function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      show(i?i.value:'');
+    });
+  }
+  p.querySelectorAll('.ai48-q').forEach(function(qb){
+    if(qb.dataset.v177)return;
+    qb.dataset.v177='1';
+    qb.addEventListener('click',function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      if(i)i.value=qb.textContent.trim();
+      show(qb.textContent.trim());
+    });
+  });
+}
+wire();
+document.addEventListener('DOMContentLoaded',wire);
+window.addEventListener('load',function(){setTimeout(wire,100);setTimeout(wire,500);});
+setInterval(wire,500);
 })();
 </script>
 
