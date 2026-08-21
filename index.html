@@ -13693,4 +13693,137 @@ if(!window.__instantDashRobustChartTouch){
 }
 })();
 </script>
+
+<script id="instantdash-v182-universal-chart-touch">
+(function(){
+'use strict';
+
+/* v18.2: universal iPhone chart touch layer.
+   Do not depend on event.target being the bar. Resolve the nearest plotted
+   data element from the actual finger coordinates across every SVG chart. */
+
+function Unearest(x,y){
+  var all=Array.prototype.slice.call(document.querySelectorAll('[data-fallback]'));
+  var best=null,bestD=Infinity;
+  all.forEach(function(el){
+    if(!el.getBoundingClientRect)return;
+    var r=el.getBoundingClientRect();
+    if(!r.width&&!r.height)return;
+    var px=Math.max(r.left,Math.min(x,r.right));
+    var py=Math.max(r.top,Math.min(y,r.bottom));
+    var d=Math.hypot(px-x,py-y);
+    if(d<bestD){bestD=d;best=el}
+  });
+  return bestD<=80?best:null;
+}
+function Uparse(el){
+  var t=el&&el.querySelector?el.querySelector('title'):null;
+  var s=t?String(t.textContent||''):'';
+  var p=s.split('·').map(function(x){return x.trim()});
+  var value=NaN,measure='',label=s||'Selected';
+  if(p.length>=3){
+    measure=p[0];label=p[1];
+    value=Number(p.slice(2).join('·').replace(/[₹$€£¥₩₽,\s%]/g,''));
+  }else if(p.length===2){
+    label=p[0];
+    value=Number(p[1].replace(/[₹$€£¥₩₽,\s%]/g,''));
+  }
+  return {measure:measure,label:label,value:isFinite(value)?value:NaN};
+}
+function Ushow(el){
+  if(!el)return;
+  var q=String(el.getAttribute('data-fallback')||'0:0').split(':');
+  var si=Number(q[0]||0),i=Number(q[1]||0),p=Uparse(el);
+  var param=document.getElementById('smartParam'+(si+1))||document.getElementById('smartParam1');
+  var measure=(param&&param.value)||p.measure||'Selected KPI';
+  var groupEl=document.getElementById('smartGroupBy');
+  var group=(groupEl&&groupEl.value)||'';
+  var detail=document.getElementById('smartChartDetail');
+  if(!detail){
+    detail=document.createElement('div');
+    detail.id='smartChartDetail';
+    detail.className='smart-detail';
+    var host=document.getElementById('smartChartCanvas');
+    if(host)host.parentNode.appendChild(detail);
+  }
+  var value=p.value;
+  detail.style.display='block';
+  detail.classList.add('show');
+  detail.innerHTML=
+    '<div style="font-size:18px;font-weight:900">📊 '+String(measure).replace(/[&<>]/g,'')+'</div>'+
+    '<div style="margin-top:5px;font-weight:700">'+String(p.label).replace(/[&<>]/g,'')+'</div>'+
+    '<div style="font-size:28px;font-weight:900;margin:6px 0 10px">'+
+      (isFinite(value)?Number(value).toLocaleString('en-IN',{maximumFractionDigits:2}):'Figure unavailable')+
+    '</div>'+
+    '<div id="u-chart-analysis">Analysing the selected figure…</div>'+
+    '<button id="u-chart-speak" type="button" style="display:block;width:100%;margin-top:12px;padding:13px;border:0;border-radius:12px;background:#F5B301;color:#111;font-weight:900;font-size:15px">🔊 Speak explanation</button>';
+
+  var speakText='The selected '+measure+' for '+p.label+' is '+(isFinite(value)?Number(value).toLocaleString('en-IN',{maximumFractionDigits:2}):'not available')+'. ';
+  if(typeof window.__instantDashChartExplainDirect==='function'&&isFinite(value)){
+    try{
+      window.__instantDashChartExplainDirect(measure,group,p.label,value,'average',detail);
+      var visible=detail.innerText||'';
+      speakText=visible.replace(/Speak explanation/gi,'').replace(/\s+/g,' ').trim();
+    }catch(_){}
+  }else{
+    var a=document.getElementById('u-chart-analysis');
+    if(a)a.innerHTML='The current data does not provide enough evidence to establish a specific reason for this variation.';
+  }
+
+  /* Always restore our speech button because the analytical renderer may replace
+     the detail contents with its own button. */
+  var b=document.createElement('button');
+  b.type='button';
+  b.id='u-chart-speak-final';
+  b.textContent='🔊 Speak explanation';
+  b.style.cssText='display:block;width:100%;margin-top:12px;padding:13px;border:0;border-radius:12px;background:#F5B301;color:#111;font-weight:900;font-size:15px';
+  detail.appendChild(b);
+
+  b.addEventListener('click',function(ev){
+    ev.preventDefault();ev.stopPropagation();
+    var text=speakText||('The selected value is '+value+'.');
+    if(!('speechSynthesis' in window)){
+      b.textContent='🔇 Speech not supported in this viewer';
+      return;
+    }
+    try{
+      window.speechSynthesis.cancel();
+      var u=new SpeechSynthesisUtterance(text);
+      u.lang='en-IN';u.rate=.9;u.pitch=1;u.volume=1;
+      u.onstart=function(){b.textContent='🔊 Speaking…';};
+      u.onend=function(){b.textContent='🔊 Speak explanation';};
+      u.onerror=function(){b.textContent='🔊 Tap to speak again';};
+      window.speechSynthesis.speak(u);
+    }catch(err){b.textContent='🔊 Tap to speak again';}
+  },false);
+
+  try{detail.scrollIntoView({behavior:'smooth',block:'nearest'})}catch(_){}
+}
+function Uevent(e){
+  var x,y;
+  if(e.touches&&e.touches.length){x=e.touches[0].clientX;y=e.touches[0].clientY}
+  else{x=e.clientX;y=e.clientY}
+  if(!isFinite(x)||!isFinite(y))return;
+  var el=Unearest(x,y);
+  if(!el)return;
+  Ushow(el);
+  if(e.type==='touchend')e.preventDefault();
+}
+if(!window.__instantDashUniversalTouch182){
+  window.__instantDashUniversalTouch182=1;
+  document.addEventListener('touchend',Uevent,{capture:true,passive:false});
+  document.addEventListener('pointerup',function(e){
+    if(e.pointerType==='touch'||e.pointerType==='pen')Uevent(e);
+  },true);
+  document.addEventListener('click',function(e){
+    var el=e.target&&e.target.closest?e.target.closest('[data-fallback]'):null;
+    if(el)Ushow(el);
+  },true);
+}
+/* Prevent the chart itself from being interpreted as a scroll gesture. */
+var st=document.createElement('style');
+st.textContent='#smartChartCanvas,.smart-svg-wrap,.ai-chart-svg-host,.id-chart-visual{touch-action:manipulation!important;-webkit-user-select:none;user-select:none} [data-fallback]{touch-action:manipulation!important}';
+document.head.appendChild(st);
+})();
+</script>
 </body></html>
