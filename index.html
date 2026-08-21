@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v17.8 TOUCH + VOICE","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">\n
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v17.7 FINAL","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">\n
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
@@ -1204,7 +1204,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v17.8 TOUCH + VOICE">
+<meta name="instantdash-build" content="v17.7 FINAL">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2059,7 +2059,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v17.8 MASTER';
+      s.textContent='v17.7 MASTER';
       b.appendChild(s);
     }
   }
@@ -2085,8 +2085,8 @@ body{
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v17.8 TOUCH + VOICE</span>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v17.8 MASTER</span></div>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v17.7 FINAL</span>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v17.7 MASTER</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
   <div class="spacer"></div>
@@ -2610,7 +2610,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v17.8',
+  VERSION: 'v17.7',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -12589,7 +12589,7 @@ setInterval(fix,700);
   function snapshot(){
     var a=window.APP||window.__INSTANTDASH_APP__||{};
     return {
-      version:'v17.8 TOUCH + VOICE',
+      version:'v17.7 FINAL',
       fileName:a.fileName||'InstantDash Dashboard',
       rows:Array.isArray(a.rows)?a.rows:[],
       columns:Array.isArray(a.columns)?a.columns:[],
@@ -12825,7 +12825,7 @@ window.addEventListener('load',function(){
 'use strict';
 
 /*
- v17.8 TOUCH + VOICE Ask Me engine.
+ v17.7 FINAL Ask Me engine.
  This is deliberately self-contained. It does not depend on any of the
  older Ask-Me IIFEs, Advanced AI renderers, category helpers, or cached
  functions. It reads the current APP object directly and writes to the
@@ -13021,311 +13021,6 @@ wire();
 document.addEventListener('DOMContentLoaded',wire);
 window.addEventListener('load',function(){setTimeout(wire,100);setTimeout(wire,500);});
 setInterval(wire,500);
-})();
-</script>
-
-
-
-<!-- ================================================================
-     InstantDash v17.8 — TOUCH + VOICE INTELLIGENCE
-     Additive patch only. Existing dashboard, charts, Share and Ask AI
-     logic remain intact. This layer adds:
-       1) Touch any chart -> exact figure + data-based variation insight
-       2) Automatic speech of the touched chart insight + replay button
-       3) Voice question input for Ask Executive AI where browser supports it
-       4) Speak/replay of Ask Executive AI answers
-     ================================================================ -->
-<style id="instantdash-v178-touch-voice-css">
-  .id178-touch-detail{
-    margin:8px 3px 0;padding:10px 12px;border:1px solid var(--border);
-    border-radius:11px;background:var(--card-2);color:var(--text);
-    font-size:11px;line-height:1.5;display:none;overflow-wrap:anywhere;
-  }
-  .id178-touch-detail.show{display:block}
-  .id178-touch-detail b{font-weight:800}
-  .id178-touch-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:7px}
-  .id178-speak-btn,.id178-stop-btn,.id178-mic-btn{
-    appearance:none;-webkit-appearance:none;border:1px solid var(--border);
-    background:var(--card);color:var(--text);border-radius:9px;padding:7px 10px;
-    font:700 11px/1 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-    cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;
-  }
-  .id178-speak-btn{background:var(--accent);color:#111;border-color:var(--accent)}
-  .id178-mic-btn.listening{background:#e2582b;color:#fff;border-color:#e2582b}
-  .id178-voice-status{font-size:10px;color:var(--muted);margin-top:5px;min-height:14px}
-  #askExecutive48 .id178-ask-tools{display:flex;gap:8px;width:100%;align-items:stretch}
-  #askExecutive48 .id178-ask-tools .ai48-input{flex:1;min-width:0}
-  #askExecutive48 .id178-mic-btn{flex:0 0 auto;min-width:52px;font-size:17px;padding:7px 12px}
-  #askExecutive48 .id178-answer-tools{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
-  #askExecutive48 .id178-answer-tools button{min-height:38px}
-  @media(max-width:600px){
-    #askExecutive48 .id178-ask-tools{display:grid;grid-template-columns:1fr auto;gap:7px}
-    #askExecutive48 .id178-mic-btn{min-width:54px}
-  }
-</style>
-<script id="instantdash-v178-touch-voice-js">
-(function(){
-  'use strict';
-  if(window.__instantDashV178TouchVoice)return;
-  window.__instantDashV178TouchVoice=true;
-
-  var speaking=false, recognition=null, listening=false;
-
-  function txt(v){return String(v==null?'':v);}
-  function clean(v){return txt(v).replace(/<[^>]*>/g,' ').replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/\s+/g,' ').trim();}
-  function app(){return window.__INSTANTDASH_APP__||window.APP||{};}
-  function num(v){
-    if(typeof v==='number'&&isFinite(v))return v;
-    if(v===null||v===undefined||txt(v).trim()==='')return NaN;
-    var n=Number(txt(v).replace(/[₹$€£¥₩₽,%\s]/g,'').replace(/,/g,''));
-    return isFinite(n)?n:NaN;
-  }
-  function fmt(v,field){
-    try{if(typeof window.fmtByField==='function')return window.fmtByField(v,field);}catch(e){}
-    return isFinite(v)?Number(v).toLocaleString(undefined,{maximumFractionDigits:2}):'—';
-  }
-  function escHtml(s){return txt(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
-
-  function speak(text){
-    text=clean(text);
-    if(!text)return;
-    if(!('speechSynthesis' in window))return;
-    try{
-      window.speechSynthesis.cancel();
-      var u=new SpeechSynthesisUtterance(text);
-      u.rate=0.92;u.pitch=1;u.volume=1;
-      var voices=window.speechSynthesis.getVoices();
-      var preferred=voices.find(function(v){return /^en-IN$/i.test(v.lang);})||voices.find(function(v){return /^en/i.test(v.lang);});
-      if(preferred)u.voice=preferred;
-      u.onstart=function(){speaking=true;};
-      u.onend=function(){speaking=false;};
-      u.onerror=function(){speaking=false;};
-      window.speechSynthesis.speak(u);
-    }catch(e){console.warn('InstantDash speech:',e);}
-  }
-  window.__instantDashSpeak=function(text){speak(text);};
-  function stopSpeak(){try{window.speechSynthesis.cancel();}catch(e){}speaking=false;}
-
-  function ensureDetail(card){
-    if(!card)return null;
-    var d=card.querySelector('.id178-touch-detail');
-    if(!d){
-      d=document.createElement('div');d.className='id178-touch-detail';
-      var anchor=card.querySelector('.chart-note,.ai-chart-foot,.ai-chart-wrap');
-      if(anchor&&anchor.parentNode)anchor.parentNode.insertBefore(d,anchor.nextSibling);
-      else card.appendChild(d);
-    }
-    return d;
-  }
-  function setDetail(card,html,speech){
-    var d=ensureDetail(card);if(!d)return;
-    d.innerHTML=html+'<div class="id178-touch-actions"><button type="button" class="id178-speak-btn">🔊 Speak</button><button type="button" class="id178-stop-btn">■ Stop</button></div>';
-    d.classList.add('show');
-    var sb=d.querySelector('.id178-speak-btn'),st=d.querySelector('.id178-stop-btn');
-    if(sb)sb.onclick=function(e){e.preventDefault();e.stopPropagation();speak(speech);};
-    if(st)st.onclick=function(e){e.preventDefault();e.stopPropagation();stopSpeak();};
-    speak(speech);
-  }
-
-  function relatedSignal(spec,label,selectedValue){
-    var a=app(),rows=Array.isArray(a.filtered)?a.filtered:(Array.isArray(a.rows)?a.rows:[]);
-    if(!rows.length)return '';
-    var group=spec && (spec.x||spec.group);
-    if(!group)return '';
-    var candidates=(Array.isArray(a.columns)?a.columns:[]).map(function(c){return c&&c.name?String(c.name):''}).filter(Boolean);
-    var measure=spec && (spec.y||spec.value||spec.measure||spec.x);
-    var out=[];
-    candidates.forEach(function(k){
-      if(k===measure||k===group)return;
-      var vals=rows.map(function(r){return num(r&&r[k]);}).filter(isFinite);
-      if(vals.length<3)return;
-      var same=rows.filter(function(r){return txt(r&&r[group])===txt(label);}).map(function(r){return num(r&&r[k]);}).filter(isFinite);
-      if(!same.length)return;
-      var avg=vals.reduce(function(x,y){return x+y;},0)/vals.length;
-      var gavg=same.reduce(function(x,y){return x+y;},0)/same.length;
-      if(!isFinite(avg)||Math.abs(avg)<1e-12)return;
-      var pct=(gavg-avg)/Math.abs(avg)*100;
-      if(Math.abs(pct)>=15)out.push({k:k,p:pct,v:gavg});
-    });
-    out.sort(function(x,y){return Math.abs(y.p)-Math.abs(x.p);});
-    if(!out.length)return '';
-    var x=out[0];
-    return '<b>Related data signal:</b> '+escHtml(x.k)+' is '+(x.p>=0?'above':'below')+' the overall average for this group by '+Math.abs(x.p).toFixed(1)+'%. This is a signal to investigate, not proof of causation.';
-  }
-
-  function chartInsight(chart,element,card){
-    var data=chart.data||{}, labels=data.labels||[], idx=element.index, dsIdx=element.datasetIndex||0;
-    var ds=(data.datasets||[])[dsIdx]||{};
-    var raw=ds.data?ds.data[idx]:null;
-    var label=labels[idx]!==undefined?labels[idx]:('Point '+(idx+1));
-    var field=(ds.label||'Value');
-    var value;
-    if(raw && typeof raw==='object' && raw.y!==undefined)value=num(raw.y);
-    else value=num(raw);
-    var parts='<b>'+escHtml(field)+'</b> · <b>'+escHtml(label)+'</b> · <b>'+escHtml(fmt(value,field))+'</b>';
-    var speech=field+' for '+label+' is '+fmt(value,field)+'. ';
-    if(idx>0 && Array.isArray(ds.data)){
-      var prev=num(ds.data[idx-1]);
-      if(isFinite(prev)&&isFinite(value)){
-        var ch=value-prev,pct=Math.abs(prev)>1e-12?(ch/Math.abs(prev))*100:0;
-        parts+='<br><b>Variation:</b> '+(ch>=0?'up ':'down ')+escHtml(fmt(Math.abs(ch),field))+' ('+(ch>=0?'+':'')+pct.toFixed(1)+'%) versus '+escHtml(labels[idx-1]!==undefined?labels[idx-1]:'previous point')+'.';
-        speech+='It is '+(ch>=0?'up ':'down ')+fmt(Math.abs(ch),field)+' or '+(ch>=0?'+':'')+pct.toFixed(1)+' percent versus the previous point. ';
-      }
-    }
-    var vals=(ds.data||[]).map(num).filter(isFinite);
-    if(vals.length){
-      var max=Math.max.apply(null,vals),min=Math.min.apply(null,vals);
-      if(value===max)parts+='<br><b>Position:</b> Highest point in this series.';
-      else if(value===min)parts+='<br><b>Position:</b> Lowest point in this series.';
-      speech+=(value===max?'It is the highest point in this series. ':value===min?'It is the lowest point in this series. ':'');
-    }
-    var spec=chart.__instantDashSpec||{};
-    if(!spec.x&&!spec.group){
-      try{
-        var sels=card.querySelectorAll('.chart-tools select');
-        if(sels.length){spec.x=sels[1]?sels[1].value:''; spec.y=sels[2]?sels[2].value:'';}
-      }catch(_spec){}
-    }
-    var signal=relatedSignal(spec,label,value);
-    if(signal){parts+='<br>'+signal;speech+=clean(signal.replace(/<[^>]*>/g,' '))+' ';}
-    else{parts+='<br><b>Reason check:</b> The loaded data shows the variation, but it does not establish a cause.';speech+='The loaded data shows the variation, but it does not establish a cause.';}
-    return {html:parts,speech:speech};
-  }
-
-  function bindMainCanvas(canvas){
-    if(!canvas||canvas.dataset.v178Touch)return;
-    canvas.dataset.v178Touch='1';
-    canvas.style.touchAction='manipulation';
-    canvas.addEventListener('click',function(e){
-      try{
-        if(typeof Chart==='undefined'||!Chart.getChart)return;
-        var chart=Chart.getChart(canvas);if(!chart)return;
-        var active=chart.getElementsAtEventForMode(e,'nearest',{intersect:true},true);
-        if(!active||!active.length)return;
-        var card=canvas.closest('.chart-card');if(!card)return;
-        var info=chartInsight(chart,active[0],card);
-        setDetail(card,info.html,info.speech);
-      }catch(err){console.warn('InstantDash chart touch:',err);}
-    },{passive:true});
-  }
-
-  function bindAIChart(wrap){
-    var svg=wrap&&wrap.querySelector('svg');if(!svg||svg.dataset.v178Touch)return;
-    svg.dataset.v178Touch='1';svg.style.touchAction='manipulation';
-    svg.addEventListener('click',function(e){
-      try{
-        var t=e.target && e.target.closest ? e.target.closest('circle,path,rect') : null;
-        if(!t||t===svg)return;
-        var title=t.querySelector('title');
-        var raw=title?clean(title.textContent):'';
-        if(!raw)return;
-        var card=svg.closest('.ai-chart-card');if(!card)return;
-        var spec={};
-        try{spec=JSON.parse(card.getAttribute('data-v178-spec')||'{}');}catch(_){ }
-        var detail=card.querySelector('.ai-chart-touch-detail');
-        var text=raw;
-        var parts=raw.split('·'),label=(parts[0]||'Selected').trim(),value=(parts.slice(1).join('·')||'').trim();
-        var speech=(card.querySelector('h4')?clean(card.querySelector('h4').textContent):'Chart')+' — '+label+' is '+value+'. ';
-        var titleNodes=Array.prototype.slice.call(svg.querySelectorAll('title'));
-        var parsed=titleNodes.map(function(n){var q=clean(n.textContent).split('·');return {label:(q[0]||'').trim(),value:(q.slice(1).join('·')||'').trim()};}).filter(function(x){return x.label&&x.value;});
-        var labels=parsed.map(function(x){return x.label;}), vals=parsed.map(function(x){return num(x.value);}), idx=labels.indexOf(label);
-        var data=spec.data||{};
-        if(!labels.length){labels=data.labels||[];vals=(data.values||[]).map(num);idx=labels.map(String).indexOf(label);}
-        if(idx>0&&isFinite(vals[idx])&&isFinite(vals[idx-1])){
-          var ch=vals[idx]-vals[idx-1],pct=Math.abs(vals[idx-1])>1e-12?ch/Math.abs(vals[idx-1])*100:0;
-          text+='<br><b>Variation:</b> '+(ch>=0?'up ':'down ')+escHtml(fmt(Math.abs(ch),spec.measure))+' ('+(ch>=0?'+':'')+pct.toFixed(1)+'%) versus '+escHtml(labels[idx-1])+'.';
-          speech+='It is '+(ch>=0?'up ':'down ')+fmt(Math.abs(ch),spec.measure)+' or '+(ch>=0?'+':'')+pct.toFixed(1)+' percent versus '+labels[idx-1]+'. ';
-        }
-        var signal=relatedSignal(spec,label,idx>=0?vals[idx]:NaN);
-        if(signal){text+='<br>'+signal;speech+=clean(signal.replace(/<[^>]*>/g,' '));}
-        else{text+='<br><b>Reason check:</b> The loaded data shows the variation, but it does not establish a cause.';speech+='The loaded data shows the variation, but it does not establish a cause.';}
-        if(detail){detail.innerHTML='<b>'+escHtml(text.split('<br>')[0].replace(/<[^>]+>/g,''))+'</b><br>'+text.split('<br>').slice(1).join('<br>');}
-        setDetail(card,text,speech);
-      }catch(err){console.warn('InstantDash AI chart touch:',err);}
-    },{passive:true});
-  }
-
-  function scanCharts(){
-    document.querySelectorAll('.chart-card canvas').forEach(bindMainCanvas);
-    document.querySelectorAll('.ai-chart-wrap').forEach(function(w){bindAIChart(w);});
-  }
-
-  function installVoice(){
-    var p=document.getElementById('askExecutive48');if(!p)return;
-    var input=document.getElementById('ai48Input');if(!input)return;
-    var row=input.parentElement;if(!row)return;
-    if(!row.querySelector('.id178-ask-tools')){
-      var tools=document.createElement('div');tools.className='id178-ask-tools';
-      input.parentNode.insertBefore(tools,input);tools.appendChild(input);
-      var mic=document.createElement('button');mic.type='button';mic.className='id178-mic-btn';mic.textContent='🎙️';mic.title='Speak your question';mic.setAttribute('aria-label','Speak your question');tools.appendChild(mic);
-      mic.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();startListening(mic,input);},true);
-    }
-    var out=document.getElementById('ai48Answer');if(out && !out.parentNode.querySelector('.id178-answer-tools')){
-      var tools2=document.createElement('div');tools2.className='id178-answer-tools';
-      var speakBtn=document.createElement('button');speakBtn.type='button';speakBtn.className='id178-speak-btn';speakBtn.textContent='🔊 Speak answer';
-      var stopBtn=document.createElement('button');stopBtn.type='button';stopBtn.className='id178-stop-btn';stopBtn.textContent='■ Stop';
-      var status=document.createElement('div');status.className='id178-voice-status';status.id='id178VoiceStatus';
-      tools2.appendChild(speakBtn);tools2.appendChild(stopBtn);out.parentNode.insertBefore(tools2,out.nextSibling);out.parentNode.insertBefore(status,tools2.nextSibling);
-      speakBtn.addEventListener('click',function(){speak(clean(out.innerText||out.textContent||''));});
-      stopBtn.addEventListener('click',stopSpeak);
-    }
-  }
-
-  function startListening(btn,input){
-    var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-    var status=document.getElementById('id178VoiceStatus');
-    if(!SR){
-      if(status)status.textContent='Voice input is not available in this browser. Use the iPhone keyboard microphone.';
-      try{input.focus();}catch(e){}
-      return;
-    }
-    if(listening){try{recognition.stop();}catch(e){}return;}
-    try{
-      recognition=new SR();recognition.lang='en-IN';recognition.interimResults=true;recognition.continuous=false;recognition.maxAlternatives=1;
-      listening=true;btn.classList.add('listening');btn.textContent='⏹️';
-      if(status)status.textContent='Listening… speak your question.';
-      recognition.onresult=function(ev){
-        var finalText='';
-        for(var i=ev.resultIndex;i<ev.results.length;i++)finalText+=ev.results[i][0].transcript;
-        input.value=finalText.trim();
-        if(ev.results[ev.results.length-1].isFinal){
-          if(status)status.textContent='Question captured. Analysing…';
-          setTimeout(function(){var ask=document.getElementById('ai48Ask');if(ask)ask.click();},120);
-        }
-      };
-      recognition.onerror=function(ev){
-        if(status)status.textContent='Voice input stopped: '+(ev.error||'browser permission or support issue')+'.';
-        listening=false;btn.classList.remove('listening');btn.textContent='🎙️';
-      };
-      recognition.onend=function(){
-        listening=false;btn.classList.remove('listening');btn.textContent='🎙️';
-      };
-      recognition.start();
-    }catch(e){
-      listening=false;btn.classList.remove('listening');btn.textContent='🎙️';
-      if(status)status.textContent='Could not start voice input. Check microphone permission.';
-    }
-  }
-
-  function captureSpecForAI(){
-    document.querySelectorAll('.ai-chart-card').forEach(function(card){
-      if(card.getAttribute('data-v178-spec'))return;
-      try{
-        var title=card.querySelector('h4'), sub=card.querySelector('.ai-chart-sub');
-        var text=(title?title.textContent:'')+' '+(sub?sub.textContent:'');
-        var m=text.match(/(?:total chart for|grouped by)\s+(.+?)(?:\.|$)/i);
-        card.setAttribute('data-v178-spec',JSON.stringify({measure:title?title.textContent:'',group:'',data:{labels:[],values:[]}}));
-      }catch(e){}
-    });
-  }
-
-  function wire(){
-    scanCharts();installVoice();captureSpecForAI();
-  }
-  document.addEventListener('click',function(){setTimeout(wire,30);},true);
-  document.addEventListener('DOMContentLoaded',wire);
-  window.addEventListener('load',function(){setTimeout(wire,300);setTimeout(wire,1200);setTimeout(wire,2500);});
-  setInterval(wire,900);
 })();
 </script>
 
