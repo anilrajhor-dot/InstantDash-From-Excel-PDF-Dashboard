@@ -13223,4 +13223,145 @@ setInterval(wire,700);
 })();
 </script>
 
+
+<script id="instantdash-v180-chart-explain-speak">
+(function(){
+'use strict';
+/* v18.0 — Chart touch intelligence.
+   Touching a chart point/bar now explains the variation from the live dataset
+   and can read the explanation aloud. No chart drawing logic is replaced. */
+
+function IDapp(){return window.__INSTANTDASH_APP__||window.APP||{}}
+function IDrows(){var a=IDapp();return Array.isArray(a.filtered)&&a.filtered.length?a.filtered:(Array.isArray(a.rows)?a.rows:[])}
+function IDnum(v){if(typeof v==='number'&&isFinite(v))return v;if(v==null||String(v).trim()==='')return NaN;var n=Number(String(v).replace(/[₹$€£¥₩₽%\s,]/g,''));return isFinite(n)?n:NaN}
+function IDclean(s){return String(s==null?'':s).toLowerCase().replace(/[_\-\/]+/g,' ').replace(/[^\w\s]/g,' ').replace(/\s+/g,' ').trim()}
+function IDnice(s){return String(s==null?'':s).replace(/[_\-]+/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase()})}
+function IDfmt(v){if(!isFinite(v))return '—';return Number(v).toLocaleString('en-IN',{maximumFractionDigits:2})}
+function IDmean(a){return a.length?a.reduce(function(x,y){return x+y},0)/a.length:NaN}
+function IDpearson(a,b){
+ if(a.length!==b.length||a.length<4)return NaN;
+ var aa=IDmean(a),bb=IDmean(b),n=0,d1=0,d2=0;
+ for(var i=0;i<a.length;i++){var x=a[i]-aa,y=b[i]-bb;n+=x*y;d1+=x*x;d2+=y*y}
+ return d1&&d2?n/Math.sqrt(d1*d2):NaN;
+}
+function IDdirection(k){
+ var s=IDclean(k);
+ if(/cost|expense|error|complaint|drop.?out|dropout|absence|overdue|npa|defect|delay|backlog|loss|risk|attrition|rejection/.test(s))return'lower';
+ if(/transaction|sales|revenue|income|profit|completion|attendance|productivity|recovery|collection|quality|output|efficien|growth|enrol|enrollment|conversion/.test(s))return'higher';
+ return'neutral';
+}
+function IDgroupRows(rows,g,label){
+ return rows.filter(function(r){return String(r[g]==null?'':r[g])===String(label==null?'':label)});
+}
+function IDaggregate(rows,k,agg){
+ var a=rows.map(function(r){return IDnum(r[k])}).filter(isFinite);
+ if(!a.length)return NaN;
+ if(String(agg||'').toLowerCase()==='avg'||String(agg||'').toLowerCase()==='average')return IDmean(a);
+ return a.reduce(function(x,y){return x+y},0);
+}
+function IDescape(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function IDspeak(text){
+ try{
+  if(!('speechSynthesis' in window)){alert('Speech is not supported by this browser.');return}
+  window.speechSynthesis.cancel();
+  var u=new SpeechSynthesisUtterance(String(text).replace(/<[^>]+>/g,' '));
+  u.lang='en-IN';u.rate=.95;u.pitch=1;
+  window.speechSynthesis.speak(u);
+ }catch(e){}
+}
+window.__instantDashSpeak=IDspeak;
+
+function IDexplain(measure,group,label,value,agg){
+ var rows=IDrows(), cleanRows=rows.filter(function(r){return r&&typeof r==='object'});
+ if(!cleanRows.length)return {html:'<b>Chart explanation</b><br>No live rows are available for explanation.',speech:'No live rows are available for explanation.'};
+ var groupRows=group?IDgroupRows(cleanRows,group,label):cleanRows;
+ var overall=IDaggregate(cleanRows,measure,agg), selected=IDaggregate(groupRows,measure,agg);
+ if(!isFinite(selected))selected=Number(value);
+ var dir=IDdirection(measure), pct=isFinite(overall)&&overall!==0?((selected-overall)/Math.abs(overall))*100:NaN;
+ var verdict='';
+ if(isFinite(pct)){
+   if(Math.abs(pct)<3)verdict='is broadly in line with the overall level';
+   else verdict=(pct>0?'is above':'is below')+' the overall level by '+Math.abs(pct).toFixed(1)+'%';
+ }
+ var signals=[];
+ if(group){
+   var groups={};cleanRows.forEach(function(r){var g=String(r[group]==null?'':r[group]);if(!g)return;(groups[g]||(groups[g]=[])).push(r)});
+   var keys=Object.keys(cleanRows[0]).filter(function(k){return k!==measure&&k!==group});
+   keys.forEach(function(k){
+     var vals=[];
+     Object.keys(groups).forEach(function(g){var y=IDaggregate(groups[g],measure,agg),x=IDaggregate(groups[g],k,'avg');if(isFinite(x)&&isFinite(y))vals.push({x:x,y:y,g:g})});
+     if(vals.length>=4){
+       var r=IDpearson(vals.map(function(z){return z.x}),vals.map(function(z){return z.y}));
+       if(isFinite(r)&&Math.abs(r)>=.5){
+         var inGroup=IDaggregate(groupRows,k,'avg'),all=IDaggregate(cleanRows,k,'avg');
+         if(isFinite(inGroup)&&isFinite(all)&&all!==0){
+           var dp=((inGroup-all)/Math.abs(all))*100;
+           signals.push({k:k,r:r,dp:dp});
+         }
+       }
+     }
+   });
+ }
+ signals.sort(function(a,b){return Math.abs(b.r)-Math.abs(a.r)});
+ var adverse=(dir==='higher'&&isFinite(pct)&&pct<0)||(dir==='lower'&&isFinite(pct)&&pct>0);
+ var html='<b>Why is '+IDnice(measure)+' varying here?</b><br>';
+ html+='<b>'+IDnice(group||'Selected')+': '+IDescape(label)+'</b> — '+IDfmt(selected);
+ if(verdict)html+='<br>This '+IDnice(measure)+' '+verdict+'.';
+ if(adverse)html+='<br><b>Management signal:</b> this movement is adverse for a '+(dir==='higher'?'higher-is-better':'lower-is-better')+' KPI.';
+ if(signals.length){
+   html+='<br><br><b>Possible contributing signals:</b><br>';
+   html+=signals.slice(0,3).map(function(s){
+     var relation=s.r>0?'moves in the same direction':'moves in the opposite direction';
+     return '• <b>'+IDnice(s.k)+'</b> '+relation+' with '+IDnice(measure)+' across groups (correlation '+s.r.toFixed(2)+')'+
+       (isFinite(s.dp)?'; selected group is '+(s.dp>=0?'+':'')+s.dp.toFixed(1)+'% versus overall average.':'')+'.';
+   }).join('<br>');
+   html+='<br><small>These are relationships to investigate, not proof of causation.</small>';
+ }else{
+   html+='<br><br><b>Reason evidence:</b> the current dataset does not show a strong enough related numeric signal to identify a likely driver.';
+ }
+ html+='<div class="id-chart-explain-actions"><button type="button" class="id-chart-speak">🔊 Speak explanation</button></div>';
+ var speech='For '+IDnice(group||'the selected chart')+' '+label+', '+IDnice(measure)+' is '+IDfmt(selected)+'. ';
+ if(verdict)speech+='It '+verdict+'. ';
+ if(adverse)speech+='This is an adverse movement for this KPI. ';
+ if(signals.length)speech+='Possible contributing signals are '+signals.slice(0,2).map(function(s){return IDnice(s.k)}).join(' and ')+'. These are relationships to investigate, not proof of causation.';
+ else speech+='The available data does not establish a clear numeric driver.';
+ return {html:html,speech:speech};
+}
+
+function IDrenderDetail(container,measure,group,label,value,agg){
+ var x=IDexplain(measure,group,label,value,agg);
+ container.innerHTML=x.html;
+ var b=container.querySelector('.id-chart-speak');
+ if(b)b.onclick=function(e){e.preventDefault();e.stopPropagation();IDspeak(x.speech)};
+}
+function IDsmartHandler(e){
+ var hit=e.target&&e.target.closest?e.target.closest('[data-fallback]'):null;
+ if(!hit)return;
+ var parts=String(hit.getAttribute('data-fallback')||'').split(':'),si=Number(parts[0]||0),i=Number(parts[1]||0);
+ var groupEl=document.getElementById('smartGroupBy'), group=groupEl?groupEl.value:'';
+ var param=document.getElementById('smartParam'+(si+1));
+ if(!param||!param.value)param=document.getElementById('smartParam1');
+ var measure=param?param.value:'';
+ var rows=IDrows(), groups=[];
+ if(group){
+   var seen={};rows.forEach(function(r){var g=String(r[group]==null?'':r[group]);if(g&&!seen[g]){seen[g]=1;groups.push(g)}});
+ }
+ var label=groups[i]!==undefined?groups[i]:(hit.querySelector('title')?hit.querySelector('title').textContent:'Selected');
+ var value=IDnum((hit.querySelector('title')||{}).textContent||'');
+ var detail=document.getElementById('smartChartDetail');
+ var mObj=(window.__INSTANTDASH_APP__&&window.__INSTANTDASH_APP__.measures||[]).find(function(x){return x&&x.name===measure});
+ IDrenderDetail(detail,measure,group,label,value,mObj&&mObj.agg);
+}
+function IDbind(){
+ var smart=document.getElementById('smartChartCanvas');
+ if(smart&&!smart.dataset.v180Explain){
+   smart.dataset.v180Explain='1';
+   smart.addEventListener('click',IDsmartHandler,true);
+   smart.addEventListener('touchend',function(e){var h=e.target&&e.target.closest?e.target.closest('[data-fallback]'):null;if(h)IDsmartHandler(e)},true);
+ }
+}
+IDbind();document.addEventListener('DOMContentLoaded',IDbind);window.addEventListener('load',function(){setTimeout(IDbind,300)});
+setInterval(IDbind,1000);
+})();
+</script>
 </body></html>
