@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v17.8 TOUCH + VOICE","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">\n
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v17.7 FINAL","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">\n
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
@@ -1204,7 +1204,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v17.8 TOUCH + VOICE">
+<meta name="instantdash-build" content="v17.7 FINAL">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2059,7 +2059,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v17.8 MASTER';
+      s.textContent='v17.7 MASTER';
       b.appendChild(s);
     }
   }
@@ -2085,8 +2085,8 @@ body{
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v17.8 TOUCH + VOICE</span>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v17.8 MASTER</span></div>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v17.7 FINAL</span>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v17.7 MASTER</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
   <div class="spacer"></div>
@@ -2610,7 +2610,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v17.8',
+  VERSION: 'v17.7',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -9853,7 +9853,7 @@ function numericColumns(rs){
   if(!rs.length)return [];
   return Object.keys(rs[0]).map(function(k){
     var s=String(k).toLowerCase();
-    if(/account|a\/c|id$|(^|[\\s_-])id([\\s_-]|$)|code|pan|aadhaar|mobile|phone|reference|invoice|serial/i.test(s))return null;
+    if(/account|account\s*(no|number)|settlement\s*ac|settlement\s*account|a\/c|ac\s*no|acct\s*no|id$|(^|[\\s_-])id([\\s_-]|$)|code|pan|aadhaar|mobile|phone|reference|invoice|serial/i.test(s))return null;
     var vals=rs.map(function(r){return Number(String(r[k]).replace(/,/g,'').replace(/₹/g,''))}).filter(Number.isFinite);
     return vals.length>=Math.max(2,Math.ceil(rs.length*.5))?{k:k,v:vals}:null;
   }).filter(Boolean);
@@ -10065,7 +10065,7 @@ window.addEventListener('load',function(){setTimeout(mount,250);});
     if(!c) return false;
     var n=String(c.name||'');
     return c.role==='identifier' ||
-      /(^|[^a-z])(id|code|account|acct|serial|sno|sr\s*no|phone|mobile|email|pan|gst|aadhaar|pincode|key)([^a-z]|$)/i.test(n);
+      /(^|[^a-z])(id|identifier|code|account|acct|account no|account number|a\\/c|a\\/c no|ac no|acct no|settlement ac|settlement ac no|serial|sno|sr\\s*no|phone|mobile|email|pan|gst|aadhaar|pincode|key)([^a-z]|$)/i.test(n);
   }
 
   function num(v){
@@ -11201,7 +11201,7 @@ function keyText(k){
 
 function isIdentifier(k){
   var s=keyText(k);
-  return /(^| )(id|identifier|code|account|acct|serial|s no|sr no|phone|mobile|email|pan|gst|aadhaar|pincode|zip|key)( |$)/i.test(s);
+  return /(^| )(id|identifier|code|account|acct|account no|account number|a c|a c no|a\/c|a\/c no|ac no|acct no|settlement ac|settlement ac no|serial|s no|sr no|phone|mobile|email|pan|gst|aadhaar|pincode|zip|key)( |$)/i.test(s);
 }
 
 function isPeriodName(k){
@@ -12589,7 +12589,7 @@ setInterval(fix,700);
   function snapshot(){
     var a=window.APP||window.__INSTANTDASH_APP__||{};
     return {
-      version:'v17.8 TOUCH + VOICE',
+      version:'v17.7 FINAL',
       fileName:a.fileName||'InstantDash Dashboard',
       rows:Array.isArray(a.rows)?a.rows:[],
       columns:Array.isArray(a.columns)?a.columns:[],
@@ -12825,7 +12825,7 @@ window.addEventListener('load',function(){
 'use strict';
 
 /*
- v17.8 TOUCH + VOICE Ask Me engine.
+ v17.7 FINAL Ask Me engine.
  This is deliberately self-contained. It does not depend on any of the
  older Ask-Me IIFEs, Advanced AI renderers, category helpers, or cached
  functions. It reads the current APP object directly and writes to the
@@ -13025,457 +13025,86 @@ setInterval(wire,500);
 </script>
 
 
-
-<!-- ================================================================
-     InstantDash v17.8 — TOUCH + VOICE INTELLIGENCE
-     Additive patch only. Existing dashboard, charts, Share and Ask AI
-     logic remain intact. This layer adds:
-       1) Touch any chart -> exact figure + data-based variation insight
-       2) Automatic speech of the touched chart insight + replay button
-       3) Voice question input for Ask Executive AI where browser supports it
-       4) Speak/replay of Ask Executive AI answers
-     ================================================================ -->
-<style id="instantdash-v178-touch-voice-css">
-  .id178-touch-detail{
-    margin:8px 3px 0;padding:10px 12px;border:1px solid var(--border);
-    border-radius:11px;background:var(--card-2);color:var(--text);
-    font-size:11px;line-height:1.5;display:none;overflow-wrap:anywhere;
-  }
-  .id178-touch-detail.show{display:block}
-  .id178-touch-detail b{font-weight:800}
-  .id178-touch-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:7px}
-  .id178-speak-btn,.id178-stop-btn,.id178-mic-btn{
-    appearance:none;-webkit-appearance:none;border:1px solid var(--border);
-    background:var(--card);color:var(--text);border-radius:9px;padding:7px 10px;
-    font:700 11px/1 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-    cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;
-  }
-  .id178-speak-btn{background:var(--accent);color:#111;border-color:var(--accent)}
-  .id178-mic-btn.listening{background:#e2582b;color:#fff;border-color:#e2582b}
-  .id178-voice-status{font-size:10px;color:var(--muted);margin-top:5px;min-height:14px}
-  #askExecutive48 .id178-ask-tools{display:flex;gap:8px;width:100%;align-items:stretch}
-  #askExecutive48 .id178-ask-tools .ai48-input{flex:1;min-width:0}
-  #askExecutive48 .id178-mic-btn{flex:0 0 auto;min-width:52px;font-size:17px;padding:7px 12px}
-  #askExecutive48 .id178-answer-tools{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
-  #askExecutive48 .id178-answer-tools button{min-height:38px}
-  @media(max-width:600px){
-    #askExecutive48 .id178-ask-tools{display:grid;grid-template-columns:1fr auto;gap:7px}
-    #askExecutive48 .id178-mic-btn{min-width:54px}
-  }
-</style>
-<script id="instantdash-v178-touch-voice-js">
-(function(){
-  'use strict';
-  if(window.__instantDashV178TouchVoice)return;
-  window.__instantDashV178TouchVoice=true;
-
-  var speaking=false, recognition=null, listening=false;
-
-  function txt(v){return String(v==null?'':v);}
-  function clean(v){return txt(v).replace(/<[^>]*>/g,' ').replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/\s+/g,' ').trim();}
-  function app(){return window.__INSTANTDASH_APP__||window.APP||{};}
-  function num(v){
-    if(typeof v==='number'&&isFinite(v))return v;
-    if(v===null||v===undefined||txt(v).trim()==='')return NaN;
-    var n=Number(txt(v).replace(/[₹$€£¥₩₽,%\s]/g,'').replace(/,/g,''));
-    return isFinite(n)?n:NaN;
-  }
-  function fmt(v,field){
-    try{if(typeof window.fmtByField==='function')return window.fmtByField(v,field);}catch(e){}
-    return isFinite(v)?Number(v).toLocaleString(undefined,{maximumFractionDigits:2}):'—';
-  }
-  function escHtml(s){return txt(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
-
-  function speak(text){
-    text=clean(text);
-    if(!text)return;
-    if(!('speechSynthesis' in window))return;
-    try{
-      window.speechSynthesis.cancel();
-      var u=new SpeechSynthesisUtterance(text);
-      u.rate=0.92;u.pitch=1;u.volume=1;
-      var voices=window.speechSynthesis.getVoices();
-      var preferred=voices.find(function(v){return /^en-IN$/i.test(v.lang);})||voices.find(function(v){return /^en/i.test(v.lang);});
-      if(preferred)u.voice=preferred;
-      u.onstart=function(){speaking=true;};
-      u.onend=function(){speaking=false;};
-      u.onerror=function(){speaking=false;};
-      window.speechSynthesis.speak(u);
-    }catch(e){console.warn('InstantDash speech:',e);}
-  }
-  window.__instantDashSpeak=function(text){speak(text);};
-  function stopSpeak(){try{window.speechSynthesis.cancel();}catch(e){}speaking=false;}
-
-  function ensureDetail(card){
-    if(!card)return null;
-    var d=card.querySelector('.id178-touch-detail');
-    if(!d){
-      d=document.createElement('div');d.className='id178-touch-detail';
-      var anchor=card.querySelector('.chart-note,.ai-chart-foot,.ai-chart-wrap');
-      if(anchor&&anchor.parentNode)anchor.parentNode.insertBefore(d,anchor.nextSibling);
-      else card.appendChild(d);
-    }
-    return d;
-  }
-  function setDetail(card,html,speech){
-    var d=ensureDetail(card);if(!d)return;
-    d.innerHTML=html+'<div class="id178-touch-actions"><button type="button" class="id178-speak-btn">🔊 Speak</button><button type="button" class="id178-stop-btn">■ Stop</button></div>';
-    d.classList.add('show');
-    var sb=d.querySelector('.id178-speak-btn'),st=d.querySelector('.id178-stop-btn');
-    if(sb)sb.onclick=function(e){e.preventDefault();e.stopPropagation();speak(speech);};
-    if(st)st.onclick=function(e){e.preventDefault();e.stopPropagation();stopSpeak();};
-    speak(speech);
-  }
-
-  function relatedSignal(spec,label,selectedValue){
-    var a=app(),rows=Array.isArray(a.filtered)?a.filtered:(Array.isArray(a.rows)?a.rows:[]);
-    if(!rows.length)return '';
-    var group=spec && (spec.x||spec.group);
-    if(!group)return '';
-    var candidates=(Array.isArray(a.columns)?a.columns:[]).map(function(c){return c&&c.name?String(c.name):''}).filter(Boolean);
-    var measure=spec && (spec.y||spec.value||spec.measure||spec.x);
-    var out=[];
-    candidates.forEach(function(k){
-      if(k===measure||k===group)return;
-      var vals=rows.map(function(r){return num(r&&r[k]);}).filter(isFinite);
-      if(vals.length<3)return;
-      var same=rows.filter(function(r){return txt(r&&r[group])===txt(label);}).map(function(r){return num(r&&r[k]);}).filter(isFinite);
-      if(!same.length)return;
-      var avg=vals.reduce(function(x,y){return x+y;},0)/vals.length;
-      var gavg=same.reduce(function(x,y){return x+y;},0)/same.length;
-      if(!isFinite(avg)||Math.abs(avg)<1e-12)return;
-      var pct=(gavg-avg)/Math.abs(avg)*100;
-      if(Math.abs(pct)>=15)out.push({k:k,p:pct,v:gavg});
-    });
-    out.sort(function(x,y){return Math.abs(y.p)-Math.abs(x.p);});
-    if(!out.length)return '';
-    var x=out[0];
-    return '<b>Related data signal:</b> '+escHtml(x.k)+' is '+(x.p>=0?'above':'below')+' the overall average for this group by '+Math.abs(x.p).toFixed(1)+'%. This is a signal to investigate, not proof of causation.';
-  }
-
-  function chartInsight(chart,element,card){
-    var data=chart.data||{}, labels=data.labels||[], idx=element.index, dsIdx=element.datasetIndex||0;
-    var ds=(data.datasets||[])[dsIdx]||{};
-    var raw=ds.data?ds.data[idx]:null;
-    var label=labels[idx]!==undefined?labels[idx]:('Point '+(idx+1));
-    var field=(ds.label||'Value');
-    var value;
-    if(raw && typeof raw==='object' && raw.y!==undefined)value=num(raw.y);
-    else value=num(raw);
-    var parts='<b>'+escHtml(field)+'</b> · <b>'+escHtml(label)+'</b> · <b>'+escHtml(fmt(value,field))+'</b>';
-    var speech=field+' for '+label+' is '+fmt(value,field)+'. ';
-    if(idx>0 && Array.isArray(ds.data)){
-      var prev=num(ds.data[idx-1]);
-      if(isFinite(prev)&&isFinite(value)){
-        var ch=value-prev,pct=Math.abs(prev)>1e-12?(ch/Math.abs(prev))*100:0;
-        parts+='<br><b>Variation:</b> '+(ch>=0?'up ':'down ')+escHtml(fmt(Math.abs(ch),field))+' ('+(ch>=0?'+':'')+pct.toFixed(1)+'%) versus '+escHtml(labels[idx-1]!==undefined?labels[idx-1]:'previous point')+'.';
-        speech+='It is '+(ch>=0?'up ':'down ')+fmt(Math.abs(ch),field)+' or '+(ch>=0?'+':'')+pct.toFixed(1)+' percent versus the previous point. ';
-      }
-    }
-    var vals=(ds.data||[]).map(num).filter(isFinite);
-    if(vals.length){
-      var max=Math.max.apply(null,vals),min=Math.min.apply(null,vals);
-      if(value===max)parts+='<br><b>Position:</b> Highest point in this series.';
-      else if(value===min)parts+='<br><b>Position:</b> Lowest point in this series.';
-      speech+=(value===max?'It is the highest point in this series. ':value===min?'It is the lowest point in this series. ':'');
-    }
-    var spec=chart.__instantDashSpec||{};
-    if(!spec.x&&!spec.group){
-      try{
-        var sels=card.querySelectorAll('.chart-tools select');
-        if(sels.length){spec.x=sels[1]?sels[1].value:''; spec.y=sels[2]?sels[2].value:'';}
-      }catch(_spec){}
-    }
-    var signal=relatedSignal(spec,label,value);
-    if(signal){parts+='<br>'+signal;speech+=clean(signal.replace(/<[^>]*>/g,' '))+' ';}
-    else{parts+='<br><b>Reason check:</b> The loaded data shows the variation, but it does not establish a cause.';speech+='The loaded data shows the variation, but it does not establish a cause.';}
-    return {html:parts,speech:speech};
-  }
-
-  function bindMainCanvas(canvas){
-    if(!canvas||canvas.dataset.v178Touch)return;
-    canvas.dataset.v178Touch='1';
-    canvas.style.touchAction='manipulation';
-    canvas.addEventListener('click',function(e){
-      try{
-        if(typeof Chart==='undefined'||!Chart.getChart)return;
-        var chart=Chart.getChart(canvas);if(!chart)return;
-        var active=chart.getElementsAtEventForMode(e,'nearest',{intersect:true},true);
-        if(!active||!active.length)return;
-        var card=canvas.closest('.chart-card');if(!card)return;
-        var info=chartInsight(chart,active[0],card);
-        setDetail(card,info.html,info.speech);
-      }catch(err){console.warn('InstantDash chart touch:',err);}
-    },{passive:true});
-  }
-
-  function bindAIChart(wrap){
-    var svg=wrap&&wrap.querySelector('svg');if(!svg||svg.dataset.v178Touch)return;
-    svg.dataset.v178Touch='1';svg.style.touchAction='manipulation';
-    svg.addEventListener('click',function(e){
-      try{
-        var t=e.target && e.target.closest ? e.target.closest('circle,path,rect') : null;
-        if(!t||t===svg)return;
-        var title=t.querySelector('title');
-        var raw=title?clean(title.textContent):'';
-        if(!raw)return;
-        var card=svg.closest('.ai-chart-card');if(!card)return;
-        var spec={};
-        try{spec=JSON.parse(card.getAttribute('data-v178-spec')||'{}');}catch(_){ }
-        var detail=card.querySelector('.ai-chart-touch-detail');
-        var text=raw;
-        var parts=raw.split('·'),label=(parts[0]||'Selected').trim(),value=(parts.slice(1).join('·')||'').trim();
-        var speech=(card.querySelector('h4')?clean(card.querySelector('h4').textContent):'Chart')+' — '+label+' is '+value+'. ';
-        var titleNodes=Array.prototype.slice.call(svg.querySelectorAll('title'));
-        var parsed=titleNodes.map(function(n){var q=clean(n.textContent).split('·');return {label:(q[0]||'').trim(),value:(q.slice(1).join('·')||'').trim()};}).filter(function(x){return x.label&&x.value;});
-        var labels=parsed.map(function(x){return x.label;}), vals=parsed.map(function(x){return num(x.value);}), idx=labels.indexOf(label);
-        var data=spec.data||{};
-        if(!labels.length){labels=data.labels||[];vals=(data.values||[]).map(num);idx=labels.map(String).indexOf(label);}
-        if(idx>0&&isFinite(vals[idx])&&isFinite(vals[idx-1])){
-          var ch=vals[idx]-vals[idx-1],pct=Math.abs(vals[idx-1])>1e-12?ch/Math.abs(vals[idx-1])*100:0;
-          text+='<br><b>Variation:</b> '+(ch>=0?'up ':'down ')+escHtml(fmt(Math.abs(ch),spec.measure))+' ('+(ch>=0?'+':'')+pct.toFixed(1)+'%) versus '+escHtml(labels[idx-1])+'.';
-          speech+='It is '+(ch>=0?'up ':'down ')+fmt(Math.abs(ch),spec.measure)+' or '+(ch>=0?'+':'')+pct.toFixed(1)+' percent versus '+labels[idx-1]+'. ';
-        }
-        var signal=relatedSignal(spec,label,idx>=0?vals[idx]:NaN);
-        if(signal){text+='<br>'+signal;speech+=clean(signal.replace(/<[^>]*>/g,' '));}
-        else{text+='<br><b>Reason check:</b> The loaded data shows the variation, but it does not establish a cause.';speech+='The loaded data shows the variation, but it does not establish a cause.';}
-        if(detail){detail.innerHTML='<b>'+escHtml(text.split('<br>')[0].replace(/<[^>]+>/g,''))+'</b><br>'+text.split('<br>').slice(1).join('<br>');}
-        setDetail(card,text,speech);
-      }catch(err){console.warn('InstantDash AI chart touch:',err);}
-    },{passive:true});
-  }
-
-  function scanCharts(){
-    document.querySelectorAll('.chart-card canvas').forEach(bindMainCanvas);
-    document.querySelectorAll('.ai-chart-wrap').forEach(function(w){bindAIChart(w);});
-  }
-
-  function installVoice(){
-    var p=document.getElementById('askExecutive48');if(!p)return;
-    var input=document.getElementById('ai48Input');if(!input)return;
-    var row=input.parentElement;if(!row)return;
-    if(!row.querySelector('.id178-ask-tools')){
-      var tools=document.createElement('div');tools.className='id178-ask-tools';
-      input.parentNode.insertBefore(tools,input);tools.appendChild(input);
-      var mic=document.createElement('button');mic.type='button';mic.className='id178-mic-btn';mic.textContent='🎙️';mic.title='Speak your question';mic.setAttribute('aria-label','Speak your question');tools.appendChild(mic);
-      mic.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();startListening(mic,input);},true);
-    }
-    var out=document.getElementById('ai48Answer');if(out && !out.parentNode.querySelector('.id178-answer-tools')){
-      var tools2=document.createElement('div');tools2.className='id178-answer-tools';
-      var speakBtn=document.createElement('button');speakBtn.type='button';speakBtn.className='id178-speak-btn';speakBtn.textContent='🔊 Speak answer';
-      var stopBtn=document.createElement('button');stopBtn.type='button';stopBtn.className='id178-stop-btn';stopBtn.textContent='■ Stop';
-      var status=document.createElement('div');status.className='id178-voice-status';status.id='id178VoiceStatus';
-      tools2.appendChild(speakBtn);tools2.appendChild(stopBtn);out.parentNode.insertBefore(tools2,out.nextSibling);out.parentNode.insertBefore(status,tools2.nextSibling);
-      speakBtn.addEventListener('click',function(){speak(clean(out.innerText||out.textContent||''));});
-      stopBtn.addEventListener('click',stopSpeak);
-    }
-  }
-
-  function startListening(btn,input){
-    var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-    var status=document.getElementById('id178VoiceStatus');
-    if(!SR){
-      if(status)status.textContent='Voice input is not available in this browser. Use the iPhone keyboard microphone.';
-      try{input.focus();}catch(e){}
-      return;
-    }
-    if(listening){try{recognition.stop();}catch(e){}return;}
-    try{
-      recognition=new SR();recognition.lang='en-IN';recognition.interimResults=true;recognition.continuous=false;recognition.maxAlternatives=1;
-      listening=true;btn.classList.add('listening');btn.textContent='⏹️';
-      if(status)status.textContent='Listening… speak your question.';
-      recognition.onresult=function(ev){
-        var finalText='';
-        for(var i=ev.resultIndex;i<ev.results.length;i++)finalText+=ev.results[i][0].transcript;
-        input.value=finalText.trim();
-        if(ev.results[ev.results.length-1].isFinal){
-          if(status)status.textContent='Question captured. Analysing…';
-          setTimeout(function(){var ask=document.getElementById('ai48Ask');if(ask)ask.click();},120);
-        }
-      };
-      recognition.onerror=function(ev){
-        if(status)status.textContent='Voice input stopped: '+(ev.error||'browser permission or support issue')+'.';
-        listening=false;btn.classList.remove('listening');btn.textContent='🎙️';
-      };
-      recognition.onend=function(){
-        listening=false;btn.classList.remove('listening');btn.textContent='🎙️';
-      };
-      recognition.start();
-    }catch(e){
-      listening=false;btn.classList.remove('listening');btn.textContent='🎙️';
-      if(status)status.textContent='Could not start voice input. Check microphone permission.';
-    }
-  }
-
-  function captureSpecForAI(){
-    document.querySelectorAll('.ai-chart-card').forEach(function(card){
-      if(card.getAttribute('data-v178-spec'))return;
-      try{
-        var title=card.querySelector('h4'), sub=card.querySelector('.ai-chart-sub');
-        var text=(title?title.textContent:'')+' '+(sub?sub.textContent:'');
-        var m=text.match(/(?:total chart for|grouped by)\s+(.+?)(?:\.|$)/i);
-        card.setAttribute('data-v178-spec',JSON.stringify({measure:title?title.textContent:'',group:'',data:{labels:[],values:[]}}));
-      }catch(e){}
-    });
-  }
-
-  function wire(){
-    scanCharts();installVoice();captureSpecForAI();
-  }
-  document.addEventListener('click',function(){setTimeout(wire,30);},true);
-  document.addEventListener('DOMContentLoaded',wire);
-  window.addEventListener('load',function(){setTimeout(wire,300);setTimeout(wire,1200);setTimeout(wire,2500);});
-  setInterval(wire,900);
-})();
-</script>
-
-
-
-<style id="instantdash-v179-touch-voice-ai-questions">
-/* v17.9 — Touch + Voice + expanded Executive AI. Existing dashboard layout,
-   charts, filters, sharing and calculations are deliberately left intact. */
-.id179-touch-detail{margin-top:8px;padding:10px 12px;border:1px solid var(--border);border-radius:12px;background:var(--card-2);font-size:11px;line-height:1.5;display:none}
-.id179-touch-detail.show{display:block}
-.id179-touch-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:7px}
-.id179-touch-actions button{border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:999px;padding:6px 10px;font-size:10px;font-weight:800;cursor:pointer;touch-action:manipulation}
-.id179-touch-actions button.primary{background:var(--accent);border-color:var(--accent);color:#111}
-.id179-mic-btn{width:48px;min-width:48px;border:1px solid var(--accent);background:var(--accent);color:#111;border-radius:12px;font-size:18px;cursor:pointer;touch-action:manipulation}
-.id179-mic-btn.listening{background:#ef4444;color:#fff;border-color:#ef4444}
-.id179-voice-status{font-size:10px;color:var(--muted);margin-top:6px;min-height:14px}
-@media(max-width:600px){
-  .id179-touch-detail{font-size:11px}
-  .id179-touch-actions{display:grid;grid-template-columns:1fr 1fr}
-  .id179-touch-actions button{width:100%}
-}
-</style>
-<script id="instantdash-v179-touch-voice-ai-questions">
+<script id="instantdash-v184-askai-reliability-only">
 (function(){
 'use strict';
-var Q=[
- 'What are the 3 most important issues?',
- 'What is going well?',
- 'What changed?',
- 'Give me an executive summary',
- 'Which region is best overall?',
- 'Which region is worst overall?',
- 'Which KPI needs attention?',
- 'What is worse?',
- 'How can we improve?',
- 'Which region improved the most?',
- 'Which region declined the most?',
- 'Compare the best and worst region'
-];
 function A(){return window.__INSTANTDASH_APP__||window.APP||{}}
 function rows(){var a=A();return Array.isArray(a.filtered)&&a.filtered.length?a.filtered:(Array.isArray(a.rows)?a.rows:[])}
-function n(v){if(typeof v==='number'&&isFinite(v))return v;if(v==null||String(v).trim()==='')return NaN;var x=Number(String(v).replace(/[₹$€£¥₩₽,%\s]/g,'').replace(/,/g,''));return isFinite(x)?x:NaN}
-function pct(k){return /%|rate|ratio|margin|growth|completion|attendance|pass|dropout|yield|achievement|coverage|satisfaction/i.test(String(k))}
-function money(k){return /amount|revenue|sales|income|profit|cost|expense|loan|value|turnover|cash|asset|debt|budget|price|fund/i.test(String(k))}
-function fmt(v,k){if(!isFinite(v))return '—';if(pct(k))return Number(v).toFixed(2)+'%';if(money(k))return '₹'+Number(v).toLocaleString('en-IN',{maximumFractionDigits:2});return Number(v).toLocaleString('en-IN',{maximumFractionDigits:2})}
-function fieldInfo(){
- var rs=rows();if(!rs.length)return {cat:null,metrics:[]};
- var keys=Object.keys(rs[0]||{}),cat=null,metrics=[];
- keys.forEach(function(k){
-   var vals=rs.map(function(r){return n(r[k])}).filter(isFinite), text=rs.map(function(r){return r[k]}).filter(function(v){return v!=null&&String(v).trim()!==''}), u=new Set(text.map(String)).size;
-   var time=/(date|month|year|quarter|period|week|day|time|fy)/i.test(k), id=/(^|[^a-z])(id|code|account|serial|sno|phone|mobile|email|key)([^a-z]|$)/i.test(k);
-   if(!cat&&!time&&!id&&vals.length/Math.max(1,rs.length)<.65&&u>=2&&u<=40)cat=k;
-   if(!time&&!id&&vals.length>=Math.max(2,Math.ceil(rs.length*.5))&&u>=2)metrics.push({k:k,v:vals,avg:vals.reduce(function(a,b){return a+b},0)/vals.length});
- });
- metrics.sort(function(a,b){
-   var score=function(x){var s=0, q=String(x.k).toLowerCase();if(/performance|achievement|completion|attendance|pass|sales|revenue|profit|collection|recovery|output|productivity|feedback|score|improvement/.test(q))s+=5;if(/id|year|month|quarter|date/.test(q))s-=10;return s};return score(b)-score(a)
- });
- return {cat:cat,metrics:metrics};
+function n(v){if(typeof v==='number'&&isFinite(v))return v;if(v==null||String(v).trim()==='')return NaN;var x=Number(String(v).replace(/[₹$€£¥₩₽,%\s,]/g,''));return isFinite(x)?x:NaN}
+function key(s){return String(s||'').toLowerCase().replace(/[_\-\/]+/g,' ').replace(/\s+/g,' ').trim()}
+function ident(k){
+ var s=key(k);
+ return /(^| )(id|identifier|code|account|acct|account no|account number|a c|a c no|a\/c|a\/c no|ac no|acct no|settlement ac|settlement ac no|serial|s no|sr no|phone|mobile|email|pan|gst|aadhaar|pincode|zip|reference|invoice|key)( |$)/i.test(s);
 }
-function rank(cat,metric){
- var rs=rows(),g={};if(!cat||!metric)return [];
- rs.forEach(function(r){var group=String(r[cat]==null?'Blank':r[cat]);var v=n(r[metric.k]);if(!isFinite(v))return;(g[group]||(g[group]=[])).push(v)});
- return Object.keys(g).map(function(k){var a=g[k];return {k:k,v:a.reduce(function(x,y){return x+y},0)/a.length,n:a.length}}).filter(function(x){return x.n}).sort(function(a,b){return b.v-a.v});
+function cols(){
+ var r=rows();if(!r.length)return [];
+ return Object.keys(r[0]||{}).map(function(k){
+   if(ident(k))return null;
+   var v=r.map(function(x){return n(x[k])}).filter(isFinite);
+   return v.length>=Math.max(2,Math.ceil(r.length*.5))?{k:k,v:v}:null;
+ }).filter(Boolean);
 }
-function enhancedAnswer(q){
- var rs=rows(), fi=fieldInfo(), ql=String(q||'').toLowerCase().replace(/[?.,]/g,' ').replace(/\s+/g,' ').trim();
- if(!rs.length)return '<b>No live dataset was found.</b><br>Please load a file first.';
- var cat=fi.cat, metric=fi.metrics[0];
- if(/region|branch|district|zone|state|area|location|circle|office/.test(ql)&&/best|highest|top|overall|performing/.test(ql)){
-   var r=rank(cat,metric);if(r.length){return '<b>Best '+cat+': '+r[0].k+'</b><br>'+metric.k+' averages <b>'+fmt(r[0].v,metric.k)+'</b> across '+r[0].n+' observations.<br><br><b>Top 3:</b><br>'+r.slice(0,3).map(function(x,i){return (i+1)+'. '+x.k+' — '+fmt(x.v,metric.k)}).join('<br>')+'<div class="ai48-evidence">Ranking is based only on the current dataset. The result does not establish why the region performed better.</div>'}
- }
- if(/region|branch|district|zone|state|area|location|circle|office/.test(ql)&&/worst|lowest|bottom|poor|weakest|declined/.test(ql)){
-   var r2=rank(cat,metric);if(r2.length){var rev=r2.slice().reverse();return '<b>Worst '+cat+': '+rev[0].k+'</b><br>'+metric.k+' averages <b>'+fmt(rev[0].v,metric.k)+'</b> across '+rev[0].n+' observations.<br><br><b>Bottom 3:</b><br>'+rev.slice(0,3).map(function(x,i){return (i+1)+'. '+x.k+' — '+fmt(x.v,metric.k)}).join('<br>')+'<div class="ai48-evidence">Ranking is based only on the current dataset. The result does not establish why the region underperformed.</div>'}
- }
- if(/compare.*best.*worst|best.*worst/.test(ql)&&cat&&metric){var rr=rank(cat,metric);if(rr.length>1)return '<b>Best vs worst '+cat+'</b><br>'+rr[0].k+' — '+fmt(rr[0].v,metric.k)+'<br>'+rr[rr.length-1].k+' — '+fmt(rr[rr.length-1].v,metric.k)+'<br><br>Difference: <b>'+fmt(rr[0].v-rr[rr.length-1].v,metric.k)+'</b>.'}
- if(/which region improved|region improved|improved the most/.test(ql)&&cat&&metric){var rr2=rank(cat,metric),best=rr2.map(function(x){return x});return '<b>Current best '+cat+' on '+metric.k+':</b> '+(best[0]?best[0].k:'No reliable group')+' — '+(best[0]?fmt(best[0].v,metric.k):'—')+'.<div class="ai48-evidence">A true period-over-period regional improvement ranking requires a reliable time field; this answer is the current level ranking only.</div>'}
- if(/which region declined|declined the most/.test(ql)&&cat&&metric){var rr3=rank(cat,metric);return '<b>Lowest current '+cat+' on '+metric.k+':</b> '+(rr3.length?rr3[rr3.length-1].k:'No reliable group')+' — '+(rr3.length?fmt(rr3[rr3.length-1].v,metric.k):'—')+'.<div class="ai48-evidence">A true decline ranking requires a reliable time field; the current answer is based on the latest loaded group levels.</div>'}
- if(/which kpi needs attention|what is worse|worse|needs attention|attention/.test(ql)){
-   var scored=fi.metrics.map(function(m){var a=m.v[0],b=m.v[m.v.length-1],p=a?((b-a)/Math.abs(a))*100:0;var s=String(m.k).toLowerCase();var adverse=/cost|expense|error|complaint|defect|risk|npa|overdue|backlog|dropout|absence/.test(s);var favourable=/revenue|sales|income|profit|completion|attendance|collection|recovery|output|productivity|pass|satisfaction|improvement/.test(s);var attention=adverse?p>0:favourable?p<0:Math.abs(p)>5;return {m:m,p:p,a:a,b:b,attention:attention,abs:Math.abs(p)}}).filter(function(x){return x.attention}).sort(function(a,b){return b.abs-a.abs});
-   if(scored.length)return '<b>Priority KPI needing attention: '+scored[0].m.k+'</b><br>'+fmt(scored[0].a,scored[0].m.k)+' → '+fmt(scored[0].b,scored[0].m.k)+' ('+(scored[0].p>=0?'+':'')+scored[0].p.toFixed(1)+'%).<br><br>Review the operational drivers, target and related KPIs before deciding corrective action.';
-   return '<b>No clearly adverse KPI movement was identified.</b><br>Review the largest movements against targets and related operational measures.';
- }
- if(/3 most important|three most important|important issues|top issues/.test(ql)){
-   var mv=fi.metrics.map(function(m){var a=m.v[0],b=m.v[m.v.length-1],p=a?((b-a)/Math.abs(a))*100:0;return {m:m,a:a,b:b,p:p,abs:Math.abs(p)}}).sort(function(a,b){return b.abs-a.abs});
-   return '<b>Three most important movements</b><br>'+mv.slice(0,3).map(function(x,i){return (i+1)+'. <b>'+x.m.k+'</b>: '+fmt(x.a,x.m.k)+' → '+fmt(x.b,x.m.k)+' ('+(x.p>=0?'+':'')+x.p.toFixed(1)+'%).'}).join('<br>');
- }
- if(/executive summary|summary/.test(ql)){
-   var sm=fi.metrics.map(function(m){var a=m.v[0],b=m.v[m.v.length-1],p=a?((b-a)/Math.abs(a))*100:0;return {m:m,a:a,b:b,p:p,abs:Math.abs(p)}}).sort(function(a,b){return b.abs-a.abs})[0];
-   return '<b>Executive summary</b><br>'+(sm?'<b>'+sm.m.k+'</b> shows the largest relative movement: '+fmt(sm.a,sm.m.k)+' → '+fmt(sm.b,sm.m.k)+' ('+(sm.p>=0?'+':'')+sm.p.toFixed(1)+'%).':'No dominant movement identified.')+'<br><br>Management should validate the movement against targets and operational drivers.';
- }
- if(/going well|positive|favourable|good/.test(ql)){
-   var good=fi.metrics.map(function(m){var a=m.v[0],b=m.v[m.v.length-1],p=a?((b-a)/Math.abs(a))*100:0;var s=String(m.k).toLowerCase(),fav=/revenue|sales|income|profit|completion|attendance|collection|recovery|output|productivity|pass|satisfaction|improvement/.test(s);return {m:m,a:a,b:b,p:p,fav:fav&&p>0}}).filter(function(x){return x.fav}).sort(function(a,b){return b.p-a.p})[0];
-   return good?'<b>What is going well:</b> '+good.m.k+' improved '+(good.p>=0?'+':'')+good.p.toFixed(1)+'%, from '+fmt(good.a,good.m.k)+' to '+fmt(good.b,good.m.k)+'.':'No clearly favourable movement identified from the current numeric KPIs.';
- }
- if(/changed|change|trend|movement|compare/.test(ql)){
-   return '<b>Key changes</b><br>'+fi.metrics.map(function(m){var a=m.v[0],b=m.v[m.v.length-1],p=a?((b-a)/Math.abs(a))*100:0;return '<b>'+m.k+'</b>: '+fmt(a,m.k)+' → '+fmt(b,m.k)+' ('+(p>=0?'+':'')+p.toFixed(1)+'%)'}).slice(0,6).join('<br>');
- }
- if(/how can|improve|increase|reduce|better|recommend|action/.test(ql)){
-   var im=fi.metrics.map(function(m){var a=m.v[0],b=m.v[m.v.length-1],p=a?((b-a)/Math.abs(a))*100:0;return {m:m,a:a,b:b,p:p,abs:Math.abs(p)}}).sort(function(a,b){return b.abs-a.abs})[0];
-   return '<b>How can we improve?</b><br>'+(im?'Focus first on <b>'+im.m.k+'</b>, which moved '+fmt(im.a,im.m.k)+' → '+fmt(im.b,im.m.k)+' ('+(im.p>=0?'+':'')+im.p.toFixed(1)+'%). Identify the operational driver, compare with target/benchmark and assign one measurable action.':'No reliable improvement priority was identified.');
- }
- return '<b>I can analyse the current file.</b><br>Ask about a KPI, region, district, trend, best/worst performer, issues, improvement or executive summary.';
+function fmt(v,k){
+ var s=key(k);
+ if(/%|rate|ratio|margin|yield|attendance|completion|pass|dropout|growth/.test(s))return Number(v).toFixed(2)+'%';
+ if(/amount|revenue|sales|income|profit|cost|expense|loan|value|turnover|cash|asset|debt|volume/.test(s))return '₹'+Number(v).toLocaleString('en-IN',{maximumFractionDigits:2});
+ return Number(v).toLocaleString('en-IN',{maximumFractionDigits:2});
 }
-function speak(text){
- try{if(!('speechSynthesis' in window))return;window.speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(String(text).replace(/<[^>]+>/g,' '));u.lang='en-IN';u.rate=.98;u.pitch=1;window.speechSynthesis.speak(u);}catch(e){console.warn('InstantDash speech failed',e)}
+function match(cs,q){
+ var z=key(q);
+ var exact=cs.find(function(c){return z.indexOf(key(c.k))>=0});
+ if(exact)return exact;
+ return cs.find(function(c){
+   var words=key(c.k).split(' ').filter(function(w){return w.length>3});
+   return words.some(function(w){return z.indexOf(w)>=0});
+ })||null;
 }
-function wireQuestions(){
- var p=document.getElementById('askExecutive48');if(!p)return false;
- var qbox=p.querySelector('.ai48-questions');if(!qbox)return false;
- if(qbox.dataset.v179==='1')return true;
- qbox.innerHTML=Q.map(function(q){return '<button type="button" class="ai48-q">'+q+'</button>'}).join('');
- qbox.querySelectorAll('.ai48-q').forEach(function(b){b.addEventListener('click',function(e){e.preventDefault();var i=document.getElementById('ai48Input');if(i){i.value=b.textContent}runEnhanced();})});
- qbox.dataset.v179='1';
- var input=document.getElementById('ai48Input'),row=input&&input.parentElement;
- if(input&&row&&!row.querySelector('.id179-mic-btn')){
-   var mic=document.createElement('button');mic.type='button';mic.className='id179-mic-btn';mic.textContent='🎙️';mic.title='Speak your question';mic.setAttribute('aria-label','Speak your question');row.appendChild(mic);mic.addEventListener('click',function(){listen(mic,input)},true);
+function answer(q){
+ var r=rows(),cs=cols(),z=key(q);
+ if(!r.length)return '<b>No current file data is loaded.</b><br>Please load a file first.';
+ if(!cs.length)return '<b>No usable numeric KPIs were found.</b><br>Account numbers, IDs and other identifiers are excluded from analysis.';
+ var c=match(cs,q);
+ var mv=cs.map(function(x){var a=x.v[0],b=x.v[x.v.length-1],p=a?((b-a)/Math.abs(a))*100:0;return{k:x.k,a:a,b:b,p:p}}).sort(function(a,b){return Math.abs(b.p)-Math.abs(a.p)});
+ if(/3|three|important|issue|problem|priority|attention|focus/.test(z))
+   return '<b>Top 3 management issues</b><br>'+mv.slice(0,3).map(function(x,i){return (i+1)+'. <b>'+x.k+'</b>: '+fmt(x.a,x.k)+' → '+fmt(x.b,x.k)+' ('+(x.p>=0?'+':'')+x.p.toFixed(1)+'%).'}).join('<br>');
+ if(/going well|positive|best|favourable|good/.test(z)&&!c){
+   var p=mv.filter(function(x){return x.p>0})[0];
+   return p?'<b>Positive movement:</b> '+p.k+' increased from '+fmt(p.a,p.k)+' to '+fmt(p.b,p.k)+' ('+p.p.toFixed(1)+'%).':'No clearly favourable movement identified.';
  }
- return true;
+ if(/worst|worse|lowest|weakest/.test(z)&&!c){
+   var w=mv.slice().sort(function(a,b){return a.p-b.p})[0];
+   return w?'<b>Weakest movement:</b> '+w.k+' changed from '+fmt(w.a,w.k)+' to '+fmt(w.b,w.k)+' ('+(w.p>=0?'+':'')+w.p.toFixed(1)+'%).':'No reliable weakest movement identified.';
+ }
+ if(/changed|change|trend|movement|variation|compare/.test(z)&&!c)
+   return '<b>Key changes</b><br>'+mv.slice(0,6).map(function(x){return '<b>'+x.k+'</b>: '+fmt(x.a,x.k)+' → '+fmt(x.b,x.k)+' ('+(x.p>=0?'+':'')+x.p.toFixed(1)+'%).'}).join('<br>');
+ if(/executive summary|summary|management/.test(z)&&!c){
+   var t=mv[0];
+   return '<b>Executive summary:</b><br>'+(t?'<b>'+t.k+'</b> has the largest relative movement, '+fmt(t.a,t.k)+' → '+fmt(t.b,t.k)+' ('+(t.p>=0?'+':'')+t.p.toFixed(1)+'%).':'No dominant movement identified.')+'<br>Review this together with related operational measures; the data alone does not establish causation.';
+ }
+ if(c){
+   if(/average|mean|avg/.test(z)){var av=c.v.reduce(function(a,b){return a+b},0)/c.v.length;return '<b>Average '+c.k+':</b> '+fmt(av,c.k)+' across '+c.v.length+' observations.'}
+   if(/highest|maximum|max|largest|peak|best/.test(z)){var mx=Math.max.apply(Math,c.v);return '<b>Highest '+c.k+':</b> '+fmt(mx,c.k)+'.'}
+   if(/lowest|minimum|min|smallest|worst/.test(z)){var mn=Math.min.apply(Math,c.v);return '<b>Lowest '+c.k+':</b> '+fmt(mn,c.k)+'.'}
+   if(/total|how many|how much|number of|no of/.test(z)){var t=c.v.reduce(function(a,b){return a+b},0);return '<b>'+c.k+':</b> total '+fmt(t,c.k)+' across '+c.v.length+' observations.'}
+   var a=c.v[0],b=c.v[c.v.length-1],p=a?((b-a)/Math.abs(a))*100:0;
+   return '<b>'+c.k+'</b>: '+fmt(a,c.k)+' → '+fmt(b,c.k)+' ('+(p>=0?'+':'')+p.toFixed(1)+'%).';
+ }
+ return '<b>I can analyse the current file.</b><br>Try “Which is best overall?”, “What is worse?”, “What changed?”, “What are the 3 most important issues?”, or name a KPI.';
 }
-function runEnhanced(){
- var i=document.getElementById('ai48Input'),o=document.getElementById('ai48Answer');if(!i||!o)return;
- var q=i.value.trim();o.classList.add('show','busy');o.innerHTML='<b>Analysing current data…</b>';
- setTimeout(function(){try{o.innerHTML=enhancedAnswer(q)+'<div class="id179-touch-actions"><button type="button" class="primary" id="id179SpeakAnswer">🔊 Speak answer</button><button type="button" id="id179StopAnswer">■ Stop</button></div><div class="ai48-evidence">Based only on the currently loaded dataset. No unsupported cause is presented as fact.</div>';o.classList.remove('busy');var sp=document.getElementById('id179SpeakAnswer');if(sp)sp.onclick=function(){speak(o.innerText||o.textContent||'')};var st=document.getElementById('id179StopAnswer');if(st)st.onclick=function(){try{speechSynthesis.cancel()}catch(e){}}}catch(e){o.innerHTML='<b>I could not complete that question.</b>';o.classList.remove('busy')}},30);
+function put(q){
+ var o=document.getElementById('ai48Answer');if(!o)return;
+ try{o.innerHTML=answer(q)+'<div class="ai48-evidence">Based only on the currently loaded dataset. Account numbers and identifiers are excluded from KPI analysis.</div>';o.classList.add('show');o.scrollTop=0;}catch(e){o.innerHTML='<b>Unable to answer this question.</b>';o.classList.add('show')}
 }
-function listen(btn,input){
- var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
- if(!SR){var st=document.getElementById('id179VoiceStatus');if(st)st.textContent='Voice input is not supported here. Use the iPhone keyboard microphone.';input.focus();return;}
- if(btn.dataset.listening==='1'){try{btn.__rec&&btn.__rec.stop()}catch(e){}return;}
- try{var r=new SR();btn.__rec=r;btn.dataset.listening='1';btn.textContent='⏹️';r.lang='en-IN';r.interimResults=false;r.continuous=false;r.onresult=function(ev){var t=ev.results[0][0].transcript||'';input.value=t;runEnhanced()};r.onerror=function(){btn.dataset.listening='';btn.textContent='🎙️'};r.onend=function(){btn.dataset.listening='';btn.textContent='🎙️'};r.start()}catch(e){btn.dataset.listening='';btn.textContent='🎙️'}
-}
-function chartTouch(){
- document.querySelectorAll('.ai-chart-card').forEach(function(card){
-   if(card.dataset.v179touch==='1')return;card.dataset.v179touch='1';
-   var wrap=card.querySelector('.ai-chart-wrap');if(!wrap)return;
-   var detail=card.querySelector('.ai-chart-touch-detail');
-   if(!detail){detail=document.createElement('div');detail.className='ai-chart-touch-detail';wrap.parentNode.insertBefore(detail,wrap.nextSibling)}
-   function show(text){detail.textContent=text;detail.classList.add('show');var old=card.querySelector('.id179-touch-actions');if(old)old.remove();var tools=document.createElement('div');tools.className='id179-touch-actions';var sp=document.createElement('button');sp.className='primary';sp.textContent='🔊 Speak';sp.onclick=function(){speak(text)};var cl=document.createElement('button');cl.textContent='Hide';cl.onclick=function(){detail.classList.remove('show');tools.remove()};tools.appendChild(sp);tools.appendChild(cl);detail.parentNode.insertBefore(tools,detail.nextSibling)}
-   wrap.addEventListener('click',function(e){
-     var t=e.target, title=t&&t.querySelector?t.querySelector('title'):null;var own=t&&t.tagName==='title'?t:null;title=own||title;
-     if(title&&title.textContent){show(title.textContent);return}
-     var cv=wrap.querySelector('canvas');if(cv&&window.Chart&&Chart.getChart){var ch=Chart.getChart(cv);if(ch){var els=ch.getElementsAtEventForMode(e,'nearest',{intersect:true},true);if(els&&els.length){var el=els[0],ds=ch.data.datasets[el.datasetIndex||0],lab=(ch.data.labels||[])[el.index]||'',val=ds&&ds.data?ds.data[el.index]:'';show((ds&&ds.label?ds.label+' · ':'')+lab+' · '+val);}}}
-   },true);
- });
-}
-function wireAsk(){
+function wire(){
  var b=document.getElementById('ai48Ask'),i=document.getElementById('ai48Input');if(!b||!i)return;
- if(b.dataset.v179==='1')return;b.dataset.v179='1';b.onclick=function(e){if(e)e.preventDefault();runEnhanced()};i.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();runEnhanced()}});
+ if(!b.dataset.v184){b.dataset.v184='1';b.addEventListener('click',function(e){e.preventDefault();e.stopImmediatePropagation();put(i.value.trim())},true);}
+ document.querySelectorAll('#askExecutive48 .ai48-q').forEach(function(q){
+   if(q.dataset.v184)return;q.dataset.v184='1';
+   q.addEventListener('click',function(e){e.preventDefault();e.stopImmediatePropagation();i.value=q.textContent;put(q.textContent)},true);
+ });
 }
-function tick(){wireQuestions();wireAsk();chartTouch()}
-document.addEventListener('DOMContentLoaded',tick);window.addEventListener('load',function(){setTimeout(tick,300);setTimeout(tick,1200)});setInterval(tick,700);
+setInterval(wire,300);document.addEventListener('DOMContentLoaded',wire);window.addEventListener('load',wire);
 })();
 </script>
+
 </body></html>
