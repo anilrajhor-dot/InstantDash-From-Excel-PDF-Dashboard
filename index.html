@@ -13334,34 +13334,186 @@ function IDrenderDetail(container,measure,group,label,value,agg){
  var b=container.querySelector('.id-chart-speak');
  if(b)b.onclick=function(e){e.preventDefault();e.stopPropagation();IDspeak(x.speech)};
 }
+window.__instantDashChartExplainDirect=function(measure,group,label,value,agg,container){
+  if(container) IDrenderDetail(container,measure,group,label,value,agg);
+};
+function IDparseChartTitle(hit){
+ var t=hit&&hit.querySelector?hit.querySelector('title'):null;
+ var s=t?t.textContent:'';
+ var parts=s.split('·').map(function(x){return String(x).trim()});
+ var value=NaN,label='Selected',measure='';
+ if(parts.length>=3){
+   measure=parts[0]; label=parts[1]; value=IDnum(parts.slice(2).join('·'));
+ }else if(parts.length===2){
+   measure=parts[0]; label=parts[1];
+ }else{
+   label=s||'Selected';
+ }
+ return {measure:measure,label:label,value:value};
+}
 function IDsmartHandler(e){
- var hit=e.target&&e.target.closest?e.target.closest('[data-fallback]'):null;
+ var target=e&&e.target;
+ var hit=target&&target.closest?target.closest('[data-fallback]'):null;
+ if(!hit){
+   /* SVG touch events can arrive on a child/text node or without closest()
+      on some iOS WebKit paths. Walk manually. */
+   var n=target;
+   while(n&&n!==document){
+     if(n.getAttribute&&n.getAttribute('data-fallback')!=null){hit=n;break}
+     n=n.parentNode;
+   }
+ }
  if(!hit)return;
- var parts=String(hit.getAttribute('data-fallback')||'').split(':'),si=Number(parts[0]||0),i=Number(parts[1]||0);
- var groupEl=document.getElementById('smartGroupBy'), group=groupEl?groupEl.value:'';
+
+ var parsed=IDparseChartTitle(hit);
+ var parts=String(hit.getAttribute('data-fallback')||'').split(':');
+ var si=Number(parts[0]||0), i=Number(parts[1]||0);
+
+ var groupEl=document.getElementById('smartGroupBy');
+ var group=groupEl&&groupEl.value?groupEl.value:'';
  var param=document.getElementById('smartParam'+(si+1));
  if(!param||!param.value)param=document.getElementById('smartParam1');
- var measure=param?param.value:'';
+
+ var measure=param&&param.value?param.value:parsed.measure;
  var rows=IDrows(), groups=[];
  if(group){
-   var seen={};rows.forEach(function(r){var g=String(r[group]==null?'':r[group]);if(g&&!seen[g]){seen[g]=1;groups.push(g)}});
+   var seen={};
+   rows.forEach(function(r){
+     var g=String(r[group]==null?'':r[group]);
+     if(g&&!seen[g]){seen[g]=1;groups.push(g)}
+   });
  }
- var label=groups[i]!==undefined?groups[i]:(hit.querySelector('title')?hit.querySelector('title').textContent:'Selected');
- var value=IDnum((hit.querySelector('title')||{}).textContent||'');
+ var label=parsed.label;
+ if(group&&groups[i]!==undefined)label=groups[i];
+
+ /* For an overall chart there is no group selector; the SVG title is the
+    authoritative label/value. This fixes the common "touched but blank"
+    case on iPhone/iPad. */
+ var value=isFinite(parsed.value)?parsed.value:IDnum((hit.textContent||'').trim());
  var detail=document.getElementById('smartChartDetail');
- var mObj=(window.__INSTANTDASH_APP__&&window.__INSTANTDASH_APP__.measures||[]).find(function(x){return x&&x.name===measure});
- IDrenderDetail(detail,measure,group,label,value,mObj&&mObj.agg);
+ if(!detail)return;
+
+ detail.classList.add('show');
+ IDrenderDetail(detail,measure||'Selected KPI',group,label,value,'average');
+
+ try{detail.scrollIntoView({behavior:'smooth',block:'nearest'})}catch(_){}
 }
+
 function IDbind(){
  var smart=document.getElementById('smartChartCanvas');
  if(smart&&!smart.dataset.v180Explain){
    smart.dataset.v180Explain='1';
+   smart.style.touchAction='manipulation';
+   smart.addEventListener('pointerup',IDsmartHandler,true);
    smart.addEventListener('click',IDsmartHandler,true);
-   smart.addEventListener('touchend',function(e){var h=e.target&&e.target.closest?e.target.closest('[data-fallback]'):null;if(h)IDsmartHandler(e)},true);
+   smart.addEventListener('touchend',IDsmartHandler,true);
  }
+}
+/* Document-level fallback is intentional: iOS Safari can retarget SVG
+   touch events in ways that bypass a normal delegated handler. */
+if(!window.__instantDashChartExplainBound){
+ window.__instantDashChartExplainBound=1;
+ document.addEventListener('pointerup',function(e){
+   var c=document.getElementById('smartChartCanvas');
+   if(c&&c.contains(e.target))IDsmartHandler(e);
+ },true);
+ document.addEventListener('click',function(e){
+   var c=document.getElementById('smartChartCanvas');
+   if(c&&c.contains(e.target))IDsmartHandler(e);
+ },true);
+ document.addEventListener('touchend',function(e){
+   var c=document.getElementById('smartChartCanvas');
+   if(c&&c.contains(e.target))IDsmartHandler(e);
+ },true);
 }
 IDbind();document.addEventListener('DOMContentLoaded',IDbind);window.addEventListener('load',function(){setTimeout(IDbind,300)});
 setInterval(IDbind,1000);
+})();
+</script>
+
+<script id="instantdash-v180-chartjs-touch-fix">
+(function(){
+'use strict';
+/* Definitive Chart.js touch handler for iPhone/iPad.
+   The dashboard has two chart renderers: the SVG fallback and Chart.js.
+   This handler covers the Chart.js canvas charts, where SVG data-fallback
+   events cannot fire. */
+
+function IDCJrows(){
+  var a=window.APP||window.__INSTANTDASH_APP__||{};
+  return Array.isArray(a.filtered)&&a.filtered.length?a.filtered:(Array.isArray(a.rows)?a.rows:[]);
+}
+function IDCJapp(){return window.APP||window.__INSTANTDASH_APP__||{}}
+function IDCJfindSpec(chart){
+  var a=IDCJapp();
+  return Array.isArray(a.charts)?a.charts.find(function(s){return s&&s.instance===chart}):null;
+}
+function IDCJvalue(chart,el){
+  try{
+    var raw=chart.data.datasets[el.datasetIndex]&&chart.data.datasets[el.datasetIndex].data[el.index];
+    if(raw&&typeof raw==='object'){
+      if(isFinite(raw.y))return Number(raw.y);
+      if(isFinite(raw.value))return Number(raw.value);
+    }
+    if(typeof raw==='number')return raw;
+    var p=chart.getDatasetMeta(el.datasetIndex).data[el.index];
+    if(p&&p.parsed&&isFinite(p.parsed.y))return Number(p.parsed.y);
+  }catch(_){}
+  return NaN;
+}
+function IDCJshow(chart,el){
+  var spec=IDCJfindSpec(chart);
+  var detail=document.getElementById('smartChartDetail');
+  if(!detail||!spec)return;
+  var label=(chart.data.labels&&chart.data.labels[el.index]!=null)?String(chart.data.labels[el.index]):'Selected point';
+  var ds=chart.data.datasets[el.datasetIndex]||{};
+  var measure=spec.y||spec.value||spec.x||ds.label||'Selected KPI';
+  var group=spec.x||'';
+  var agg=spec.agg||'sum';
+  var value=IDCJvalue(chart,el);
+
+  /* Reuse the tested executive explanation engine when available. */
+  if(typeof window.__instantDashChartExplain==='function'){
+    window.__instantDashChartExplain(measure,group,label,value,agg,detail);
+  }else if(typeof window.__instantDashChartExplainDirect==='function'){
+    window.__instantDashChartExplainDirect(measure,group,label,value,agg,detail);
+  }else{
+    detail.classList.add('show');
+    detail.innerHTML='<b>'+String(measure).replace(/[&<>]/g,'')+'</b><br>'+String(label).replace(/[&<>]/g,'')+' — '+(isFinite(value)?value:'—');
+  }
+  try{detail.scrollIntoView({behavior:'smooth',block:'nearest'})}catch(_){}
+}
+function IDCJevent(e){
+  var t=e&&e.target;
+  var canvas=t&&t.closest?t.closest('canvas'):null;
+  if(!canvas||typeof Chart==='undefined')return;
+  var chart;
+  try{chart=Chart.getChart(canvas)}catch(_){return}
+  if(!chart)return;
+  var els=[];
+  try{
+    els=chart.getElementsAtEventForMode(e,'nearest',{intersect:true},true)||[];
+  }catch(_){}
+  if(!els.length)return;
+  IDCJshow(chart,els[0]);
+}
+if(!window.__instantDashChartJsTouchFix){
+  window.__instantDashChartJsTouchFix=1;
+  ['pointerup','click','touchend'].forEach(function(ev){
+    document.addEventListener(ev,IDCJevent,true);
+  });
+}
+})();
+</script>
+
+<script id="instantdash-v180-chart-explain-bridge">
+(function(){
+  window.__instantDashChartExplain=function(measure,group,label,value,agg,detail){
+    if(typeof IDrenderDetail==='function'){IDrenderDetail(detail,measure,group,label,value,agg);return}
+    if(typeof window.__instantDashChartExplainDirect==='function'){window.__instantDashChartExplainDirect(measure,group,label,value,agg,detail);return}
+    detail.classList.add('show');
+    detail.innerHTML='<b>Chart explanation</b><br>'+String(measure)+' · '+String(label)+' · '+String(value);
+  };
 })();
 </script>
 </body></html>
