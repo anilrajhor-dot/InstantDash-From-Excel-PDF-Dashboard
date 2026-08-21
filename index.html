@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v17.9 FINAL","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">\n
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v18.0 FINAL","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">\n
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
@@ -1204,7 +1204,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v17.9 FINAL">
+<meta name="instantdash-build" content="v18.0 FINAL">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2059,7 +2059,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v17.9 MASTER';
+      s.textContent='v18.0 MASTER';
       b.appendChild(s);
     }
   }
@@ -2085,8 +2085,8 @@ body{
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v17.9 FINAL</span>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v17.9 MASTER</span></div>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v18.0 FINAL</span>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v18.0 MASTER</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
   <div class="spacer"></div>
@@ -2610,7 +2610,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v17.9',
+  VERSION: 'v18.0',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -12589,7 +12589,7 @@ setInterval(fix,700);
   function snapshot(){
     var a=window.APP||window.__INSTANTDASH_APP__||{};
     return {
-      version:'v17.9 FINAL',
+      version:'v18.0 FINAL',
       fileName:a.fileName||'InstantDash Dashboard',
       rows:Array.isArray(a.rows)?a.rows:[],
       columns:Array.isArray(a.columns)?a.columns:[],
@@ -12893,10 +12893,23 @@ function answer(q){
   if(/lowest|minimum|min|smallest/.test(ql)&&m)return evidence('<b>Lowest '+m.k+':</b> '+fmt(Math.min.apply(Math,m.v),m.k)+'.');
   if(/total|sum|how much|how many/.test(ql)&&m)return evidence('<b>Total '+m.k+':</b> '+fmt(m.v.reduce(function(a,b){return a+b},0),m.k)+' across '+m.v.length+' populated records.');
 
-  if(groups.length&&/best|top|highest|performing|worst|lowest|weakest/.test(ql)){
+  if(groups.length&&/best|top|highest|performing|worst|worse|lowest|weakest/.test(ql)){
     g=g||groups.find(function(x){return /region|branch|zone|district|state|area|location|circle|office/i.test(x.k)})||groups[0];
     m=m||measures[0];var r=rank(rs,g,m);
-    if(r.length){var worst=/worst|lowest|weakest/.test(ql),list=worst?r.slice().reverse():r,lead=list[0];return evidence('<b>'+(worst?'Weakest ':'Best ')+g.k+': '+lead.k+'</b><br>'+m.k+' averages '+fmt(lead.v,m.k)+' across '+lead.n+' populated records.<br><br><b>Comparison:</b><br>'+list.slice(0,5).map(function(x,i){return(i+1)+'. '+x.k+' — '+fmt(x.v,m.k)}).join('<br>'))}
+    if(r.length){var worst=/worst|worse|lowest|weakest/.test(ql),list=worst?r.slice().reverse():r,lead=list[0];return evidence('<b>'+(worst?'Weakest ':'Best ')+g.k+': '+lead.k+'</b><br>'+m.k+' averages '+fmt(lead.v,m.k)+' across '+lead.n+' populated records.<br><br><b>Comparison:</b><br>'+list.slice(0,5).map(function(x,i){return(i+1)+'. '+x.k+' — '+fmt(x.v,m.k)}).join('<br>'))}
+  }
+
+  if(/worse|worst|poor|weakest|declined|deteriorat/.test(ql) && !/best|top|region|branch|zone|district|state|area|location|circle|office/.test(ql)){
+    var adverse=measures.map(function(x){
+      var c=change(x.v),d=direction(x.k);
+      var bad=(d==='higher'&&c<0)||(d==='lower'&&c>0);
+      return {m:x,c:c,bad:bad,score:bad?Math.abs(c)+10:Math.abs(c)};
+    }).sort(function(a,b){return b.score-a.score});
+    if(adverse.length){
+      return evidence('<b>What is worse</b><br>'+adverse.slice(0,5).map(function(x){
+        return '<b>'+x.m.k+'</b>: '+(x.c>=0?'+':'')+x.c.toFixed(1)+'%'+(x.bad?' — adverse movement.':' — significant movement.');
+      }).join('<br>'));
+    }
   }
 
   if(/changed|change|trend|movement|compare|improved|deteriorat|increased|decreased/.test(ql)){
