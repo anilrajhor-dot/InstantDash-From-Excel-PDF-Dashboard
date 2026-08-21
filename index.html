@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v17.7 FINAL","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">\n
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v17.8 FINAL","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">\n
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
@@ -1204,7 +1204,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v17.7 FINAL">
+<meta name="instantdash-build" content="v17.8 FINAL">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2059,7 +2059,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v17.7 MASTER';
+      s.textContent='v17.8 MASTER';
       b.appendChild(s);
     }
   }
@@ -2085,8 +2085,8 @@ body{
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v17.7 FINAL</span>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v17.7 MASTER</span></div>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v17.8 FINAL</span>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v17.8 MASTER</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
   <div class="spacer"></div>
@@ -2610,7 +2610,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v17.7',
+  VERSION: 'v17.8',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -12589,7 +12589,7 @@ setInterval(fix,700);
   function snapshot(){
     var a=window.APP||window.__INSTANTDASH_APP__||{};
     return {
-      version:'v17.7 FINAL',
+      version:'v17.8 FINAL',
       fileName:a.fileName||'InstantDash Dashboard',
       rows:Array.isArray(a.rows)?a.rows:[],
       columns:Array.isArray(a.columns)?a.columns:[],
@@ -12820,207 +12820,343 @@ window.addEventListener('load',function(){
 </script>
 
 
-<script id="instantdash-v177-askme-final-engine">
+<script id="instantdash-v178-ai-intelligence-engine">
 (function(){
 'use strict';
 
 /*
- v17.7 FINAL Ask Me engine.
- This is deliberately self-contained. It does not depend on any of the
- older Ask-Me IIFEs, Advanced AI renderers, category helpers, or cached
- functions. It reads the current APP object directly and writes to the
- existing #ai48Answer element.
+ v17.8 — AI Intelligence Upgrade
+ ONLY the Ask Me reasoning engine is changed.
+ UI, Share, upload, charts, filters and dashboard structure are untouched.
+
+ Design goals:
+ - natural-language question routing
+ - KPI intent and direction awareness
+ - group/region/branch comparison
+ - period/change analysis
+ - outlier and exception detection
+ - driver/correlation hints
+ - management diagnosis and actions
+ - explicit separation of fact, inference and recommendation
+ - follow-up questions using the current loaded dataset
 */
-function app(){
-  return window.__INSTANTDASH_APP__ || window.APP || {};
-}
+
+var STOP={
+  the:1,is:1,a:1,an:1,of:1,for:1,to:1,and:1,in:1,on:1,me:1,my:1,our:1,
+  what:1,which:1,where:1,how:1,why:1,are:1,was:1,were:1,with:1,from:1,
+  this:1,that:1,current:1,file:1,data:1,dataset:1,please:1,show:1,give:1,
+  tell:1,can:1,you:1,about:1,does:1,do:1,should:1,be:1,their:1
+};
+
+function A(){return window.__INSTANTDASH_APP__||window.APP||{}}
 function rows(){
-  var a=app();
-  if(Array.isArray(a.filtered) && a.filtered.length) return a.filtered;
-  return Array.isArray(a.rows) ? a.rows : [];
+  var a=A();
+  if(Array.isArray(a.filtered)&&a.filtered.length)return a.filtered;
+  return Array.isArray(a.rows)?a.rows:[];
+}
+function clean(s){
+  return String(s==null?'':s).toLowerCase()
+    .replace(/[_\-\/]+/g,' ')
+    .replace(/[₹$€£¥₩₽,%?.,:;()[\]{}]/g,' ')
+    .replace(/\s+/g,' ').trim();
+}
+function tokens(s){
+  return clean(s).split(' ').filter(function(x){return x&&!STOP[x]});
 }
 function num(v){
-  if(typeof v==='number' && isFinite(v)) return v;
-  if(v===null || v===undefined || String(v).trim()==='') return NaN;
-  var x=Number(String(v).replace(/[₹$€£¥₩₽,%\s]/g,'').replace(/,/g,''));
+  if(typeof v==='number'&&isFinite(v))return v;
+  if(v==null||String(v).trim()==='')return NaN;
+  var x=Number(String(v).replace(/[₹$€£¥₩₽%\s,]/g,''));
   return isFinite(x)?x:NaN;
 }
-function isDateKey(k){
+function dateLike(k){
   return /(^|[^a-z])(date|time|period|month|year|quarter|week|fy|timestamp)([^a-z]|$)/i.test(String(k));
 }
-function isIdKey(k){
+function idLike(k){
   return /(^|[^a-z])(id|code|account|acct|serial|sno|sr\s*no|phone|mobile|email|pan|gst|aadhaar|key)([^a-z]|$)/i.test(String(k));
 }
-function moneyKey(k){
-  return /amount|revenue|sales|income|profit|cost|expense|loan|value|turnover|cash|asset|debt|price|budget/i.test(String(k));
+function textSimilarity(q,k){
+  var qt=tokens(q), kt=tokens(k), score=0;
+  qt.forEach(function(t){
+    kt.forEach(function(x){
+      if(x===t)score+=3;
+      else if(x.length>4&&(x.indexOf(t)>=0||t.indexOf(x)>=0))score+=1;
+    });
+  });
+  return score;
+}
+function measureList(rs){
+  if(!rs.length)return [];
+  return Object.keys(rs[0]).map(function(k){
+    var v=rs.map(function(r){return num(r[k])}).filter(isFinite);
+    return {k:k,v:v,coverage:v.length/rs.length};
+  }).filter(function(x){
+    return !dateLike(x.k)&&!idLike(x.k)&&x.v.length>=Math.max(2,Math.ceil(rs.length*.35));
+  });
+}
+function groupList(rs){
+  if(!rs.length)return [];
+  return Object.keys(rs[0]).map(function(k){
+    if(dateLike(k)||idLike(k))return null;
+    var vals=rs.map(function(r){return r[k]}).filter(function(v){return v!=null&&String(v).trim()!==''});
+    var u={};vals.forEach(function(v){u[String(v)]=1});
+    var n=Object.keys(u).length;
+    return (n>=2&&n<=50&&n<rs.length*.8)?{k:k,n:n}:null;
+  }).filter(Boolean);
 }
 function fmt(v,k){
   var n=Number(v);
-  if(moneyKey(k)) return '₹'+n.toLocaleString('en-IN',{maximumFractionDigits:2});
+  if(!isFinite(n))return '—';
+  var pct=/percent|%|rate|ratio|margin|growth|share/i.test(String(k));
+  if(pct)return n.toLocaleString('en-IN',{maximumFractionDigits:2})+'%';
+  if(/amount|revenue|sales|income|profit|cost|expense|loan|value|turnover|cash|asset|debt|price|budget/i.test(String(k)))
+    return '₹'+n.toLocaleString('en-IN',{maximumFractionDigits:2});
   return n.toLocaleString('en-IN',{maximumFractionDigits:2});
 }
-function measures(rs){
-  if(!rs.length) return [];
-  var out=[];
-  Object.keys(rs[0]).forEach(function(k){
-    if(isDateKey(k)||isIdKey(k)) return;
-    var vals=rs.map(function(r){return num(r[k]);}).filter(isFinite);
-    if(vals.length>=Math.max(2,Math.ceil(rs.length*0.4)))
-      out.push({k:k,v:vals});
-  });
-  return out;
+function avg(v){return v.length?v.reduce(function(a,b){return a+b},0)/v.length:NaN}
+function pctChange(a,b){return a?((b-a)/Math.abs(a))*100:NaN}
+function direction(k){
+  var s=clean(k);
+  if(/cost|expense|error|complaint|npa|overdue|defect|waste|incident|absence|backlog|risk|loss|turnaround|delay/i.test(s))return 'lower';
+  if(/revenue|sales|income|profit|completion|attendance|productivity|resolved|recovery|collection|quality|output|efficien|growth/i.test(s))return 'higher';
+  return 'neutral';
 }
-function groups(rs){
-  if(!rs.length) return [];
-  var out=[];
-  Object.keys(rs[0]).forEach(function(k){
-    if(isDateKey(k)) return;
-    var vals=rs.map(function(r){return r[k];}).filter(function(v){return v!==null&&v!==undefined&&String(v).trim()!=='';});
-    if(vals.length && vals.length<=Math.max(100,rs.length*.5)){
-      var u={};
-      vals.forEach(function(v){u[String(v)]=1;});
-      var n=Object.keys(u).length;
-      if(n>=2 && n<=50) out.push({k:k,n:n});
+function measurePick(q,ms){
+  var best=null,bs=0;
+  ms.forEach(function(m){
+    var s=textSimilarity(q,m.k);
+    if(s>bs){bs=s;best=m}
+  });
+  return best;
+}
+function groupPick(q,gs){
+  var best=null,bs=0;
+  gs.forEach(function(g){
+    var s=textSimilarity(q,g.k);
+    if(s>bs){bs=s;best=g}
+  });
+  if(!best){
+    var hints=/region|branch|zone|district|state|area|location|circle|office/.test(clean(q));
+    if(hints)best=gs.find(function(g){return /region|branch|zone|district|state|area|location|circle|office/i.test(g.k)})||null;
+  }
+  return best;
+}
+function rankGroups(rs,g,m){
+  var bucket={};
+  rs.forEach(function(r){
+    var key=String(r[g.k]==null?'':r[g.k]);
+    var v=num(r[m.k]);
+    if(key&&isFinite(v)){
+      if(!bucket[key])bucket[key]={s:0,n:0};
+      bucket[key].s+=v;bucket[key].n++;
     }
   });
-  return out;
+  return Object.keys(bucket).map(function(k){
+    return {k:k,v:bucket[k].s/bucket[k].n,n:bucket[k].n};
+  }).sort(function(a,b){return b.v-a.v});
 }
-function answer(q){
-  var rs=rows();
-  if(!rs.length) return '<b>No live dataset was found.</b><br>Please load a file first.';
-  var ms=measures(rs);
-  if(!ms.length) return '<b>No numeric KPI fields were found.</b><br>The current file has no usable numeric measures.';
-  var ql=String(q||'').toLowerCase().replace(/[?.,]/g,' ').replace(/\s+/g,' ').trim();
-
-  var col=ms.find(function(x){
-    var n=x.k.toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
-    return n && ql.indexOf(n)>=0;
-  });
-
-  if(/how many|how much|number of|no of|total/.test(ql) && col){
-    var total=col.v.reduce(function(a,b){return a+b;},0);
-    return '<b>Total '+col.k+':</b> '+fmt(total,col.k)+' across '+col.v.length+' populated records.';
-  }
-  if(/average|mean|avg/.test(ql) && col){
-    var av=col.v.reduce(function(a,b){return a+b;},0)/col.v.length;
-    return '<b>Average '+col.k+':</b> '+fmt(av,col.k)+' across '+col.v.length+' populated records.';
-  }
-  if(/highest|maximum|max|largest|peak/.test(ql) && col)
-    return '<b>Highest '+col.k+':</b> '+fmt(Math.max.apply(Math,col.v),col.k)+'.';
-  if(/lowest|minimum|min|smallest/.test(ql) && col)
-    return '<b>Lowest '+col.k+':</b> '+fmt(Math.min.apply(Math,col.v),col.k)+'.';
-
-  var moves=ms.map(function(x){
-    var a=x.v[0],b=x.v[x.v.length-1],p=a?((b-a)/Math.abs(a))*100:0;
-    return {x:x,a:a,b:b,p:p};
-  }).sort(function(a,b){return Math.abs(b.p)-Math.abs(a.p);});
-
-  if(/changed|change|trend|movement|compare/.test(ql)){
-    return '<b>Key changes</b><br>'+moves.slice(0,6).map(function(z){
-      return '<b>'+z.x.k+'</b>: '+fmt(z.a,z.x.k)+' → '+fmt(z.b,z.x.k)+' ('+(z.p>=0?'+':'')+z.p.toFixed(1)+'%).';
-    }).join('<br>');
-  }
-
-  if(/three|3|important|issue|concern|problem|focus|priority/.test(ql)){
-    return '<b>Top management movements</b><br>'+moves.slice(0,3).map(function(z,i){
-      return (i+1)+'. <b>'+z.x.k+'</b>: '+fmt(z.a,z.x.k)+' → '+fmt(z.b,z.x.k)+' ('+(z.p>=0?'+':'')+z.p.toFixed(1)+'%).';
-    }).join('<br>');
-  }
-
-  if(/going well|positive|favourable|good/.test(ql)){
-    var z=moves.find(function(x){
-      var positive=/revenue|sales|income|profit|completion|attendance|resolved|collection|output|productivity/i.test(x.x.k);
-      return positive ? x.p>0 : x.p<0;
-    });
-    return z
-      ? '<b>What is going well:</b> '+z.x.k+' moved from '+fmt(z.a,z.x.k)+' to '+fmt(z.b,z.x.k)+' ('+(z.p>=0?'+':'')+z.p.toFixed(1)+'%).'
-      : '<b>No clear favourable movement was identified.</b>';
-  }
-
-  if(/executive summary|summary|management/.test(ql)){
-    var s=moves[0];
-    return '<b>Executive summary</b><br>'+
-      (s ? '<b>'+s.x.k+'</b> shows the largest relative movement at '+(s.p>=0?'+':'')+s.p.toFixed(1)+'%.' : 'No dominant movement identified.')+
-      '<br>Review this movement alongside the related operational drivers.';
-  }
-
-  var gs=groups(rs);
-  if(/best|top|highest|performing|which/.test(ql) && gs.length){
-    var g=gs[0], metric=ms[0], bucket={};
+function groupCompare(rs,g,m){
+  var rank=rankGroups(rs,g,m);
+  return rank.length?rank:null;
+}
+function anomalies(m){
+  var a=avg(m.v), sd=Math.sqrt(avg(m.v.map(function(x){return Math.pow(x-a,2)})));
+  if(!isFinite(sd)||sd===0)return [];
+  return m.v.map(function(v,i){return {i:i,v:v,z:(v-a)/sd}}).filter(function(x){return Math.abs(x.z)>=2});
+}
+function trend(m){
+  if(m.v.length<4)return {label:'limited',change:pctChange(m.v[0],m.v[m.v.length-1])};
+  var half=Math.max(2,Math.floor(m.v.length/2));
+  var a=avg(m.v.slice(0,half)),b=avg(m.v.slice(-half));
+  return {label:b>a?'up':b<a?'down':'flat',change:pctChange(a,b),first:a,last:b};
+}
+function correlations(rs,ms,target){
+  if(!target)return [];
+  var out=[];
+  ms.forEach(function(m){
+    if(m.k===target.k)return;
+    var pairs=[];
     rs.forEach(function(r){
-      var key=String(r[g.k]===undefined?'':r[g.k]);
-      var v=num(r[metric.k]);
-      if(key && isFinite(v)){
-        if(!bucket[key])bucket[key]={s:0,n:0};
-        bucket[key].s+=v; bucket[key].n++;
-      }
+      var a=num(r[target.k]),b=num(r[m.k]);
+      if(isFinite(a)&&isFinite(b))pairs.push([a,b]);
     });
-    var rank=Object.keys(bucket).map(function(k){
-      return {k:k,v:bucket[k].s/bucket[k].n};
-    }).sort(function(a,b){return b.v-a.v;});
-    if(rank.length) return '<b>Best '+g.k+': '+rank[0].k+'</b><br>'+metric.k+' averages '+fmt(rank[0].v,metric.k)+' for this group.';
+    if(pairs.length<5)return;
+    var ax=avg(pairs.map(function(p){return p[0]})), bx=avg(pairs.map(function(p){return p[1]}));
+    var den1=0,den2=0,numr=0;
+    pairs.forEach(function(p){
+      var x=p[0]-ax,y=p[1]-bx;numr+=x*y;den1+=x*x;den2+=y*y;
+    });
+    var r=numr/Math.sqrt(den1*den2);
+    if(isFinite(r)&&Math.abs(r)>=.45)out.push({k:m.k,r:r,n:pairs.length});
+  });
+  return out.sort(function(a,b){return Math.abs(b.r)-Math.abs(a.r)}).slice(0,3);
+}
+function actionFor(k,change){
+  var d=direction(k);
+  if(d==='higher'&&change<0)return 'Identify the driver of the decline, compare the weakest groups, and set a recovery target.';
+  if(d==='higher'&&change>0)return 'Sustain the improvement and identify the practices used by the strongest groups.';
+  if(d==='lower'&&change>0)return 'Investigate the increase, isolate the affected groups, and set a reduction target.';
+  if(d==='lower'&&change<0)return 'The movement is favourable; identify what drove the reduction and sustain it.';
+  return 'Review the KPI with related operational measures before deciding on corrective action.';
+}
+function evidence(html){return html+'<div class="ai48-evidence">Facts and calculations are based only on the currently loaded dataset. Inferences are labelled; correlation does not establish causation.</div>'}
+
+function answer(q){
+  var rs=rows(),ms=measureList(rs),gs=groupList(rs),ql=clean(q);
+  if(!rs.length)return evidence('<b>No live dataset is loaded.</b><br>Please load a file first.');
+  if(!ms.length)return evidence('<b>No usable numeric KPIs were found.</b><br>The current file does not contain enough numeric fields for management analysis.');
+
+  var m=measurePick(q,ms);
+  var g=groupPick(q,gs);
+
+  /* Explicit KPI question */
+  if(m && /average|mean|avg/.test(ql)){
+    return evidence('<b>Average '+m.k+':</b> '+fmt(avg(m.v),m.k)+' across '+m.v.length+' populated records.');
+  }
+  if(m && /highest|maximum|max|largest|peak/.test(ql))
+    return evidence('<b>Highest '+m.k+':</b> '+fmt(Math.max.apply(Math,m.v),m.k)+'.');
+  if(m && /lowest|minimum|min|smallest/.test(ql))
+    return evidence('<b>Lowest '+m.k+':</b> '+fmt(Math.min.apply(Math,m.v),m.k)+'.');
+  if(m && /total|sum|how much|how many/.test(ql)){
+    var total=m.v.reduce(function(a,b){return a+b},0);
+    return evidence('<b>Total '+m.k+':</b> '+fmt(total,m.k)+' across '+m.v.length+' populated records.');
   }
 
-  return '<b>I can analyse the current file.</b><br>Try “What changed?”, “What is going well?”, “Give me an executive summary”, “Which region is best?”, or name a KPI.';
+  /* Best/worst group */
+  if(gs.length && /best|top|highest|performing|worst|lowest|weakest/.test(ql)){
+    g=g||gs.find(function(x){return /region|branch|zone|district|state|area|location|circle|office/i.test(x.k)})||gs[0];
+    m=m||ms[0];
+    var rank=groupCompare(rs,g,m);
+    if(rank&&rank.length){
+      var wantWorst=/worst|lowest|weakest/.test(ql);
+      var list=wantWorst?rank.slice().reverse():rank;
+      var lead=list[0];
+      var title=wantWorst?'Weakest':'Best';
+      var html='<b>'+title+' '+g.k+': '+lead.k+'</b><br>'+m.k+' averages '+fmt(lead.v,m.k)+' across '+lead.n+' populated records.';
+      html+='<br><br><b>Top comparison:</b><br>'+list.slice(0,5).map(function(x,i){return (i+1)+'. '+x.k+' — '+fmt(x.v,m.k)}).join('<br>');
+      return evidence(html);
+    }
+  }
+
+  /* Biggest change / changed */
+  if(/changed|change|trend|movement|compare|improved|deteriorat|increased|decreased/.test(ql)){
+    var mv=ms.map(function(x){
+      var t=trend(x);return {m:x,t:t,abs:isFinite(t.change)?Math.abs(t.change):0};
+    }).sort(function(a,b){return b.abs-a.abs});
+    var html2='<b>Most significant movements</b><br>'+mv.slice(0,6).map(function(z){
+      return '<b>'+z.m.k+'</b>: '+(z.t.change>=0?'+':'')+z.t.change.toFixed(1)+'% based on early-versus-late period averages.';
+    }).join('<br>');
+    return evidence(html2);
+  }
+
+  /* Issues / priorities */
+  if(/three|3|important|issue|concern|problem|focus|priority|attention/.test(ql)){
+    var pr=ms.map(function(x){
+      var t=trend(x),d=direction(x.k),risk=0;
+      if(d==='higher'&&t.change<0)risk=Math.abs(t.change)+10;
+      else if(d==='lower'&&t.change>0)risk=Math.abs(t.change)+10;
+      else risk=Math.abs(t.change);
+      return {m:x,t:t,risk:risk};
+    }).sort(function(a,b){return b.risk-a.risk});
+    var hp=pr.slice(0,3);
+    return evidence('<b>Top management priorities</b><br>'+hp.map(function(z,i){
+      return (i+1)+'. <b>'+z.m.k+'</b>: '+(z.t.change>=0?'+':'')+z.t.change.toFixed(1)+'%. '+actionFor(z.m.k,z.t.change);
+    }).join('<br><br>'));
+  }
+
+  /* What is going well */
+  if(/going well|positive|favourable|good|success/.test(ql)){
+    var good=ms.map(function(x){var t=trend(x);return {m:x,t:t}}).filter(function(z){
+      var d=direction(z.m.k);return d==='higher'?z.t.change>0:d==='lower'?z.t.change<0:z.t.change>0;
+    }).sort(function(a,b){return b.t.change-a.t.change});
+    if(good.length)return evidence('<b>What is going well</b><br>'+good.slice(0,5).map(function(z){
+      return '<b>'+z.m.k+'</b> moved '+(z.t.change>=0?'+':'')+z.t.change.toFixed(1)+'%.';
+    }).join('<br>'));
+    return evidence('<b>No clear favourable movement was identified.</b>');
+  }
+
+  /* Why / driver analysis */
+  if(/why|reason|driver|cause|causing|because/.test(ql)){
+    m=m||ms[0];
+    var t=trend(m),cor=correlations(rs,ms,m);
+    var h='<b>What the data can say about '+m.k+'</b><br>'+
+      'The KPI moved '+(t.change>=0?'+':'')+t.change.toFixed(1)+'% based on early-versus-late period averages.';
+    if(cor.length){
+      h+='<br><br><b>Related movements:</b><br>'+cor.map(function(c){
+        return c.k+' shows a '+(c.r>0?'positive':'negative')+' relationship (r='+c.r.toFixed(2)+').';
+      }).join('<br>');
+      h+='<br><br><b>Important:</b> these relationships are signals to investigate, not proof of causation.';
+    }else{
+      h+='<br><br>The available data does not provide a strong statistical relationship with another numeric field. A causal explanation cannot be established from this dataset alone.';
+    }
+    return evidence(h);
+  }
+
+  /* Improvement / recommendations */
+  if(/improv|better|increase|reduce|optimis|action|recommend|what should|what to do|next step/.test(ql)){
+    m=m||ms[0];var tr=trend(m);
+    var h2='<b>Recommended management focus for '+m.k+'</b><br>'+actionFor(m.k,tr.change);
+    var an=anomalies(m);
+    if(an.length)h2+='<br><br><b>Exception signal:</b> '+an.length+' observation(s) are more than two standard deviations from the KPI mean and merit review.';
+    return evidence(h2);
+  }
+
+  /* Data quality */
+  if(/data quality|missing|blank|null|empty|reliable|accuracy|quality/.test(ql)){
+    var dq=Object.keys(rs[0]).map(function(k){
+      var miss=rs.filter(function(r){return r[k]==null||String(r[k]).trim()===''}).length;
+      return {k:k,p:miss/rs.length};
+    }).sort(function(a,b){return b.p-a.p}).slice(0,5);
+    return evidence('<b>Data quality signals</b><br>'+dq.map(function(x){
+      return '<b>'+x.k+'</b>: '+(x.p*100).toFixed(1)+'% blank.';
+    }).join('<br>'));
+  }
+
+  /* Executive summary */
+  if(/executive summary|summary|management view|overall/.test(ql)){
+    var top=ms.map(function(x){var t=trend(x);return {m:x,t:t}}).sort(function(a,b){return Math.abs(b.t.change)-Math.abs(a.t.change)}).slice(0,5);
+    var h3='<b>Executive summary</b><br>';
+    h3+=top.map(function(z){return '<b>'+z.m.k+'</b>: '+(z.t.change>=0?'+':'')+z.t.change.toFixed(1)+'%.'}).join('<br>');
+    h3+='<br><br><b>Management implication:</b> focus first on movements that are adverse for the KPI type, then compare the weakest groups and investigate the related drivers.';
+    return evidence(h3);
+  }
+
+  return evidence('<b>I can analyse the current file.</b><br>Ask about a KPI, trend, best/worst region or branch, priorities, exceptions, data quality, drivers, improvement actions, or an executive summary.');
 }
 
 function show(q){
-  var o=document.getElementById('ai48Answer');
-  var i=document.getElementById('ai48Input');
-  if(!o) return;
+  var o=document.getElementById('ai48Answer'),i=document.getElementById('ai48Input');
+  if(!o)return;
   q=String(q!==undefined?q:(i?i.value:'')).trim();
   o.classList.add('show');
   o.classList.remove('busy');
-  if(!q){
-    o.innerHTML='<b>Please type a question.</b><br>For example: “What changed?”';
-    return;
-  }
-  try{
-    o.innerHTML=answer(q)+'<div class="ai48-evidence">Based only on the currently loaded dataset.</div>';
-  }catch(e){
-    o.innerHTML='<b>Ask Me could not analyse this question.</b><br>Please try “What changed?” or “Give me an executive summary”.';
-  }
+  if(!q){o.innerHTML='<b>Please type a question.</b><br>For example: “Which region is best?”';return;}
+  try{o.innerHTML=answer(q);}
+  catch(e){o.innerHTML=evidence('<b>I could not complete that analysis.</b><br>Please try a more specific KPI or management question.');}
 }
 
 window.__instantDashAskMeAnswer=show;
-window.__instantDashAskMeFinal177=show;
+window.__instantDashAskMeFinal178=show;
 
 function wire(){
-  var p=document.getElementById('askExecutive48');
-  if(!p)return;
-  var i=document.getElementById('ai48Input');
-  var b=document.getElementById('ai48Ask');
-  if(i && !i.dataset.v177){
-    i.dataset.v177='1';
-    i.addEventListener('keydown',function(e){
-      if(e.key==='Enter'){e.preventDefault();show(i.value);}
-    });
+  var p=document.getElementById('askExecutive48');if(!p)return;
+  var i=document.getElementById('ai48Input'),b=document.getElementById('ai48Ask');
+  if(i&&!i.dataset.v178){
+    i.dataset.v178='1';
+    i.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();show(i.value)}});
   }
-  if(b && !b.dataset.v177){
-    b.dataset.v177='1';
-    b.disabled=false;
-    b.removeAttribute('disabled');
-    b.addEventListener('click',function(e){
-      e.preventDefault();
-      e.stopPropagation();
-      show(i?i.value:'');
-    });
+  if(b&&!b.dataset.v178){
+    b.dataset.v178='1';b.disabled=false;b.removeAttribute('disabled');
+    b.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();show(i?i.value:'')});
   }
-  p.querySelectorAll('.ai48-q').forEach(function(qb){
-    if(qb.dataset.v177)return;
-    qb.dataset.v177='1';
-    qb.addEventListener('click',function(e){
-      e.preventDefault();
-      e.stopPropagation();
-      if(i)i.value=qb.textContent.trim();
-      show(qb.textContent.trim());
-    });
+  p.querySelectorAll('.ai48-q').forEach(function(x){
+    if(x.dataset.v178)return;x.dataset.v178='1';
+    x.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();if(i)i.value=x.textContent.trim();show(x.textContent.trim())});
   });
 }
-wire();
-document.addEventListener('DOMContentLoaded',wire);
-window.addEventListener('load',function(){setTimeout(wire,100);setTimeout(wire,500);});
-setInterval(wire,500);
+wire();document.addEventListener('DOMContentLoaded',wire);
+window.addEventListener('load',function(){setTimeout(wire,100);setTimeout(wire,500)});
+setInterval(wire,700);
 })();
 </script>
 
