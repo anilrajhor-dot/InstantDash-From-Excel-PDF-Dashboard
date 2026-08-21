@@ -9574,7 +9574,15 @@ function renderFallback(){
  svg.push('</svg>');
  var note=(reason?'<div class="id-chart-note warn">'+esc(reason)+'</div>':'')+'<div class="id-chart-note">Tap a bar, point or segment for the exact figure · '+f.rs.length.toLocaleString()+' loaded rows</div>';
  wrap.innerHTML='<div class="id-chart-visual">'+svg.join('')+'</div>'+note;
- wrap.querySelectorAll('[data-fallback]').forEach(function(el){el.addEventListener('click',function(){var q=el.getAttribute('data-fallback').split(':'),si=+q[0],i=+q[1],s=series[si],g=gs[i],d=$('smartChartDetail');if(d)d.innerHTML='<b>'+esc(s.name)+'</b><div class="id-touch-value"><span>'+esc(g.label)+'</span><strong>'+esc(fmt(s.values[i]))+'</strong></div>';});});
+ wrap.querySelectorAll('[data-fallback]').forEach(function(el){
+  el.style.cursor='pointer';
+  el.style.touchAction='manipulation';
+  el.addEventListener('click',function(e){
+    e.preventDefault(); e.stopPropagation();
+    var q=el.getAttribute('data-fallback').split(':'),si=+q[0],i=+q[1];
+    if(window.__instantDashTouchExplain) window.__instantDashTouchExplain(el,si,i);
+  },true);
+});
 }
 function tick(){
  var f=fields();if(!f.measures.length)return;
@@ -13558,6 +13566,131 @@ if(!window.__instantDashChartJsTouchFix){
     detail.classList.add('show');
     detail.innerHTML='<b>Chart explanation</b><br>'+String(measure)+' · '+String(label)+' · '+String(value);
   };
+})();
+</script>
+
+<script id="instantdash-v181-robust-chart-touch">
+(function(){
+'use strict';
+
+function Tclean(v){return String(v==null?'':v).replace(/[&<>]/g,'')}
+function Tnum(v){
+  if(typeof v==='number'&&isFinite(v))return v;
+  if(v==null)return NaN;
+  var n=Number(String(v).replace(/[₹$€£¥₩₽,\s%]/g,''));
+  return isFinite(n)?n:NaN;
+}
+function Trows(){
+  var a=window.APP||window.__INSTANTDASH_APP__||{};
+  if(Array.isArray(a.filtered)&&a.filtered.length)return a.filtered;
+  return Array.isArray(a.rows)?a.rows:[];
+}
+function Tnice(s){return String(s||'').replace(/[_-]+/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase()})}
+function TfindDataEl(svg,x,y){
+  var els=Array.prototype.slice.call(svg.querySelectorAll('[data-fallback]'));
+  var best=null,bd=1e9;
+  els.forEach(function(el){
+    var r=el.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;
+    /* For bars, use the nearest point on the rectangle rather than its centre. */
+    var px=Math.max(r.left,Math.min(x,r.right)),py=Math.max(r.top,Math.min(y,r.bottom));
+    var d=Math.hypot(px-x,py-y);
+    if(d<bd){bd=d;best=el}
+  });
+  return bd<=90?best:null;
+}
+function Tparse(el){
+  var title=el&&el.querySelector?el.querySelector('title'):null;
+  var s=title?String(title.textContent||''):'';
+  var p=s.split('·').map(function(x){return x.trim()});
+  var value=p.length>=3?Tnum(p.slice(2).join('·')):(p.length===2?Tnum(p[1]):NaN);
+  return {measure:p.length>=3?p[0]:'',label:p.length>=3?p[1]:(p[0]||'Selected'),value:value};
+}
+function Texplain(el,si,i){
+  var q=String(el.getAttribute('data-fallback')||si+':'+i).split(':');
+  si=Number(q[0]||si||0);i=Number(q[1]||i||0);
+  var parsed=Tparse(el);
+  var param=document.getElementById('smartParam'+(si+1))||document.getElementById('smartParam1');
+  var measure=param&&param.value?param.value:parsed.measure;
+  var groupEl=document.getElementById('smartGroupBy');
+  var group=groupEl&&groupEl.value?groupEl.value:'';
+  var rows=Trows(), labels=[];
+  if(group){
+    var seen={};
+    rows.forEach(function(r){
+      var g=String(r[group]==null?'':r[group]);
+      if(g&&!seen[g]){seen[g]=1;labels.push(g)}
+    });
+  }
+  var label=(group&&labels[i]!==undefined)?labels[i]:parsed.label;
+  var value=isFinite(parsed.value)?parsed.value:NaN;
+  var detail=document.getElementById('smartChartDetail');
+  if(!detail)return;
+  detail.classList.add('show');
+  detail.style.display='block';
+  detail.innerHTML='<div style="font-weight:900;font-size:18px;margin-bottom:8px">📊 '+Tclean(Tnice(measure||'Selected KPI'))+'</div>'+
+    '<div style="font-size:16px"><b>'+Tclean(label)+'</b></div>'+
+    '<div style="font-size:28px;font-weight:900;margin:8px 0 12px">'+
+      (isFinite(value)?Tclean(Number(value).toLocaleString('en-IN',{maximumFractionDigits:2})):'Figure unavailable')+
+    '</div>'+
+    '<div id="id-touch-ai-reason" style="line-height:1.55">Analysing the variation from the currently loaded data…</div>'+
+    '<button type="button" id="id-touch-speak" style="margin-top:14px;padding:12px 18px;border:0;border-radius:12px;background:#F5B301;font-weight:800;font-size:15px">🔊 Speak explanation</button>';
+  try{detail.scrollIntoView({behavior:'smooth',block:'nearest'})}catch(_){}
+
+  var reason=document.getElementById('id-touch-ai-reason');
+  var speech='For '+Tnice(measure||'the selected KPI')+', '+label+' has a value of '+(isFinite(value)?Number(value).toLocaleString('en-IN',{maximumFractionDigits:2}):'not available')+'. ';
+  if(typeof window.__instantDashChartExplainDirect==='function'&&isFinite(value)){
+    /* Let the existing analytical engine produce the detailed explanation. */
+    try{
+      window.__instantDashChartExplainDirect(measure,group,label,value,'average',detail);
+      var btn=detail.querySelector('.id-chart-speak');
+      if(btn){
+        btn.textContent='🔊 Speak explanation';
+      }
+      var text=detail.innerText||'';
+      speech=text.replace(/🔊 Speak explanation/g,' ').replace(/\s+/g,' ').trim();
+    }catch(_){
+      if(reason)reason.innerHTML='<b>Figure:</b> '+Number(value).toLocaleString('en-IN',{maximumFractionDigits:2})+'<br>There is not enough evidence in the current data to establish a specific cause.';
+    }
+  }else if(reason){
+    reason.innerHTML='<b>Figure:</b> '+(isFinite(value)?Number(value).toLocaleString('en-IN',{maximumFractionDigits:2}):'not available')+
+      '<br>There is not enough evidence in the current data to establish a specific cause.';
+  }
+  var speak=document.getElementById('id-touch-speak');
+  if(speak){
+    speak.onclick=function(e){
+      e.preventDefault();e.stopPropagation();
+      try{
+        if(window.speechSynthesis){
+          window.speechSynthesis.cancel();
+          var u=new SpeechSynthesisUtterance(speech||('The value is '+value));
+          u.lang='en-IN';u.rate=.92;u.volume=1;
+          window.speechSynthesis.speak(u);
+        }
+      }catch(_){}
+    };
+  }
+}
+window.__instantDashTouchExplain=Texplain;
+
+function handleTouch(e){
+  var c=document.getElementById('smartChartCanvas');
+  if(!c)return;
+  var svg=c.querySelector('svg');
+  if(!svg)return;
+  var t=e.touches&&e.touches[0];
+  var x=t?t.clientX:e.clientX,y=t?t.clientY:e.clientY;
+  if(!isFinite(x)||!isFinite(y))return;
+  var el=TfindDataEl(svg,x,y);
+  if(!el)return;
+  var q=String(el.getAttribute('data-fallback')||'0:0').split(':');
+  Texplain(el,Number(q[0]),Number(q[1]));
+  if(e.type==='touchend')e.preventDefault();
+}
+if(!window.__instantDashRobustChartTouch){
+  window.__instantDashRobustChartTouch=1;
+  document.addEventListener('touchend',handleTouch,{passive:false,capture:true});
+  document.addEventListener('pointerup',function(e){if(e.pointerType==='touch'||e.pointerType==='pen')handleTouch(e)},true);
+}
 })();
 </script>
 </body></html>
