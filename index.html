@@ -1,5 +1,37 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v17.7 FINAL","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">\n
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v17.7 FINAL","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<style id="instantdash-dark-mode-contrast-final">
+/* DARK MODE CONTRAST ONLY — no layout, sizing, spacing, controls, data,
+   charts, interactions, Ask AI, touch, speak or other UI changes. */
+html.theme-dark[data-theme="dark"] body.dark #aiExecutiveIntelligence,
+html.theme-dark body.dark #aiExecutiveIntelligence{
+  color:var(--text)!important;
+}
+html.theme-dark[data-theme="dark"] body.dark #aiExecutiveIntelligence .exec-card,
+html.theme-dark body.dark #aiExecutiveIntelligence .exec-card{
+  background:var(--card)!important;
+  color:var(--text)!important;
+  border-color:var(--border)!important;
+}
+html.theme-dark[data-theme="dark"] body.dark #aiExecutiveIntelligence .exec-label,
+html.theme-dark body.dark #aiExecutiveIntelligence .exec-label{
+  color:var(--muted)!important;
+}
+html.theme-dark[data-theme="dark"] body.dark #aiExecutiveIntelligence .exec-title,
+html.theme-dark body.dark #aiExecutiveIntelligence .exec-title{
+  color:var(--text)!important;
+}
+html.theme-dark[data-theme="dark"] body.dark #aiExecutiveIntelligence .exec-body,
+html.theme-dark body.dark #aiExecutiveIntelligence .exec-body{
+  color:var(--muted)!important;
+}
+html.theme-dark[data-theme="dark"] body.dark #aiExecutiveIntelligence #aiExecutiveStatus,
+html.theme-dark body.dark #aiExecutiveIntelligence #aiExecutiveStatus{
+  color:var(--muted)!important;
+}
+</style>
+
+</head><body class="dark" style="">\n
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
@@ -13281,29 +13313,5 @@ boot();document.addEventListener('DOMContentLoaded',boot);window.addEventListene
 })();
 </script>
 
-</body></html>
-<!-- DARK MODE CONTRAST ONLY: no layout, sizing, spacing, interaction or component changes -->
 
-<style id="instantdash-dark-mode-contrast-only">
-/* DARK MODE CONTRAST ONLY
-   No layout, spacing, sizing, positioning, controls, data, charts or behaviour changed.
-   This override only restores readable text contrast where older AI/management cards
-   contain hard-coded light-theme text colours. */
-html.theme-dark body.dark .ai47-card,
-html.theme-dark body.dark .ai47-card p,
-html.theme-dark body.dark .ai47-card li,
-html.theme-dark body.dark .ai47-card .ai47-title,
-html.theme-dark body.dark .ai47-card .ai47-text,
-html.theme-dark body.dark .ai47-card .ai47-action,
-html.theme-dark body.dark .ai47-details summary {
-  color:var(--text)!important;
-}
-html.theme-dark body.dark .ai47-card .ai47-kicker,
-html.theme-dark body.dark .ai47-meta {
-  color:var(--muted)!important;
-}
-html.theme-dark body.dark .ai47-card b,
-html.theme-dark body.dark .ai47-card strong {
-  color:var(--text)!important;
-}
-</style>
+</body></html>
