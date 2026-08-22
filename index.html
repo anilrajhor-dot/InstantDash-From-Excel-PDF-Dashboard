@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v19.14","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">\n
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v19.15","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">\n
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
@@ -1205,7 +1205,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v19.14">
+<meta name="instantdash-build" content="v19.15">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2060,7 +2060,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v19.14';
+      s.textContent='v19.15';
       b.appendChild(s);
     }
   }
@@ -2069,48 +2069,6 @@ body{
 })();
 </script>
 
-<!-- v19.12 — standalone speech test button, zero dependency on any app code.
-     Wired directly to the raw browser Speech API so we can tell, with total
-     certainty, whether speech can work at all on this page right now — fully
-     independent of every layer we've been chasing (instantDashSpeak,
-     instantDashSpeakChartPoint, click delegation, etc). The button's own
-     label is the feedback, so nothing else needs to be visible or working
-     for this test to be conclusive. -->
-<script id="instantdash-speech-selftest">
-(function(){
-  function mount(){
-    if(document.getElementById('idSpeechSelfTest')) return;
-    var btn=document.createElement('button');
-    btn.id='idSpeechSelfTest';
-    btn.type='button';
-    btn.textContent='🔊 Test Speech (standalone)';
-    btn.style.cssText='position:fixed;left:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);z-index:99999;padding:10px 14px;border-radius:999px;border:none;background:#0E0E10;color:#fff;font:700 12px Poppins,sans-serif;box-shadow:0 4px 16px rgba(0,0,0,.3)';
-    btn.addEventListener('click',function(){
-      try{
-        var s=window.speechSynthesis;
-        if(!s){ btn.textContent='❌ no speechSynthesis API'; return; }
-        if(s.speaking||s.pending) s.cancel();
-        s.resume();
-        var u=new SpeechSynthesisUtterance('This is a direct standalone test.');
-        u.rate=.95;
-        u.onstart=function(){ btn.textContent='🔊 speaking (standalone)'; };
-        u.onend=function(){ btn.textContent='✅ finished — tap to test again'; };
-        u.onerror=function(e){ btn.textContent='❌ error: '+(e&&e.error?e.error:'unknown'); };
-        btn.textContent='… sent to engine';
-        s.speak(u);
-        setTimeout(function(){
-          if(btn.textContent==='… sent to engine'){
-            btn.textContent='⚠️ stuck (speaking:'+s.speaking+' pending:'+s.pending+' paused:'+s.paused+')';
-          }
-        },1500);
-      }catch(err){ btn.textContent='❌ exception: '+(err&&err.message?err.message:err); }
-    });
-    document.body.appendChild(btn);
-  }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount);
-  else mount();
-})();
-</script>
 
 
 
@@ -2129,7 +2087,7 @@ body{
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v19.14</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v19.15</span>
   <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v19.11</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -2654,7 +2612,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v19.14',
+  VERSION: 'v19.15',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -4335,28 +4293,16 @@ function instantDashCleanLabel(raw){
   }catch(_){ return String(raw==null?'':raw); }
 }
 function instantDashSpeechStatus(msg){
-  try{
-    var el = window.__instantDashActiveDetailEl;
-    if(!el) return;
-    el.textContent += ' [' + msg + ']';
-  }catch(_){ }
+  /* v19.15 — diagnosis complete, disabled. Kept as a no-op stub since
+     instantDashSpeak() still calls it; restore the body below if a new
+     speech issue ever needs this level of tracing again. */
+  return;
 }
 function instantDashSpeechDiag(msg, isError){
-  try{
-    var el = document.getElementById('instantdash-speech-diag');
-    if(!el){
-      el = document.createElement('div');
-      el.id = 'instantdash-speech-diag';
-      el.style.cssText = 'position:fixed;left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);z-index:99999;padding:8px 12px;border-radius:10px;font:600 11px Poppins,sans-serif;box-shadow:0 4px 16px rgba(0,0,0,.25);text-align:center;transition:opacity .25s';
-      document.body.appendChild(el);
-    }
-    el.style.background = isError ? '#E2582B' : '#2E8B57';
-    el.style.color = '#fff';
-    el.style.opacity = '1';
-    el.textContent = msg;
-    clearTimeout(window.__instantDashDiagTimer);
-    window.__instantDashDiagTimer = setTimeout(function(){ el.style.opacity='0'; }, 5000);
-  }catch(_){ }
+  /* v19.15 — diagnosis complete, banner disabled. Kept as a no-op stub since
+     instantDashSpeak() still calls it from other chart systems; flip this
+     back on (restore the body below) if a new speech issue needs debugging. */
+  return;
 }
 window.__instantDashVoices = [];
 (function primeVoices(){
@@ -9256,40 +9202,20 @@ function redrawAICard(s,card){
    var label=(__rawLabel instanceof Date)?fmtDate(__rawLabel):(__rawLabel!==undefined?String(__rawLabel):'Selected');
    var value=Number(s.data.values[idx]||0);
    if(s.detailEl)s.detailEl.textContent=niceName(s.measure)+' · '+label+' · '+fmtByField(value,s.measure);
-   if(s.detailEl) s.detailEl.textContent += ' [A]';
    window.__instantDashActiveDetailEl = s.detailEl || null;
    window.__instantDashActiveDetailBase = s.detailEl ? s.detailEl.textContent : '';
-   if(s.detailEl) s.detailEl.textContent += ' [B]';
-   /* v19.13 — inline speech call, bypassing instantDashSpeakChartPoint and
-      instantDashSpeak entirely. The standalone test button — identical
-      browser APIs, much simpler code, no named helper functions — works
-      reliably every time. Calling through our helper functions from this
-      exact click handler mysteriously never reached them, even after they
-      were stripped to near-nothing. Rather than keep chasing why, this
-      inlines the same logic that's already proven to work. */
-   if(s.detailEl) s.detailEl.textContent += ' [F1]';
    try{
      var __txt = niceName(s.measure)+' for '+instantDashCleanLabel(label)+' is '+fmtByField(value,s.measure)+'.';
-     if(s.detailEl) s.detailEl.textContent += ' [F2]';
      var __synth = window.speechSynthesis;
      if(__synth){
        if(__synth.speaking||__synth.pending) __synth.cancel();
        __synth.resume();
        var __u = new SpeechSynthesisUtterance(__txt);
        __u.rate = .95;
-       __u.onstart = function(){ if(s.detailEl) s.detailEl.textContent += ' [🔊]'; };
-       __u.onerror = function(e){ if(s.detailEl) s.detailEl.textContent += ' [❌'+(e&&e.error?e.error:'?')+']'; };
        window.__instantDashUtterance = __u;
-       if(s.detailEl) s.detailEl.textContent += ' [F3]';
        __synth.speak(__u);
-       if(s.detailEl) s.detailEl.textContent += ' [F4]';
-     } else {
-       if(s.detailEl) s.detailEl.textContent += ' [no-speechSynthesis]';
      }
-   }catch(__err){
-     if(s.detailEl) s.detailEl.textContent += ' [EXC:'+(__err&&__err.message?__err.message:__err)+']';
-   }
-   if(s.detailEl) s.detailEl.textContent += ' [C]';
+   }catch(_){ }
  });}
  catch(err){wrap.innerHTML='<div class="ai-chart-render-error" style="height:100%;min-height:220px;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;color:var(--muted);font:600 11px Poppins,sans-serif">Unable to draw this chart. The data is still available in the manual chart selector.</div>';console.error('InstantDash native AI chart error',err);}
 }
