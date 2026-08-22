@@ -2192,8 +2192,8 @@ body{
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v23.0</span>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v23.0</span></div>
+    <span class="sub">Excel / CSV / PDF → AI Management Cockpit · v24.0</span>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v24.0</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
       <button class="id-health-btn no-print" id="aiModeToggleBtn" type="button" aria-label="Real AI settings">🤖 Real AI: Off</button>
@@ -2775,9 +2775,9 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
    CONFIG — the knobs worth turning. See "How to Customize" in the notes.
    --------------------------------------------------------------------- */
 const CONFIG = {
-  BUILD_VERSION: '1.13.53',
+  BUILD_VERSION: '1.14.0',
   APP_NAME: 'InstantDash',
-  VERSION: 'v23.0',
+  VERSION: 'v24.0',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -11618,5 +11618,131 @@ window.addEventListener('load',function(){setTimeout(mountAskMe,250);});
   window.addEventListener('load',function(){setTimeout(wire,100);setTimeout(wire,500);});
   setInterval(wire,500);
 })();
+</script>
+<style id="instantdash-v24-unified-cockpit">
+#id24Cockpit{margin:0 0 18px!important;overflow:hidden;background:linear-gradient(145deg,rgba(245,179,1,.07),var(--card));border:1px solid var(--border)}
+.id24-verdict{display:flex;justify-content:space-between;gap:18px;align-items:center;padding:20px 20px 16px;border-bottom:1px solid var(--border)}
+.id24-kicker{font-size:9px;font-weight:900;letter-spacing:.16em;color:var(--accent);text-transform:uppercase}.id24-verdict h2{margin:5px 0 4px;font-size:24px;letter-spacing:-.03em}.id24-verdict p{margin:0;color:var(--muted);font-size:12px;max-width:760px;line-height:1.55}.id24-actions{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}.id24-btn,.id24-top-btn{border:1px solid var(--border);background:var(--card);color:var(--text);padding:9px 12px;border-radius:10px;font-size:11px;font-weight:800;cursor:pointer;white-space:nowrap}.id24-btn.primary,.id24-top-btn{background:var(--accent);border-color:var(--accent);color:#111}.id24-btn:hover,.id24-top-btn:hover{transform:translateY(-1px);box-shadow:var(--shadow)}
+.id24-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;padding:12px 16px}.id24-card{padding:14px;border:1px solid var(--border);border-radius:14px;background:var(--card-2);min-height:116px}.id24-card.good{border-top:3px solid var(--ok)}.id24-card.bad{border-top:3px solid #E2582B}.id24-card.info{border-top:3px solid var(--accent)}.id24-label{font-size:9px;font-weight:900;letter-spacing:.1em;color:var(--muted)}.id24-title{font-size:14px;font-weight:900;margin-top:8px;line-height:1.25}.id24-body{font-size:11px;line-height:1.55;color:var(--muted);margin-top:6px}
+.id24-two{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px 12px}.id24-two>section{border:1px solid var(--border);border-radius:14px;background:var(--card-2);padding:13px}.id24-section-head{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:9px}.id24-section-head h3{margin:0;font-size:13px}.id24-section-head span{font-size:9px;color:var(--muted);font-weight:700}.id24-issue{display:flex;gap:9px;padding:9px 0;border-top:1px solid var(--border)}.id24-issue:first-of-type{border-top:0}.id24-issue>span{font-size:8px;font-weight:900;align-self:flex-start;padding:4px 6px;border-radius:999px;background:var(--card)}.id24-issue.high>span{color:#E2582B}.id24-issue.watch>span{color:#b07b00}.id24-issue.info>span{color:var(--ok)}.id24-issue b{display:block;font-size:11px}.id24-issue small{display:block;color:var(--muted);font-size:10px;line-height:1.45;margin-top:3px}.id24-action{display:flex;gap:10px;padding:9px 0;border-top:1px solid var(--border);font-size:11px;line-height:1.5}.id24-action:first-of-type{border-top:0}.id24-action b{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:#111;flex:0 0 auto;font-size:10px}.id24-rank{display:flex;justify-content:space-between;padding:8px 0;border-top:1px solid var(--border);font-size:11px}.id24-rank:first-of-type{border-top:0}.id24-rank b{font-size:11px}.id24-muted{color:var(--muted);font-size:10px;padding:8px 0}.id24-foot{display:flex;gap:14px;align-items:center;flex-wrap:wrap;padding:11px 16px;border-top:1px solid var(--border);color:var(--muted);font-size:9px}.id24-link{margin-left:auto;border:0;background:none;color:var(--accent);font-weight:800;cursor:pointer}.id24-empty{padding:22px;display:grid;gap:5px}.id24-empty b{font-size:15px}.id24-empty span{font-size:11px;color:var(--muted)}.id24-loading{padding:20px;color:var(--muted);font-size:11px}.id24-version{font-size:9px;color:var(--muted);border-left:1px solid var(--border);padding-left:8px;margin-left:6px;white-space:nowrap}
+@media(max-width:900px){.id24-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.id24-verdict{align-items:flex-start;flex-direction:column}.id24-actions{justify-content:flex-start}.id24-two{grid-template-columns:1fr}}
+@media(max-width:560px){.id24-grid{grid-template-columns:1fr;padding:10px}.id24-two{grid-template-columns:1fr;padding:0 10px 10px}.id24-verdict{padding:16px 12px}.id24-verdict h2{font-size:21px}.id24-actions{width:100%}.id24-btn{flex:1;min-width:0}.id24-foot{padding:10px}.id24-link{margin-left:0;width:100%;text-align:left;padding:0}}
+@media print{#id24Cockpit{border:1px solid #ccc;background:#fff}.id24-actions,.id24-link,.id24-top-btn{display:none!important}.id24-grid{grid-template-columns:repeat(2,1fr)}.id24-two{grid-template-columns:1fr 1fr}}
+</style>
+
+<script id="instantdash-v24-unified-cockpit-js">(function(){
+'use strict';
+
+/* InstantDash v24.0 — Unified AI Management Cockpit
+   Additive redesign: keeps the existing dashboard, charts, Health Check,
+   Ask AI and Share functions while adding one decision-first management layer. */
+
+const ID24 = {
+  version:'v24.0', lastSig:'', timer:null
+};
+const q24 = s => document.querySelector(s);
+const esc24 = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const num24 = v => { if(v instanceof Date) return NaN; if(typeof v==='number') return Number.isFinite(v)?v:NaN; let s=String(v==null?'':v).trim().replace(/[₹$€£¥₩,%]/g,'').replace(/,/g,''); if(/^\(.*\)$/.test(s))s='-'+s.slice(1,-1); return s!=='' && Number.isFinite(Number(s))?Number(s):NaN; };
+const fmt24 = v => Number.isFinite(v)?Number(v.toFixed(2)).toLocaleString('en-IN'):'—';
+const pct24 = v => Number.isFinite(v)?Number(v.toFixed(1)).toLocaleString('en-IN')+'%':'—';
+const money24 = (v,name) => { if(!Number.isFinite(v))return '—'; const s=String(name||'').toLowerCase(); return /amount|sales|revenue|profit|income|expense|cost|cash|loan|asset|balance|budget|target|actual|price|value|capital|investment|salary|interest|emi|outstanding|purchase|stock|debt|deposit|saving|turnover|fee|tax|premium/.test(s)?'₹'+fmt24(v):fmt24(v); };
+function rows24(){ const a=window.__INSTANTDASH_APP__||{}; return Array.isArray(a.filtered)&&a.filtered.length?a.filtered:(Array.isArray(a.rows)?a.rows:[]); }
+function allRows24(){ const a=window.__INSTANTDASH_APP__||{}; return Array.isArray(a.rows)?a.rows:[]; }
+function cols24(){ const a=window.__INSTANTDASH_APP__||{}; return Array.isArray(a.columns)?a.columns:[]; }
+function cleanName24(n){ return String(n||'').replace(/[_-]+/g,' ').replace(/\s+/g,' ').trim(); }
+function isId24(n){ return /account|a\/c|(^|\s)id(\s|$)|code|pan|aadhaar|mobile|phone|reference|invoice|serial/i.test(String(n)); }
+function numericCols24(rs){ if(!rs.length)return []; return Object.keys(rs[0]).map(k=>{if(isId24(k))return null;const vals=rs.map(r=>num24(r[k])).filter(Number.isFinite);return vals.length>=Math.max(2,Math.ceil(rs.length*.5))?{name:k,vals}:null;}).filter(Boolean); }
+function dateCols24(rs){ if(!rs.length)return []; return Object.keys(rs[0]).map(k=>{const c=cols24().find(x=>x.name===k); if(c&&c.type==='date')return k; const s=k.toLowerCase(); if(/date|month|quarter|year|period|time/.test(s))return k; return null;}).filter(Boolean); }
+function groupCols24(rs){ if(!rs.length)return []; return Object.keys(rs[0]).map(k=>{if(isId24(k))return null;const vals=rs.map(r=>String(r[k]??'').trim()).filter(Boolean);const uniq=[...new Set(vals)]; if(uniq.length<2||uniq.length>30)return null; const numeric=vals.filter(v=>Number.isFinite(num24(v))).length/Math.max(1,vals.length); if(numeric>.8)return null; return {name:k,unique:uniq};}).filter(Boolean); }
+function mean24(vals){return vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:NaN;}
+function trend24(vals){if(vals.length<2)return null;const a=vals[0],b=vals[vals.length-1]; if(!Number.isFinite(a)||!Number.isFinite(b)||a===0)return null; return (b-a)/Math.abs(a)*100;}
+function findPair24(nums){
+  const targets=nums.filter(x=>/target|budget|plan|goal|benchmark|quota/i.test(x.name));
+  const actuals=nums.filter(x=>/actual|achiev|attain|result|performance|current/i.test(x.name));
+  if(targets.length&&actuals.length)return {target:targets[0],actual:actuals[0]};
+  return null;
+}
+function bestGroup24(rs,nums,groups){
+  if(!groups.length||!nums.length)return null;
+  const g=groups[0], n=nums[0];
+  const out=g.unique.map(v=>{const vals=rs.filter(r=>String(r[g.name]??'').trim()===v).map(r=>num24(r[n.name])).filter(Number.isFinite);return {group:v,avg:mean24(vals),count:vals.length};}).filter(x=>Number.isFinite(x.avg));
+  if(out.length<2)return null;
+  out.sort((a,b)=>b.avg-a.avg); return {dimension:g.name,measure:n.name,top:out[0],bottom:out[out.length-1],all:out};
+}
+function makeSummary24(){
+  const rs=rows24(), all=allRows24(), nums=numericCols24(rs), groups=groupCols24(rs), dates=dateCols24(rs), pair=findPair24(nums);
+  const cards=[];
+  if(!rs.length)return {empty:true};
+  const movement=nums.map(n=>({name:n.name,t:trend24(n.vals),avg:mean24(n.vals)})).filter(x=>x.t!==null).sort((a,b)=>Math.abs(b.t)-Math.abs(a.t));
+  const best=bestGroup24(rs,nums,groups);
+  if(pair){
+    const tv=mean24(pair.target.vals), av=mean24(pair.actual.vals), variance=tv?((av-tv)/Math.abs(tv))*100:null;
+    cards.push({kind:variance!=null&&variance<0?'bad':'good',label:'TARGET vs ACTUAL',title:cleanName24(pair.actual.name),body:`Actual ${money24(av,pair.actual.name)} vs target ${money24(tv,pair.target.name)} · variance ${pct24(variance)}`});
+  }
+  if(movement[0]){
+    const m=movement[0]; cards.push({kind:m.t<0?'bad':'good',label:'KEY MOVEMENT',title:cleanName24(m.name),body:`From first to latest available value: ${m.t>=0?'+':''}${pct24(m.t)} · current ${money24(m.avg,m.name)} average.`});
+  }
+  if(best)cards.push({kind:'good',label:'TOP / BOTTOM',title:`${cleanName24(best.dimension)} · ${cleanName24(best.measure)}`,body:`Best: ${best.top.group} (${fmt24(best.top.avg)}) · Lowest: ${best.bottom.group} (${fmt24(best.bottom.avg)}).`});
+  cards.push({kind:'info',label:'DATA UNDERSTANDING',title:`${rs.length.toLocaleString('en-IN')} rows · ${Object.keys(rs[0]||{}).length} fields`,body:`${nums.length} usable measures · ${groups.length} grouping fields${dates.length?' · '+dates.length+' time field'+(dates.length>1?'s':''):''}.`});
+  const issues=[];
+  const miss=Object.keys(rs[0]||{}).map(k=>{const m=rs.filter(r=>r[k]==null||String(r[k]).trim()==='').length;return {name:k,pct:m/rs.length*100};}).filter(x=>x.pct>0).sort((a,b)=>b.pct-a.pct);
+  miss.slice(0,3).forEach(x=>issues.push({level:x.pct>=20?'HIGH':'MEDIUM',title:`${cleanName24(x.name)} has ${pct24(x.pct)} missing`,body:'Validate whether blanks are genuinely not applicable before changing them.'}));
+  movement.filter(x=>Math.abs(x.t)>=10).slice(0,3).forEach(x=>issues.push({level:x.t<0?'HIGH':'WATCH',title:`${cleanName24(x.name)} ${x.t<0?'declined':'increased'} ${Math.abs(x.t).toFixed(1)}%`,body:'Review the underlying periods/groups and related KPIs before concluding why the movement occurred.'}));
+  if(!issues.length)issues.push({level:'INFO',title:'No material exception detected by the local cockpit',body:'Use Ask AI or the detailed charts for deeper investigation.'});
+  const top=best?best.all.slice(0,5):[]; const bottom=best?best.all.slice(-5).reverse():[];
+  const actions=[];
+  if(pair && mean24(pair.actual.vals)<mean24(pair.target.vals))actions.push('Prioritise the target gap and inspect the groups/periods contributing most to the shortfall.');
+  if(movement[0]&&movement[0].t<-10)actions.push(`Investigate the decline in ${cleanName24(movement[0].name)} and compare it with related measures.`);
+  if(!actions.length)actions.push('Confirm the strongest and weakest areas, then use evidence view before taking action.');
+  return {rows:rs,all,nums,groups,dates,pair,cards,issues,top,bottom,actions};
+}
+function cockpitHTML24(s){
+ if(s.empty)return `<div class="id24-empty"><b>Upload a file to activate the AI Management Cockpit.</b><span>InstantDash will understand the columns, identify measures and surface management priorities.</span></div>`;
+ const card=s.cards.map(c=>`<article class="id24-card ${c.kind}"><div class="id24-label">${esc24(c.label)}</div><div class="id24-title">${esc24(c.title)}</div><div class="id24-body">${esc24(c.body)}</div></article>`).join('');
+ const issue=s.issues.map(x=>`<div class="id24-issue ${x.level==='HIGH'?'high':x.level==='WATCH'?'watch':'info'}"><span>${esc24(x.level)}</span><div><b>${esc24(x.title)}</b><small>${esc24(x.body)}</small></div></div>`).join('');
+ const list=(arr,empty)=>arr.length?arr.map(x=>`<div class="id24-rank"><span>${esc24(x.group)}</span><b>${fmt24(x.avg)}</b></div>`).join(''):`<div class="id24-muted">${empty}</div>`;
+ return `<div class="id24-verdict"><div><div class="id24-kicker">AI MANAGEMENT COCKPIT · CURRENT DATA</div><h2>Executive Verdict</h2><p>${esc24(s.issues.filter(x=>x.level==='HIGH').length?`${s.issues.filter(x=>x.level==='HIGH').length} priority issue${s.issues.filter(x=>x.level==='HIGH').length>1?'s':''} need management attention.`:'The dataset is ready for management review; no high-priority exception was detected locally.')}</p></div><div class="id24-actions"><button class="id24-btn primary" data-id24="ask">💬 Ask AI</button><button class="id24-btn" data-id24="evidence">🔎 Show evidence</button><button class="id24-btn" data-id24="share">📤 Share</button></div></div>
+ <div class="id24-grid">${card}</div>
+ <div class="id24-two"><section><div class="id24-section-head"><h3>🚨 Management Attention</h3><span>Evidence-led</span></div>${issue}</section><section><div class="id24-section-head"><h3>🎯 Recommended Actions</h3><span>Next steps</span></div>${s.actions.map((a,i)=>`<div class="id24-action"><b>${i+1}</b><span>${esc24(a)}</span></div>`).join('')}</section></div>
+ <div class="id24-two"><section><div class="id24-section-head"><h3>🏆 Top performers</h3><span>${esc24(s.groups[0]?.name||'Group')}</span></div>${list(s.top,'No suitable grouping field detected.')}</section><section><div class="id24-section-head"><h3>⚠ Needs attention</h3><span>${esc24(s.groups[0]?.name||'Group')}</span></div>${list(s.bottom,'No suitable grouping field detected.')}</section></div>
+ <div class="id24-foot"><span>🔒 Local analysis uses the currently loaded/filtered dataset.</span><span>AI conclusions do not establish causation; verify the evidence.</span><button class="id24-link" data-id24="explain">Explain the numbers</button></div>`;
+}
+function mount24(){
+ if(document.getElementById('id24Cockpit'))return;
+ const anchor=document.getElementById('aiExecutiveIntelligence')||document.getElementById('postUploadHealth'); if(!anchor)return;
+ const sec=document.createElement('section'); sec.id='id24Cockpit'; sec.className='id24-cockpit card no-print'; sec.innerHTML='<div class="id24-loading">Preparing management cockpit…</div>';
+ anchor.insertAdjacentElement('afterend',sec);
+ const newBtn=document.createElement('button'); newBtn.type='button'; newBtn.id='id24New'; newBtn.className='id24-top-btn no-print'; newBtn.textContent='＋ New Analysis';
+ const share=document.getElementById('share'); if(share)share.parentNode.insertBefore(newBtn,share);
+ newBtn.addEventListener('click',newAnalysis24);
+ document.addEventListener('click',function(e){const b=e.target.closest('[data-id24]');if(!b)return;const act=b.getAttribute('data-id24');if(act==='ask')openAsk24();if(act==='share'){const t=document.getElementById('topShareBtn');if(t)t.click();}if(act==='evidence')scrollEvidence24();if(act==='explain')openExplain24();});
+ refresh24(true);
+ ID24.timer=setInterval(()=>refresh24(false),1200);
+}
+function signature24(){const a=window.__INSTANTDASH_APP__||{};return [a.fileName,a.rows?.length,a.filtered?.length,Object.keys(a.filters||{}).map(k=>k+JSON.stringify(a.filters[k])).join('|'),a.__dataVersion].join('::');}
+function refresh24(force){const sec=document.getElementById('id24Cockpit');if(!sec)return;const sig=signature24();if(!force&&sig===ID24.lastSig)return;ID24.lastSig=sig;sec.innerHTML=cockpitHTML24(makeSummary24());}
+function openAsk24(){const p=document.getElementById('askExecutive48'), l=document.getElementById('ai48Launch');if(p){p.classList.add('ai48-open');document.body.classList.add('ai48-open');setTimeout(()=>document.getElementById('ai48Input')?.focus(),80);}else if(l)l.click();}
+function scrollEvidence24(){const ids=['managementInsights','idV1400','idV143Report','chartsGrid'];for(const id of ids){const n=document.getElementById(id);if(n){n.scrollIntoView({behavior:'smooth',block:'start'});return;}}}
+function openExplain24(){const s=makeSummary24();const txt=s.empty?'No data loaded.':`InstantDash analysed ${s.rows.length} current rows. Measures: ${s.nums.map(x=>cleanName24(x.name)).join(', ')||'none'}. ${s.pair?`Target/actual comparison detected for ${cleanName24(s.pair.actual.name)} versus ${cleanName24(s.pair.target.name)}.`:''} Every finding should be checked against the underlying rows and business context.`;alert(txt);}
+function newAnalysis24(){
+ try{ if(typeof window.__instantDashResetAskAIForNewFile==='function')window.__instantDashResetAskAIForNewFile(); }catch(_){ }
+ try{ if(typeof resetDataForNewFile==='function')resetDataForNewFile(); }catch(_){ const a=window.__INSTANTDASH_APP__;if(a){a.rows=[];a.filtered=[];a.columns=[];a.filters={};} }
+ try{ window.__instantDashDepartments=[];window.__instantDashActiveDeptId=null;if(typeof idRenderDepartments==='function')idRenderDepartments(); }catch(_){ }
+ const app=document.getElementById('app'), empty=document.getElementById('emptyState');if(app)app.hidden=true;if(empty)empty.hidden=false;
+ const fn=document.getElementById('fileName'),fm=document.getElementById('fileMeta');if(fn)fn.textContent='No file loaded';if(fm)fm.textContent='Start a new analysis';
+ const src=document.getElementById('idV163Source');if(src)src.innerHTML='<span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span>';
+ const cockpit=document.getElementById('id24Cockpit');if(cockpit)cockpit.innerHTML=cockpitHTML24({empty:true});
+ const input=document.getElementById('fileInput');if(input)input.value='';
+ try{scrollTo({top:0,behavior:'smooth'});}catch(_){scrollTo(0,0)}
+ try{toast('New analysis ready — previous data cleared');}catch(_){ }
+}
+function installVersion24(){
+ document.querySelectorAll('#idV171Master').forEach(n=>n.textContent='v24.0');
+ const sub=document.querySelector('.brand .sub');if(sub)sub.textContent='Excel / CSV / PDF → AI Management Cockpit · v24.0';
+ const old=document.getElementById('id24VersionBadge');if(!old){const b=document.createElement('span');b.id='id24VersionBadge';b.textContent='v24.0 · Unified Cockpit';b.className='id24-version';document.querySelector('.brand')?.appendChild(b);}
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{mount24();installVersion24();});else{mount24();installVersion24();}
+})();
+
 </script>
 </body></html>
