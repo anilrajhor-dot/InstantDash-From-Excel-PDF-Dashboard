@@ -17,6 +17,7 @@
 
 </script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
@@ -4375,6 +4376,11 @@ function drawChart(spec){
       kind = 'bar';
       data = {labels:h.labels, datasets:[{label:'Rows', data:h.series[0].data, backgroundColor:P[0], borderRadius:4, borderSkipped:false}]};
       options = deep(common, {scales:{x:{ticks:{maxRotation:60}}, y:{title:{display:true, text:'Rows', color:th.muted}}}});
+      options.plugins.datalabels = {
+        display:true, anchor:'end', align:'end', offset:4, clamp:true,
+        color:th.text, font:{size:9, weight:'700'},
+        formatter:(v)=> (v||0).toLocaleString('en-IN')
+      };
       if (note) note.textContent = `${CONFIG.HISTOGRAM_BINS} equal-width bins across ${spec.x}.`;
 
     } else if (spec.type === 'scatter'){
@@ -4388,6 +4394,13 @@ function drawChart(spec){
         },
         plugins:{tooltip:{callbacks:{label:(c)=>`${spec.x}: ${fmtByField(c.parsed.x,spec.x)} · ${spec.y}: ${fmtByField(c.parsed.y,spec.y)}`}}}
       });
+      /* Point labels only up to a readable density — beyond that every figure
+         overlaps every other and the chart becomes unreadable rather than clearer. */
+      options.plugins.datalabels = {
+        display: pts.length <= 25, anchor:'end', align:'top', offset:4, clamp:true,
+        color:th.muted, font:{size:8, weight:'700'},
+        formatter:(v)=> fmtByField(v.y, spec.y)
+      };
       const r = correlation(pts);
       if (note) note.textContent = `${pts.length.toLocaleString()} points${pts.length < rows.length ? ' (sampled)' : ''}${r === null ? '' : ' · correlation r = ' + r.toFixed(2)}.`;
 
@@ -4409,6 +4422,12 @@ function drawChart(spec){
           }
         });
         delete options.scales;   // circular charts have no x/y axes
+        options.plugins.datalabels = {
+          display:true, anchor:'center', align:'center', clamp:true,
+          color:'#fff', textStrokeColor:'rgba(0,0,0,.55)', textStrokeWidth:3,
+          font:{size:10, weight:'700'},
+          formatter:(v)=> [fmtByField(v, spec.y || spec.value || spec.x), `(${total ? (v/total*100).toFixed(1) : 0}%)`]
+        };
       } else {
         kind = (spec.type === 'line' || spec.type === 'area') ? 'line' : 'bar';
         data = {labels:res.labels, datasets:res.series.map((s, i) => ({
@@ -4431,6 +4450,22 @@ function drawChart(spec){
             : {x:{ticks:{color:th.muted, font:{size:10}, maxRotation:50, autoSkip:true, maxTicksLimit:14}, grid:{color:th.grid}, stacked},
                y:{ticks:{color:th.muted, font:{size:10}, callback:(v)=>fmtByField(v, spec.y || spec.value || spec.x)}, grid:{color:th.grid}, beginAtZero:true, stacked}}
         });
+        /* Stacked segments get labels centred inside the bar (with an outline so
+           they read on any fill colour); everything else gets a label just
+           outside the bar/point so it never gets clipped by the segment edge. */
+        const manyPoints = res.labels.length > 40;
+        options.plugins.datalabels = {
+          display: !manyPoints,
+          clamp:true,
+          color: stacked ? '#fff' : th.text,
+          textStrokeColor: stacked ? 'rgba(0,0,0,.5)' : undefined,
+          textStrokeWidth: stacked ? 2 : 0,
+          font:{size:9, weight:'700'},
+          anchor: stacked ? 'center' : (kind === 'line' ? 'end' : 'end'),
+          align: stacked ? 'center' : (spec.type === 'hbar' ? 'right' : (kind === 'line' ? 'top' : 'end')),
+          offset: stacked ? 0 : 4,
+          formatter:(v)=> fmtByField(v, spec.y || spec.value || spec.x)
+        };
       }
 
       if (note){
@@ -6615,6 +6650,13 @@ function wireRest(){
   if (window.Chart){
     Chart.defaults.font.family = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
     Chart.defaults.font.size = 11;
+    /* v17.8 — always-visible data-value labels on charts, additive only. */
+    try{
+      if(typeof ChartDataLabels !== 'undefined'){
+        Chart.register(ChartDataLabels);
+        Chart.defaults.set('plugins.datalabels', {display:false});
+      }
+    }catch(_){ }
   }
   // Let CONFIG.APP_NAME drive the visible name in one place
   $('appName').textContent = CONFIG.APP_NAME;
@@ -9043,7 +9085,11 @@ function drawNativeAIChart(s,canvas){
  svg.push('<rect x="0" y="0" width="'+w+'" height="'+h+'" rx="12" fill="#fffdf8"/>');
  if(pie){
    var cx=w/2,cy=h/2,r=Math.min(w,h)*.29,total=vals.reduce(function(a,b){return a+Math.max(0,b)},0)||1,angle=-Math.PI/2;
-   vals.slice(0,12).forEach(function(v,i){var part=Math.max(0,v)/total,a2=angle+part*Math.PI*2, x1=cx+r*Math.cos(angle),y1=cy+r*Math.sin(angle),x2=cx+r*Math.cos(a2),y2=cy+r*Math.sin(a2),large=part>.5?1:0;svg.push('<path d="M '+cx+' '+cy+' L '+x1+' '+y1+' A '+r+' '+r+' 0 '+large+' 1 '+x2+' '+y2+' Z" fill="'+colors[i%colors.length]+'" stroke="#fff" stroke-width="2" data-chart-index="'+i+'"><title>'+escA(labels[i])+' · '+escA(fmt(v))+'</title></path>');angle=a2;});
+   vals.slice(0,12).forEach(function(v,i){var part=Math.max(0,v)/total,a2=angle+part*Math.PI*2, x1=cx+r*Math.cos(angle),y1=cy+r*Math.sin(angle),x2=cx+r*Math.cos(a2),y2=cy+r*Math.sin(a2),large=part>.5?1:0;svg.push('<path d="M '+cx+' '+cy+' L '+x1+' '+y1+' A '+r+' '+r+' 0 '+large+' 1 '+x2+' '+y2+' Z" fill="'+colors[i%colors.length]+'" stroke="#fff" stroke-width="2" data-chart-index="'+i+'"><title>'+escA(labels[i])+' · '+escA(fmt(v))+'</title></path>');
+     /* Value + share label, same content the Chart.js pie/donut charts show,
+        placed mid-slice with a dark outline so it reads on every slice colour. */
+     if(part>.02){var mid=angle+part*Math.PI,lx=cx+(r*.66)*Math.cos(mid),ly=cy+(r*.66)*Math.sin(mid),pct=(part*100).toFixed(1);svg.push('<text x="'+lx+'" y="'+(ly-3)+'" text-anchor="middle" font-size="9.5" font-weight="800" fill="#fff" style="paint-order:stroke;stroke:rgba(0,0,0,.55);stroke-width:3px">'+escA(fmt(v))+'</text><text x="'+lx+'" y="'+(ly+9)+'" text-anchor="middle" font-size="8.5" font-weight="700" fill="#fff" style="paint-order:stroke;stroke:rgba(0,0,0,.55);stroke-width:3px">('+pct+'%)</text>');}
+     angle=a2;});
    if(type==='donut')svg.push('<circle cx="'+cx+'" cy="'+cy+'" r="'+(r*.58)+'" fill="#fffdf8"/>');
    labels.slice(0,10).forEach(function(l,i){var yy=20+i*19;svg.push('<rect x="'+(w-125)+'" y="'+yy+'" width="9" height="9" rx="2" fill="'+colors[i%colors.length]+'"/><text x="'+(w-110)+'" y="'+(yy+8)+'" font-size="10" font-weight="700" fill="#5f574e">'+escA(short(l,18))+'</text>');});
  } else {
@@ -9053,7 +9099,9 @@ function drawNativeAIChart(s,canvas){
    } else if(line){
      var n2=Math.min(labels.length,16),pts=[];for(var i=0;i<n2;i++){var x=left+(n2===1?plotW/2:i*plotW/(n2-1)),y=top+plotH-(vals[i]/max)*plotH;pts.push([x,y]);}
      if(type==='area'&&pts.length){var d='M '+pts[0][0]+' '+(top+plotH)+' L '+pts.map(function(p){return p[0]+' '+p[1];}).join(' L ')+' L '+pts[pts.length-1][0]+' '+(top+plotH)+' Z';svg.push('<path d="'+d+'" fill="'+colors[0]+'" opacity=".16"/>');}
-     if(pts.length){svg.push('<polyline points="'+pts.map(function(p){return p[0]+','+p[1];}).join(' ')+'" fill="none" stroke="'+colors[0]+'" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>');pts.forEach(function(p,i){svg.push('<circle cx="'+p[0]+'" cy="'+p[1]+'" r="4" fill="'+colors[0]+'" stroke="#fff" stroke-width="2" data-chart-index="'+i+'"><title>'+escA(labels[i])+' · '+escA(fmt(vals[i]))+'</title></circle>');});}
+     if(pts.length){svg.push('<polyline points="'+pts.map(function(p){return p[0]+','+p[1];}).join(' ')+'" fill="none" stroke="'+colors[0]+'" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>');pts.forEach(function(p,i){svg.push('<circle cx="'+p[0]+'" cy="'+p[1]+'" r="4" fill="'+colors[0]+'" stroke="#fff" stroke-width="2" data-chart-index="'+i+'"><title>'+escA(labels[i])+' · '+escA(fmt(vals[i]))+'</title></circle>');
+       /* Value above each point — same figure the bar/hbar charts already show on-chart. */
+       svg.push('<text x="'+p[0]+'" y="'+(p[1]-9)+'" text-anchor="middle" font-size="9" font-weight="800" fill="#24201b">'+escA(fmt(vals[i]))+'</text>');});}
      labels.slice(0,n2).forEach(function(l,i){var x=left+(n2===1?plotW/2:i*plotW/(n2-1));svg.push('<text x="'+x+'" y="'+(top+plotH+25)+'" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">'+escA(short(l,14))+'</text>');});
    } else {
      var n3=Math.min(labels.length,12),bw=Math.max(8,(plotW-(n3-1)*8)/n3);for(var j=0;j<n3;j++){var bh=Math.max(1,(Math.max(0,vals[j])/max)*plotH),x=left+j*(bw+8),y=top+plotH-bh;svg.push('<rect x="'+x+'" y="'+y+'" width="'+bw+'" height="'+bh+'" rx="7" fill="'+colors[j%colors.length]+'" data-chart-index="'+j+'"><title>'+escA(labels[j])+' · '+escA(fmt(vals[j]))+'</title></rect><text x="'+(x+bw/2)+'" y="'+(y-7)+'" text-anchor="middle" font-size="9" font-weight="800" fill="#24201b">'+escA(fmt(vals[j]))+'</text><text x="'+(x+bw/2)+'" y="'+(top+plotH+25)+'" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">'+escA(short(labels[j],14))+'</text>');}
