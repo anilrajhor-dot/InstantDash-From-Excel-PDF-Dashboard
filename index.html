@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v19.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">\n
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v19.1","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">\n
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
@@ -1205,7 +1205,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v19.0">
+<meta name="instantdash-build" content="v19.1">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2060,7 +2060,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v19.0';
+      s.textContent='v19.1';
       b.appendChild(s);
     }
   }
@@ -2086,8 +2086,8 @@ body{
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v19.0</span>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v19.0</span></div>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v19.1</span>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v19.1</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
   <div class="spacer"></div>
@@ -2611,7 +2611,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v19.0',
+  VERSION: 'v19.1',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -9085,26 +9085,27 @@ function drawNativeAIChart(s,canvas){
  svg.push('<rect x="0" y="0" width="'+w+'" height="'+h+'" rx="12" fill="#fffdf8"/>');
  if(pie){
    var cx=w/2,cy=h/2,r=Math.min(w,h)*.29,total=vals.reduce(function(a,b){return a+Math.max(0,b)},0)||1,angle=-Math.PI/2;
-   vals.slice(0,12).forEach(function(v,i){var part=Math.max(0,v)/total,a2=angle+part*Math.PI*2, x1=cx+r*Math.cos(angle),y1=cy+r*Math.sin(angle),x2=cx+r*Math.cos(a2),y2=cy+r*Math.sin(a2),large=part>.5?1:0;svg.push('<path d="M '+cx+' '+cy+' L '+x1+' '+y1+' A '+r+' '+r+' 0 '+large+' 1 '+x2+' '+y2+' Z" fill="'+colors[i%colors.length]+'" stroke="#fff" stroke-width="2" data-chart-index="'+i+'"><title>'+escA(labels[i])+' · '+escA(fmt(v))+'</title></path>');
+   vals.slice(0,12).forEach(function(v,i){var part=Math.max(0,v)/total,a2=angle+part*Math.PI*2, x1=cx+r*Math.cos(angle),y1=cy+r*Math.sin(angle),x2=cx+r*Math.cos(a2),y2=cy+r*Math.sin(a2),large=part>.5?1:0;svg.push('<g data-chart-index="'+i+'"><path d="M '+cx+' '+cy+' L '+x1+' '+y1+' A '+r+' '+r+' 0 '+large+' 1 '+x2+' '+y2+' Z" fill="'+colors[i%colors.length]+'" stroke="#fff" stroke-width="2"><title>'+escA(labels[i])+' · '+escA(fmt(v))+'</title></path>');
      /* Value + share label, same content the Chart.js pie/donut charts show,
         placed mid-slice with a dark outline so it reads on every slice colour. */
      if(part>.02){var mid=angle+part*Math.PI,lx=cx+(r*.66)*Math.cos(mid),ly=cy+(r*.66)*Math.sin(mid),pct=(part*100).toFixed(1);svg.push('<text x="'+lx+'" y="'+(ly-3)+'" text-anchor="middle" font-size="9.5" font-weight="800" fill="#fff" style="paint-order:stroke;stroke:rgba(0,0,0,.55);stroke-width:3px">'+escA(fmt(v))+'</text><text x="'+lx+'" y="'+(ly+9)+'" text-anchor="middle" font-size="8.5" font-weight="700" fill="#fff" style="paint-order:stroke;stroke:rgba(0,0,0,.55);stroke-width:3px">('+pct+'%)</text>');}
+     svg.push('</g>');
      angle=a2;});
    if(type==='donut')svg.push('<circle cx="'+cx+'" cy="'+cy+'" r="'+(r*.58)+'" fill="#fffdf8"/>');
    labels.slice(0,10).forEach(function(l,i){var yy=20+i*19;svg.push('<rect x="'+(w-125)+'" y="'+yy+'" width="9" height="9" rx="2" fill="'+colors[i%colors.length]+'"/><text x="'+(w-110)+'" y="'+(yy+8)+'" font-size="10" font-weight="700" fill="#5f574e">'+escA(short(l,18))+'</text>');});
  } else {
    var left=horiz?100:46,right=18,top=18,bottom=52,plotW=w-left-right,plotH=h-top-bottom;
    for(var gy=0;gy<=4;gy++){var yy=top+plotH-gy*plotH/4;svg.push('<line x1="'+left+'" y1="'+yy+'" x2="'+(left+plotW)+'" y2="'+yy+'" stroke="#e8dfd2" stroke-width="1"/><text x="'+(left-7)+'" y="'+(yy+4)+'" text-anchor="end" font-size="9" fill="#777066">'+escA(fmt(max*gy/4))+'</text>');}
-   if(horiz){var n=Math.min(labels.length,12),gap=6,bh=Math.max(10,(plotH-gap*(n-1))/n);var items=vals.map(function(v,i){return {v:v,l:labels[i],i:i};}).sort(function(a,b){return b.v-a.v}).slice(0,n);items.forEach(function(it,j){var y=top+j*(bh+gap),bw=Math.max(1,it.v/max*plotW);svg.push('<rect x="'+left+'" y="'+y+'" width="'+bw+'" height="'+Math.max(2,bh)+'" rx="7" fill="'+colors[it.i%colors.length]+'" data-chart-index="'+it.i+'"><title>'+escA(it.l)+' · '+escA(fmt(it.v))+'</title></rect><text x="'+(left-7)+'" y="'+(y+bh*.65)+'" text-anchor="end" font-size="9" font-weight="700" fill="#5f574e">'+escA(short(it.l,16))+'</text><text x="'+(left+bw+6)+'" y="'+(y+bh*.65)+'" font-size="9" font-weight="800" fill="#24201b">'+escA(fmt(it.v))+'</text>');});
+   if(horiz){var n=Math.min(labels.length,12),gap=6,bh=Math.max(10,(plotH-gap*(n-1))/n);var items=vals.map(function(v,i){return {v:v,l:labels[i],i:i};}).sort(function(a,b){return b.v-a.v}).slice(0,n);items.forEach(function(it,j){var y=top+j*(bh+gap),bw=Math.max(1,it.v/max*plotW);svg.push('<g data-chart-index="'+it.i+'"><rect x="'+left+'" y="'+y+'" width="'+bw+'" height="'+Math.max(2,bh)+'" rx="7" fill="'+colors[it.i%colors.length]+'"><title>'+escA(it.l)+' · '+escA(fmt(it.v))+'</title></rect><text x="'+(left-7)+'" y="'+(y+bh*.65)+'" text-anchor="end" font-size="9" font-weight="700" fill="#5f574e">'+escA(short(it.l,16))+'</text><text x="'+(left+bw+6)+'" y="'+(y+bh*.65)+'" font-size="9" font-weight="800" fill="#24201b">'+escA(fmt(it.v))+'</text></g>');});
    } else if(line){
      var n2=Math.min(labels.length,16),pts=[];for(var i=0;i<n2;i++){var x=left+(n2===1?plotW/2:i*plotW/(n2-1)),y=top+plotH-(vals[i]/max)*plotH;pts.push([x,y]);}
      if(type==='area'&&pts.length){var d='M '+pts[0][0]+' '+(top+plotH)+' L '+pts.map(function(p){return p[0]+' '+p[1];}).join(' L ')+' L '+pts[pts.length-1][0]+' '+(top+plotH)+' Z';svg.push('<path d="'+d+'" fill="'+colors[0]+'" opacity=".16"/>');}
-     if(pts.length){svg.push('<polyline points="'+pts.map(function(p){return p[0]+','+p[1];}).join(' ')+'" fill="none" stroke="'+colors[0]+'" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>');pts.forEach(function(p,i){svg.push('<circle cx="'+p[0]+'" cy="'+p[1]+'" r="4" fill="'+colors[0]+'" stroke="#fff" stroke-width="2" data-chart-index="'+i+'"><title>'+escA(labels[i])+' · '+escA(fmt(vals[i]))+'</title></circle>');
+     if(pts.length){svg.push('<polyline points="'+pts.map(function(p){return p[0]+','+p[1];}).join(' ')+'" fill="none" stroke="'+colors[0]+'" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>');pts.forEach(function(p,i){svg.push('<g data-chart-index="'+i+'"><circle cx="'+p[0]+'" cy="'+p[1]+'" r="4" fill="'+colors[0]+'" stroke="#fff" stroke-width="2"><title>'+escA(labels[i])+' · '+escA(fmt(vals[i]))+'</title></circle>');
        /* Value above each point — same figure the bar/hbar charts already show on-chart. */
-       svg.push('<text x="'+p[0]+'" y="'+(p[1]-9)+'" text-anchor="middle" font-size="9" font-weight="800" fill="#24201b">'+escA(fmt(vals[i]))+'</text>');});}
+       svg.push('<text x="'+p[0]+'" y="'+(p[1]-9)+'" text-anchor="middle" font-size="9" font-weight="800" fill="#24201b">'+escA(fmt(vals[i]))+'</text></g>');});}
      labels.slice(0,n2).forEach(function(l,i){var x=left+(n2===1?plotW/2:i*plotW/(n2-1));svg.push('<text x="'+x+'" y="'+(top+plotH+25)+'" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">'+escA(short(l,14))+'</text>');});
    } else {
-     var n3=Math.min(labels.length,12),bw=Math.max(8,(plotW-(n3-1)*8)/n3);for(var j=0;j<n3;j++){var bh=Math.max(1,(Math.max(0,vals[j])/max)*plotH),x=left+j*(bw+8),y=top+plotH-bh;svg.push('<rect x="'+x+'" y="'+y+'" width="'+bw+'" height="'+bh+'" rx="7" fill="'+colors[j%colors.length]+'" data-chart-index="'+j+'"><title>'+escA(labels[j])+' · '+escA(fmt(vals[j]))+'</title></rect><text x="'+(x+bw/2)+'" y="'+(y-7)+'" text-anchor="middle" font-size="9" font-weight="800" fill="#24201b">'+escA(fmt(vals[j]))+'</text><text x="'+(x+bw/2)+'" y="'+(top+plotH+25)+'" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">'+escA(short(labels[j],14))+'</text>');}
+     var n3=Math.min(labels.length,12),bw=Math.max(8,(plotW-(n3-1)*8)/n3);for(var j=0;j<n3;j++){var bh=Math.max(1,(Math.max(0,vals[j])/max)*plotH),x=left+j*(bw+8),y=top+plotH-bh;svg.push('<g data-chart-index="'+j+'"><rect x="'+x+'" y="'+y+'" width="'+bw+'" height="'+bh+'" rx="7" fill="'+colors[j%colors.length]+'"><title>'+escA(labels[j])+' · '+escA(fmt(vals[j]))+'</title></rect><text x="'+(x+bw/2)+'" y="'+(y-7)+'" text-anchor="middle" font-size="9" font-weight="800" fill="#24201b">'+escA(fmt(vals[j]))+'</text><text x="'+(x+bw/2)+'" y="'+(top+plotH+25)+'" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">'+escA(short(labels[j],14))+'</text></g>');}
    }
  }
  svg.push('</svg>');
@@ -9124,7 +9125,10 @@ function redrawAICard(s,card){
  var sub=card.querySelector('.ai-chart-sub'),selector=card.querySelector('.ai-chart-type');if(selector)selector.value=s.type;
  if(sub)sub.textContent=(autoReason?autoReason+' ':'')+(s.group?'AI selected '+niceName(s.type)+' chart grouped by '+niceName(s.group):'AI selected a total chart for '+niceName(s.measure))+'.';
  s.detailEl=card.querySelector('.ai-chart-touch-detail');if(s.detailEl)s.detailEl.textContent='Tap a bar or point to see the exact figure.';
- try{drawNativeAIChart(s,canvas);canvas.addEventListener('click',function(e){
+ /* v19.1 fix — drawNativeAIChart replaces `canvas`'s own parent's innerHTML,
+    which detaches `canvas` from the DOM. Listening on it meant taps never
+    reached the handler. `wrap` is what actually stays on screen. */
+ try{drawNativeAIChart(s,canvas);wrap.addEventListener('click',function(e){
    var target=e.target&&e.target.closest?e.target.closest('[data-chart-index]'):null;
    var idx=target?Number(target.getAttribute('data-chart-index')):-1;
    if(idx<0||!isFinite(idx))return;
