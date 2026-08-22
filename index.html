@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v19.13","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">\n
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v19.14","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">\n
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
@@ -1205,7 +1205,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v19.13">
+<meta name="instantdash-build" content="v19.14">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2060,7 +2060,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v19.13';
+      s.textContent='v19.14';
       b.appendChild(s);
     }
   }
@@ -2129,7 +2129,7 @@ body{
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v19.13</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v19.14</span>
   <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v19.11</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -2654,7 +2654,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v19.13',
+  VERSION: 'v19.14',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -4321,6 +4321,19 @@ function refreshChart(spec, rebuildCard){
    bar / "Private" pill area entirely. */
 window.__instantDashActiveDetailEl = null;
 window.__instantDashActiveDetailBase = '';
+/* v19.14 — a raw JS Date.toString(), e.g.
+   "Wed Dec 31 2025 23:59:50 GMT+0530 (India Standard Time)", was being read
+   aloud (and shown) verbatim wherever a time-series label came straight from
+   a Date object. This trims it down to "Dec 31, 2025". Non-date labels pass
+   through unchanged. */
+function instantDashCleanLabel(raw){
+  try{
+    var s = String(raw==null?'':raw);
+    var m = s.match(/^[A-Za-z]{3}\s([A-Za-z]{3})\s(\d{1,2})\s(\d{4})\s\d{2}:\d{2}:\d{2}/);
+    if(m) return m[1]+' '+m[2]+', '+m[3];
+    return s;
+  }catch(_){ return String(raw==null?'':raw); }
+}
 function instantDashSpeechStatus(msg){
   try{
     var el = window.__instantDashActiveDetailEl;
@@ -4413,10 +4426,11 @@ function instantDashChartSpeechText(measure, group, labels, values, idx){
      lookups (col() calls cols(), which re-scans all loaded columns) as
      unreliable on this dataset too. Speaking the tapped value is the actual
      ask — the enrichment commentary is not worth the risk. */
-  var label=labels[idx]!==undefined?String(labels[idx]):'selected point';
+  var __rawLabel=labels[idx];
+  var label=(__rawLabel instanceof Date)?fmtDate(__rawLabel):(__rawLabel!==undefined?String(__rawLabel):'selected point');
   var value=Number(values[idx]);
   if(!isFinite(value)) return niceName(measure)+'. The selected value is not available.';
-  return niceName(measure)+' for '+label+' is '+fmtByField(value,measure)+'.';
+  return niceName(measure)+' for '+instantDashCleanLabel(label)+' is '+fmtByField(value,measure)+'.';
 }
 function instantDashSpeakChartPoint(spec, labels, values, idx){
   try{ if(window.__instantDashActiveDetailEl) window.__instantDashActiveDetailEl.textContent += ' [D]'; }catch(_){ }
@@ -9206,7 +9220,7 @@ function drawNativeAIChart(s,canvas){
    } else if(line){
      var n2=Math.min(labels.length,16),pts=[];for(var i=0;i<n2;i++){var x=left+(n2===1?plotW/2:i*plotW/(n2-1)),y=top+plotH-(vals[i]/max)*plotH;pts.push([x,y]);}
      if(type==='area'&&pts.length){var d='M '+pts[0][0]+' '+(top+plotH)+' L '+pts.map(function(p){return p[0]+' '+p[1];}).join(' L ')+' L '+pts[pts.length-1][0]+' '+(top+plotH)+' Z';svg.push('<path d="'+d+'" fill="'+colors[0]+'" opacity=".16"/>');}
-     if(pts.length){svg.push('<polyline points="'+pts.map(function(p){return p[0]+','+p[1];}).join(' ')+'" fill="none" stroke="'+colors[0]+'" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>');pts.forEach(function(p,i){svg.push('<g data-chart-index="'+i+'"><circle cx="'+p[0]+'" cy="'+p[1]+'" r="4" fill="'+colors[0]+'" stroke="#fff" stroke-width="2"><title>'+escA(labels[i])+' · '+escA(fmt(vals[i]))+'</title></circle>');
+     if(pts.length){svg.push('<polyline points="'+pts.map(function(p){return p[0]+','+p[1];}).join(' ')+'" fill="none" stroke="'+colors[0]+'" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>');pts.forEach(function(p,i){svg.push('<g data-chart-index="'+i+'"><circle cx="'+p[0]+'" cy="'+p[1]+'" r="18" fill="transparent"/><circle cx="'+p[0]+'" cy="'+p[1]+'" r="4" fill="'+colors[0]+'" stroke="#fff" stroke-width="2"><title>'+escA(labels[i])+' · '+escA(fmt(vals[i]))+'</title></circle>');
        /* Value above each point — same figure the bar/hbar charts already show on-chart. */
        svg.push('<text x="'+p[0]+'" y="'+(p[1]-9)+'" text-anchor="middle" font-size="9" font-weight="800" fill="#24201b">'+escA(fmt(vals[i]))+'</text></g>');});}
      labels.slice(0,n2).forEach(function(l,i){var x=left+(n2===1?plotW/2:i*plotW/(n2-1));svg.push('<text x="'+x+'" y="'+(top+plotH+25)+'" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">'+escA(short(l,14))+'</text>');});
@@ -9238,7 +9252,8 @@ function redrawAICard(s,card){
    var target=e.target&&e.target.closest?e.target.closest('[data-chart-index]'):null;
    var idx=target?Number(target.getAttribute('data-chart-index')):-1;
    if(idx<0||!isFinite(idx))return;
-   var label=s.data.labels[idx]!==undefined?String(s.data.labels[idx]):'Selected';
+   var __rawLabel=s.data.labels[idx];
+   var label=(__rawLabel instanceof Date)?fmtDate(__rawLabel):(__rawLabel!==undefined?String(__rawLabel):'Selected');
    var value=Number(s.data.values[idx]||0);
    if(s.detailEl)s.detailEl.textContent=niceName(s.measure)+' · '+label+' · '+fmtByField(value,s.measure);
    if(s.detailEl) s.detailEl.textContent += ' [A]';
@@ -9254,7 +9269,7 @@ function redrawAICard(s,card){
       inlines the same logic that's already proven to work. */
    if(s.detailEl) s.detailEl.textContent += ' [F1]';
    try{
-     var __txt = niceName(s.measure)+' for '+label+' is '+fmtByField(value,s.measure)+'.';
+     var __txt = niceName(s.measure)+' for '+instantDashCleanLabel(label)+' is '+fmtByField(value,s.measure)+'.';
      if(s.detailEl) s.detailEl.textContent += ' [F2]';
      var __synth = window.speechSynthesis;
      if(__synth){
@@ -9399,8 +9414,8 @@ window.__instantDashAIMultiChartsRefresh=render;
     $('smartExpandSubtitle').textContent=sub?sub.textContent:'';
     $('smartExpandDetail').innerHTML=($('smartChartDetail')||{}).innerHTML||'';
     ov.classList.add('open');ov.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';
-    dst.querySelectorAll('.sc-hit').forEach(function(n){
-      var handler=function(e){e.preventDefault();var i=Number(n.getAttribute('data-i')||0);var original=src.querySelector('.sc-hit[data-i="'+i+'"]');if(original)original.dispatchEvent(new Event('click',{bubbles:true}));setTimeout(function(){var d=$('smartChartDetail');if(d)$('smartExpandDetail').innerHTML=d.innerHTML;},30);};
+    dst.querySelectorAll('[data-fallback]').forEach(function(n){
+      var handler=function(e){e.preventDefault();var key=n.getAttribute('data-fallback');var original=src.querySelector('[data-fallback="'+key+'"]');if(original)original.dispatchEvent(new Event('click',{bubbles:true}));setTimeout(function(){var d=$('smartChartDetail');if(d)$('smartExpandDetail').innerHTML=d.innerHTML;},30);};
       n.addEventListener('click',handler,{passive:false});n.addEventListener('touchend',handler,{passive:false});
     });
   }
@@ -9809,7 +9824,29 @@ function renderFallback(){
  svg.push('</svg>');
  var note=(reason?'<div class="id-chart-note warn">'+esc(reason)+'</div>':'')+'<div class="id-chart-note">Tap a bar, point or segment for the exact figure · '+f.rs.length.toLocaleString()+' loaded rows</div>';
  wrap.innerHTML='<div class="id-chart-visual">'+svg.join('')+'</div>'+note;
- wrap.querySelectorAll('[data-fallback]').forEach(function(el){el.addEventListener('click',function(){var q=el.getAttribute('data-fallback').split(':'),si=+q[0],i=+q[1],s=series[si],g=gs[i],d=$('smartChartDetail');if(d)d.innerHTML='<b>'+esc(s.name)+'</b><div class="id-touch-value"><span>'+esc(g.label)+'</span><strong>'+esc(fmt(s.values[i]))+'</strong></div>';});});
+ wrap.querySelectorAll('[data-fallback]').forEach(function(el){el.addEventListener('click',function(){
+   var q=el.getAttribute('data-fallback').split(':'),si=+q[0],i=+q[1],s=series[si],g=gs[i],d=$('smartChartDetail');
+   if(d)d.innerHTML='<b>'+esc(s.name)+'</b><div class="id-touch-value"><span>'+esc(g.label)+'</span><strong>'+esc(fmt(s.values[i]))+'</strong></div>';
+   /* v19.14 — this chart engine (Interactive Charts / parameter fallback
+      renderer) never called any speech function at all; wired directly here,
+      inline, mirroring the approach already proven to work elsewhere.
+      instantDashCleanLabel() strips a raw Date.toString() (e.g. "Wed Dec 31
+      2025 23:59:50 GMT+0530 (India Standard Time)") down to "Dec 31, 2025"
+      so dates read naturally instead of announcing a full timestamp+timezone. */
+   try{
+     var __label = (typeof instantDashCleanLabel==='function') ? instantDashCleanLabel(g.label) : String(g.label);
+     var __txt = s.name+' for '+__label+' is '+fmt(s.values[i])+'.';
+     var __synth = window.speechSynthesis;
+     if(__synth){
+       if(__synth.speaking||__synth.pending) __synth.cancel();
+       __synth.resume();
+       var __u = new SpeechSynthesisUtterance(__txt);
+       __u.rate = .95;
+       window.__instantDashUtterance = __u;
+       __synth.speak(__u);
+     }
+   }catch(_){ }
+ });});
 }
 function tick(){
  var f=fields();if(!f.measures.length)return;
