@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v21.1","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v21.2","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
@@ -1205,6 +1205,8 @@ html,body{overflow-anchor:none!important;}
 .ai-chart-touch-detail::before{content:"🔊";position:absolute;left:10px;top:9px;font-size:12px;opacity:.75}
 .ai-chart-card{transition:transform .16s ease,box-shadow .16s ease}
 .ai-chart-card:hover{transform:translateY(-2px);box-shadow:0 14px 32px rgba(68,50,20,.09)!important}
+#v21CombinedOut .ai-chart-card{border:1px solid var(--accent)!important;background:linear-gradient(160deg,rgba(245,179,1,.07),rgba(255,255,255,.96))!important;box-shadow:0 10px 28px rgba(245,179,1,.14)!important}
+#v21CombinedOut .ai-chart-card h4{color:var(--accent-2,var(--accent))}
 .ai-chart-foot{margin-top:7px;font-size:10px;color:var(--muted);line-height:1.35}
 .ai-empty{padding:28px 12px;text-align:center;color:var(--muted);font-size:12px;border:1px dashed var(--border);border-radius:12px}
 .ai-chart-overlay{position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:100000;display:none;align-items:center;justify-content:center;padding:12px}
@@ -1218,7 +1220,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v21.1">
+<meta name="instantdash-build" content="v21.2">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2073,7 +2075,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v21.1';
+      s.textContent='v21.2';
       b.appendChild(s);
     }
   }
@@ -2131,8 +2133,8 @@ body{
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v21.1</span>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v21.1</span></div>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v21.2</span>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v21.2</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
       <button class="id-health-btn no-print" id="aiModeToggleBtn" type="button" aria-label="Real AI settings">🤖 Real AI: Off</button>
@@ -2659,7 +2661,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v21.1',
+  VERSION: 'v21.2',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -9764,12 +9766,14 @@ function render(){
  var host=$('aiDashboardCharts');if(!host)return;
  var grid=$('aiChartGrid');
  if(!grid){
-   host.innerHTML='<div class="ai-dashboard-head"><div><h3 style="margin:0;font-size:16px">AI-generated key charts</h3><p id="aiDashboardSub" style="margin:4px 0 12px;color:var(--muted);font-size:11px">Building the strongest views from the loaded data…</p></div><button type="button" id="v21ChartSuggestBtn" class="btn sm no-print" style="white-space:nowrap">🤖 Suggest more charts</button></div><div id="v21ChartSuggestOut" style="display:none"></div><div class="ai-chart-grid" id="aiChartGrid"></div>';
+   host.innerHTML='<div class="ai-dashboard-head"><div><h3 style="margin:0;font-size:16px">📊 AI-generated key charts</h3><p id="aiDashboardSub" style="margin:4px 0 12px;color:var(--muted);font-size:11px">Building the strongest views from the loaded data…</p></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" id="v21CombineBtn" class="btn sm no-print" style="white-space:nowrap">🔗 Combine into one chart</button><button type="button" id="v21ChartSuggestBtn" class="btn sm no-print" style="white-space:nowrap">🤖 Suggest more charts</button></div></div><div id="v21CombinedOut" style="display:none"></div><div id="v21ChartSuggestOut" style="display:none"></div><div class="ai-chart-grid" id="aiChartGrid"></div>';
    grid=$('aiChartGrid');
    try{ if(typeof window.__id21WireChartSuggest==='function') window.__id21WireChartSuggest(); }catch(_){ }
+   try{ if(typeof window.__id21WireCombine==='function') window.__id21WireCombine(); }catch(_){ }
  }
  Object.keys(charts).forEach(function(k){try{charts[k].destroy()}catch(_){}});charts={};
  var specs=makeSpecs().slice(0,4);
+ window.__id21LastSpecs = specs;
  grid.innerHTML='';
  if(!specs.length){grid.innerHTML='<div class="ai-empty">No reliable numeric parameters were detected for automatic chart creation. Use the manual parameter selectors below.</div>';return}
  var sub=$('aiDashboardSub');if(sub)sub.textContent='AI automatically created '+specs.length+' key chart'+(specs.length>1?'s':'')+' from the loaded data. These charts are independent of the manual parameter selector below.';
@@ -9786,6 +9790,84 @@ function render(){
  });
 }
 function openExpand(s){var ov=$('aiChartOverlay'),cv=$('aiOverlayCanvas');if(!ov||!cv)return;$('aiOverlayTitle').textContent=niceName(s.title)+' · '+niceName(s.type==='hbar'?'Horizontal Bar':s.type);$('aiOverlaySub').textContent=s.subtitle+' · Parameter: '+niceName(s.measure);ov.classList.add('open');ov.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';requestAnimationFrame(function(){try{drawNativeAIChart(s,cv)}catch(e){console.warn('InstantDash expanded chart failed',e)}})}
+
+/* v21.2 — Combined View. Draws all of the AI's individual-card measures as
+   ONE multi-line chart so they can be compared side by side. Different
+   measures usually have wildly different units/scales (₹ vs % vs counts),
+   so each line is normalised to 0–100% of ITS OWN peak — that's stated
+   plainly in the chart so it's never mistaken for showing raw values.
+   Entirely self-contained: draws its own SVG, doesn't touch drawNativeAIChart
+   or redrawAICard, so it can't destabilise the four cards that already work. */
+function drawCombinedChart(specs, host){
+  var usable = (specs||[]).filter(function(s){ return s && s.data && Array.isArray(s.data.labels) && s.data.labels.length>1; });
+  if(usable.length<2){
+    host.innerHTML='<div class="ai-empty" style="margin:8px 0 12px">Combine needs at least 2 charts with more than one group each — not enough comparable data here yet.</div>';
+    return;
+  }
+  var w=680,h=300,left=46,right=18,top=18,bottom=44,plotW=w-left-right,plotH=h-top-bottom;
+  var labels = usable[0].data.labels;
+  var n = Math.min(labels.length, 16);
+  var svg=['<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+w+' '+h+'" width="100%" height="100%" preserveAspectRatio="none" style="display:block;font-family:Poppins,Arial,sans-serif">'];
+  svg.push('<rect x="0" y="0" width="'+w+'" height="'+h+'" rx="12" fill="#fffdf8"/>');
+  for(var gy=0; gy<=4; gy++){
+    var yy=top+plotH-gy*plotH/4;
+    svg.push('<line x1="'+left+'" y1="'+yy+'" x2="'+(left+plotW)+'" y2="'+yy+'" stroke="#e8dfd2" stroke-width="1"/><text x="'+(left-7)+'" y="'+(yy+4)+'" text-anchor="end" font-size="9" fill="#777066">'+(gy*25)+'%</text>');
+  }
+  var esc2=function(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');};
+  var short2=function(s,k){s=String(s==null?'':s);return s.length>k?s.slice(0,k-1)+'…':s;};
+  usable.forEach(function(s,si){
+    var vals=s.data.values.slice(0,n).map(function(v){return Number(v)||0;});
+    var mx=Math.max.apply(null,vals.map(Math.abs)); if(!isFinite(mx)||mx<=0) mx=1;
+    var pts=vals.map(function(v,i){
+      var x=left+(n===1?plotW/2:i*plotW/(n-1));
+      var y=top+plotH-(Math.max(0,v)/mx)*plotH;
+      return [x,y];
+    });
+    var color=palette[si%palette.length];
+    svg.push('<polyline points="'+pts.map(function(p){return p[0]+','+p[1];}).join(' ')+'" fill="none" stroke="'+color+'" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>');
+    pts.forEach(function(p,i){
+      svg.push('<circle cx="'+p[0]+'" cy="'+p[1]+'" r="3.5" fill="'+color+'" stroke="#fff" stroke-width="1.5"><title>'+esc2(niceName(s.measure))+' · '+esc2(String(labels[i]))+' · '+esc2(fmtByField(vals[i],s.measure))+' ('+(mx?(vals[i]/mx*100).toFixed(0):0)+'% of its peak)</title></circle>');
+    });
+  });
+  labels.slice(0,n).forEach(function(l,i){
+    var x=left+(n===1?plotW/2:i*plotW/(n-1));
+    svg.push('<text x="'+x+'" y="'+(top+plotH+20)+'" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">'+esc2(short2(l,12))+'</text>');
+  });
+  svg.push('</svg>');
+  var legend = usable.map(function(s,si){
+    return '<span style="display:inline-flex;align-items:center;gap:5px;margin:3px 10px 3px 0;font-size:11px;font-weight:700;color:var(--text)">'
+      + '<span style="width:10px;height:10px;border-radius:3px;background:'+palette[si%palette.length]+';display:inline-block"></span>'
+      + esc2(niceName(s.measure)) + '</span>';
+  }).join('');
+  host.innerHTML = '<article class="ai-chart-card" style="margin-bottom:12px">'
+    + '<div class="ai-chart-card-head"><div><h4>🔗 Combined comparison</h4><p class="ai-chart-sub">All '+usable.length+' measures, each shown as % of its own peak so different units can sit on one scale.</p></div></div>'
+    + '<div style="margin:6px 0 10px">'+legend+'</div>'
+    + '<div class="ai-chart-wrap" style="min-height:260px">'+svg.join('')+'</div>'
+    + '<div class="ai-chart-foot">Lines are independently normalised (0–100% of each measure\u2019s own highest value) purely to make the shapes comparable — hover or tap a point for the real figure.</div>'
+    + '</article>';
+}
+window.__id21WireCombine = function(){
+  var btn = document.getElementById('v21CombineBtn');
+  if(!btn || btn.__id21Wired) return;
+  btn.__id21Wired = 1;
+  var open = false;
+  btn.addEventListener('click', function(){
+    var out = document.getElementById('v21CombinedOut');
+    if(!out) return;
+    open = !open;
+    if(!open){
+      out.style.display='none'; out.innerHTML='';
+      btn.textContent='🔗 Combine into one chart';
+      return;
+    }
+    var specs = window.__id21LastSpecs || [];
+    out.style.display='block';
+    try{ drawCombinedChart(specs, out); }
+    catch(err){ out.innerHTML='<div class="ai-empty" style="margin:8px 0 12px">Could not build the combined chart for this data.</div>'; console.error('InstantDash combined chart error', err); }
+    btn.textContent='🔗 Hide combined chart';
+  });
+};
+
 function closeExpand(){var ov=$('aiChartOverlay');if(!ov)return;ov.classList.remove('open');ov.setAttribute('aria-hidden','true');if(overlayChart){overlayChart.destroy();overlayChart=null}document.body.style.overflow=''}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 function watch(){
