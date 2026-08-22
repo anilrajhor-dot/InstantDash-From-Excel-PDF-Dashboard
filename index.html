@@ -1,5 +1,209 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v23.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v23.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<style id="instantdash-v241-contrast-fix">
+/* ================================================================
+   InstantDash v24.1 — HIGH-CONTRAST / READABILITY PASS
+   Fixes low-contrast management cards, headings and secondary text,
+   especially on iPhone/iPad in Night mode. Light mode is also tightened.
+   ================================================================ */
+:root{
+  --text:#101318;
+  --muted:#4F5661;
+  --border:#D7DCE3;
+  --card:#FFFFFF;
+  --card-2:#F5F7FA;
+  --bg:#F3F5F8;
+  --accent:#FFB800;
+  --accent-2:#D9482B;
+  --ok:#137A45;
+  --warn:#C93620;
+  --grid:rgba(16,19,24,.12);
+}
+body.dark{
+  --bg:#0E1116;
+  --card:#191D24;
+  --card-2:#232933;
+  --text:#F7F9FC;
+  --muted:#C4CBD5;
+  --border:#3B4450;
+  --grid:rgba(247,249,252,.14);
+  --accent:#FFC21A;
+  --accent-2:#FF6B4A;
+  --ok:#45D58A;
+  --warn:#FF7557;
+  --shadow:0 2px 4px rgba(0,0,0,.55),0 10px 28px rgba(0,0,0,.38);
+  --shadow-h:0 4px 10px rgba(0,0,0,.60),0 18px 44px rgba(0,0,0,.48);
+}
+
+/* Core readability */
+body.dark .card,
+body.dark .kpi,
+body.dark .id24-cockpit,
+body.dark .id24-card,
+body.dark .id24-two>section,
+body.dark .id24-verdict,
+body.dark .id24-foot{
+  color:var(--text)!important;
+}
+body.dark .section-head h2,
+body.dark .section-head h3,
+body.dark .id24-verdict h2,
+body.dark .id24-section-head h3,
+body.dark .id24-title,
+body.dark .id24-issue b,
+body.dark .id24-action span,
+body.dark .id24-rank span,
+body.dark .id24-rank b,
+body.dark .management-insights .mi-card summary,
+body.dark .management-insights .mi-card .mi-body,
+body.dark .management-insights .mi-card .mi-body b,
+body.dark .management-insights .mi-card .mi-body strong,
+body.dark .management-insights .mi-card li,
+body.dark .ai-exec146-title,
+body.dark .ai-exec146-text,
+body.dark .ai47-title,
+body.dark .ai47-text,
+body.dark .snapshot-card strong,
+body.dark .snapshot-card b,
+body.dark .exec-label,
+body.dark .exec-measure b,
+body.dark .mac-title,
+body.dark .mac-why{
+  color:var(--text)!important;
+}
+body.dark .id24-body,
+body.dark .id24-verdict p,
+body.dark .id24-foot,
+body.dark .id24-section-head span,
+body.dark .id24-muted,
+body.dark .id24-empty span,
+body.dark .management-insights .mi-empty,
+body.dark .management-insights .mi-card p,
+body.dark .management-insights .mi-signal,
+body.dark .snapshot-card p,
+body.dark .exec-sub,
+body.dark .exec-live-note,
+body.dark .mac-hint,
+body.dark .mac-status,
+body.dark .mac-movement small{
+  color:var(--muted)!important;
+}
+
+/* Management cards that previously used fixed cream/light colours */
+body.dark .mi-movement-facts{
+  background:#1A1F27!important;
+  border-color:var(--border)!important;
+}
+body.dark .mi-movement-facts>div{
+  background:#252B35!important;
+}
+body.dark .mi-movement-facts span,
+body.dark .mi-movement-facts .mi-arrow{
+  color:#BFC7D2!important;
+}
+body.dark .smart-svg-wrap,
+body.dark .id-chart-visual,
+body.dark .smart-detail{
+  background:linear-gradient(145deg,#1A1F27,#11151B)!important;
+  border-color:var(--border)!important;
+  color:var(--text)!important;
+}
+body.dark .id-chart-note{
+  background:#232933!important;
+  color:var(--muted)!important;
+  border-color:var(--border)!important;
+}
+
+/* Explicitly protect text from old hard-coded dark colours in AI layers */
+body.dark .ai-exec146-card,
+body.dark .ai47-card,
+body.dark .ai48-panel,
+body.dark .id-v1400-card,
+body.dark .id-v143-card,
+body.dark .id-v150-card,
+body.dark .id-v160-card,
+body.dark .id-v170-card,
+body.dark .id-v170-item{
+  background:var(--card)!important;
+  border-color:var(--border)!important;
+  color:var(--text)!important;
+}
+body.dark .ai-exec146-card *,
+body.dark .ai47-card *,
+body.dark .id-v1400-card *,
+body.dark .id-v143-card *,
+body.dark .id-v150-card *,
+body.dark .id-v160-card *,
+body.dark .id-v170-card *,
+body.dark .id-v170-item *{
+  color:inherit;
+}
+body.dark .ai-exec146-kicker,
+body.dark .ai47-kicker,
+body.dark .id-v150-match,
+body.dark .id-v160-status,
+body.dark .id-v170-note{
+  color:var(--muted)!important;
+}
+
+/* High-contrast status colours */
+body.dark .id24-issue.high>span{color:#FF8A70!important;background:#3A211C!important}
+body.dark .id24-issue.watch>span{color:#FFD35A!important;background:#3A311A!important}
+body.dark .id24-issue.info>span{color:#6BE5A4!important;background:#173126!important}
+body.dark .id24-card.good{border-top-color:#45D58A!important}
+body.dark .id24-card.bad{border-top-color:#FF7557!important}
+body.dark .id24-card.info{border-top-color:#FFC21A!important}
+body.dark .id24-link{color:#FFD24A!important}
+body.dark .id24-action b{color:#101318!important}
+
+/* Inputs, filters and tables */
+body.dark input,body.dark select,body.dark textarea{
+  background:#171B22!important;color:#F7F9FC!important;border-color:#46505D!important;
+}
+body.dark input::placeholder,body.dark textarea::placeholder{color:#AEB7C3!important;opacity:1}
+body.dark .filter>button,
+body.dark .panel>summary,
+body.dark .toolbar,
+body.dark .filters,
+body.dark th{
+  color:var(--text)!important;
+  border-color:var(--border)!important;
+}
+body.dark td,body.dark th{color:var(--text)!important}
+body.dark tbody tr:hover{background:#262D37!important}
+
+/* Buttons: strong text-to-background contrast */
+body.dark .btn,
+body.dark .icon-btn,
+body.dark .id24-btn,
+body.dark .id-v1400-btn,
+body.dark .id-v143-btn{
+  color:#F7F9FC!important;
+  background:#20252D;
+  border-color:#4A5563;
+}
+body.dark .btn.primary,
+body.dark .id24-btn.primary,
+body.dark .id24-top-btn,
+body.dark .id-v1400-btn.primary,
+body.dark .id-v143-btn.primary{
+  color:#111318!important;
+  background:#FFC21A!important;
+  border-color:#FFC21A!important;
+}
+body.dark #topShareBtn{color:#F7F9FC!important;background:#20252D!important;border-color:#4A5563!important}
+
+/* Mobile: larger readable secondary text and no low-contrast tiny labels */
+@media(max-width:600px){
+  body.dark .id24-body{font-size:11.5px;line-height:1.55}
+  body.dark .id24-foot{font-size:10.5px;line-height:1.45}
+  body.dark .id24-section-head span{font-size:10px}
+  body.dark .management-insights .mi-card li,
+  body.dark .management-insights .mi-empty{font-size:13px!important}
+}
+</style>
+
+</head><body class="dark" style="">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
@@ -2192,8 +2396,8 @@ body{
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → AI Management Cockpit · v24.0</span>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v24.0</span></div>
+    <span class="sub">Excel / CSV / PDF → AI Management Cockpit · v24.1</span>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v24.1</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
       <button class="id-health-btn no-print" id="aiModeToggleBtn" type="button" aria-label="Real AI settings">🤖 Real AI: Off</button>
@@ -2777,7 +2981,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.14.0',
   APP_NAME: 'InstantDash',
-  VERSION: 'v24.0',
+  VERSION: 'v24.1',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -11633,12 +11837,12 @@ window.addEventListener('load',function(){setTimeout(mountAskMe,250);});
 <script id="instantdash-v24-unified-cockpit-js">(function(){
 'use strict';
 
-/* InstantDash v24.0 — Unified AI Management Cockpit
+/* InstantDash v24.1 — High-Contrast AI Management Cockpit
    Additive redesign: keeps the existing dashboard, charts, Health Check,
    Ask AI and Share functions while adding one decision-first management layer. */
 
 const ID24 = {
-  version:'v24.0', lastSig:'', timer:null
+  version:'v24.1', lastSig:'', timer:null
 };
 const q24 = s => document.querySelector(s);
 const esc24 = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -11737,9 +11941,9 @@ function newAnalysis24(){
  try{toast('New analysis ready — previous data cleared');}catch(_){ }
 }
 function installVersion24(){
- document.querySelectorAll('#idV171Master').forEach(n=>n.textContent='v24.0');
- const sub=document.querySelector('.brand .sub');if(sub)sub.textContent='Excel / CSV / PDF → AI Management Cockpit · v24.0';
- const old=document.getElementById('id24VersionBadge');if(!old){const b=document.createElement('span');b.id='id24VersionBadge';b.textContent='v24.0 · Unified Cockpit';b.className='id24-version';document.querySelector('.brand')?.appendChild(b);}
+ document.querySelectorAll('#idV171Master').forEach(n=>n.textContent='v24.1');
+ const sub=document.querySelector('.brand .sub');if(sub)sub.textContent='Excel / CSV / PDF → AI Management Cockpit · v24.1';
+ const old=document.getElementById('id24VersionBadge');if(!old){const b=document.createElement('span');b.id='id24VersionBadge';b.textContent='v24.1 · High Contrast Cockpit';b.className='id24-version';document.querySelector('.brand')?.appendChild(b);}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{mount24();installVersion24();});else{mount24();installVersion24();}
 })();
