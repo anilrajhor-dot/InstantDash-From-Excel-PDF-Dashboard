@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v19.15","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">\n
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v19.16","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">\n
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
@@ -1191,7 +1191,10 @@ html,body{overflow-anchor:none!important;}
 .ai-chart-wrap canvas{width:100%!important;height:100%!important;display:block}
 .ai-chart-svg-host{position:absolute;inset:0;width:100%;height:100%;overflow:hidden}
 .ai-chart-svg-host svg{display:block;width:100%;height:100%;}
-.ai-chart-touch-detail{margin-top:7px;padding:8px 10px;border:1px dashed var(--border);border-radius:9px;font-size:10px;color:var(--muted);line-height:1.35;background:var(--card)}
+.ai-chart-touch-detail{margin-top:7px;padding:10px 12px 10px 34px;position:relative;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:10px;font-size:11px;color:var(--text);line-height:1.5;background:var(--card);box-shadow:0 2px 8px rgba(68,50,20,.05)}
+.ai-chart-touch-detail::before{content:"🔊";position:absolute;left:10px;top:9px;font-size:12px;opacity:.75}
+.ai-chart-card{transition:transform .16s ease,box-shadow .16s ease}
+.ai-chart-card:hover{transform:translateY(-2px);box-shadow:0 14px 32px rgba(68,50,20,.09)!important}
 .ai-chart-foot{margin-top:7px;font-size:10px;color:var(--muted);line-height:1.35}
 .ai-empty{padding:28px 12px;text-align:center;color:var(--muted);font-size:12px;border:1px dashed var(--border);border-radius:12px}
 .ai-chart-overlay{position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:100000;display:none;align-items:center;justify-content:center;padding:12px}
@@ -1205,7 +1208,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v19.15">
+<meta name="instantdash-build" content="v19.16">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2060,7 +2063,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v19.15';
+      s.textContent='v19.16';
       b.appendChild(s);
     }
   }
@@ -2087,7 +2090,7 @@ body{
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v19.15</span>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v19.16</span>
   <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v19.11</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -2612,7 +2615,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v19.15',
+  VERSION: 'v19.16',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -4292,6 +4295,44 @@ function instantDashCleanLabel(raw){
     return s;
   }catch(_){ return String(raw==null?'':raw); }
 }
+/* v19.16 — "why the variation" + "how to improve" for tap-to-speak.
+   Does NOT recompute anything expensive on tap. window.__miItems is the
+   Management Insights engine's output, already calculated once per data
+   load/filter change (see buildManagementInsights()) — this just looks up
+   whether the tapped measure already has a data-supported finding in it,
+   and reuses miActionForKpi()'s existing rule-based (instant, no data scan)
+   improvement suggestion. Both are wrapped defensively so a lookup miss
+   never breaks the core "value is X" speech. */
+function instantDashEnrichSpeech(measure, baseText){
+  var extra = '';
+  try{
+    var mi = window.__miItems;
+    if(mi && measure){
+      var needle = String(measure).toLowerCase();
+      var pools = [mi.attention, mi.performance, mi.contextual];
+      var found = null;
+      for(var p=0; p<pools.length && !found; p++){
+        var arr = pools[p]||[];
+        for(var i=0; i<arr.length; i++){
+          var m = String(arr[i]).match(/^<b>(.*?)<\/b>/);
+          var name = m ? m[1].replace(/<[^>]+>/g,'').toLowerCase() : '';
+          if(name && (name.indexOf(needle)>=0 || needle.indexOf(name)>=0)){ found=arr[i]; break; }
+        }
+      }
+      if(found){
+        var plain = (typeof miStrip==='function') ? miStrip(found) : String(found).replace(/<[^>]*>/g,'');
+        if(plain.length>260) plain = plain.slice(0,257)+'…';
+        if(plain) extra += ' ' + plain;
+      }
+    }
+  }catch(_){ }
+  try{
+    if(measure && typeof miActionForKpi==='function'){
+      extra += ' Suggested next step: ' + miActionForKpi(measure);
+    }
+  }catch(_){ }
+  return baseText + extra;
+}
 function instantDashSpeechStatus(msg){
   /* v19.15 — diagnosis complete, disabled. Kept as a no-op stub since
      instantDashSpeak() still calls it; restore the body below if a new
@@ -4376,7 +4417,7 @@ function instantDashChartSpeechText(measure, group, labels, values, idx){
   var label=(__rawLabel instanceof Date)?fmtDate(__rawLabel):(__rawLabel!==undefined?String(__rawLabel):'selected point');
   var value=Number(values[idx]);
   if(!isFinite(value)) return niceName(measure)+'. The selected value is not available.';
-  return niceName(measure)+' for '+instantDashCleanLabel(label)+' is '+fmtByField(value,measure)+'.';
+  return instantDashEnrichSpeech(measure, niceName(measure)+' for '+instantDashCleanLabel(label)+' is '+fmtByField(value,measure)+'.');
 }
 function instantDashSpeakChartPoint(spec, labels, values, idx){
   try{ if(window.__instantDashActiveDetailEl) window.__instantDashActiveDetailEl.textContent += ' [D]'; }catch(_){ }
@@ -9205,7 +9246,7 @@ function redrawAICard(s,card){
    window.__instantDashActiveDetailEl = s.detailEl || null;
    window.__instantDashActiveDetailBase = s.detailEl ? s.detailEl.textContent : '';
    try{
-     var __txt = niceName(s.measure)+' for '+instantDashCleanLabel(label)+' is '+fmtByField(value,s.measure)+'.';
+     var __txt = instantDashEnrichSpeech(s.measure, niceName(s.measure)+' for '+instantDashCleanLabel(label)+' is '+fmtByField(value,s.measure)+'.');
      var __synth = window.speechSynthesis;
      if(__synth){
        if(__synth.speaking||__synth.pending) __synth.cancel();
@@ -9761,7 +9802,7 @@ function renderFallback(){
       so dates read naturally instead of announcing a full timestamp+timezone. */
    try{
      var __label = (typeof instantDashCleanLabel==='function') ? instantDashCleanLabel(g.label) : String(g.label);
-     var __txt = s.name+' for '+__label+' is '+fmt(s.values[i])+'.';
+     var __txt = instantDashEnrichSpeech(s.name, s.name+' for '+__label+' is '+fmt(s.values[i])+'.');
      var __synth = window.speechSynthesis;
      if(__synth){
        if(__synth.speaking||__synth.pending) __synth.cancel();
