@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v22.2","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v22.3","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
@@ -1250,7 +1250,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v22.2">
+<meta name="instantdash-build" content="v22.3">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -1296,8 +1296,14 @@ html,body{overflow-anchor:none!important;}
 <style id="instantdash-v11323-executive-polish">
 #aiExecutiveCards .exec-card{min-height:142px;border-radius:18px!important;padding:16px!important;background:linear-gradient(145deg,rgba(255,255,255,.98),rgba(255,249,232,.94))!important;box-shadow:0 10px 24px rgba(70,50,20,.07);transition:transform .18s ease,box-shadow .18s ease}
 #aiExecutiveCards .exec-card:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(70,50,20,.11)}
-#aiExecutiveCards .exec-title{font-size:16px!important;letter-spacing:-.01em}
-#aiExecutiveCards .exec-body{font-size:12px!important;line-height:1.55!important;color:var(--text)}
+/* v22.3 — this card's background is intentionally fixed light (cream
+   gradient above), regardless of the app's dark/light mode toggle. Its
+   text must therefore be a fixed dark color too — using var(--text) here
+   was resolving to the theme's light color in dark mode, landing light
+   text on a light background and making it nearly unreadable. */
+#aiExecutiveCards .exec-title{font-size:16px!important;letter-spacing:-.01em;color:#24201b!important}
+#aiExecutiveCards .exec-body{font-size:12px!important;line-height:1.55!important;color:#4a4238!important}
+#aiExecutiveCards .exec-label{color:#8a8175!important}
 #aiExecutiveCards .exec-positive{border-left:5px solid #2e9d69!important}
 #aiExecutiveCards .exec-warning{border-left:5px solid #e2582b!important}
 #aiExecutiveCards .exec-info{border-left:5px solid #f5b301!important}
@@ -2105,7 +2111,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v22.2';
+      s.textContent='v22.3';
       b.appendChild(s);
     }
   }
@@ -2163,8 +2169,8 @@ body{
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v22.2</span>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v22.2</span></div>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v22.3</span>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v22.3</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
       <button class="id-health-btn no-print" id="aiModeToggleBtn" type="button" aria-label="Real AI settings">🤖 Real AI: Off</button>
@@ -2748,7 +2754,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v22.2',
+  VERSION: 'v22.3',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
