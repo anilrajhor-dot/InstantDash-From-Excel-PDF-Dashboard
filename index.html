@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v19.5","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">\n
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v17.7 FINAL","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">\n
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
@@ -17,7 +17,6 @@
 
 </script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
@@ -1205,7 +1204,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v19.5">
+<meta name="instantdash-build" content="v17.7 FINAL">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2060,7 +2059,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v19.5';
+      s.textContent='v17.7 MASTER';
       b.appendChild(s);
     }
   }
@@ -2086,8 +2085,8 @@ body{
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v19.5</span>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v19.5</span></div>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v17.7 FINAL</span>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v17.7 MASTER</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
   <div class="spacer"></div>
@@ -2611,7 +2610,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v19.5',
+  VERSION: 'v17.7',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -4267,76 +4266,26 @@ function refreshChart(spec, rebuildCard){
   drawChart(spec);
 }
 
-/* v19.4 — iOS 'stuck paused' fix + visible diagnostics.
-   After Safari is backgrounded (e.g. switching to Settings and back, exactly
-   what happens while checking installed voices) WebKit can leave
-   speechSynthesis internally paused; every speak() after that is silently
-   swallowed unless resume() is called first. We also surface a tiny on-screen
-   status toast (top of screen, auto-hides) reporting exactly what the browser
-   did — speaking / error / no voices — so a failure can be diagnosed from a
-   screenshot alone, without needing a computer for remote debugging. */
-function instantDashSpeechDiag(msg, isError){
-  try{
-    var el = document.getElementById('instantdash-speech-diag');
-    if(!el){
-      el = document.createElement('div');
-      el.id = 'instantdash-speech-diag';
-      el.style.cssText = 'position:fixed;left:12px;right:12px;top:calc(env(safe-area-inset-top,0px) + 8px);z-index:99999;padding:8px 12px;border-radius:10px;font:600 11px Poppins,sans-serif;box-shadow:0 4px 16px rgba(0,0,0,.25);text-align:center;transition:opacity .25s';
-      document.body.appendChild(el);
-    }
-    el.style.background = isError ? '#E2582B' : '#2E8B57';
-    el.style.color = '#fff';
-    el.style.opacity = '1';
-    el.textContent = msg;
-    clearTimeout(window.__instantDashDiagTimer);
-    window.__instantDashDiagTimer = setTimeout(function(){ el.style.opacity='0'; }, 4000);
-  }catch(_){ }
-}
-window.__instantDashVoices = [];
-(function primeVoices(){
-  try{
-    if(!('speechSynthesis' in window)) return;
-    var refresh=function(){ window.__instantDashVoices = window.speechSynthesis.getVoices() || []; };
-    refresh();
-    window.speechSynthesis.onvoiceschanged = refresh;
-  }catch(_){ }
-})();
-function instantDashPickVoice(){
-  var vs = window.__instantDashVoices && window.__instantDashVoices.length
-    ? window.__instantDashVoices
-    : (window.speechSynthesis ? window.speechSynthesis.getVoices() : []);
-  if(!vs || !vs.length) return null;
-  var byLang=function(re){ for(var i=0;i<vs.length;i++){ if(re.test(vs[i].lang||'')) return vs[i]; } return null; };
-  return byLang(/^en[-_]IN/i) || byLang(/^en[-_]GB/i) || byLang(/^en[-_]US/i) || byLang(/^en/i) || vs[0];
-}
+/* v17.7.1 — chart tap-to-speak reliability fix only. No UI/layout changes. */
 function instantDashSpeak(text){
   try{
-    if(!('speechSynthesis' in window) || !text){ instantDashSpeechDiag('Speech not supported on this browser', true); return false; }
-    var synth = window.speechSynthesis;
-    if (synth.speaking || synth.pending) synth.cancel();
-    synth.resume();   // clears the iOS "stuck paused" state
-    var u = new SpeechSynthesisUtterance(String(text));
-    var v = instantDashPickVoice();
-    if(v){ u.voice = v; u.lang = v.lang; } else { u.lang = 'en-US'; }
-    u.rate=.92; u.pitch=1;
-    var started = false, ended = false;
-    u.onstart = function(){ started = true; instantDashSpeechDiag('🔊 Speaking (' + (v ? v.name : 'default voice') + ')', false); };
-    u.onend   = function(){ ended = true; };
-    u.onerror = function(e){ instantDashSpeechDiag('❌ Speech error: ' + (e && e.error ? e.error : 'unknown'), true); };
-    window.__instantDashUtterance = u;   // prevent premature GC on iOS
-    instantDashSpeechDiag('… sending to speech engine (voices:' + (window.__instantDashVoices||[]).length + ', voice:' + (v?v.name:'none') + ')', false);
+    if(!text) return false;
+    var synth=window.speechSynthesis || window.webkitSpeechSynthesis;
+    var Utter=window.SpeechSynthesisUtterance || window.webkitSpeechSynthesisUtterance;
+    if(!synth || !Utter) return false;
+    var u=new Utter(String(text));
+    u.lang='en-IN';
+    u.rate=.92;
+    u.pitch=1;
+    u.volume=1;
+    /* Keep this call synchronous with the iOS touch/click event. */
+    try{ if(synth.speaking || synth.pending) synth.cancel(); }catch(_){ }
     synth.speak(u);
-    /* Watchdog — if the browser neither started nor errored within 1.5s,
-       the utterance is stuck in the queue (a distinct WebKit failure mode
-       from a normal error), which otherwise looks like total silence with
-       no explanation at all. */
-    setTimeout(function(){
-      if(!started && !ended){
-        instantDashSpeechDiag('⚠️ Stuck — never started (speaking:'+synth.speaking+' pending:'+synth.pending+' paused:'+synth.paused+')', true);
-      }
-    }, 1500);
     return true;
-  }catch(err){ instantDashSpeechDiag('❌ Speech exception: ' + (err && err.message ? err.message : err), true); return false; }
+  }catch(err){
+    console.warn('InstantDash chart speech unavailable',err);
+    return false;
+  }
 }
 function instantDashChartSpeechText(measure, group, labels, values, idx){
   var label=labels[idx]!==undefined?String(labels[idx]):'selected point';
@@ -4345,7 +4294,8 @@ function instantDashChartSpeechText(measure, group, labels, values, idx){
   var text=niceName(measure)+' for '+label+' is '+fmtByField(value,measure)+'.';
   if(labels.length<2) return text+' There is no comparable second value in this chart.';
   var compareIdx=-1, compareLabel='', compareValue=null;
-  var time=group && isTime(group,col(group));
+  var time=false;
+  try{time=!!(group && isTime(group,col(group)));}catch(_){ }
   if(time){
     compareIdx=idx>0?idx-1:(idx<values.length-1?idx+1:-1);
     if(compareIdx>=0){compareLabel=String(labels[compareIdx]);compareValue=Number(values[compareIdx]);}
@@ -4355,16 +4305,15 @@ function instantDashChartSpeechText(measure, group, labels, values, idx){
   }
   if(compareValue!==null&&isFinite(compareValue)){
     var diff=value-compareValue, pct=compareValue!==0?(diff/Math.abs(compareValue))*100:null;
-    text+=' Compared with '+compareLabel+', the difference is '+fmtByField(diff,measure)+(pct===null?'':' ('+(pct>=0?'+':'')+pct.toFixed(1)+'%).');
+    text+=' Compared with '+compareLabel+', the difference is '+fmtByField(diff,measure)+(pct===null?'':' ('+(pct>=0?'+':'')+pct.toFixed(1)+' percent).');
   }
-  /* Look for a data-supported possible driver in another numeric measure.
-     This is deliberately described as a possible driver, not a causal reason. */
   try{
     if(group){
       var rs=rows(), ms=getMeasures(rs).filter(function(m){return String(m.name)!==String(measure)}).slice(0,18);
       var chosen=null;
       ms.forEach(function(m){
-        var a=aggregate(rs,group,m.name), map={};a.labels.forEach(function(k,i){map[String(k)]=a.values[i]});
+        var a=aggregate(rs,group,m.name), map={};
+        a.labels.forEach(function(k,i){map[String(k)]=a.values[i]});
         var cur=map[label], cmp=null;
         if(time&&compareIdx>=0) cmp=map[String(labels[compareIdx])];
         else if(isFinite(compareValue)){
@@ -4376,11 +4325,8 @@ function instantDashChartSpeechText(measure, group, labels, values, idx){
           if(!chosen||Math.abs(chg)>Math.abs(chosen.chg)) chosen={name:m.name,cur:cur,cmp:cmp,chg:chg};
         }
       });
-      if(chosen){
-        text+=' A possible data-supported driver is '+niceName(chosen.name)+', which changed '+(chosen.chg>=0?'+':'')+chosen.chg.toFixed(1)+'% on the same comparison. This indicates a possible relationship, not proven causation.';
-      }else{
-        text+=' The loaded data does not provide enough comparable driver information to establish a reason for the difference.';
-      }
+      if(chosen) text+=' A possible data-supported driver is '+niceName(chosen.name)+', which changed '+(chosen.chg>=0?'+':'')+chosen.chg.toFixed(1)+' percent on the same comparison. This indicates a possible relationship, not proven causation.';
+      else text+=' The loaded data does not provide enough comparable driver information to establish a reason for the difference.';
     }
   }catch(_){ }
   return text;
@@ -4388,8 +4334,61 @@ function instantDashChartSpeechText(measure, group, labels, values, idx){
 function instantDashSpeakChartPoint(spec, labels, values, idx){
   try{
     var text=instantDashChartSpeechText(spec.y||spec.value||spec.x||'Value',spec.x||'',labels||[],values||[],idx);
-    instantDashSpeak(text);
-  }catch(_){ }
+    return instantDashSpeak(text);
+  }catch(_){ return false; }
+}
+/* iPhone-safe AI chart touch handler. The visible chart is unchanged. */
+function instantDashBindAISvgSpeech(host,spec){
+  if(!host) return;
+  var root=host.querySelector('svg');
+  if(!root) return;
+  if(host.__instantDashSpeakBound) return;
+  host.__instantDashSpeakBound=true;
+  var lastTouch=0;
+  function speakIndex(idx,e){
+    idx=Number(idx);
+    if(!isFinite(idx) || idx<0) return false;
+    var labels=(spec.data&&spec.data.labels)||[], values=(spec.data&&spec.data.values)||[];
+    if(idx>=labels.length || idx>=values.length) return false;
+    if(e && e.type==='touchend') { try{e.preventDefault();}catch(_){} }
+    if(e && e.type!=='click') lastTouch=Date.now();
+    var label=labels[idx], value=values[idx];
+    if(spec.detailEl) spec.detailEl.textContent=niceName(spec.measure)+' · '+String(label)+' · '+fmtByField(Number(value),spec.measure);
+    return instantDashSpeakChartPoint({x:spec.group,y:spec.measure,value:spec.measure},labels,values,idx);
+  }
+  /* Bind directly to every real SVG mark. This is the most reliable iOS path. */
+  root.querySelectorAll('[data-chart-index]').forEach(function(mark){
+    var idx=mark.getAttribute('data-chart-index');
+    mark.style.pointerEvents='auto';
+    mark.addEventListener('touchend',function(e){speakIndex(idx,e);},{passive:false});
+    mark.addEventListener('pointerup',function(e){
+      if(e.pointerType==='touch') speakIndex(idx,e);
+    },{passive:false});
+    mark.addEventListener('click',function(e){
+      if(Date.now()-lastTouch<900) return;
+      speakIndex(idx,e);
+    },{passive:false});
+  });
+  /* Fallback for tapping near a small point/bar rather than exactly on it. */
+  function nearest(e){
+    var x=(e.clientX!=null?e.clientX:(e.changedTouches&&e.changedTouches[0]?e.changedTouches[0].clientX:0));
+    var y=(e.clientY!=null?e.clientY:(e.changedTouches&&e.changedTouches[0]?e.changedTouches[0].clientY:0));
+    var best=Infinity,bestIdx=-1;
+    root.querySelectorAll('[data-chart-index]').forEach(function(el){
+      var r=el.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;
+      /* For bars, use the whole bar rectangle; for points use a 55px radius. */
+      var inside=x>=r.left-10&&x<=r.right+10&&y>=r.top-10&&y<=r.bottom+10;
+      var d=inside?0:Math.hypot(x-cx,y-cy);
+      if(d<best){best=d;bestIdx=Number(el.getAttribute('data-chart-index'));}
+    });
+    if(bestIdx>=0 && best<=55) speakIndex(bestIdx,e);
+  }
+  host.addEventListener('touchend',nearest,{passive:false});
+  host.addEventListener('pointerup',function(e){if(e.pointerType==='touch')nearest(e);},{passive:false});
+  host.addEventListener('click',function(e){
+    if(Date.now()-lastTouch<900) return;
+    nearest(e);
+  },{passive:false});
 }
 
 function drawChart(spec){
@@ -4436,11 +4435,6 @@ function drawChart(spec){
       kind = 'bar';
       data = {labels:h.labels, datasets:[{label:'Rows', data:h.series[0].data, backgroundColor:P[0], borderRadius:4, borderSkipped:false}]};
       options = deep(common, {scales:{x:{ticks:{maxRotation:60}}, y:{title:{display:true, text:'Rows', color:th.muted}}}});
-      options.plugins.datalabels = {
-        display:true, anchor:'end', align:'end', offset:4, clamp:true,
-        color:th.text, font:{size:9, weight:'700'},
-        formatter:(v)=> (v||0).toLocaleString('en-IN')
-      };
       if (note) note.textContent = `${CONFIG.HISTOGRAM_BINS} equal-width bins across ${spec.x}.`;
 
     } else if (spec.type === 'scatter'){
@@ -4454,13 +4448,6 @@ function drawChart(spec){
         },
         plugins:{tooltip:{callbacks:{label:(c)=>`${spec.x}: ${fmtByField(c.parsed.x,spec.x)} · ${spec.y}: ${fmtByField(c.parsed.y,spec.y)}`}}}
       });
-      /* Point labels only up to a readable density — beyond that every figure
-         overlaps every other and the chart becomes unreadable rather than clearer. */
-      options.plugins.datalabels = {
-        display: pts.length <= 25, anchor:'end', align:'top', offset:4, clamp:true,
-        color:th.muted, font:{size:8, weight:'700'},
-        formatter:(v)=> fmtByField(v.y, spec.y)
-      };
       const r = correlation(pts);
       if (note) note.textContent = `${pts.length.toLocaleString()} points${pts.length < rows.length ? ' (sampled)' : ''}${r === null ? '' : ' · correlation r = ' + r.toFixed(2)}.`;
 
@@ -4482,12 +4469,6 @@ function drawChart(spec){
           }
         });
         delete options.scales;   // circular charts have no x/y axes
-        options.plugins.datalabels = {
-          display:true, anchor:'center', align:'center', clamp:true,
-          color:'#fff', textStrokeColor:'rgba(0,0,0,.55)', textStrokeWidth:3,
-          font:{size:10, weight:'700'},
-          formatter:(v)=> [fmtByField(v, spec.y || spec.value || spec.x), `(${total ? (v/total*100).toFixed(1) : 0}%)`]
-        };
       } else {
         kind = (spec.type === 'line' || spec.type === 'area') ? 'line' : 'bar';
         data = {labels:res.labels, datasets:res.series.map((s, i) => ({
@@ -4510,22 +4491,6 @@ function drawChart(spec){
             : {x:{ticks:{color:th.muted, font:{size:10}, maxRotation:50, autoSkip:true, maxTicksLimit:14}, grid:{color:th.grid}, stacked},
                y:{ticks:{color:th.muted, font:{size:10}, callback:(v)=>fmtByField(v, spec.y || spec.value || spec.x)}, grid:{color:th.grid}, beginAtZero:true, stacked}}
         });
-        /* Stacked segments get labels centred inside the bar (with an outline so
-           they read on any fill colour); everything else gets a label just
-           outside the bar/point so it never gets clipped by the segment edge. */
-        const manyPoints = res.labels.length > 40;
-        options.plugins.datalabels = {
-          display: !manyPoints,
-          clamp:true,
-          color: stacked ? '#fff' : th.text,
-          textStrokeColor: stacked ? 'rgba(0,0,0,.5)' : undefined,
-          textStrokeWidth: stacked ? 2 : 0,
-          font:{size:9, weight:'700'},
-          anchor: stacked ? 'center' : (kind === 'line' ? 'end' : 'end'),
-          align: stacked ? 'center' : (spec.type === 'hbar' ? 'right' : (kind === 'line' ? 'top' : 'end')),
-          offset: stacked ? 0 : 4,
-          formatter:(v)=> fmtByField(v, spec.y || spec.value || spec.x)
-        };
       }
 
       if (note){
@@ -4537,7 +4502,7 @@ function drawChart(spec){
     }
 
     /* Click/tap speech is additive only; all existing chart configuration remains unchanged. */
-    options.onClick = function(evt, active){
+    function speakChartHit(evt, active){
       try{
         if(!active || !active.length) return;
         var el=active[0], idx=typeof el.index==='number'?el.index:0;
@@ -4549,9 +4514,49 @@ function drawChart(spec){
           var vals=(data.datasets&&data.datasets[0]&&data.datasets[0].data)||[];
           instantDashSpeakChartPoint(spec,labs,vals,idx);
         }
-      }catch(_){ }
-    };
+      }catch(err){console.warn('InstantDash chart touch speech failed',err);}
+    }
+    options.onClick = speakChartHit;
     spec.instance = new Chart(cv.getContext('2d'), {type:kind, data, options});
+    if(!cv.__instantDashSpeakBound){
+      cv.__instantDashSpeakBound=true;
+      var lastTouch=0;
+      var touchHandler=function(e){
+        try{
+          var now=Date.now();
+          if(e.type==='click' && now-lastTouch<700) return;
+          if(e.type!=='click') lastTouch=now;
+          var active=spec.instance && spec.instance.getElementsAtEventForMode
+            ? spec.instance.getElementsAtEventForMode(e,'nearest',{intersect:false},true) : [];
+          if(active&&active.length) speakChartHit(e,active);
+        }catch(err){console.warn('InstantDash canvas touch speech failed',err);}
+      };
+      /* iPhone/iPad Safari: Chart.js does not reliably expose a useful active
+         element for a raw pointer/touch event. Keep the existing canvas and
+         chart completely unchanged, but resolve the touch through a synthetic
+         click-like event using the actual screen coordinates. */
+      function touchPoint(e){
+        var t=e.changedTouches&&e.changedTouches[0];
+        return {clientX:t?t.clientX:e.clientX,clientY:t?t.clientY:e.clientY};
+      }
+      function touchHandler2(e){
+        try{
+          var now=Date.now();
+          if(e.type==='click' && now-lastTouch<900) return;
+          if(e.type!=='click') lastTouch=now;
+          var pt=touchPoint(e);
+          if(pt.clientX==null||pt.clientY==null) return;
+          var ev={type:'click',clientX:pt.clientX,clientY:pt.clientY,native:e};
+          var active=spec.instance && spec.instance.getElementsAtEventForMode
+            ? spec.instance.getElementsAtEventForMode(ev,'nearest',{intersect:false,axis:'xy'},true) : [];
+          if(active&&active.length) speakChartHit(e,active);
+        }catch(err){console.warn('InstantDash iPhone chart speech failed',err);}
+      }
+      cv.addEventListener('touchend',function(e){try{e.preventDefault();}catch(_){} touchHandler2(e);},{passive:false});
+      cv.addEventListener('pointerup',touchHandler2,{passive:false});
+      cv.addEventListener('click',touchHandler2,{passive:false});
+      cv.style.touchAction='manipulation';
+    }
   } catch (err){
     console.error('Chart failed', spec, err);
     if (note) note.textContent = 'This combination can’t be charted — try a different column.';
@@ -6710,13 +6715,6 @@ function wireRest(){
   if (window.Chart){
     Chart.defaults.font.family = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
     Chart.defaults.font.size = 11;
-    /* v19.0 — always-visible data-value labels on charts, additive only. */
-    try{
-      if(typeof ChartDataLabels !== 'undefined'){
-        Chart.register(ChartDataLabels);
-        Chart.defaults.set('plugins.datalabels', {display:false});
-      }
-    }catch(_){ }
   }
   // Let CONFIG.APP_NAME drive the visible name in one place
   $('appName').textContent = CONFIG.APP_NAME;
@@ -9145,27 +9143,20 @@ function drawNativeAIChart(s,canvas){
  svg.push('<rect x="0" y="0" width="'+w+'" height="'+h+'" rx="12" fill="#fffdf8"/>');
  if(pie){
    var cx=w/2,cy=h/2,r=Math.min(w,h)*.29,total=vals.reduce(function(a,b){return a+Math.max(0,b)},0)||1,angle=-Math.PI/2;
-   vals.slice(0,12).forEach(function(v,i){var part=Math.max(0,v)/total,a2=angle+part*Math.PI*2, x1=cx+r*Math.cos(angle),y1=cy+r*Math.sin(angle),x2=cx+r*Math.cos(a2),y2=cy+r*Math.sin(a2),large=part>.5?1:0;svg.push('<g data-chart-index="'+i+'"><path d="M '+cx+' '+cy+' L '+x1+' '+y1+' A '+r+' '+r+' 0 '+large+' 1 '+x2+' '+y2+' Z" fill="'+colors[i%colors.length]+'" stroke="#fff" stroke-width="2"><title>'+escA(labels[i])+' · '+escA(fmt(v))+'</title></path>');
-     /* Value + share label, same content the Chart.js pie/donut charts show,
-        placed mid-slice with a dark outline so it reads on every slice colour. */
-     if(part>.02){var mid=angle+part*Math.PI,lx=cx+(r*.66)*Math.cos(mid),ly=cy+(r*.66)*Math.sin(mid),pct=(part*100).toFixed(1);svg.push('<text x="'+lx+'" y="'+(ly-3)+'" text-anchor="middle" font-size="9.5" font-weight="800" fill="#fff" style="paint-order:stroke;stroke:rgba(0,0,0,.55);stroke-width:3px">'+escA(fmt(v))+'</text><text x="'+lx+'" y="'+(ly+9)+'" text-anchor="middle" font-size="8.5" font-weight="700" fill="#fff" style="paint-order:stroke;stroke:rgba(0,0,0,.55);stroke-width:3px">('+pct+'%)</text>');}
-     svg.push('</g>');
-     angle=a2;});
+   vals.slice(0,12).forEach(function(v,i){var part=Math.max(0,v)/total,a2=angle+part*Math.PI*2, x1=cx+r*Math.cos(angle),y1=cy+r*Math.sin(angle),x2=cx+r*Math.cos(a2),y2=cy+r*Math.sin(a2),large=part>.5?1:0;svg.push('<path d="M '+cx+' '+cy+' L '+x1+' '+y1+' A '+r+' '+r+' 0 '+large+' 1 '+x2+' '+y2+' Z" fill="'+colors[i%colors.length]+'" stroke="#fff" stroke-width="2" data-chart-index="'+i+'"><title>'+escA(labels[i])+' · '+escA(fmt(v))+'</title></path>');angle=a2;});
    if(type==='donut')svg.push('<circle cx="'+cx+'" cy="'+cy+'" r="'+(r*.58)+'" fill="#fffdf8"/>');
    labels.slice(0,10).forEach(function(l,i){var yy=20+i*19;svg.push('<rect x="'+(w-125)+'" y="'+yy+'" width="9" height="9" rx="2" fill="'+colors[i%colors.length]+'"/><text x="'+(w-110)+'" y="'+(yy+8)+'" font-size="10" font-weight="700" fill="#5f574e">'+escA(short(l,18))+'</text>');});
  } else {
    var left=horiz?100:46,right=18,top=18,bottom=52,plotW=w-left-right,plotH=h-top-bottom;
    for(var gy=0;gy<=4;gy++){var yy=top+plotH-gy*plotH/4;svg.push('<line x1="'+left+'" y1="'+yy+'" x2="'+(left+plotW)+'" y2="'+yy+'" stroke="#e8dfd2" stroke-width="1"/><text x="'+(left-7)+'" y="'+(yy+4)+'" text-anchor="end" font-size="9" fill="#777066">'+escA(fmt(max*gy/4))+'</text>');}
-   if(horiz){var n=Math.min(labels.length,12),gap=6,bh=Math.max(10,(plotH-gap*(n-1))/n);var items=vals.map(function(v,i){return {v:v,l:labels[i],i:i};}).sort(function(a,b){return b.v-a.v}).slice(0,n);items.forEach(function(it,j){var y=top+j*(bh+gap),bw=Math.max(1,it.v/max*plotW);svg.push('<g data-chart-index="'+it.i+'"><rect x="'+left+'" y="'+y+'" width="'+bw+'" height="'+Math.max(2,bh)+'" rx="7" fill="'+colors[it.i%colors.length]+'"><title>'+escA(it.l)+' · '+escA(fmt(it.v))+'</title></rect><text x="'+(left-7)+'" y="'+(y+bh*.65)+'" text-anchor="end" font-size="9" font-weight="700" fill="#5f574e">'+escA(short(it.l,16))+'</text><text x="'+(left+bw+6)+'" y="'+(y+bh*.65)+'" font-size="9" font-weight="800" fill="#24201b">'+escA(fmt(it.v))+'</text></g>');});
+   if(horiz){var n=Math.min(labels.length,12),gap=6,bh=Math.max(10,(plotH-gap*(n-1))/n);var items=vals.map(function(v,i){return {v:v,l:labels[i],i:i};}).sort(function(a,b){return b.v-a.v}).slice(0,n);items.forEach(function(it,j){var y=top+j*(bh+gap),bw=Math.max(1,it.v/max*plotW);svg.push('<rect x="'+left+'" y="'+y+'" width="'+bw+'" height="'+Math.max(2,bh)+'" rx="7" fill="'+colors[it.i%colors.length]+'" data-chart-index="'+it.i+'"><title>'+escA(it.l)+' · '+escA(fmt(it.v))+'</title></rect><text x="'+(left-7)+'" y="'+(y+bh*.65)+'" text-anchor="end" font-size="9" font-weight="700" fill="#5f574e">'+escA(short(it.l,16))+'</text><text x="'+(left+bw+6)+'" y="'+(y+bh*.65)+'" font-size="9" font-weight="800" fill="#24201b">'+escA(fmt(it.v))+'</text>');});
    } else if(line){
      var n2=Math.min(labels.length,16),pts=[];for(var i=0;i<n2;i++){var x=left+(n2===1?plotW/2:i*plotW/(n2-1)),y=top+plotH-(vals[i]/max)*plotH;pts.push([x,y]);}
      if(type==='area'&&pts.length){var d='M '+pts[0][0]+' '+(top+plotH)+' L '+pts.map(function(p){return p[0]+' '+p[1];}).join(' L ')+' L '+pts[pts.length-1][0]+' '+(top+plotH)+' Z';svg.push('<path d="'+d+'" fill="'+colors[0]+'" opacity=".16"/>');}
-     if(pts.length){svg.push('<polyline points="'+pts.map(function(p){return p[0]+','+p[1];}).join(' ')+'" fill="none" stroke="'+colors[0]+'" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>');pts.forEach(function(p,i){svg.push('<g data-chart-index="'+i+'"><circle cx="'+p[0]+'" cy="'+p[1]+'" r="4" fill="'+colors[0]+'" stroke="#fff" stroke-width="2"><title>'+escA(labels[i])+' · '+escA(fmt(vals[i]))+'</title></circle>');
-       /* Value above each point — same figure the bar/hbar charts already show on-chart. */
-       svg.push('<text x="'+p[0]+'" y="'+(p[1]-9)+'" text-anchor="middle" font-size="9" font-weight="800" fill="#24201b">'+escA(fmt(vals[i]))+'</text></g>');});}
+     if(pts.length){svg.push('<polyline points="'+pts.map(function(p){return p[0]+','+p[1];}).join(' ')+'" fill="none" stroke="'+colors[0]+'" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>');pts.forEach(function(p,i){svg.push('<circle cx="'+p[0]+'" cy="'+p[1]+'" r="4" fill="'+colors[0]+'" stroke="#fff" stroke-width="2" data-chart-index="'+i+'"><title>'+escA(labels[i])+' · '+escA(fmt(vals[i]))+'</title></circle>');});}
      labels.slice(0,n2).forEach(function(l,i){var x=left+(n2===1?plotW/2:i*plotW/(n2-1));svg.push('<text x="'+x+'" y="'+(top+plotH+25)+'" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">'+escA(short(l,14))+'</text>');});
    } else {
-     var n3=Math.min(labels.length,12),bw=Math.max(8,(plotW-(n3-1)*8)/n3);for(var j=0;j<n3;j++){var bh=Math.max(1,(Math.max(0,vals[j])/max)*plotH),x=left+j*(bw+8),y=top+plotH-bh;svg.push('<g data-chart-index="'+j+'"><rect x="'+x+'" y="'+y+'" width="'+bw+'" height="'+bh+'" rx="7" fill="'+colors[j%colors.length]+'"><title>'+escA(labels[j])+' · '+escA(fmt(vals[j]))+'</title></rect><text x="'+(x+bw/2)+'" y="'+(y-7)+'" text-anchor="middle" font-size="9" font-weight="800" fill="#24201b">'+escA(fmt(vals[j]))+'</text><text x="'+(x+bw/2)+'" y="'+(top+plotH+25)+'" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">'+escA(short(labels[j],14))+'</text></g>');}
+     var n3=Math.min(labels.length,12),bw=Math.max(8,(plotW-(n3-1)*8)/n3);for(var j=0;j<n3;j++){var bh=Math.max(1,(Math.max(0,vals[j])/max)*plotH),x=left+j*(bw+8),y=top+plotH-bh;svg.push('<rect x="'+x+'" y="'+y+'" width="'+bw+'" height="'+bh+'" rx="7" fill="'+colors[j%colors.length]+'" data-chart-index="'+j+'"><title>'+escA(labels[j])+' · '+escA(fmt(vals[j]))+'</title></rect><text x="'+(x+bw/2)+'" y="'+(y-7)+'" text-anchor="middle" font-size="9" font-weight="800" fill="#24201b">'+escA(fmt(vals[j]))+'</text><text x="'+(x+bw/2)+'" y="'+(top+plotH+25)+'" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">'+escA(short(labels[j],14))+'</text>');}
    }
  }
  svg.push('</svg>');
@@ -9185,18 +9176,7 @@ function redrawAICard(s,card){
  var sub=card.querySelector('.ai-chart-sub'),selector=card.querySelector('.ai-chart-type');if(selector)selector.value=s.type;
  if(sub)sub.textContent=(autoReason?autoReason+' ':'')+(s.group?'AI selected '+niceName(s.type)+' chart grouped by '+niceName(s.group):'AI selected a total chart for '+niceName(s.measure))+'.';
  s.detailEl=card.querySelector('.ai-chart-touch-detail');if(s.detailEl)s.detailEl.textContent='Tap a bar or point to see the exact figure.';
- /* v19.1 fix — drawNativeAIChart replaces `canvas`'s own parent's innerHTML,
-    which detaches `canvas` from the DOM. Listening on it meant taps never
-    reached the handler. `wrap` is what actually stays on screen. */
- try{drawNativeAIChart(s,canvas);wrap.addEventListener('click',function(e){
-   var target=e.target&&e.target.closest?e.target.closest('[data-chart-index]'):null;
-   var idx=target?Number(target.getAttribute('data-chart-index')):-1;
-   if(idx<0||!isFinite(idx))return;
-   var label=s.data.labels[idx]!==undefined?String(s.data.labels[idx]):'Selected';
-   var value=Number(s.data.values[idx]||0);
-   if(s.detailEl)s.detailEl.textContent=niceName(s.measure)+' · '+label+' · '+fmtByField(value,s.measure);
-   instantDashSpeakChartPoint({x:s.group,y:s.measure,value:s.measure},s.data.labels,s.data.values,idx);
- });}
+ try{drawNativeAIChart(s,canvas);instantDashBindAISvgSpeech(canvas,s);}
  catch(err){wrap.innerHTML='<div class="ai-chart-render-error" style="height:100%;min-height:220px;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;color:var(--muted);font:600 11px Poppins,sans-serif">Unable to draw this chart. The data is still available in the manual chart selector.</div>';console.error('InstantDash native AI chart error',err);}
 }
 function render(){
@@ -9223,7 +9203,7 @@ function render(){
   card.querySelector('.ai-chart-wrap').addEventListener('click',function(e){if(e.target.tagName==='CANVAS')openExpand(s)});
  });
 }
-function openExpand(s){var ov=$('aiChartOverlay'),cv=$('aiOverlayCanvas');if(!ov||!cv)return;$('aiOverlayTitle').textContent=niceName(s.title)+' · '+niceName(s.type==='hbar'?'Horizontal Bar':s.type);$('aiOverlaySub').textContent=s.subtitle+' · Parameter: '+niceName(s.measure);ov.classList.add('open');ov.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';requestAnimationFrame(function(){try{drawNativeAIChart(s,cv)}catch(e){console.warn('InstantDash expanded chart failed',e)}})}
+function openExpand(s){var ov=$('aiChartOverlay'),cv=$('aiOverlayCanvas');if(!ov||!cv)return;$('aiOverlayTitle').textContent=niceName(s.title)+' · '+niceName(s.type==='hbar'?'Horizontal Bar':s.type);$('aiOverlaySub').textContent=s.subtitle+' · Parameter: '+niceName(s.measure);ov.classList.add('open');ov.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';requestAnimationFrame(function(){try{var host=cv.parentElement;drawNativeAIChart(s,cv);instantDashBindAISvgSpeech(host,s)}catch(e){console.warn('InstantDash expanded chart failed',e)}})}
 function closeExpand(){var ov=$('aiChartOverlay');if(!ov)return;ov.classList.remove('open');ov.setAttribute('aria-hidden','true');if(overlayChart){overlayChart.destroy();overlayChart=null}document.body.style.overflow=''}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 function watch(){
@@ -10438,4 +10418,175 @@ window.addEventListener('load',function(){setTimeout(mountAskMe,250);});
   setInterval(wire,500);
 })();
 </script>
+
+<script id="instantdash-v177-chart-speak-final">
+(function(){
+  'use strict';
+
+  /* v17.7 — ONLY chart touch/speak reliability. Existing UI and chart setup
+     are deliberately untouched. This handler resolves the touched Chart.js
+     element from its rendered geometry instead of relying on synthetic
+     Chart.js events, which are unreliable on iPhone Safari. */
+
+  function bindChartSpeechReliably(){
+    try{
+      if(typeof Chart==='undefined') return;
+
+      document.querySelectorAll('canvas').forEach(function(cv){
+        var chart=null;
+        try{
+          var found=Chart.getChart ? Chart.getChart(cv) : null;
+          chart=found || null;
+        }catch(_){}
+
+        if(!chart || cv.__id177SpeakFinal) return;
+        cv.__id177SpeakFinal=true;
+
+        var lastSpoken=0;
+
+        function pointFromEvent(e){
+          var t=e && e.changedTouches && e.changedTouches[0];
+          return {
+            x:t ? t.clientX : e.clientX,
+            y:t ? t.clientY : e.clientY
+          };
+        }
+
+        function nearestElement(pt){
+          if(!pt || pt.x==null || pt.y==null) return null;
+          var best=null, bestD=Infinity;
+
+          try{
+            chart.data.datasets.forEach(function(ds,di){
+              var meta=chart.getDatasetMeta(di);
+              if(!meta || !meta.data) return;
+
+              meta.data.forEach(function(el,idx){
+                if(!el || el.hidden) return;
+                var p=el.getProps ? el.getProps(['x','y'],true) : {x:el.x,y:el.y};
+                if(!p || !isFinite(p.x) || !isFinite(p.y)) return;
+
+                var dx=pt.x-(cv.getBoundingClientRect().left+p.x);
+                var dy=pt.y-(cv.getBoundingClientRect().top+p.y);
+                var d=Math.sqrt(dx*dx+dy*dy);
+
+                /* Bars: use their rendered rectangle as a generous hit area. */
+                var inside=false;
+                try{
+                  var r=el.getProps ? el.getProps(['x','y','width','height'],true) : el;
+                  if(r && isFinite(r.width) && isFinite(r.height)){
+                    var cx=cv.getBoundingClientRect().left+p.x;
+                    var cy=cv.getBoundingClientRect().top+p.y;
+                    inside=Math.abs(pt.x-cx)<=Math.max(28,r.width/2+14) &&
+                           Math.abs(pt.y-cy)<=Math.max(28,r.height/2+14);
+                  }
+                }catch(_){}
+
+                var score=inside ? 0 : d;
+                if(score<bestD){
+                  bestD=score;
+                  best={di:di,idx:idx,d:d};
+                }
+              });
+            });
+          }catch(_){}
+
+          return best && (best.d<=70 || best.d===0) ? best : null;
+        }
+
+        function speakHit(e){
+          var pt=pointFromEvent(e);
+          var hit=nearestElement(pt);
+          if(!hit) return;
+
+          var ds=chart.data.datasets[hit.di]||{};
+          var labels=chart.data.labels||[];
+          var values=Array.isArray(ds.data)?ds.data:[];
+          var idx=hit.idx;
+
+          if(typeof instantDashSpeakChartPoint==='function'){
+            try{
+              var spec={
+                x:chart.options && chart.options.indexAxis==='y' ? (chart.data.labels||[])[idx] : '',
+                y:ds.label||'Value',
+                value:ds.label||'Value',
+                group:''
+              };
+              instantDashSpeakChartPoint(spec,labels,values,idx);
+              lastSpoken=Date.now();
+              return;
+            }catch(_){}
+          }
+
+          /* Safe fallback if the existing helper is unavailable. */
+          var v=Number(values[idx]);
+          if(!isFinite(v)) return;
+          var label=labels[idx]!==undefined?String(labels[idx]):'selected value';
+          var text=(ds.label||'Value')+' for '+label+' is '+String(v)+'.';
+          try{
+            var synth=window.speechSynthesis;
+            var U=window.SpeechSynthesisUtterance;
+            if(synth&&U){
+              synth.cancel();
+              var u=new U(text);
+              u.lang='en-IN';
+              u.rate=.92;
+              u.volume=1;
+              synth.speak(u);
+              lastSpoken=Date.now();
+            }
+          }catch(_){}
+        }
+
+        function handle(e){
+          if(e.type==='click' && Date.now()-lastSpoken<1000) return;
+          if(e.type==='touchend' || e.type==='pointerup'){
+            try{ if(e.cancelable) e.preventDefault(); }catch(_){}
+          }
+          speakHit(e);
+        }
+
+        /* Capture phase is intentional: other dashboard handlers must not
+           prevent the chart speech handler from seeing an iPhone touch. */
+        cv.addEventListener('touchend',handle,{passive:false,capture:true});
+        cv.addEventListener('pointerup',function(e){
+          if(e.pointerType==='touch') handle(e);
+        },{passive:false,capture:true});
+        cv.addEventListener('click',handle,{passive:false,capture:true});
+      });
+
+      /* Native AI SVG charts: retain the existing binding and also make the
+         parent capture a touch if the SVG mark itself does not receive it. */
+      document.querySelectorAll('.ai-chart-svg-host').forEach(function(host){
+        if(host.__id177SpeakFinalHost) return;
+        if(!host.querySelector('svg')) return;
+        host.__id177SpeakFinalHost=true;
+        host.style.touchAction='manipulation';
+      });
+    }catch(err){
+      console.warn('InstantDash final chart speech binding:',err);
+    }
+  }
+
+  function boot(){
+    bindChartSpeechReliably();
+    setTimeout(bindChartSpeechReliably,150);
+    setTimeout(bindChartSpeechReliably,500);
+    setTimeout(bindChartSpeechReliably,1200);
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',boot);
+  }else{
+    boot();
+  }
+
+  window.addEventListener('load',boot);
+  if(window.MutationObserver){
+    new MutationObserver(function(){bindChartSpeechReliably();})
+      .observe(document.body,{childList:true,subtree:true});
+  }
+})();
+</script>
+
 </body></html>
