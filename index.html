@@ -10066,4 +10066,80 @@ setInterval(wire,500);
 })();
 </script>
 
+<script id="instantdash-v177-askme-restore">
+(function(){
+'use strict';
+function el(id){return document.getElementById(id)}
+function focusAI(){
+  var p=el('askExecutive48');
+  if(!p)return;
+  p.classList.add('ai48-open');
+  document.body.classList.add('ai48-open');
+  setTimeout(function(){
+    var i=el('ai48Input');
+    if(i)i.focus({preventScroll:true});
+  },80);
+}
+function mountAskMe(){
+  if(el('askExecutive48')){ return; }
+  var p=document.createElement('section');
+  p.id='askExecutive48';
+  p.className='ai48-panel';
+  p.setAttribute('role','dialog');
+  p.setAttribute('aria-label','Ask Executive AI');
+  p.innerHTML='<div class="ai48-head"><div><div class="ai48-title">💬 Ask Executive AI</div><div class="ai48-hint">Ask your own question about the currently loaded dashboard data — including how to improve any parameter</div></div><span class="badge">LIVE DATA</span></div>'+
+    '<div class="ai48-questions">'+
+    '<button type="button" class="ai48-q">What are the 3 most important issues?</button>'+ 
+    '<button type="button" class="ai48-q">What is going well?</button>'+ 
+    '<button type="button" class="ai48-q">What changed?</button>'+ 
+    '<button type="button" class="ai48-q">Give me an executive summary</button>'+ 
+    '<button type="button" class="ai48-q">Which region is best overall?</button>'+ 
+    '<button type="button" class="ai48-q">Which region is worst overall?</button>'+ 
+    '<button type="button" class="ai48-q">Which KPI needs attention?</button>'+ 
+    '<button type="button" class="ai48-q">What is worse?</button>'+ 
+    '<button type="button" class="ai48-q">How can we improve?</button>'+ 
+    '<button type="button" class="ai48-q">Why was the target not achieved?</button>'+ 
+    '<button type="button" class="ai48-q">What are the reasons for the variation?</button>'+ 
+    '<button type="button" class="ai48-q">How can we control expenses?</button>'+ 
+    '<button type="button" class="ai48-q">How can we increase transactions?</button>'+ 
+    '<button type="button" class="ai48-q">How can we reduce drop-outs?</button>'+ 
+    '<button type="button" class="ai48-q">Which district is best?</button>'+ 
+    '<button type="button" class="ai48-q">Which district needs attention?</button>'+ 
+    '<button type="button" class="ai48-q">What are the biggest performance gaps?</button>'+ 
+    '</div>'+ 
+    '<div class="ai48-row"><input id="ai48Input" class="ai48-input" autocomplete="off" placeholder="Type your own question about this dataset…" aria-label="Ask Executive AI a question"><button type="button" id="ai48Ask" class="ai48-ask">Ask</button></div><div id="ai48Answer" class="ai48-answer" aria-live="polite"></div>';
+  document.body.appendChild(p);
+  var close=document.createElement('button');
+  close.type='button'; close.className='ai48-close'; close.textContent='×';
+  close.setAttribute('aria-label','Close Ask Executive AI');
+  close.addEventListener('click',function(){p.classList.remove('ai48-open');document.body.classList.remove('ai48-open');});
+  p.insertBefore(close,p.firstChild);
+  var ask=el('ai48Ask');
+  if(ask)ask.addEventListener('click',function(e){
+    e.preventDefault();e.stopPropagation();
+    if(typeof window.__instantDashAskMeAnswer==='function')window.__instantDashAskMeAnswer(el('ai48Input').value);
+  });
+  var input=el('ai48Input');
+  if(input)input.addEventListener('keydown',function(e){
+    if(e.key==='Enter'){e.preventDefault();if(typeof window.__instantDashAskMeAnswer==='function')window.__instantDashAskMeAnswer(input.value);}
+    if(e.key==='Escape'){p.classList.remove('ai48-open');document.body.classList.remove('ai48-open');}
+  });
+  p.querySelectorAll('.ai48-q').forEach(function(b){
+    b.addEventListener('click',function(){
+      if(input)input.value=b.textContent.trim();
+      if(typeof window.__instantDashAskMeAnswer==='function')window.__instantDashAskMeAnswer(b.textContent.trim());
+    });
+  });
+  var launch=document.createElement('button');
+  launch.type='button'; launch.id='ai48Launch'; launch.className='ai48-launch';
+  launch.textContent='💬 Ask AI'; launch.setAttribute('aria-label','Open Ask Executive AI');
+  launch.addEventListener('click',function(e){e.preventDefault();focusAI();});
+  document.body.appendChild(launch);
+  window.__instantDashAskOpen=focusAI;
+}
+function boot(){mountAskMe();}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+window.addEventListener('load',function(){setTimeout(mountAskMe,250);});
+})();
+</script>
 </body></html>
