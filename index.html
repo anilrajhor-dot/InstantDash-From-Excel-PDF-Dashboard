@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v21.5","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v21.6","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
@@ -1226,7 +1226,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v21.5">
+<meta name="instantdash-build" content="v21.6">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2081,7 +2081,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v21.5';
+      s.textContent='v21.6';
       b.appendChild(s);
     }
   }
@@ -2139,8 +2139,8 @@ body{
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v21.5</span>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v21.5</span></div>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v21.6</span>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v21.6</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
       <button class="id-health-btn no-print" id="aiModeToggleBtn" type="button" aria-label="Real AI settings">🤖 Real AI: Off</button>
@@ -2707,7 +2707,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v21.5',
+  VERSION: 'v21.6',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -9820,6 +9820,7 @@ function render(){
  Object.keys(charts).forEach(function(k){try{charts[k].destroy()}catch(_){}});charts={};
  var specs=makeSpecs().slice(0,4);
  window.__id21LastSpecs = specs;
+ try{ if(typeof window.__id21DrawCombinedIfOpen==='function') window.__id21DrawCombinedIfOpen(); }catch(_){ }
  grid.innerHTML='';
  if(!specs.length){grid.innerHTML='<div class="ai-empty">No reliable numeric parameters were detected for automatic chart creation. Use the manual parameter selectors below.</div>';return}
  var sub=$('aiDashboardSub');if(sub)sub.textContent='AI automatically created '+specs.length+' key chart'+(specs.length>1?'s':'')+' from the loaded data. These charts are independent of the manual parameter selector below.';
@@ -9844,7 +9845,8 @@ function openExpand(s){var ov=$('aiChartOverlay'),cv=$('aiOverlayCanvas');if(!ov
    plainly in the chart so it's never mistaken for showing raw values.
    Entirely self-contained: draws its own SVG, doesn't touch drawNativeAIChart
    or redrawAICard, so it can't destabilise the four cards that already work. */
-function drawCombinedChart(specs, host){
+function drawCombinedChart(specs, host, type){
+  type = type==='bar' ? 'bar' : 'line';
   var palette=['#F5B301','#E2582B','#2E86AB','#3FB07A','#8E5BC9','#D9455F','#0E9AA7','#B0793E'];
   var usable = (specs||[]).filter(function(s){ return s && s.data && Array.isArray(s.data.labels) && s.data.labels.length>1; });
   if(usable.length<2){
@@ -9862,22 +9864,41 @@ function drawCombinedChart(specs, host){
   }
   var esc2=function(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');};
   var short2=function(s,k){s=String(s==null?'':s);return s.length>k?s.slice(0,k-1)+'…':s;};
-  usable.forEach(function(s,si){
-    var vals=s.data.values.slice(0,n).map(function(v){return Number(v)||0;});
-    var mx=Math.max.apply(null,vals.map(Math.abs)); if(!isFinite(mx)||mx<=0) mx=1;
-    var pts=vals.map(function(v,i){
-      var x=left+(n===1?plotW/2:i*plotW/(n-1));
-      var y=top+plotH-(Math.max(0,v)/mx)*plotH;
-      return [x,y];
+
+  if(type==='bar'){
+    var groupW = plotW/n, seriesCount=usable.length, barGap=2;
+    var barW = Math.max(2, (groupW-8)/seriesCount - barGap);
+    usable.forEach(function(s,si){
+      var vals=s.data.values.slice(0,n).map(function(v){return Number(v)||0;});
+      var mx=Math.max.apply(null,vals.map(Math.abs)); if(!isFinite(mx)||mx<=0) mx=1;
+      vals.forEach(function(v,i){
+        var groupX = left + i*groupW + 4;
+        var x = groupX + si*(barW+barGap);
+        var bh = (Math.max(0,v)/mx)*plotH;
+        var y = top+plotH-bh;
+        var color=palette[si%palette.length];
+        svg.push('<rect x="'+x+'" y="'+y+'" width="'+barW+'" height="'+Math.max(1,bh)+'" rx="2" fill="'+color+'"><title>'+esc2(niceName(s.measure))+' · '+esc2(String(labels[i]))+' · '+esc2(fmtByField(vals[i],s.measure))+' ('+(mx?(vals[i]/mx*100).toFixed(0):0)+'% of its peak)</title></rect>');
+      });
     });
-    var color=palette[si%palette.length];
-    svg.push('<polyline points="'+pts.map(function(p){return p[0]+','+p[1];}).join(' ')+'" fill="none" stroke="'+color+'" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>');
-    pts.forEach(function(p,i){
-      svg.push('<circle cx="'+p[0]+'" cy="'+p[1]+'" r="3.5" fill="'+color+'" stroke="#fff" stroke-width="1.5"><title>'+esc2(niceName(s.measure))+' · '+esc2(String(labels[i]))+' · '+esc2(fmtByField(vals[i],s.measure))+' ('+(mx?(vals[i]/mx*100).toFixed(0):0)+'% of its peak)</title></circle>');
+  }else{
+    usable.forEach(function(s,si){
+      var vals=s.data.values.slice(0,n).map(function(v){return Number(v)||0;});
+      var mx=Math.max.apply(null,vals.map(Math.abs)); if(!isFinite(mx)||mx<=0) mx=1;
+      var pts=vals.map(function(v,i){
+        var x=left+(n===1?plotW/2:i*plotW/(n-1));
+        var y=top+plotH-(Math.max(0,v)/mx)*plotH;
+        return [x,y];
+      });
+      var color=palette[si%palette.length];
+      svg.push('<polyline points="'+pts.map(function(p){return p[0]+','+p[1];}).join(' ')+'" fill="none" stroke="'+color+'" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>');
+      pts.forEach(function(p,i){
+        svg.push('<circle cx="'+p[0]+'" cy="'+p[1]+'" r="3.5" fill="'+color+'" stroke="#fff" stroke-width="1.5"><title>'+esc2(niceName(s.measure))+' · '+esc2(String(labels[i]))+' · '+esc2(fmtByField(vals[i],s.measure))+' ('+(mx?(vals[i]/mx*100).toFixed(0):0)+'% of its peak)</title></circle>');
+      });
     });
-  });
+  }
+
   labels.slice(0,n).forEach(function(l,i){
-    var x=left+(n===1?plotW/2:i*plotW/(n-1));
+    var x = type==='bar' ? (left + i*(plotW/n) + (plotW/n)/2) : left+(n===1?plotW/2:i*plotW/(n-1));
     svg.push('<text x="'+x+'" y="'+(top+plotH+20)+'" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">'+esc2(short2(l,12))+'</text>');
   });
   svg.push('</svg>');
@@ -9887,31 +9908,48 @@ function drawCombinedChart(specs, host){
       + esc2(niceName(s.measure)) + '</span>';
   }).join('');
   host.innerHTML = '<article class="ai-chart-card" style="margin-bottom:12px">'
-    + '<div class="ai-chart-card-head"><div><h4>🔗 Combined comparison</h4><p class="ai-chart-sub">All '+usable.length+' measures, each shown as % of its own peak so different units can sit on one scale.</p></div></div>'
+    + '<div class="ai-chart-card-head"><div><h4>🔗 Combined comparison</h4><p class="ai-chart-sub">All '+usable.length+' measures, each shown as % of its own peak so different units can sit on one scale.</p></div>'
+    + '<div class="ai-chart-actions"><label style="font-size:9px;color:var(--muted);font-weight:800">Chart <select id="v21CombinedType" aria-label="Change combined chart type"><option value="line"'+(type==='line'?' selected':'')+'>Line</option><option value="bar"'+(type==='bar'?' selected':'')+'>Bar</option></select></label></div></div>'
     + '<div style="margin:6px 0 10px">'+legend+'</div>'
     + '<div class="ai-chart-wrap" style="min-height:260px">'+svg.join('')+'</div>'
-    + '<div class="ai-chart-foot">Lines are independently normalised (0–100% of each measure\u2019s own highest value) purely to make the shapes comparable — hover or tap a point for the real figure.</div>'
+    + '<div class="ai-chart-foot">'+(type==='bar'?'Bars are':'Lines are')+' independently normalised (0–100% of each measure\u2019s own highest value) purely to make the shapes comparable — hover or tap a point for the real figure.</div>'
     + '</article>';
 }
+window.__id21CombineOpen = (window.__id21CombineOpen !== undefined) ? window.__id21CombineOpen : true;
+window.__id21CombineType = window.__id21CombineType || 'line';
+window.__id21DrawCombinedIfOpen = function(){
+  var out = document.getElementById('v21CombinedOut');
+  var btn = document.getElementById('v21CombineBtn');
+  if(!out) return;
+  if(!window.__id21CombineOpen){
+    out.style.display='none'; out.innerHTML='';
+    if(btn) btn.textContent='🔗 Combine into one chart';
+    return;
+  }
+  var specs = window.__id21LastSpecs || [];
+  out.style.display='block';
+  try{
+    drawCombinedChart(specs, out, window.__id21CombineType);
+    var typeSel = document.getElementById('v21CombinedType');
+    if(typeSel){
+      typeSel.addEventListener('change', function(){
+        window.__id21CombineType = typeSel.value;
+        window.__id21DrawCombinedIfOpen();
+      });
+    }
+  }catch(err){
+    out.innerHTML='<div class="ai-empty" style="margin:8px 0 12px">Could not build the combined chart: '+(err&&err.message?err.message:String(err))+'</div>';
+    console.error('InstantDash combined chart error', err);
+  }
+  if(btn) btn.textContent='🔗 Hide combined chart';
+};
 window.__id21WireCombine = function(){
   var btn = document.getElementById('v21CombineBtn');
   if(!btn || btn.__id21Wired) return;
   btn.__id21Wired = 1;
-  var open = false;
   btn.addEventListener('click', function(){
-    var out = document.getElementById('v21CombinedOut');
-    if(!out) return;
-    open = !open;
-    if(!open){
-      out.style.display='none'; out.innerHTML='';
-      btn.textContent='🔗 Combine into one chart';
-      return;
-    }
-    var specs = window.__id21LastSpecs || [];
-    out.style.display='block';
-    try{ drawCombinedChart(specs, out); }
-    catch(err){ out.innerHTML='<div class="ai-empty" style="margin:8px 0 12px">Could not build the combined chart: '+(err&&err.message?err.message:String(err))+'</div>'; console.error('InstantDash combined chart error', err); }
-    btn.textContent='🔗 Hide combined chart';
+    window.__id21CombineOpen = !window.__id21CombineOpen;
+    window.__id21DrawCombinedIfOpen();
   });
 };
 
