@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v21.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v21.1","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
@@ -1218,7 +1218,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v21.0">
+<meta name="instantdash-build" content="v21.1">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2073,7 +2073,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v21.0';
+      s.textContent='v21.1';
       b.appendChild(s);
     }
   }
@@ -2131,8 +2131,8 @@ body{
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v21.0</span>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v21.0</span></div>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v21.1</span>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v21.1</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
       <button class="id-health-btn no-print" id="aiModeToggleBtn" type="button" aria-label="Real AI settings">🤖 Real AI: Off</button>
@@ -2659,7 +2659,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v21.0',
+  VERSION: 'v21.1',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -3199,7 +3199,7 @@ function idRegisterNewDepartment(){
   idRenderDeptTabs();
   try{
     var n = window.__instantDashDepartments.length;
-    setTimeout(function(){ try{ if(typeof toast==='function') toast('Department added: "'+snap.name+'" ('+n+' total)'); }catch(_){ } }, 2600);
+    if(n>=2 && typeof toast==='function') toast('Department added: "'+snap.name+'" ('+n+' total) — see tabs above');
   }catch(_){ }
 }
 
@@ -3250,12 +3250,31 @@ function idRenameDepartment(deptId, evt){
   idRenderDeptTabs();
 }
 
+function idGetOrCreateDeptTabsBar(){
+  var bar = document.getElementById('deptTabsBar');
+  if(bar) return bar;
+  /* Defensive fallback — if the static element is ever missing from the
+     live DOM for any reason, create one fresh right after the toolbar
+     instead of silently giving up. */
+  var toolbar = document.querySelector('.card.toolbar');
+  if(!toolbar || !toolbar.parentNode) return null;
+  bar = document.createElement('div');
+  bar.id = 'deptTabsBar';
+  bar.className = 'dept-tabs-bar';
+  bar.style.display = 'none';
+  toolbar.parentNode.insertBefore(bar, toolbar.nextSibling);
+  return bar;
+}
+
 function idRenderDeptTabs(){
-  var bar = $('deptTabsBar');
-  if(!bar){ try{ if(typeof toast==='function') toast('DIAG: #deptTabsBar not found in DOM'); }catch(_){ } return; }
+  var bar = idGetOrCreateDeptTabsBar();
+  if(!bar) return;
   var list = window.__instantDashDepartments;
-  if(list.length<2){ bar.hidden = true; bar.innerHTML=''; try{ if(typeof toast==='function') toast('DIAG: only '+list.length+' dept(s), bar stays hidden'); }catch(_){ } return; }
-  bar.hidden = false;
+  if(list.length<2){ bar.style.cssText='display:none!important'; bar.innerHTML=''; return; }
+  /* v21.1 — inline styles with !important bypass the entire CSS cascade,
+     so this can no longer be hidden by any conflicting rule anywhere in
+     the stylesheet, regardless of specificity or source order. */
+  bar.style.cssText = 'display:flex!important;flex-wrap:wrap;gap:8px;overflow-x:auto;padding:4px 2px 10px;margin-top:-4px;-webkit-overflow-scrolling:touch';
   bar.innerHTML = list.map(function(d){
     var active = d.id===window.__instantDashActiveDeptId;
     return '<span class="dept-tab'+(active?' active':'')+'" data-dept-id="'+esc(d.id)+'" tabindex="0" role="button" title="Tap to switch · long-press label to rename">'
@@ -3263,10 +3282,6 @@ function idRenderDeptTabs(){
       + '<span class="dept-tab-close" data-dept-close="'+esc(d.id)+'" title="Remove this department" aria-label="Remove '+esc(d.name)+'">✕</span>'
       + '</span>';
   }).join('');
-  try{
-    var rect = bar.getBoundingClientRect();
-    if(typeof toast==='function') toast('DIAG: rendered '+list.length+' tabs, hidden='+bar.hidden+', h='+Math.round(rect.height)+'px, top='+Math.round(rect.top));
-  }catch(_){ }
   bar.querySelectorAll('.dept-tab').forEach(function(tab){
     var id = tab.getAttribute('data-dept-id');
     tab.addEventListener('click', function(e){
