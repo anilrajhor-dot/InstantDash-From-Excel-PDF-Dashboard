@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v22.9","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v22.10","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
@@ -116,6 +116,19 @@ button,select,input,textarea{font:inherit;color:inherit}
 .btn:focus-visible,select:focus-visible,input:focus-visible,summary:focus-visible,.icon-btn:focus-visible{
   outline:2px solid var(--accent); outline-offset:2px;
 }
+/* v22.10 — these action buttons (Copy/Export/Re-scan/Ask AI links scattered
+   through the Smart KPI, Executive Brief and Management Summary sections)
+   had NO CSS at all, anywhere in the file — not even a generic `button{}`
+   rule — so they rendered with whatever the browser's native default button
+   chrome happened to be, which doesn't reliably follow the app's own theme. */
+#idV150Refresh,#idV150ShowAll,#idV160ShowAll,#idV170Refresh,#idV170All,
+.id-v1400-btn,.id-v143-btn{
+  border:1px solid var(--border); background:var(--card); color:var(--text)!important;
+  padding:8px 14px; border-radius:999px; cursor:pointer; font-size:13px; font-weight:600;
+  font-family:inherit;
+}
+.id-v1400-btn.primary,#idV160ShowTop{background:var(--accent)!important;border-color:var(--accent)!important;color:#0E0E10!important;font-weight:700}
+.id-v143-btn.primary{background:var(--accent)!important;border-color:var(--accent)!important;color:#0E0E10!important;font-weight:700}
 select,input[type=text],input[type=number],input[type=date],input[type=search]{
   background:var(--card);border:1px solid var(--border);border-radius:9px;padding:7px 10px;font-size:13px;
 }
@@ -1257,7 +1270,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v22.9">
+<meta name="instantdash-build" content="v22.10">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2118,7 +2131,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v22.9';
+      s.textContent='v22.10';
       b.appendChild(s);
     }
   }
@@ -2176,8 +2189,8 @@ body{
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v22.9</span>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v22.9</span></div>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v22.10</span>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v22.10</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
       <button class="id-health-btn no-print" id="aiModeToggleBtn" type="button" aria-label="Real AI settings">🤖 Real AI: Off</button>
@@ -2761,7 +2774,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v22.9',
+  VERSION: 'v22.10',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
