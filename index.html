@@ -4531,8 +4531,30 @@ function drawChart(spec){
           if(active&&active.length) speakChartHit(e,active);
         }catch(err){console.warn('InstantDash canvas touch speech failed',err);}
       };
-      cv.addEventListener('pointerup',touchHandler,{passive:true});
-      cv.addEventListener('click',touchHandler,{passive:true});
+      /* iPhone/iPad Safari: Chart.js does not reliably expose a useful active
+         element for a raw pointer/touch event. Keep the existing canvas and
+         chart completely unchanged, but resolve the touch through a synthetic
+         click-like event using the actual screen coordinates. */
+      function touchPoint(e){
+        var t=e.changedTouches&&e.changedTouches[0];
+        return {clientX:t?t.clientX:e.clientX,clientY:t?t.clientY:e.clientY};
+      }
+      function touchHandler2(e){
+        try{
+          var now=Date.now();
+          if(e.type==='click' && now-lastTouch<900) return;
+          if(e.type!=='click') lastTouch=now;
+          var pt=touchPoint(e);
+          if(pt.clientX==null||pt.clientY==null) return;
+          var ev={type:'click',clientX:pt.clientX,clientY:pt.clientY,native:e};
+          var active=spec.instance && spec.instance.getElementsAtEventForMode
+            ? spec.instance.getElementsAtEventForMode(ev,'nearest',{intersect:false,axis:'xy'},true) : [];
+          if(active&&active.length) speakChartHit(e,active);
+        }catch(err){console.warn('InstantDash iPhone chart speech failed',err);}
+      }
+      cv.addEventListener('touchend',function(e){try{e.preventDefault();}catch(_){} touchHandler2(e);},{passive:false});
+      cv.addEventListener('pointerup',touchHandler2,{passive:false});
+      cv.addEventListener('click',touchHandler2,{passive:false});
       cv.style.touchAction='manipulation';
     }
   } catch (err){
