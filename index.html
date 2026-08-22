@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v19.1","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">\n
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v19.2","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">\n
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
@@ -1205,7 +1205,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v19.1">
+<meta name="instantdash-build" content="v19.2">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2060,7 +2060,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v19.1';
+      s.textContent='v19.2';
       b.appendChild(s);
     }
   }
@@ -2086,8 +2086,8 @@ body{
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v19.1</span>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v19.1</span></div>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v19.2</span>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v19.2</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
   <div class="spacer"></div>
@@ -2611,7 +2611,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v19.1',
+  VERSION: 'v19.2',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -4267,14 +4267,28 @@ function refreshChart(spec, rebuildCard){
   drawChart(spec);
 }
 
-/* v17.7 — chart click speech only. No layout/UI changes. */
+/* v19.2 — iOS-safe speech.
+   WebKit has two well-known bugs that cause silent failures:
+   1) calling speechSynthesis.cancel() immediately followed by .speak() in
+      the same tick is often dropped entirely — needs a short pause between them.
+   2) the SpeechSynthesisUtterance can be garbage-collected mid-speech if
+      nothing keeps a reference to it — so we hold it on window. */
 function instantDashSpeak(text){
   try{
     if(!('speechSynthesis' in window) || !text) return false;
-    window.speechSynthesis.cancel();
-    var u=new SpeechSynthesisUtterance(String(text));
-    u.lang='en-IN'; u.rate=.92; u.pitch=1;
-    window.speechSynthesis.speak(u);
+    var synth = window.speechSynthesis;
+    var fire = function(){
+      var u = new SpeechSynthesisUtterance(String(text));
+      u.lang='en-IN'; u.rate=.92; u.pitch=1;
+      window.__instantDashUtterance = u;   // prevent premature GC on iOS
+      synth.speak(u);
+    };
+    if (synth.speaking || synth.pending){
+      synth.cancel();
+      setTimeout(fire, 60);
+    } else {
+      fire();
+    }
     return true;
   }catch(_){ return false; }
 }
