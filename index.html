@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v19.16","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">\n
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v20.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">\n
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
@@ -1118,6 +1118,15 @@ html,body{overflow-anchor:none!important;}
 .id-touch-value{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:6px}.id-touch-value span{color:var(--muted);font-weight:700}.id-touch-value strong{font-size:20px;color:#171717}
 .smart-chart-head h3{font-size:19px!important;letter-spacing:-.02em}.smart-subtitle{font-weight:600}
 .ai-dashboard-charts{background:linear-gradient(145deg,#fffdf8,#fff8e8)!important;border-radius:22px!important;box-shadow:0 14px 38px rgba(68,50,20,.08)!important}
+/* v20.0 — Department tabs (multi-dataset support). Each uploaded file
+   becomes a tab; switching swaps the whole app's data and re-renders every
+   existing chart/insight system unchanged. */
+.dept-tabs-bar{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 10px;margin-top:-4px;-webkit-overflow-scrolling:touch}
+.dept-tab{flex:0 0 auto;display:flex;align-items:center;gap:6px;padding:7px 12px;border-radius:999px;border:1px solid var(--border);background:var(--card);color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;transition:background .15s,color .15s,border-color .15s}
+.dept-tab:active{transform:scale(.97)}
+.dept-tab.active{background:var(--accent);color:#151515;border-color:var(--accent)}
+.dept-tab .dept-tab-close{opacity:.55;font-weight:900;padding:0 2px;border-radius:6px}
+.dept-tab .dept-tab-close:hover{opacity:1}
 .ai-chart-card{background:rgba(255,255,255,.78)!important;border-radius:18px!important;box-shadow:0 8px 22px rgba(68,50,20,.05)!important}
 @media(max-width:600px){.id-chart-visual{height:315px}.id-touch-value strong{font-size:18px}}
 </style>
@@ -1208,7 +1217,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v19.16">
+<meta name="instantdash-build" content="v20.0">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2063,7 +2072,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v19.16';
+      s.textContent='v20.0';
       b.appendChild(s);
     }
   }
@@ -2090,8 +2099,8 @@ body{
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v19.16</span>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v19.11</span></div>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v20.0</span>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v20.0</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
   <div class="spacer"></div>
@@ -2176,8 +2185,10 @@ body{
         <input type="number" id="headerRow" min="1" value="1" style="width:64px">
       </label>
       <button class="btn sm" id="resetFiltersBtn">Reset filters</button>
-      <button class="btn sm" id="newFileBtn">Load another file</button>
+      <button class="btn sm" id="newFileBtn">+ Add Department</button>
     </div>
+
+    <div id="deptTabsBar" class="dept-tabs-bar" hidden></div>
 
     <div id="alerts" class="section"></div>
 
@@ -2615,7 +2626,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v19.16',
+  VERSION: 'v20.0',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -3094,6 +3105,146 @@ function resetDataForNewFile(){
   }catch(_){}
 }
 
+/* =====================================================================
+   v20.0 — DEPARTMENT TABS (multi-dataset dashboards)
+   Every uploaded file becomes a "department". Switching a tab swaps a
+   fixed set of APP fields — the exact same fields rebuildFromAoa() already
+   populates for a fresh upload — then calls buildEverything(), the same
+   master render function a normal upload already uses. Nothing about the
+   chart/insight/speech systems needed to change: they only ever read from
+   APP, and department switching is just "which snapshot is currently
+   loaded into APP".
+   ===================================================================== */
+window.__instantDashDepartments = window.__instantDashDepartments || [];
+window.__instantDashActiveDeptId = window.__instantDashActiveDeptId || null;
+
+function idDeptNameFromFile(fileName){
+  try{
+    var base = String(fileName||'Department').replace(/\.[a-z0-9]+$/i,'');
+    base = base.replace(/[_\-]+/g,' ').replace(/\s+/g,' ').trim();
+    if(!base) base = 'Department';
+    if(base.length>28) base = base.slice(0,27)+'…';
+    return base;
+  }catch(_){ return 'Department'; }
+}
+
+function idSnapshotAppFields(){
+  return {
+    fileName: APP.fileName, workbook: APP.workbook, __pdfMeta: APP.__pdfMeta,
+    sheetNames: (APP.sheetNames||[]).slice(), activeSheet: APP.activeSheet,
+    aoa: APP.aoa, headerRow: APP.headerRow, colSrc: APP.colSrc,
+    srcIndex: APP.srcIndex, rawColumnNames: APP.rawColumnNames,
+    columns: APP.columns, rows: APP.rows,
+    excludedSummaryRows: APP.excludedSummaryRows, __dataVersion: APP.__dataVersion
+  };
+}
+
+/* Called right before a new upload wipes APP — preserves whatever was
+   already loaded as its own department tab (creating one on first use). */
+function idSaveCurrentAsDepartment(){
+  if(!APP.rows || !APP.rows.length) return;
+  var list = window.__instantDashDepartments;
+  var id = window.__instantDashActiveDeptId;
+  var existing = id ? list.find(function(d){return d.id===id;}) : null;
+  if(existing){
+    Object.assign(existing, idSnapshotAppFields());
+  }else{
+    var snap = idSnapshotAppFields();
+    snap.id = 'dept_'+Date.now()+'_'+Math.floor(Math.random()*10000);
+    snap.name = idDeptNameFromFile(APP.fileName);
+    list.push(snap);
+  }
+}
+
+/* Called right after a new upload finishes loading — turns it into a tab. */
+function idRegisterNewDepartment(){
+  var snap = idSnapshotAppFields();
+  snap.id = 'dept_'+Date.now()+'_'+Math.floor(Math.random()*10000);
+  snap.name = idDeptNameFromFile(APP.fileName);
+  window.__instantDashDepartments.push(snap);
+  window.__instantDashActiveDeptId = snap.id;
+  idRenderDeptTabs();
+}
+
+function idSwitchDepartment(deptId){
+  if(deptId===window.__instantDashActiveDeptId) return;
+  try{ idSaveCurrentAsDepartment(); }catch(_){}
+  var target = window.__instantDashDepartments.find(function(d){return d.id===deptId;});
+  if(!target) return;
+  window.__instantDashActiveDeptId = deptId;
+  APP.fileName=target.fileName; APP.workbook=target.workbook; APP.__pdfMeta=target.__pdfMeta;
+  APP.sheetNames=(target.sheetNames||[]).slice(); APP.activeSheet=target.activeSheet;
+  APP.aoa=target.aoa; APP.headerRow=target.headerRow; APP.colSrc=target.colSrc;
+  APP.srcIndex=target.srcIndex; APP.rawColumnNames=target.rawColumnNames;
+  APP.columns=target.columns; APP.rows=target.rows;
+  APP.excludedSummaryRows=target.excludedSummaryRows; APP.__dataVersion=target.__dataVersion;
+  try{ if(typeof window.__instantDashResetAskAIForNewFile==='function') window.__instantDashResetAskAIForNewFile(); }catch(_){}
+  try{ buildSheetSelector(APP.activeSheet); }catch(_){}
+  try{ buildEverything(); }catch(err){ console.error('InstantDash department switch failed', err); }
+  idRenderDeptTabs();
+}
+
+function idRemoveDepartment(deptId, evt){
+  if(evt){ evt.preventDefault(); evt.stopPropagation(); }
+  var list = window.__instantDashDepartments;
+  var idx = list.findIndex(function(d){return d.id===deptId;});
+  if(idx<0) return;
+  var wasActive = (deptId===window.__instantDashActiveDeptId);
+  list.splice(idx,1);
+  if(wasActive){
+    if(list.length){
+      var next = list[Math.max(0,idx-1)];
+      window.__instantDashActiveDeptId = null; // force a real switch, not a no-op
+      idSwitchDepartment(next.id);
+      return; // idSwitchDepartment already re-renders tabs
+    }
+  }
+  idRenderDeptTabs();
+}
+
+function idRenameDepartment(deptId, evt){
+  if(evt){ evt.preventDefault(); evt.stopPropagation(); }
+  var d = window.__instantDashDepartments.find(function(x){return x.id===deptId;});
+  if(!d) return;
+  var name = window.prompt('Department name', d.name);
+  if(name==null) return;
+  name = name.trim();
+  if(name) d.name = name.length>28 ? name.slice(0,27)+'…' : name;
+  idRenderDeptTabs();
+}
+
+function idRenderDeptTabs(){
+  var bar = $('deptTabsBar');
+  if(!bar) return;
+  var list = window.__instantDashDepartments;
+  if(list.length<2){ bar.hidden = true; bar.innerHTML=''; return; }
+  bar.hidden = false;
+  bar.innerHTML = list.map(function(d){
+    var active = d.id===window.__instantDashActiveDeptId;
+    return '<span class="dept-tab'+(active?' active':'')+'" data-dept-id="'+esc(d.id)+'" tabindex="0" role="button" title="Tap to switch · long-press label to rename">'
+      + '<span class="dept-tab-label">'+esc(d.name)+'</span>'
+      + '<span class="dept-tab-close" data-dept-close="'+esc(d.id)+'" title="Remove this department" aria-label="Remove '+esc(d.name)+'">✕</span>'
+      + '</span>';
+  }).join('');
+  bar.querySelectorAll('.dept-tab').forEach(function(tab){
+    var id = tab.getAttribute('data-dept-id');
+    tab.addEventListener('click', function(e){
+      if(e.target && e.target.getAttribute && e.target.getAttribute('data-dept-close')) return;
+      idSwitchDepartment(id);
+    });
+    var label = tab.querySelector('.dept-tab-label');
+    if(label){
+      var pressTimer=null;
+      label.addEventListener('touchstart', function(){ pressTimer=setTimeout(function(){ idRenameDepartment(id); },550); }, {passive:true});
+      ['touchend','touchmove','touchcancel'].forEach(function(ev){ label.addEventListener(ev, function(){ clearTimeout(pressTimer); }); });
+      label.addEventListener('dblclick', function(e){ idRenameDepartment(id,e); });
+    }
+  });
+  bar.querySelectorAll('[data-dept-close]').forEach(function(btn){
+    btn.addEventListener('click', function(e){ idRemoveDepartment(btn.getAttribute('data-dept-close'), e); });
+  });
+}
+
 async function handleFile(file){
   /* v13.72 — a new dataset starts a fresh Ask Executive AI session.
      Clear the previous manually typed question and its answer immediately. */
@@ -3107,6 +3258,7 @@ async function handleFile(file){
   // asynchronous read is ignored if the user selects another file before it finishes.
   const loadToken = ++APP.__loadToken;
   window.__instantDashCurrentLoadToken = loadToken;
+  try{ if(typeof idSaveCurrentAsDepartment==='function') idSaveCurrentAsDepartment(); }catch(_){}
   resetDataForNewFile();
   $('app').hidden = true;
   $('emptyState').hidden = true;
@@ -3177,6 +3329,7 @@ async function handleFile(file){
     await loadSheet(pick, true, loadToken);
     // v13.41: keep the viewport stationary after upload; user controls scrolling.
     window.__instantDashUserUploadComplete=true;
+    try{ if(typeof idRegisterNewDepartment==='function') idRegisterNewDepartment(); }catch(_){}
   } catch (err){
     console.error(err);
     hideLoader();
