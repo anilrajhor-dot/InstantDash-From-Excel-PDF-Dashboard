@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v19.9","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">\n
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v19.10","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">\n
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
@@ -1205,7 +1205,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v19.9">
+<meta name="instantdash-build" content="v19.10">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2060,7 +2060,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v19.9';
+      s.textContent='v19.10';
       b.appendChild(s);
     }
   }
@@ -2086,8 +2086,8 @@ body{
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v19.9</span>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v19.9</span></div>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v19.10</span>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v19.10</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
   <div class="spacer"></div>
@@ -2611,7 +2611,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v19.9',
+  VERSION: 'v19.10',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -4368,16 +4368,19 @@ function instantDashChartSpeechText(measure, group, labels, values, idx){
   var value=Number(values[idx]);
   if(!isFinite(value)) return niceName(measure)+'. The selected value is not available.';
   var text=niceName(measure)+' for '+label+' is '+fmtByField(value,measure)+'.';
-  /* v19.7 — everything past the basic value is enrichment only. If any of it
-     throws (comparison lookup, "possible driver" search, etc.) we still
-     return the basic sentence rather than losing speech entirely — this was
-     silently swallowing the whole utterance before. */
+  /* v19.10 — removed the cross-column "possible driver" search entirely.
+     It re-ran aggregate() against up to 18 other columns in a nested loop on
+     every single tap, and on real data (367 rows, many columns) this was
+     almost certainly hanging or crashing hard enough that not even its own
+     try/catch could report an error — execution just never came back. The
+     comparison-to-average/previous-period sentence below is the useful part
+     and is cheap (single pass over the values already on screen). */
   try{
     if(labels.length<2) return text+' There is no comparable second value in this chart.';
-    var compareIdx=-1, compareLabel='', compareValue=null;
+    var compareLabel='', compareValue=null;
     var time=group && isTime(group,col(group));
     if(time){
-      compareIdx=idx>0?idx-1:(idx<values.length-1?idx+1:-1);
+      var compareIdx=idx>0?idx-1:(idx<values.length-1?idx+1:-1);
       if(compareIdx>=0){compareLabel=String(labels[compareIdx]);compareValue=Number(values[compareIdx]);}
     }else{
       var others=values.map(function(v,i){return i===idx?null:Number(v)}).filter(function(v){return v!==null&&isFinite(v)});
@@ -4386,30 +4389,6 @@ function instantDashChartSpeechText(measure, group, labels, values, idx){
     if(compareValue!==null&&isFinite(compareValue)){
       var diff=value-compareValue, pct=compareValue!==0?(diff/Math.abs(compareValue))*100:null;
       text+=' Compared with '+compareLabel+', the difference is '+fmtByField(diff,measure)+(pct===null?'':' ('+(pct>=0?'+':'')+pct.toFixed(1)+'%).');
-    }
-    /* Look for a data-supported possible driver in another numeric measure.
-       This is deliberately described as a possible driver, not a causal reason. */
-    if(group){
-      var rs=rows(), ms=getMeasures(rs).filter(function(m){return String(m.name)!==String(measure)}).slice(0,18);
-      var chosen=null;
-      ms.forEach(function(m){
-        var a=aggregate(rs,group,m.name), map={};a.labels.forEach(function(k,i){map[String(k)]=a.values[i]});
-        var cur=map[label], cmp=null;
-        if(time&&compareIdx>=0) cmp=map[String(labels[compareIdx])];
-        else if(isFinite(compareValue)){
-          var vals=a.values.filter(function(v,i){return String(a.labels[i])!==label&&isFinite(v)});
-          if(vals.length) cmp=vals.reduce(function(x,y){return x+y},0)/vals.length;
-        }
-        if(isFinite(cur)&&isFinite(cmp)&&cmp!==0){
-          var chg=(cur-cmp)/Math.abs(cmp)*100;
-          if(!chosen||Math.abs(chg)>Math.abs(chosen.chg)) chosen={name:m.name,cur:cur,cmp:cmp,chg:chg};
-        }
-      });
-      if(chosen){
-        text+=' A possible data-supported driver is '+niceName(chosen.name)+', which changed '+(chosen.chg>=0?'+':'')+chosen.chg.toFixed(1)+'% on the same comparison. This indicates a possible relationship, not proven causation.';
-      }else{
-        text+=' The loaded data does not provide enough comparable driver information to establish a reason for the difference.';
-      }
     }
   }catch(_){ }
   return text;
