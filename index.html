@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v20.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">\n
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v20.1","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">\n
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
@@ -1217,7 +1217,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v20.0">
+<meta name="instantdash-build" content="v20.1">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2072,12 +2072,43 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v20.0';
+      s.textContent='v20.1';
       b.appendChild(s);
     }
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mark);
   else mark();
+})();
+</script>
+
+<!-- v20.1 — universal Stop Speech control. The three chart systems each call
+     speechSynthesis directly (see today's earlier fixes), so rather than
+     hook a stop button into each one separately, this just watches the
+     shared browser-level speaking state and shows/hides one small button
+     accordingly — works no matter which chart triggered the speech. -->
+<script id="instantdash-stop-speech">
+(function(){
+  function mount(){
+    if(document.getElementById('idStopSpeechBtn')) return;
+    var btn=document.createElement('button');
+    btn.id='idStopSpeechBtn';
+    btn.type='button';
+    btn.textContent='⏹ Stop speech';
+    btn.style.cssText='position:fixed;left:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);z-index:99998;padding:9px 14px;border-radius:999px;border:none;background:#E2582B;color:#fff;font:700 12px Poppins,sans-serif;box-shadow:0 4px 16px rgba(0,0,0,.28);display:none;cursor:pointer';
+    btn.addEventListener('click',function(){
+      try{ window.speechSynthesis.cancel(); }catch(_){ }
+      btn.style.display='none';
+    });
+    document.body.appendChild(btn);
+    setInterval(function(){
+      try{
+        var speaking = window.speechSynthesis && window.speechSynthesis.speaking;
+        btn.style.display = speaking ? 'block' : 'none';
+      }catch(_){ }
+    },350);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount);
+  else mount();
 })();
 </script>
 
@@ -2099,8 +2130,8 @@ body{
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v20.0</span>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v20.0</span></div>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v20.1</span>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v20.1</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
   <div class="spacer"></div>
@@ -2626,7 +2657,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v20.0',
+  VERSION: 'v20.1',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -7413,6 +7444,114 @@ function wireRest(){
     <div id="v154ShareNote" style="margin-top:12px;color:var(--muted,#a0a0a8);font-size:13px;line-height:1.45"></div>
   </div>
 </div>
+
+<script id="instantdash-v20-share-wiring">
+/* v20.1 — the Share button/panel above existed in HTML/CSS but had no
+   JavaScript behind it at all: tapping "Share" did nothing. This wires it
+   up, reusing the restore-on-load logic already built for
+   window.__INSTANTDASH_SHARED_STATE__ (see the "v1.11.14 — restore a
+   dashboard exported with Share/Save" block) — that side only ever had a
+   consumer, never a producer. This is the producer. */
+(function(){
+  function panel(){ return document.getElementById('v154SharePanel'); }
+  function note(msg){ var n=document.getElementById('v154ShareNote'); if(n) n.textContent=msg||''; }
+  function hasData(){ try{ return !!(window.APP && APP.rows && APP.rows.length); }catch(_){ return false; } }
+  function openPanel(){
+    var p=panel(); if(!p) return;
+    p.classList.add('is-open'); p.setAttribute('aria-hidden','false');
+    note(hasData()
+      ? 'Ready to share: '+(APP.fileName||'dashboard')+' · '+APP.rows.length.toLocaleString()+' rows.'
+      : 'Load a file first — there is nothing to share yet.');
+  }
+  function closePanel(){
+    var p=panel(); if(!p) return;
+    p.classList.remove('is-open'); p.setAttribute('aria-hidden','true');
+  }
+  function reportText(){
+    var r=document.getElementById('idV143Report');
+    var t=r ? (r.innerText||r.textContent||'') : '';
+    t=t.replace(/\n{3,}/g,'\n\n').trim();
+    if(t) return t;
+    return hasData() ? ('InstantDash dashboard — '+(APP.fileName||'dataset')+' · '+APP.rows.length.toLocaleString()+' rows.') : '';
+  }
+  function deepConvertDates(v){
+    if(v instanceof Date) return {__instantdashDate:v.toISOString()};
+    if(Array.isArray(v)) return v.map(deepConvertDates);
+    if(v && typeof v==='object'){ var o={}; Object.keys(v).forEach(function(k){o[k]=deepConvertDates(v[k]);}); return o; }
+    return v;
+  }
+  /* Builds a full, self-contained copy of the CURRENTLY RUNNING page with the
+     live dataset embedded — the exact shape the existing restore-on-load
+     code already expects and reads back out. */
+  function buildShareHtml(){
+    var state={
+      version:(typeof CONFIG!=='undefined'&&CONFIG.VERSION)?CONFIG.VERSION:'',
+      fileName:APP.fileName||'Shared dashboard',
+      sheetNames:APP.sheetNames||[], activeSheet:APP.activeSheet||'',
+      headerRow:APP.headerRow||0, excludedSummaryRows:APP.excludedSummaryRows||0,
+      rows:deepConvertDates(APP.rows||[]), columns:deepConvertDates(APP.columns||[]),
+      rawColumnNames:APP.rawColumnNames||[],
+      pdfMeta:APP.__pdfMeta?deepConvertDates(APP.__pdfMeta):null
+    };
+    var stateJson=JSON.stringify(state).replace(/</g,'\\u003c');
+    var html='<!doctype html>\n'+document.documentElement.outerHTML;
+    html=html.replace(
+      /<script id="instantdash-shared-state">[\s\S]*?<\/script>/,
+      '<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__='+stateJson+';<\/script>'
+    );
+    return html;
+  }
+  function shareFileName(){
+    return (APP.fileName||'InstantDash_Dashboard').replace(/\.[a-z0-9]+$/i,'').replace(/[^\w\- ]+/g,'').trim()+'_Dashboard.html';
+  }
+  function downloadHtml(html,filename){
+    try{
+      var blob=new Blob([html],{type:'text/html;charset=utf-8'});
+      var url=URL.createObjectURL(blob);
+      var a=document.createElement('a'); a.href=url; a.download=filename; a.style.display='none';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function(){URL.revokeObjectURL(url);},2000);
+      return true;
+    }catch(_){ return false; }
+  }
+  async function nativeShareHtml(){
+    if(!hasData()){ note('Load a file first — there is nothing to share yet.'); return; }
+    var html=buildShareHtml(), filename=shareFileName();
+    try{
+      var file=new File([html],filename,{type:'text/html'});
+      if(navigator.canShare && navigator.canShare({files:[file]})){
+        await navigator.share({files:[file],title:'InstantDash Dashboard',text:'InstantDash dashboard: '+(APP.fileName||'')});
+        note('Shared.');
+        return;
+      }
+    }catch(e){ if(e && e.name==='AbortError') return; }
+    // Fallback for browsers without file-sharing support: just download it.
+    if(downloadHtml(html,filename)) note('Sharing isn\u2019t available here, so the dashboard was saved instead — send that file manually.');
+    else note('Could not prepare the dashboard file. Try Save or Copy instead.');
+  }
+  function saveHtml(){
+    if(!hasData()){ note('Load a file first — there is nothing to share yet.'); return; }
+    var ok=downloadHtml(buildShareHtml(),shareFileName());
+    note(ok?'Dashboard HTML saved.':'Could not save the dashboard file.');
+  }
+  async function copyShareText(){
+    var text=reportText();
+    if(!text){ note('Load a file first — there is nothing to share yet.'); return; }
+    try{ await navigator.clipboard.writeText(text); note('Copied — paste it into WhatsApp, email, etc.'); }
+    catch(_){ window.prompt('Copy this text:',text); }
+  }
+  function wire(id,fn){ var b=document.getElementById(id); if(b && !b.__id20Wired){ b.__id20Wired=1; b.addEventListener('click',function(e){ e.preventDefault(); fn(); }); } }
+  wire('topShareBtn',openPanel);
+  wire('v154ShareClose',closePanel);
+  wire('v154NativeShare',nativeShareHtml);
+  wire('v154SaveShare',saveHtml);
+  wire('v154CopyShare',copyShareText);
+  wire('v154MailShare',nativeShareHtml); // lets the OS share-sheet's Mail option handle it
+  var p=panel();
+  if(p && !p.__id20Wired){ p.__id20Wired=1; p.addEventListener('click',function(e){ if(e.target===p) closePanel(); }); }
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape') closePanel(); });
+})();
+</script>
 
 
 <style id="v157-direct-movement-controls">
