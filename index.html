@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v19.8","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">\n
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v19.9","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">\n
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
@@ -1205,7 +1205,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v19.8">
+<meta name="instantdash-build" content="v19.9">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2060,7 +2060,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v19.8';
+      s.textContent='v19.9';
       b.appendChild(s);
     }
   }
@@ -2086,8 +2086,8 @@ body{
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v19.8</span>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v19.8</span></div>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v19.9</span>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v19.9</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
   <div class="spacer"></div>
@@ -2611,7 +2611,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v19.8',
+  VERSION: 'v19.9',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -4282,7 +4282,7 @@ function instantDashSpeechStatus(msg){
   try{
     var el = window.__instantDashActiveDetailEl;
     if(!el) return;
-    el.textContent = window.__instantDashActiveDetailBase + '  [' + msg + ']';
+    el.textContent += ' [' + msg + ']';
   }catch(_){ }
 }
 function instantDashSpeechDiag(msg, isError){
@@ -4320,12 +4320,10 @@ function instantDashPickVoice(){
   return byLang(/^en[-_]IN/i) || byLang(/^en[-_]GB/i) || byLang(/^en[-_]US/i) || byLang(/^en/i) || vs[0];
 }
 function instantDashSpeak(text){
-  /* v19.8 TEMPORARY — remove after diagnosis. Every previous on-screen
-     diagnostic has failed to appear despite confirmed-correct versions, which
-     is itself strange. alert() is a native OS dialog that cannot be hidden by
-     CSS, Safari chrome, or timing — this proves definitively whether this
-     function is even being reached and with what text. */
-  try{ window.alert('instantDashSpeak reached. text="' + String(text).slice(0,120) + '"'); }catch(_){ }
+  /* v19.9 — breadcrumb trail instead of alert() (an alert elsewhere in this
+     app may have triggered Safari's "block additional dialogs" for this
+     page, which would silently eat a new alert() with zero indication). */
+  try{ if(window.__instantDashActiveDetailEl) window.__instantDashActiveDetailEl.textContent += ' [E]'; }catch(_){ }
   try{
     if(!('speechSynthesis' in window) || !text){
       instantDashSpeechDiag('Speech not supported on this browser', true);
@@ -4417,6 +4415,7 @@ function instantDashChartSpeechText(measure, group, labels, values, idx){
   return text;
 }
 function instantDashSpeakChartPoint(spec, labels, values, idx){
+  try{ if(window.__instantDashActiveDetailEl) window.__instantDashActiveDetailEl.textContent += ' [D]'; }catch(_){ }
   var text;
   try{
     text=instantDashChartSpeechText(spec.y||spec.value||spec.x||'Value',spec.x||'',labels||[],values||[],idx);
@@ -9238,9 +9237,12 @@ function redrawAICard(s,card){
    var label=s.data.labels[idx]!==undefined?String(s.data.labels[idx]):'Selected';
    var value=Number(s.data.values[idx]||0);
    if(s.detailEl)s.detailEl.textContent=niceName(s.measure)+' · '+label+' · '+fmtByField(value,s.measure);
+   if(s.detailEl) s.detailEl.textContent += ' [A]';
    window.__instantDashActiveDetailEl = s.detailEl || null;
    window.__instantDashActiveDetailBase = s.detailEl ? s.detailEl.textContent : '';
+   if(s.detailEl) s.detailEl.textContent += ' [B]';
    instantDashSpeakChartPoint({x:s.group,y:s.measure,value:s.measure},s.data.labels,s.data.values,idx);
+   if(s.detailEl) s.detailEl.textContent += ' [C]';
  });}
  catch(err){wrap.innerHTML='<div class="ai-chart-render-error" style="height:100%;min-height:220px;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;color:var(--muted);font:600 11px Poppins,sans-serif">Unable to draw this chart. The data is still available in the manual chart selector.</div>';console.error('InstantDash native AI chart error',err);}
 }
