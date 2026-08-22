@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v22.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v22.2","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
@@ -1250,7 +1250,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v22.0">
+<meta name="instantdash-build" content="v22.2">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2105,7 +2105,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v22.0';
+      s.textContent='v22.2';
       b.appendChild(s);
     }
   }
@@ -2163,8 +2163,8 @@ body{
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v22.0</span>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v22.0</span></div>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v22.2</span>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v22.2</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
       <button class="id-health-btn no-print" id="aiModeToggleBtn" type="button" aria-label="Real AI settings">🤖 Real AI: Off</button>
@@ -2255,8 +2255,25 @@ body{
 
     <div id="deptTabsBar" class="dept-tabs-bar" hidden></div>
 
+    <section id="v22AIAssistant" class="card no-print" style="padding:16px 18px;margin:0 0 16px" hidden>
+      <div class="section-head" style="border:none;margin-bottom:10px!important;padding-bottom:0">
+        <h2 style="margin:0;font-size:16px">🤖 AI Data Assistant</h2>
+        <span class="hint">Optional · uses your Real AI key · never sends raw row data</span>
+      </div>
+      <div id="v22AIAssistantGate" style="font-size:12.5px;color:var(--muted);padding:8px 0">
+        Turn on 🤖 Real AI (top of the page) and add your API key (Anthropic or Google Gemini) to use these.
+      </div>
+      <div id="v22AIAssistantActions" style="display:none;gap:8px;flex-wrap:wrap;margin-bottom:4px">
+        <button type="button" id="v22AIQuality" class="btn sm">🧪 Check data quality</button>
+        <button type="button" id="v22AIMeasures" class="btn sm">🎯 Recommend key measures</button>
+        <button type="button" id="v22AIReport" class="btn sm primary">📝 Full interpretation report</button>
+      </div>
+      <div id="v22AIAssistantOut" style="margin-top:10px"></div>
+    </section>
+
     <nav id="v21QuickNav" class="v21-quicknav no-print" aria-label="Jump to section" hidden>
       <span class="v21-quicknav-label">Jump to</span>
+      <button type="button" data-jump="v22AIAssistant">🤖 AI Assistant</button>
       <button type="button" data-jump="kpiSection">📌 KPIs</button>
       <button type="button" data-jump="smartChartsSection">📊 Charts</button>
       <button type="button" data-jump="idV1400">🧭 Executive Brief</button>
@@ -2731,7 +2748,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v22.0',
+  VERSION: 'v22.2',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -7681,13 +7698,19 @@ function wireRest(){
 <div id="v21AIPanel" aria-hidden="true">
   <div class="v21-card" role="dialog" aria-modal="true" aria-labelledby="v21AITitle">
     <h3 id="v21AITitle">🤖 Real AI Analysis</h3>
-    <p>Off by default — everything else in InstantDash stays fully offline. Turning this on sends a <b>compact summary</b> (KPI totals, top movements, column names) directly from your browser to Anthropic's Claude API using your own key. Your key is stored only in this browser and is never sent anywhere except directly to Anthropic. Raw row-level data is never sent.</p>
+    <p>Off by default — everything else in InstantDash stays fully offline. Turning this on sends a <b>compact summary</b> (KPI totals, top movements, column names) directly from your browser to your chosen AI provider, using your own key. Your key is stored only in this browser and is never sent anywhere except directly to that provider. Raw row-level data is never sent.</p>
     <div class="v21-toggle-row">
       <span><b>Enable Real AI</b></span>
       <button type="button" class="v21-switch" id="v21AISwitch" role="switch" aria-checked="false" aria-label="Enable Real AI"></button>
     </div>
-    <label for="v21AIKey">Anthropic API key</label>
+    <label for="v21AIProvider">Provider</label>
+    <select id="v21AIProvider">
+      <option value="anthropic">Anthropic Claude (paid)</option>
+      <option value="gemini">Google Gemini (has a free tier)</option>
+    </select>
+    <label for="v21AIKey" id="v21AIKeyLabel">Anthropic API key</label>
     <input type="password" id="v21AIKey" placeholder="sk-ant-..." autocomplete="off" spellcheck="false">
+    <p id="v21AIKeyHelp" style="margin:6px 0 0;font-size:11.5px">Get a key at <span style="text-decoration:underline">console.anthropic.com</span>.</p>
     <label for="v21AIModel">Model</label>
     <select id="v21AIModel">
       <option value="claude-sonnet-5">Claude Sonnet 5 (recommended)</option>
@@ -7722,8 +7745,41 @@ function wireRest(){
     var priv=document.getElementById('privacyNote');
     if(priv){
       priv.textContent = window.__instantDashAI.enabled
-        ? '🔓 Real AI is ON — a compact summary is sent to Anthropic when you use AI features.'
+        ? '🔓 Real AI is ON — a compact summary is sent to '+(window.__instantDashAI.provider==='gemini'?'Google':'Anthropic')+' when you use AI features.'
         : '🔒 Your data never leaves your computer.';
+    }
+  }
+
+  var MODELS_BY_PROVIDER = {
+    anthropic: [
+      ['claude-sonnet-5','Claude Sonnet 5 (recommended)'],
+      ['claude-haiku-4-5-20251001','Claude Haiku 4.5 (fastest / cheapest)'],
+      ['claude-opus-4-8','Claude Opus 4.8 (most capable)']
+    ],
+    gemini: [
+      ['gemini-2.5-flash','Gemini 2.5 Flash (free tier)'],
+      ['gemini-2.5-flash-lite','Gemini 2.5 Flash-Lite (free tier, fastest)']
+    ]
+  };
+  function refreshModelOptions(provider, selected){
+    var modelSel=document.getElementById('v21AIModel');
+    if(!modelSel) return;
+    var list = MODELS_BY_PROVIDER[provider] || MODELS_BY_PROVIDER.anthropic;
+    modelSel.innerHTML = list.map(function(m){ return '<option value="'+m[0]+'">'+m[1]+'</option>'; }).join('');
+    if(selected && list.some(function(m){return m[0]===selected;})) modelSel.value = selected;
+  }
+  function refreshProviderFields(provider){
+    var keyLabel=document.getElementById('v21AIKeyLabel');
+    var keyInput=document.getElementById('v21AIKey');
+    var keyHelp=document.getElementById('v21AIKeyHelp');
+    if(provider==='gemini'){
+      if(keyLabel) keyLabel.textContent='Google Gemini API key';
+      if(keyInput) keyInput.placeholder='AIza...';
+      if(keyHelp) keyHelp.innerHTML='Get a free key at <span style="text-decoration:underline">aistudio.google.com</span> — no credit card needed for the free tier.';
+    }else{
+      if(keyLabel) keyLabel.textContent='Anthropic API key';
+      if(keyInput) keyInput.placeholder='sk-ant-...';
+      if(keyHelp) keyHelp.innerHTML='Get a key at <span style="text-decoration:underline">console.anthropic.com</span>.';
     }
   }
 
@@ -7734,8 +7790,11 @@ function wireRest(){
     var s=window.__instantDashAI;
     var sw=document.getElementById('v21AISwitch');
     if(sw){ sw.classList.toggle('on', !!s.enabled); sw.setAttribute('aria-checked', s.enabled?'true':'false'); }
+    var provider = s.provider || 'anthropic';
+    var providerSel=document.getElementById('v21AIProvider'); if(providerSel) providerSel.value=provider;
+    refreshProviderFields(provider);
+    refreshModelOptions(provider, s.model);
     var keyInput=document.getElementById('v21AIKey'); if(keyInput) keyInput.value=s.key||'';
-    var modelSel=document.getElementById('v21AIModel'); if(modelSel) modelSel.value=s.model||'claude-sonnet-5';
     note('');
     p.classList.add('is-open'); p.setAttribute('aria-hidden','false');
   }
@@ -7747,21 +7806,24 @@ function wireRest(){
     var sw=document.getElementById('v21AISwitch');
     var keyInput=document.getElementById('v21AIKey');
     var modelSel=document.getElementById('v21AIModel');
+    var providerSel=document.getElementById('v21AIProvider');
     var enabled = sw ? sw.classList.contains('on') : false;
     var key = keyInput ? keyInput.value.trim() : '';
-    var model = modelSel ? modelSel.value : 'claude-sonnet-5';
-    if(enabled && !key){ note('Enter your Anthropic API key first, or leave Real AI off.'); return; }
-    window.__instantDashAI = {enabled:enabled, key:key, model:model};
+    var provider = providerSel ? providerSel.value : 'anthropic';
+    var model = modelSel ? modelSel.value : (MODELS_BY_PROVIDER[provider][0][0]);
+    if(enabled && !key){ note('Enter your API key first, or leave Real AI off.'); return; }
+    window.__instantDashAI = {enabled:enabled, key:key, model:model, provider:provider};
     saveState(window.__instantDashAI);
     updateHeaderBits();
     note('Saved.');
     setTimeout(closePanel, 500);
   }
 
-  /* The actual API call. Any caller anywhere in the app can use this. */
-  window.__instantDashCallClaude = async function(prompt, maxTokens){
-    var ai = window.__instantDashAI;
-    if(!ai || !ai.enabled || !ai.key) throw new Error('Real AI is not enabled. Turn it on in the 🤖 Real AI settings first.');
+  /* The actual API call. Any caller anywhere in the app can use this —
+     dispatches to whichever provider is configured. Gemini is offered
+     specifically because it has a genuine, permanent free tier (Flash /
+     Flash-Lite, no credit card), unlike Anthropic's pay-as-you-go API. */
+  async function callAnthropic(prompt, maxTokens, ai){
     var res = await fetch('https://api.anthropic.com/v1/messages', {
       method:'POST',
       headers:{
@@ -7783,6 +7845,34 @@ function wireRest(){
     }
     var data = await res.json();
     return (data.content||[]).filter(function(b){return b.type==='text';}).map(function(b){return b.text;}).join('');
+  }
+  async function callGemini(prompt, maxTokens, ai){
+    var model = ai.model || 'gemini-2.5-flash';
+    var res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+model+':generateContent', {
+      method:'POST',
+      headers:{
+        'content-type':'application/json',
+        'x-goog-api-key': ai.key
+      },
+      body: JSON.stringify({
+        contents: [{ role:'user', parts:[{ text: String(prompt||'') }] }],
+        generationConfig: { maxOutputTokens: maxTokens || 1024 }
+      })
+    });
+    if(!res.ok){
+      var errText='';
+      try{ var j=await res.json(); errText = j && j.error && j.error.message ? j.error.message : ''; }catch(_){ }
+      throw new Error('Gemini API error '+res.status+(errText?(': '+errText):''));
+    }
+    var data = await res.json();
+    try{
+      return (data.candidates[0].content.parts||[]).map(function(p){return p.text||'';}).join('');
+    }catch(_){ return ''; }
+  }
+  window.__instantDashCallClaude = async function(prompt, maxTokens){
+    var ai = window.__instantDashAI;
+    if(!ai || !ai.enabled || !ai.key) throw new Error('Real AI is not enabled. Turn it on in the 🤖 Real AI settings first.');
+    return (ai.provider==='gemini') ? callGemini(prompt, maxTokens, ai) : callAnthropic(prompt, maxTokens, ai);
   };
 
   function wire(id,fn){ var b=document.getElementById(id); if(b && !b.__id21Wired){ b.__id21Wired=1; b.addEventListener('click',function(e){ e.preventDefault(); fn(); }); } }
@@ -7791,6 +7881,8 @@ function wireRest(){
   wire('v21AISave', saveSettings);
   var sw=document.getElementById('v21AISwitch');
   if(sw && !sw.__id21Wired){ sw.__id21Wired=1; sw.addEventListener('click', function(){ sw.classList.toggle('on'); sw.setAttribute('aria-checked', sw.classList.contains('on')?'true':'false'); }); }
+  var providerSel=document.getElementById('v21AIProvider');
+  if(providerSel && !providerSel.__id21Wired){ providerSel.__id21Wired=1; providerSel.addEventListener('change', function(){ refreshProviderFields(providerSel.value); refreshModelOptions(providerSel.value); }); }
   var p=panel();
   if(p && !p.__id21Wired){ p.__id21Wired=1; p.addEventListener('click',function(e){ if(e.target===p) closePanel(); }); }
 
@@ -7811,7 +7903,7 @@ function wireRest(){
       var ai = window.__instantDashAI;
       if(!ai || !ai.enabled || !ai.key){
         out.style.display='block';
-        out.innerHTML='<div style="margin:8px 0 12px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--card-2);font-size:12px;color:var(--muted)">Turn on 🤖 Real AI (top of the page) and add your Anthropic API key first.</div>';
+        out.innerHTML='<div style="margin:8px 0 12px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--card-2);font-size:12px;color:var(--muted)">Turn on 🤖 Real AI (top of the page) and add your API key (Anthropic or Google Gemini) first.</div>';
         return;
       }
       out.style.display='block';
@@ -7830,6 +7922,93 @@ function wireRest(){
       }
     });
   };
+
+  /* v22.1 — AI Data Assistant. Three focused actions, all reusing the same
+     compact summary + existing Real AI call function. Shows/hides itself
+     based on whether Real AI is actually usable, and whether a dataset is
+     loaded, so it never sits around uselessly. */
+  var esc3=function(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');};
+  function id22DataQualityText(){
+    try{
+      var dq = window.__miDataQuality;
+      if(!dq || !dq.length) return 'No missing-data issues were flagged by the app\u2019s own data quality check.';
+      return dq.map(function(c){ return c.name+': '+c.missingPct.toFixed(1)+'% missing ('+c.missing+' cells)'; }).join('\n');
+    }catch(_){ return ''; }
+  }
+  function id22Out(){ return document.getElementById('v22AIAssistantOut'); }
+  function id22Busy(){ var o=id22Out(); if(o) o.innerHTML='<div style="padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--card-2);font-size:12px;color:var(--muted)">🤖 Thinking…</div>'; }
+  function id22Show(html){ var o=id22Out(); if(o) o.innerHTML=html; }
+  function id22Fail(err){ id22Show('<div style="padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--card-2);font-size:12px;color:var(--muted)">Could not complete this: '+esc3(err&&err.message?err.message:String(err))+'</div>'); }
+  function id22Card(title, text){
+    return '<div style="padding:14px 16px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:10px;background:var(--card-2);font-size:12.5px;line-height:1.65"><span class="v21-ai-badge">🤖 Real AI</span> <b>'+esc3(title)+'</b><br><br>'+esc3(text).replace(/\n/g,'<br>')+'</div>';
+  }
+  window.__id22WireAssistant = function(){
+    var q=document.getElementById('v22AIQuality'), m=document.getElementById('v22AIMeasures'), r=document.getElementById('v22AIReport');
+    if(q && !q.__id22Wired){
+      q.__id22Wired=1;
+      q.addEventListener('click', async function(){
+        id22Busy();
+        try{
+          var summary=(typeof window.__instantDashBuildAISummary==='function')?window.__instantDashBuildAISummary():'';
+          var dq = id22DataQualityText();
+          var prompt='You are a data quality reviewer for a bank/NGO management dataset. Given this summary and missing-data breakdown, '
+            +'identify the 3 most important data quality concerns (if any) and one concrete fix for each. Be specific and brief — '
+            +'no generic advice. If the data looks genuinely clean, say so plainly rather than inventing issues.\n\nDATA SUMMARY:\n'+summary
+            +'\n\nMISSING DATA BY COLUMN:\n'+dq;
+          var text=await window.__instantDashCallClaude(prompt, 500);
+          id22Show(id22Card('Data quality review', text));
+        }catch(err){ id22Fail(err); }
+      });
+    }
+    if(m && !m.__id22Wired){
+      m.__id22Wired=1;
+      m.addEventListener('click', async function(){
+        id22Busy();
+        try{
+          var summary=(typeof window.__instantDashBuildAISummary==='function')?window.__instantDashBuildAISummary():'';
+          var prompt='You are a management analytics advisor. Given this data summary, identify the 3-4 measures that matter MOST '
+            +'for management decision-making in this dataset, and explain in one sentence each why. Prioritise measures that '
+            +'drive outcomes or reveal risk over ones that are merely descriptive. Use only measures listed in the summary.\n\nDATA SUMMARY:\n'+summary;
+          var text=await window.__instantDashCallClaude(prompt, 500);
+          id22Show(id22Card('Recommended key measures', text));
+        }catch(err){ id22Fail(err); }
+      });
+    }
+    if(r && !r.__id22Wired){
+      r.__id22Wired=1;
+      r.addEventListener('click', async function(){
+        id22Busy();
+        try{
+          var summary=(typeof window.__instantDashBuildAISummary==='function')?window.__instantDashBuildAISummary():'';
+          var dq = id22DataQualityText();
+          var prompt='You are writing a concise interpretation report for a bank/NGO management dashboard, for a busy executive audience. '
+            +'Using ONLY the data below, write a report with these short sections: OVERVIEW (2 sentences), KEY FINDINGS (3-4 bullet points), '
+            +'RISKS OR CONCERNS (bullet points, or "None identified" if genuinely none), RECOMMENDED ACTIONS (2-3 bullet points). '
+            +'Do not invent numbers not present in the summary. Do not claim proven causation for any movement.\n\nDATA SUMMARY:\n'+summary
+            +'\n\nDATA QUALITY:\n'+dq;
+          var text=await window.__instantDashCallClaude(prompt, 900);
+          id22Show(id22Card('Full interpretation report', text));
+        }catch(err){ id22Fail(err); }
+      });
+    }
+  };
+  function id22Sync(){
+    var section=document.getElementById('v22AIAssistant');
+    var gate=document.getElementById('v22AIAssistantGate');
+    var actions=document.getElementById('v22AIAssistantActions');
+    if(!section) return;
+    var hasData = false;
+    try{ hasData = !!(window.APP && APP.rows && APP.rows.length); }catch(_){ }
+    section.hidden = !hasData;
+    var ai = window.__instantDashAI;
+    var ready = !!(ai && ai.enabled && ai.key);
+    if(gate) gate.style.display = ready ? 'none' : 'block';
+    if(actions) actions.style.display = ready ? 'flex' : 'none';
+    window.__id22WireAssistant();
+  }
+  setInterval(id22Sync, 700);
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', id22Sync);
+  else id22Sync();
 })();
 </script>
 
@@ -10731,9 +10910,9 @@ window.addEventListener('load',function(){setTimeout(mount,500);setTimeout(rende
 .ai47-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;box-shadow:var(--shadow)}
 .ai47-main{grid-row:span 2;border-top:3px solid var(--accent)}
 .ai47-kicker{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:800}
-.ai47-title{font:700 15px/1.35 Poppins,-apple-system,sans-serif;margin-top:5px}.ai47-text{font-size:12px;line-height:1.58;margin-top:7px}
-.ai47-list{padding-left:18px;margin:7px 0}.ai47-list li{font-size:11.5px;line-height:1.5;margin:4px 0}
-.ai47-action{margin-top:9px;padding:10px;border-radius:10px;background:var(--card-2);font-size:11.5px;line-height:1.55}
+.ai47-title{font:700 15px/1.35 Poppins,-apple-system,sans-serif;margin-top:5px;color:var(--text)}.ai47-text{font-size:12px;line-height:1.58;margin-top:7px;color:var(--text)}
+.ai47-list{padding-left:18px;margin:7px 0;color:var(--text)}.ai47-list li{font-size:11.5px;line-height:1.5;margin:4px 0}
+.ai47-action{margin-top:9px;padding:10px;border-radius:10px;background:var(--card-2);font-size:11.5px;line-height:1.55;color:var(--text)}
 .ai47-meta{margin-top:9px;color:var(--muted);font-size:10px;line-height:1.45}
 .ai47-details{margin-top:12px}.ai47-details summary{cursor:pointer;font-weight:700;font-size:12px}
 .ai47-subgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
