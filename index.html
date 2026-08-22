@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v20.4","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v21.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
@@ -1218,7 +1218,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v20.4">
+<meta name="instantdash-build" content="v21.0">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2073,7 +2073,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v20.4';
+      s.textContent='v21.0';
       b.appendChild(s);
     }
   }
@@ -2131,12 +2131,13 @@ body{
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v20.4</span>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v20.4</span></div>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v21.0</span>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v21.0</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
+      <button class="id-health-btn no-print" id="aiModeToggleBtn" type="button" aria-label="Real AI settings">🤖 Real AI: Off</button>
   <div class="spacer"></div>
-  <span class="privacy">🔒 Your data never leaves your computer.</span>
+  <span class="privacy" id="privacyNote">🔒 Your data never leaves your computer.</span>
   <button class="icon-btn no-print" id="themeToggle" title="Switch to day mode" aria-label="Switch to day mode" data-v160-bound="1">☀️</button>
 </header>
 
@@ -2658,7 +2659,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v20.4',
+  VERSION: 'v21.0',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -7562,6 +7563,189 @@ function wireRest(){
 })();
 </script>
 
+<!-- v21.0 — Real AI (optional). Off by default; the entire rest of the app is
+     unaffected either way. When enabled, this calls the Anthropic API
+     directly from the browser using the person's own API key (the
+     documented "anthropic-dangerous-direct-browser-access" BYOK pattern),
+     which is the only way a static, key-less, single-file app like this can
+     offer real AI without a backend server. Only a compact, pre-aggregated
+     summary is ever sent — never raw row-level data — and only when the
+     person explicitly enables this and taps an AI action. -->
+<style id="instantdash-v21-ai-style">
+#v21AIPanel{position:fixed;inset:0;z-index:100000;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.5)}
+#v21AIPanel.is-open{display:flex}
+#v21AIPanel .v21-card{width:min(480px,100%);max-height:90vh;overflow:auto;background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:18px;padding:20px;box-shadow:0 25px 70px rgba(0,0,0,.3)}
+#v21AIPanel h3{margin:0 0 8px}
+#v21AIPanel p{color:var(--muted);font-size:12.5px;line-height:1.5;margin:0 0 12px}
+#v21AIPanel label{display:block;font-size:11px;font-weight:800;color:var(--muted);margin:12px 0 5px;text-transform:uppercase;letter-spacing:.03em}
+#v21AIPanel input[type=password],#v21AIPanel input[type=text],#v21AIPanel select{width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--card-2);color:var(--text);font-size:14px}
+.v21-toggle-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0}
+.v21-switch{position:relative;width:46px;height:26px;border-radius:999px;background:var(--border);border:none;cursor:pointer;flex:0 0 auto}
+.v21-switch::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .15s}
+.v21-switch.on{background:var(--accent)}
+.v21-switch.on::after{transform:translateX(20px)}
+#v21AIPanel .v21-actions{display:flex;gap:8px;margin-top:16px}
+#v21AIPanel button.primary{background:var(--accent);color:#151515;border:none;border-radius:10px;padding:11px 16px;font-weight:800;flex:1;cursor:pointer}
+#v21AIPanel button.secondary{background:var(--card-2);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:11px 16px;font-weight:700;cursor:pointer}
+#v21AINote{margin-top:10px;font-size:12px;color:var(--muted);min-height:16px}
+.v21-ai-badge{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.03em;padding:2px 8px;border-radius:999px;margin-left:6px;background:var(--accent);color:#151515}
+.v21-offline-badge{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.03em;padding:2px 8px;border-radius:999px;margin-left:6px;background:var(--card-2);color:var(--muted);border:1px solid var(--border)}
+</style>
+<div id="v21AIPanel" aria-hidden="true">
+  <div class="v21-card" role="dialog" aria-modal="true" aria-labelledby="v21AITitle">
+    <h3 id="v21AITitle">🤖 Real AI Analysis</h3>
+    <p>Off by default — everything else in InstantDash stays fully offline. Turning this on sends a <b>compact summary</b> (KPI totals, top movements, column names) directly from your browser to Anthropic's Claude API using your own key. Your key is stored only in this browser and is never sent anywhere except directly to Anthropic. Raw row-level data is never sent.</p>
+    <div class="v21-toggle-row">
+      <span><b>Enable Real AI</b></span>
+      <button type="button" class="v21-switch" id="v21AISwitch" role="switch" aria-checked="false" aria-label="Enable Real AI"></button>
+    </div>
+    <label for="v21AIKey">Anthropic API key</label>
+    <input type="password" id="v21AIKey" placeholder="sk-ant-..." autocomplete="off" spellcheck="false">
+    <label for="v21AIModel">Model</label>
+    <select id="v21AIModel">
+      <option value="claude-sonnet-5">Claude Sonnet 5 (recommended)</option>
+      <option value="claude-haiku-4-5-20251001">Claude Haiku 4.5 (fastest / cheapest)</option>
+      <option value="claude-opus-4-8">Claude Opus 4.8 (most capable)</option>
+    </select>
+    <div class="v21-actions">
+      <button type="button" class="secondary" id="v21AIClose">Close</button>
+      <button type="button" class="primary" id="v21AISave">Save</button>
+    </div>
+    <div id="v21AINote"></div>
+  </div>
+</div>
+<script id="instantdash-v21-ai-core">
+(function(){
+  var STORE_KEY='instantdash_ai_v21';
+  function loadState(){
+    try{
+      var raw=localStorage.getItem(STORE_KEY);
+      if(raw) return JSON.parse(raw);
+    }catch(_){ }
+    return {enabled:false,key:'',model:'claude-sonnet-5'};
+  }
+  function saveState(s){
+    try{ localStorage.setItem(STORE_KEY, JSON.stringify(s)); }catch(_){ }
+  }
+  window.__instantDashAI = loadState();
+
+  function updateHeaderBits(){
+    var btn=document.getElementById('aiModeToggleBtn');
+    if(btn) btn.textContent = '🤖 Real AI: ' + (window.__instantDashAI.enabled ? 'On' : 'Off');
+    var priv=document.getElementById('privacyNote');
+    if(priv){
+      priv.textContent = window.__instantDashAI.enabled
+        ? '🔓 Real AI is ON — a compact summary is sent to Anthropic when you use AI features.'
+        : '🔒 Your data never leaves your computer.';
+    }
+  }
+
+  function panel(){ return document.getElementById('v21AIPanel'); }
+  function note(msg){ var n=document.getElementById('v21AINote'); if(n) n.textContent=msg||''; }
+  function openPanel(){
+    var p=panel(); if(!p) return;
+    var s=window.__instantDashAI;
+    var sw=document.getElementById('v21AISwitch');
+    if(sw){ sw.classList.toggle('on', !!s.enabled); sw.setAttribute('aria-checked', s.enabled?'true':'false'); }
+    var keyInput=document.getElementById('v21AIKey'); if(keyInput) keyInput.value=s.key||'';
+    var modelSel=document.getElementById('v21AIModel'); if(modelSel) modelSel.value=s.model||'claude-sonnet-5';
+    note('');
+    p.classList.add('is-open'); p.setAttribute('aria-hidden','false');
+  }
+  function closePanel(){
+    var p=panel(); if(!p) return;
+    p.classList.remove('is-open'); p.setAttribute('aria-hidden','true');
+  }
+  function saveSettings(){
+    var sw=document.getElementById('v21AISwitch');
+    var keyInput=document.getElementById('v21AIKey');
+    var modelSel=document.getElementById('v21AIModel');
+    var enabled = sw ? sw.classList.contains('on') : false;
+    var key = keyInput ? keyInput.value.trim() : '';
+    var model = modelSel ? modelSel.value : 'claude-sonnet-5';
+    if(enabled && !key){ note('Enter your Anthropic API key first, or leave Real AI off.'); return; }
+    window.__instantDashAI = {enabled:enabled, key:key, model:model};
+    saveState(window.__instantDashAI);
+    updateHeaderBits();
+    note('Saved.');
+    setTimeout(closePanel, 500);
+  }
+
+  /* The actual API call. Any caller anywhere in the app can use this. */
+  window.__instantDashCallClaude = async function(prompt, maxTokens){
+    var ai = window.__instantDashAI;
+    if(!ai || !ai.enabled || !ai.key) throw new Error('Real AI is not enabled. Turn it on in the 🤖 Real AI settings first.');
+    var res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{
+        'content-type':'application/json',
+        'x-api-key': ai.key,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
+      body: JSON.stringify({
+        model: ai.model || 'claude-sonnet-5',
+        max_tokens: maxTokens || 1024,
+        messages: [{role:'user', content: String(prompt||'')}]
+      })
+    });
+    if(!res.ok){
+      var errText='';
+      try{ var j=await res.json(); errText = j && j.error && j.error.message ? j.error.message : ''; }catch(_){ }
+      throw new Error('Claude API error '+res.status+(errText?(': '+errText):''));
+    }
+    var data = await res.json();
+    return (data.content||[]).filter(function(b){return b.type==='text';}).map(function(b){return b.text;}).join('');
+  };
+
+  function wire(id,fn){ var b=document.getElementById(id); if(b && !b.__id21Wired){ b.__id21Wired=1; b.addEventListener('click',function(e){ e.preventDefault(); fn(); }); } }
+  wire('aiModeToggleBtn', openPanel);
+  wire('v21AIClose', closePanel);
+  wire('v21AISave', saveSettings);
+  var sw=document.getElementById('v21AISwitch');
+  if(sw && !sw.__id21Wired){ sw.__id21Wired=1; sw.addEventListener('click', function(){ sw.classList.toggle('on'); sw.setAttribute('aria-checked', sw.classList.contains('on')?'true':'false'); }); }
+  var p=panel();
+  if(p && !p.__id21Wired){ p.__id21Wired=1; p.addEventListener('click',function(e){ if(e.target===p) closePanel(); }); }
+
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', updateHeaderBits);
+  else updateHeaderBits();
+
+  /* Chart suggestions — deliberately TEXT-ONLY output. It never creates or
+     modifies an actual chart; it just tells the person what to try next in
+     the existing "Chart" dropdowns, so it can't destabilize the chart
+     rendering engines. */
+  window.__id21WireChartSuggest = function(){
+    var btn = document.getElementById('v21ChartSuggestBtn');
+    if(!btn || btn.__id21Wired) return;
+    btn.__id21Wired = 1;
+    btn.addEventListener('click', async function(){
+      var out = document.getElementById('v21ChartSuggestOut');
+      if(!out) return;
+      var ai = window.__instantDashAI;
+      if(!ai || !ai.enabled || !ai.key){
+        out.style.display='block';
+        out.innerHTML='<div style="margin:8px 0 12px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--card-2);font-size:12px;color:var(--muted)">Turn on 🤖 Real AI (top of the page) and add your Anthropic API key first.</div>';
+        return;
+      }
+      out.style.display='block';
+      out.innerHTML='<div style="margin:8px 0 12px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--card-2);font-size:12px;color:var(--muted)">🤖 Thinking…</div>';
+      try{
+        var summary = (typeof window.__instantDashBuildAISummary==='function') ? window.__instantDashBuildAISummary() : '';
+        var prompt = 'You are a dashboard design advisor for a bank/NGO management tool. Given this data summary, '
+          + 'suggest exactly 3 additional charts that would be genuinely useful (not already obvious totals). '
+          + 'For each: name the measure, the grouping field if any, the chart type (bar/line/pie/scatter/etc), and one sentence on why it matters for management decisions. '
+          + 'Keep each suggestion to 2 short lines. Use only fields mentioned in the summary.\n\nDATA SUMMARY:\n'+summary;
+        var text = await window.__instantDashCallClaude(prompt, 500);
+        var esc2=function(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');};
+        out.innerHTML='<div style="margin:8px 0 12px;padding:12px 14px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:10px;background:var(--card-2);font-size:12.5px;line-height:1.6"><span class="v21-ai-badge">🤖 Real AI</span> Chart ideas from the current dataset:<br><br>'+esc2(text).replace(/\n/g,'<br>')+'<div style="margin-top:8px;font-size:11px;color:var(--muted)">Suggestions only — build them yourself using the Chart / Group by dropdowns below.</div></div>';
+      }catch(err){
+        out.innerHTML='<div style="margin:8px 0 12px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--card-2);font-size:12px;color:var(--muted)">Could not get suggestions: '+(err&&err.message?err.message:String(err))+'</div>';
+      }
+    });
+  };
+})();
+</script>
+
 
 <style id="v157-direct-movement-controls">
 /* v1.11.14 — direct iPhone-safe movement control layer */
@@ -9565,8 +9749,9 @@ function render(){
  var host=$('aiDashboardCharts');if(!host)return;
  var grid=$('aiChartGrid');
  if(!grid){
-   host.innerHTML='<div class="ai-dashboard-head"><div><h3 style="margin:0;font-size:16px">AI-generated key charts</h3><p id="aiDashboardSub" style="margin:4px 0 12px;color:var(--muted);font-size:11px">Building the strongest views from the loaded data…</p></div></div><div class="ai-chart-grid" id="aiChartGrid"></div>';
+   host.innerHTML='<div class="ai-dashboard-head"><div><h3 style="margin:0;font-size:16px">AI-generated key charts</h3><p id="aiDashboardSub" style="margin:4px 0 12px;color:var(--muted);font-size:11px">Building the strongest views from the loaded data…</p></div><button type="button" id="v21ChartSuggestBtn" class="btn sm no-print" style="white-space:nowrap">🤖 Suggest more charts</button></div><div id="v21ChartSuggestOut" style="display:none"></div><div class="ai-chart-grid" id="aiChartGrid"></div>';
    grid=$('aiChartGrid');
+   try{ if(typeof window.__id21WireChartSuggest==='function') window.__id21WireChartSuggest(); }catch(_){ }
  }
  Object.keys(charts).forEach(function(k){try{charts[k].destroy()}catch(_){}});charts={};
  var specs=makeSpecs().slice(0,4);
@@ -10448,6 +10633,35 @@ function aiFmt(v,k){
   if(/amount|revenue|sales|income|profit|cost|expense|loan|value|turnover|cash|asset|debt/.test(s))return '₹'+Number(v).toLocaleString('en-IN',{maximumFractionDigits:2});
   return Number(v).toLocaleString('en-IN',{maximumFractionDigits:2});
 }
+/* v21.0 — the ONLY thing ever sent to the Real AI API. Pre-aggregated
+   stats and already-computed findings only — never raw row-level data. */
+function buildAISummaryText(){
+  var rs=liveRows();
+  var app=window.__INSTANTDASH_APP__||window.APP||{};
+  var cols=numericColumns(rs);
+  var lines=[];
+  lines.push('Dataset: '+(app.fileName||'current dataset')+' — '+rs.length.toLocaleString('en-IN')+' rows, '+(app.columns?app.columns.length:'?')+' columns.');
+  if(cols.length){
+    lines.push('Numeric measures ('+cols.length+'): '+cols.map(function(c){return c.k;}).join(', ')+'.');
+    cols.slice(0,12).forEach(function(c){
+      var sum=c.v.reduce(function(a,b){return a+b;},0), avg=sum/c.v.length;
+      var mn=Math.min.apply(null,c.v), mx=Math.max.apply(null,c.v);
+      lines.push('- '+c.k+': total '+aiFmt(sum,c.k)+', average '+aiFmt(avg,c.k)+', range '+aiFmt(mn,c.k)+' to '+aiFmt(mx,c.k)+'.');
+    });
+  }else{
+    lines.push('No numeric measures were detected in this dataset.');
+  }
+  try{
+    var mi=window.__miItems;
+    if(mi){
+      var strip=function(s){return String(s||'').replace(/<[^>]*>/g,'').replace(/\s+/g,' ').trim();};
+      if(mi.attention&&mi.attention.length) lines.push('Attention needed: '+mi.attention.slice(0,4).map(strip).join(' | '));
+      if(mi.performance&&mi.performance.length) lines.push('Going well: '+mi.performance.slice(0,4).map(strip).join(' | '));
+      if(mi.contextual&&mi.contextual.length) lines.push('Contextual movements: '+mi.contextual.slice(0,3).map(strip).join(' | '));
+    }
+  }catch(_){ }
+  return lines.join('\n');
+}
 function findCol(cols,q){
   var z=q.toLowerCase();
   return cols.find(function(c){return z.indexOf(String(c.k).toLowerCase())>=0}) || cols.find(function(c){
@@ -10634,6 +10848,32 @@ function show(q){
     o.innerHTML='<b>Please type a question.</b><br>For example: “What changed?”';
     return;
   }
+  /* v21.0 — Real AI routing. Off by default; falls back to the offline
+     engine below on any failure so a bad key or network hiccup never
+     leaves the person with nothing. */
+  var ai = window.__instantDashAI;
+  if(ai && ai.enabled && ai.key && typeof window.__instantDashCallClaude==='function'){
+    o.innerHTML='<b>🤖 Thinking…</b>';
+    (async function(){
+      try{
+        var summary = buildAISummaryText();
+        var prompt = 'You are a management dashboard analyst helping a bank/NGO manager. '
+          + 'Using ONLY the data summary below, answer the question briefly and practically. '
+          + 'Do not invent numbers that are not present in the summary. Do not claim proven causation. '
+          + 'If the question asks for an executive summary, use short headers.\n\n'
+          + 'DATA SUMMARY:\n'+summary+'\n\nQUESTION: '+q;
+        var aiText = await window.__instantDashCallClaude(prompt, 700);
+        o.innerHTML = '<span class="v21-ai-badge">🤖 Real AI</span><br>'+esc(aiText).replace(/\n/g,'<br>')+'<div class="ai48-evidence">Generated by Claude from a summary of the currently loaded dataset — not raw row data.</div>';
+      }catch(err){
+        try{
+          o.innerHTML='<span class="v21-offline-badge">Offline (Real AI failed)</span><br>'+answer(q)+'<div class="ai48-evidence">Real AI call failed: '+esc(err&&err.message?err.message:String(err))+' — showing offline analysis instead.</div>';
+        }catch(e2){
+          o.innerHTML='<b>Ask Me could not analyse this question.</b>';
+        }
+      }
+    })();
+    return;
+  }
   try{
     o.innerHTML=answer(q)+'<div class="ai48-evidence">Based only on the currently loaded dataset.</div>';
   }catch(e){
@@ -10642,6 +10882,7 @@ function show(q){
 }
 
 window.__instantDashAskMeAnswer=show;
+window.__instantDashBuildAISummary=buildAISummaryText;
 window.__instantDashAskMeFinal177=show;
 
 function wire(){
