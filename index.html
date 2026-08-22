@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v19.4","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">\n
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v19.5","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">\n
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
@@ -1205,7 +1205,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v19.4">
+<meta name="instantdash-build" content="v19.5">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2060,7 +2060,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v19.4';
+      s.textContent='v19.5';
       b.appendChild(s);
     }
   }
@@ -2086,8 +2086,8 @@ body{
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v19.4</span>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v19.4</span></div>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v19.5</span>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v19.5</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
   <div class="spacer"></div>
@@ -2611,7 +2611,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v19.4',
+  VERSION: 'v19.5',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -4319,10 +4319,22 @@ function instantDashSpeak(text){
     var v = instantDashPickVoice();
     if(v){ u.voice = v; u.lang = v.lang; } else { u.lang = 'en-US'; }
     u.rate=.92; u.pitch=1;
-    u.onstart = function(){ instantDashSpeechDiag('🔊 Speaking (' + (v ? v.name : 'default voice') + ')', false); };
+    var started = false, ended = false;
+    u.onstart = function(){ started = true; instantDashSpeechDiag('🔊 Speaking (' + (v ? v.name : 'default voice') + ')', false); };
+    u.onend   = function(){ ended = true; };
     u.onerror = function(e){ instantDashSpeechDiag('❌ Speech error: ' + (e && e.error ? e.error : 'unknown'), true); };
     window.__instantDashUtterance = u;   // prevent premature GC on iOS
+    instantDashSpeechDiag('… sending to speech engine (voices:' + (window.__instantDashVoices||[]).length + ', voice:' + (v?v.name:'none') + ')', false);
     synth.speak(u);
+    /* Watchdog — if the browser neither started nor errored within 1.5s,
+       the utterance is stuck in the queue (a distinct WebKit failure mode
+       from a normal error), which otherwise looks like total silence with
+       no explanation at all. */
+    setTimeout(function(){
+      if(!started && !ended){
+        instantDashSpeechDiag('⚠️ Stuck — never started (speaking:'+synth.speaking+' pending:'+synth.pending+' paused:'+synth.paused+')', true);
+      }
+    }, 1500);
     return true;
   }catch(err){ instantDashSpeechDiag('❌ Speech exception: ' + (err && err.message ? err.message : err), true); return false; }
 }
