@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v19.6","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">\n
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v19.7","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">\n
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
@@ -1205,7 +1205,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v19.6">
+<meta name="instantdash-build" content="v19.7">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2060,7 +2060,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v19.6';
+      s.textContent='v19.7';
       b.appendChild(s);
     }
   }
@@ -2086,8 +2086,8 @@ body{
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v19.6</span>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v19.6</span></div>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v19.7</span>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v19.7</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
   <div class="spacer"></div>
@@ -2611,7 +2611,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v19.6',
+  VERSION: 'v19.7',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -4364,23 +4364,27 @@ function instantDashChartSpeechText(measure, group, labels, values, idx){
   var value=Number(values[idx]);
   if(!isFinite(value)) return niceName(measure)+'. The selected value is not available.';
   var text=niceName(measure)+' for '+label+' is '+fmtByField(value,measure)+'.';
-  if(labels.length<2) return text+' There is no comparable second value in this chart.';
-  var compareIdx=-1, compareLabel='', compareValue=null;
-  var time=group && isTime(group,col(group));
-  if(time){
-    compareIdx=idx>0?idx-1:(idx<values.length-1?idx+1:-1);
-    if(compareIdx>=0){compareLabel=String(labels[compareIdx]);compareValue=Number(values[compareIdx]);}
-  }else{
-    var others=values.map(function(v,i){return i===idx?null:Number(v)}).filter(function(v){return v!==null&&isFinite(v)});
-    if(others.length){compareValue=others.reduce(function(a,b){return a+b},0)/others.length;compareLabel='the average of the other '+others.length+' groups';}
-  }
-  if(compareValue!==null&&isFinite(compareValue)){
-    var diff=value-compareValue, pct=compareValue!==0?(diff/Math.abs(compareValue))*100:null;
-    text+=' Compared with '+compareLabel+', the difference is '+fmtByField(diff,measure)+(pct===null?'':' ('+(pct>=0?'+':'')+pct.toFixed(1)+'%).');
-  }
-  /* Look for a data-supported possible driver in another numeric measure.
-     This is deliberately described as a possible driver, not a causal reason. */
+  /* v19.7 — everything past the basic value is enrichment only. If any of it
+     throws (comparison lookup, "possible driver" search, etc.) we still
+     return the basic sentence rather than losing speech entirely — this was
+     silently swallowing the whole utterance before. */
   try{
+    if(labels.length<2) return text+' There is no comparable second value in this chart.';
+    var compareIdx=-1, compareLabel='', compareValue=null;
+    var time=group && isTime(group,col(group));
+    if(time){
+      compareIdx=idx>0?idx-1:(idx<values.length-1?idx+1:-1);
+      if(compareIdx>=0){compareLabel=String(labels[compareIdx]);compareValue=Number(values[compareIdx]);}
+    }else{
+      var others=values.map(function(v,i){return i===idx?null:Number(v)}).filter(function(v){return v!==null&&isFinite(v)});
+      if(others.length){compareValue=others.reduce(function(a,b){return a+b},0)/others.length;compareLabel='the average of the other '+others.length+' groups';}
+    }
+    if(compareValue!==null&&isFinite(compareValue)){
+      var diff=value-compareValue, pct=compareValue!==0?(diff/Math.abs(compareValue))*100:null;
+      text+=' Compared with '+compareLabel+', the difference is '+fmtByField(diff,measure)+(pct===null?'':' ('+(pct>=0?'+':'')+pct.toFixed(1)+'%).');
+    }
+    /* Look for a data-supported possible driver in another numeric measure.
+       This is deliberately described as a possible driver, not a causal reason. */
     if(group){
       var rs=rows(), ms=getMeasures(rs).filter(function(m){return String(m.name)!==String(measure)}).slice(0,18);
       var chosen=null;
@@ -4407,10 +4411,18 @@ function instantDashChartSpeechText(measure, group, labels, values, idx){
   return text;
 }
 function instantDashSpeakChartPoint(spec, labels, values, idx){
+  var text;
   try{
-    var text=instantDashChartSpeechText(spec.y||spec.value||spec.x||'Value',spec.x||'',labels||[],values||[],idx);
-    instantDashSpeak(text);
-  }catch(_){ }
+    text=instantDashChartSpeechText(spec.y||spec.value||spec.x||'Value',spec.x||'',labels||[],values||[],idx);
+  }catch(err){
+    /* Guaranteed fallback — never let a text-generation bug mean total
+       silence with no explanation. */
+    var lbl=(labels&&labels[idx]!==undefined)?String(labels[idx]):'selected point';
+    var val=(values&&values[idx]!==undefined)?Number(values[idx]):NaN;
+    text=isFinite(val) ? (niceName(spec.y||spec.value||spec.x||'Value')+' for '+lbl+' is '+val+'.') : 'Value not available.';
+    instantDashSpeechStatus('⚠️ text-gen error, used fallback: '+(err&&err.message?err.message:err));
+  }
+  instantDashSpeak(text);
 }
 
 function drawChart(spec){
