@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v21.6","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v21.7","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
@@ -1226,7 +1226,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v21.6">
+<meta name="instantdash-build" content="v21.7">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2081,7 +2081,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v21.6';
+      s.textContent='v21.7';
       b.appendChild(s);
     }
   }
@@ -2139,8 +2139,8 @@ body{
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v21.6</span>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v21.6</span></div>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v21.7</span>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v21.7</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
       <button class="id-health-btn no-print" id="aiModeToggleBtn" type="button" aria-label="Real AI settings">🤖 Real AI: Off</button>
@@ -2707,7 +2707,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v21.6',
+  VERSION: 'v21.7',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -9812,11 +9812,13 @@ function render(){
  var host=$('aiDashboardCharts');if(!host)return;
  var grid=$('aiChartGrid');
  if(!grid){
-   host.innerHTML='<div class="ai-dashboard-head"><div><h3 style="margin:0;font-size:16px">📊 AI-generated key charts</h3><p id="aiDashboardSub" style="margin:4px 0 12px;color:var(--muted);font-size:11px">Building the strongest views from the loaded data…</p></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" id="v21CombineBtn" class="btn sm no-print" style="white-space:nowrap">🔗 Combine into one chart</button><button type="button" id="v21ChartSuggestBtn" class="btn sm no-print" style="white-space:nowrap">🤖 Suggest more charts</button></div></div><div id="v21CombinedOut" style="display:none"></div><div id="v21ChartSuggestOut" style="display:none"></div><div class="ai-chart-grid" id="aiChartGrid"></div>';
+   host.innerHTML='<div class="ai-dashboard-head"><div><h3 style="margin:0;font-size:16px">📊 AI-generated key charts</h3><p id="aiDashboardSub" style="margin:4px 0 12px;color:var(--muted);font-size:11px">Building the strongest views from the loaded data…</p></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" id="v21CombineBtn" class="btn sm no-print" style="white-space:nowrap">🔗 Combine into one chart</button><button type="button" id="v21ShowIndividualBtn" class="btn sm no-print" style="white-space:nowrap">🔍 Show 4 individual charts</button><button type="button" id="v21ChartSuggestBtn" class="btn sm no-print" style="white-space:nowrap">🤖 Suggest more charts</button></div></div><div id="v21CombinedOut" style="display:none"></div><div id="v21ChartSuggestOut" style="display:none"></div><div class="ai-chart-grid" id="aiChartGrid" style="display:none"></div>';
    grid=$('aiChartGrid');
    try{ if(typeof window.__id21WireChartSuggest==='function') window.__id21WireChartSuggest(); }catch(_){ }
    try{ if(typeof window.__id21WireCombine==='function') window.__id21WireCombine(); }catch(_){ }
+   try{ if(typeof window.__id21WireShowIndividual==='function') window.__id21WireShowIndividual(); }catch(_){ }
  }
+ try{ grid.style.display = window.__id21ShowIndividual ? '' : 'none'; }catch(_){ }
  Object.keys(charts).forEach(function(k){try{charts[k].destroy()}catch(_){}});charts={};
  var specs=makeSpecs().slice(0,4);
  window.__id21LastSpecs = specs;
@@ -9877,7 +9879,7 @@ function drawCombinedChart(specs, host, type){
         var bh = (Math.max(0,v)/mx)*plotH;
         var y = top+plotH-bh;
         var color=palette[si%palette.length];
-        svg.push('<rect x="'+x+'" y="'+y+'" width="'+barW+'" height="'+Math.max(1,bh)+'" rx="2" fill="'+color+'"><title>'+esc2(niceName(s.measure))+' · '+esc2(String(labels[i]))+' · '+esc2(fmtByField(vals[i],s.measure))+' ('+(mx?(vals[i]/mx*100).toFixed(0):0)+'% of its peak)</title></rect>');
+        svg.push('<g data-si="'+si+'" data-pi="'+i+'"><rect x="'+x+'" y="'+y+'" width="'+barW+'" height="'+Math.max(1,bh)+'" rx="2" fill="'+color+'"><title>'+esc2(niceName(s.measure))+' · '+esc2(String(labels[i]))+' · '+esc2(fmtByField(vals[i],s.measure))+' ('+(mx?(vals[i]/mx*100).toFixed(0):0)+'% of its peak)</title></rect></g>');
       });
     });
   }else{
@@ -9892,7 +9894,7 @@ function drawCombinedChart(specs, host, type){
       var color=palette[si%palette.length];
       svg.push('<polyline points="'+pts.map(function(p){return p[0]+','+p[1];}).join(' ')+'" fill="none" stroke="'+color+'" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>');
       pts.forEach(function(p,i){
-        svg.push('<circle cx="'+p[0]+'" cy="'+p[1]+'" r="3.5" fill="'+color+'" stroke="#fff" stroke-width="1.5"><title>'+esc2(niceName(s.measure))+' · '+esc2(String(labels[i]))+' · '+esc2(fmtByField(vals[i],s.measure))+' ('+(mx?(vals[i]/mx*100).toFixed(0):0)+'% of its peak)</title></circle>');
+        svg.push('<g data-si="'+si+'" data-pi="'+i+'"><circle cx="'+p[0]+'" cy="'+p[1]+'" r="16" fill="transparent"/><circle cx="'+p[0]+'" cy="'+p[1]+'" r="3.5" fill="'+color+'" stroke="#fff" stroke-width="1.5"><title>'+esc2(niceName(s.measure))+' · '+esc2(String(labels[i]))+' · '+esc2(fmtByField(vals[i],s.measure))+' ('+(mx?(vals[i]/mx*100).toFixed(0):0)+'% of its peak)</title></circle></g>');
       });
     });
   }
@@ -9911,9 +9913,41 @@ function drawCombinedChart(specs, host, type){
     + '<div class="ai-chart-card-head"><div><h4>🔗 Combined comparison</h4><p class="ai-chart-sub">All '+usable.length+' measures, each shown as % of its own peak so different units can sit on one scale.</p></div>'
     + '<div class="ai-chart-actions"><label style="font-size:9px;color:var(--muted);font-weight:800">Chart <select id="v21CombinedType" aria-label="Change combined chart type"><option value="line"'+(type==='line'?' selected':'')+'>Line</option><option value="bar"'+(type==='bar'?' selected':'')+'>Bar</option></select></label></div></div>'
     + '<div style="margin:6px 0 10px">'+legend+'</div>'
-    + '<div class="ai-chart-wrap" style="min-height:260px">'+svg.join('')+'</div>'
+    + '<div class="ai-chart-wrap" id="v21CombinedSvgWrap" style="min-height:260px">'+svg.join('')+'</div>'
+    + '<div class="ai-chart-touch-detail" id="v21CombinedDetail">🔊 Tap a point to hear the figure.</div>'
     + '<div class="ai-chart-foot">'+(type==='bar'?'Bars are':'Lines are')+' independently normalised (0–100% of each measure\u2019s own highest value) purely to make the shapes comparable — hover or tap a point for the real figure.</div>'
     + '</article>';
+
+  var wrap = document.getElementById('v21CombinedSvgWrap');
+  var detailEl = document.getElementById('v21CombinedDetail');
+  if(wrap){
+    wrap.addEventListener('click', function(e){
+      var target = e.target && e.target.closest ? e.target.closest('[data-si]') : null;
+      if(!target) return;
+      var si = Number(target.getAttribute('data-si'));
+      var pi = Number(target.getAttribute('data-pi'));
+      var s = usable[si];
+      if(!s || !isFinite(pi)) return;
+      var label = labels[pi]!==undefined ? String(labels[pi]) : 'Selected';
+      var value = Number(s.data.values[pi]||0);
+      var cleanLabel = (typeof instantDashCleanLabel==='function') ? instantDashCleanLabel(label) : label;
+      var valText = fmtByField(value, s.measure);
+      if(detailEl) detailEl.textContent = niceName(s.measure)+' · '+cleanLabel+' · '+valText;
+      try{
+        var baseText = niceName(s.measure)+' for '+cleanLabel+' is '+valText+'.';
+        var speakText = (typeof instantDashEnrichSpeech==='function') ? instantDashEnrichSpeech(s.measure, baseText) : baseText;
+        var synth = window.speechSynthesis;
+        if(synth){
+          if(synth.speaking||synth.pending) synth.cancel();
+          synth.resume();
+          var u = new SpeechSynthesisUtterance(speakText);
+          u.rate = .95;
+          window.__instantDashUtterance = u;
+          synth.speak(u);
+        }
+      }catch(_){ }
+    });
+  }
 }
 window.__id21CombineOpen = (window.__id21CombineOpen !== undefined) ? window.__id21CombineOpen : true;
 window.__id21CombineType = window.__id21CombineType || 'line';
@@ -9950,6 +9984,18 @@ window.__id21WireCombine = function(){
   btn.addEventListener('click', function(){
     window.__id21CombineOpen = !window.__id21CombineOpen;
     window.__id21DrawCombinedIfOpen();
+  });
+};
+window.__id21ShowIndividual = window.__id21ShowIndividual || false;
+window.__id21WireShowIndividual = function(){
+  var btn = document.getElementById('v21ShowIndividualBtn');
+  if(!btn || btn.__id21Wired) return;
+  btn.__id21Wired = 1;
+  btn.addEventListener('click', function(){
+    window.__id21ShowIndividual = !window.__id21ShowIndividual;
+    var grid = document.getElementById('aiChartGrid');
+    if(grid) grid.style.display = window.__id21ShowIndividual ? '' : 'none';
+    btn.textContent = window.__id21ShowIndividual ? '🔍 Hide 4 individual charts' : '🔍 Show 4 individual charts';
   });
 };
 
