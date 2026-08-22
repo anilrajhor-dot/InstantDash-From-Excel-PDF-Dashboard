@@ -10175,4 +10175,67 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 window.addEventListener('load',function(){setTimeout(mountAskMe,250);});
 })();
 </script>
+<script id="instantdash-v177-copy-export-fix">
+(function(){
+  'use strict';
+  function report(){ return document.getElementById('idV143Report'); }
+  function cleanText(){
+    var r=report();
+    if(!r) return '';
+    return (r.innerText || r.textContent || '').replace(/\n{3,}/g,'\n\n').trim();
+  }
+  function toastMsg(msg){
+    try { if(typeof toast==='function'){ toast(msg); return; } } catch(e){}
+    var t=document.createElement('div');
+    t.textContent=msg;
+    t.style.cssText='position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:999999;background:#111;color:#fff;padding:10px 16px;border-radius:10px;font:600 14px system-ui;box-shadow:0 4px 18px rgba(0,0,0,.25)';
+    document.body.appendChild(t); setTimeout(function(){t.remove();},1800);
+  }
+  function copyText(text){
+    if(!text) return false;
+    if(navigator.clipboard && window.isSecureContext){
+      navigator.clipboard.writeText(text).then(function(){toastMsg('Executive brief copied');}).catch(function(){fallbackCopy(text);});
+      return true;
+    }
+    return fallbackCopy(text);
+  }
+  function fallbackCopy(text){
+    try{
+      var ta=document.createElement('textarea');
+      ta.value=text; ta.setAttribute('readonly','');
+      ta.style.position='fixed'; ta.style.left='-9999px'; ta.style.top='0';
+      document.body.appendChild(ta); ta.focus(); ta.select();
+      var ok=document.execCommand('copy'); document.body.removeChild(ta);
+      if(ok) toastMsg('Executive brief copied');
+      else toastMsg('Copy failed — please select and copy the brief');
+      return ok;
+    }catch(e){ toastMsg('Copy failed — please select and copy the brief'); return false; }
+  }
+  function exportBrief(){
+    var text=cleanText();
+    if(!text){toastMsg('Executive brief is not available');return;}
+    var name='InstantDash_Executive_Brief.txt';
+    try{
+      var blob=new Blob([text+'\n'],{type:'text/plain;charset=utf-8'});
+      var url=URL.createObjectURL(blob);
+      var a=document.createElement('a'); a.href=url; a.download=name; a.style.display='none';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function(){URL.revokeObjectURL(url);},1000);
+      toastMsg('Executive brief exported');
+    }catch(e){
+      // iOS/browser fallback: open the brief in a new tab so it can be saved/shared.
+      try{ var w=window.open('','_blank'); if(w){w.document.write('<pre style="white-space:pre-wrap;font:16px system-ui;padding:20px">'+text.replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c]})+'</pre>'); w.document.close(); } }catch(x){}
+    }
+  }
+  function wire(){
+    var c=document.getElementById('idV143Copy'), e=document.getElementById('idV143Export');
+    if(c && !c.dataset.copyExport177){ c.dataset.copyExport177='1'; c.addEventListener('click',function(ev){ev.preventDefault();ev.stopPropagation();copyText(cleanText());}); }
+    if(e && !e.dataset.copyExport177){ e.dataset.copyExport177='1'; e.addEventListener('click',function(ev){ev.preventDefault();ev.stopPropagation();exportBrief();}); }
+  }
+  wire();
+  document.addEventListener('DOMContentLoaded',wire);
+  window.addEventListener('load',function(){setTimeout(wire,100);setTimeout(wire,500);});
+  setInterval(wire,500);
+})();
+</script>
 </body></html>
