@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v22.3","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v22.4","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
@@ -373,6 +373,7 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
 .management-insights .mi-card summary::before{content:'▸';color:var(--accent);font-size:11px;transition:transform .18s ease}
 .management-insights .mi-card[open] summary::before{transform:rotate(90deg)}
 .management-insights .mi-card .mi-body{padding:0 15px 14px}
+.management-insights .mi-card .mi-body b,.management-insights .mi-card .mi-body strong{color:var(--text)!important}
 .management-insights .mi-card p{margin:0;font-size:12.5px;line-height:1.6}
 .management-insights .mi-card ul{margin:4px 0 0;padding-left:18px}
 .management-insights .mi-more{margin:8px 0 0;padding:0;border:0;background:none;color:var(--accent);font:600 11.5px Poppins,sans-serif;cursor:pointer}
@@ -390,6 +391,7 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
 .management-insights .mi-status{display:inline-flex;align-items:center;border:1px solid var(--border);border-radius:999px;padding:3px 9px;font-size:10.5px;font-weight:600;margin-left:auto;color:var(--muted);background:var(--card-2)}
 .management-insights .mi-count{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 6px;border-radius:999px;font-size:9.5px;font-weight:700;color:var(--muted);background:var(--card-2);border:1px solid var(--border)}
 .management-insights .mi-empty{margin:0;padding:5px 0;font-size:12.5px;line-height:1.6;color:var(--muted)}
+.management-insights .mi-empty b{color:var(--text)!important}
 .management-insights .mi-executive-lead{font-size:13px;line-height:1.6;color:var(--text);margin:0 0 8px}
 .management-insights .mi-card.executive .mi-body li{font-size:13px;line-height:1.6;margin:7px 0}
 .management-insights .mi-card.good .mi-more{color:var(--ok)}
@@ -1250,7 +1252,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v22.3">
+<meta name="instantdash-build" content="v22.4">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2111,7 +2113,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v22.3';
+      s.textContent='v22.4';
       b.appendChild(s);
     }
   }
@@ -2169,8 +2171,8 @@ body{
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v22.3</span>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v22.3</span></div>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v22.4</span>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v22.4</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
       <button class="id-health-btn no-print" id="aiModeToggleBtn" type="button" aria-label="Real AI settings">🤖 Real AI: Off</button>
@@ -2754,7 +2756,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v22.3',
+  VERSION: 'v22.4',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -9840,7 +9842,42 @@ function isTime(name,c){var x=String(name||'');return !!(c&&((String(c.type||'')
 function col(name){return cols().find(function(c){return String(c.name||'')===String(name)})||{name:name,type:'',role:''}}
 function uniqueValues(rs,name){var a=[],seen={};(rs||[]).forEach(function(r){var v=r[name];if(v==null||v==='')return;var k=String(v);if(!seen[k]){seen[k]=1;a.push(v)}});return a}
 function measureScore(name){var x=norm(name),s=0;[[['revenue','sales','profit','pat','ebit','income','expense','cost','cash','deposit','loan','asset','liability','commission','fee','amount','value','balance','budget','target','actual'],18],[['count','number','qty','quantity','volume','transactions','orders','customers','accounts','members','cases','units'],15],[['growth','change','yoy','mom','qoq','rate','ratio','margin','share','percentage','percent','yield'],13]].forEach(function(g){g[0].forEach(function(t){var q=norm(t);if(x===q)s+=50;else if(x.indexOf(q)>=0)s+=g[1]})});return s}
-function getMeasures(rs){var cs=cols(),names=[];if(cs.length){cs.forEach(function(c){if(c.type==='number'&&!isTime(c.name,c)&&!isId(c.name))names.push(c.name)})}else if(rs[0])Object.keys(rs[0]).forEach(function(k){if(!isTime(k,null)&&!isId(k)&&rs.some(function(r){return isFinite(n(r[k]))}))names.push(k)});return names.map(function(name){var vals=rs.map(function(r){return n(r[name])}).filter(isFinite),ratio=vals.length/Math.max(1,rs.length);return {name:name,ratio:ratio,score:measureScore(name),count:vals.length}}).filter(function(x){return x.ratio>=.20}).sort(function(a,b){return b.score-a.score||b.count-a.count})}
+function getMeasures(rs){var cs=cols(),names=[];if(cs.length){cs.forEach(function(c){if(c.type==='number'&&!isTime(c.name,c)&&!isId(c.name))names.push(c.name)})}else if(rs[0])Object.keys(rs[0]).forEach(function(k){if(!isTime(k,null)&&!isId(k)&&rs.some(function(r){return isFinite(n(r[k]))}))names.push(k)});
+ /* v22.4 — offline "smart parameter selection". Previously this ranked
+    measures purely by keyword-matching the column NAME (does it contain
+    "revenue", "cost", etc). That misses two things real analysis cares
+    about: whether the data actually varies at all (a name like "Target
+    Revenue" that's the same value on every row makes a useless chart),
+    and whether the app's own rule-based Management Insights engine has
+    already found this measure significant — a much stronger, data-backed
+    signal than name-matching alone. Both are added as bonuses, so this
+    degrades gracefully to the old behaviour when insights haven't run yet. */
+ var miNames={};
+ try{
+   var mi=window.__miItems;
+   if(mi){
+     ['attention','performance'].forEach(function(bucket){
+       (mi[bucket]||[]).forEach(function(item){
+         var mm=String(item).match(/^<b>(.*?)<\/b>/);
+         if(mm) miNames[mm[1].replace(/<[^>]+>/g,'').toLowerCase()]=true;
+       });
+     });
+   }
+ }catch(_){ }
+ return names.map(function(name){
+   var vals=rs.map(function(r){return n(r[name])}).filter(isFinite),ratio=vals.length/Math.max(1,rs.length);
+   var varianceBonus=0;
+   if(vals.length>1){
+     var mean=vals.reduce(function(a,b){return a+b},0)/vals.length;
+     if(mean){
+       var variance=vals.reduce(function(a,v){return a+(v-mean)*(v-mean)},0)/vals.length;
+       var cv=Math.sqrt(variance)/Math.abs(mean);
+       varianceBonus=Math.min(10, cv*10);
+     }
+   }
+   var miBonus=miNames[String(name).toLowerCase()]?20:0;
+   return {name:name,ratio:ratio,score:measureScore(name)+varianceBonus+miBonus,count:vals.length};
+ }).filter(function(x){return x.ratio>=.20}).sort(function(a,b){return b.score-a.score||b.count-a.count})}
 function getGroups(rs){var cs=cols(),out=[];cs.forEach(function(c){if(c.type==='number'||isId(c.name)||isTime(c.name,c))return;var nm=String(c.name||'').trim();/* v1.13.09: MID is commonly a metadata/code field (e.g. 0 / Blank / P), not a management dimension. Do not let AI choose it as the default grouping field. It remains available to the manual Group By selector. */if(/^mid$/i.test(nm))return;var u=uniqueValues(rs,c.name);if(u.length>=2&&u.length<=36)out.push({name:c.name,unique:u.length,kind:'category'})});cs.forEach(function(c){if(isTime(c.name,c)){var u=uniqueValues(rs,c.name);if(u.length>=2)out.unshift({name:c.name,unique:u.length,kind:'time'})}});return out}
 function sortKey(a,b,time){if(!time)return String(a).localeCompare(String(b),undefined,{numeric:true});var da=new Date(a),db=new Date(b);if(!isNaN(da)&&!isNaN(db))return da-db;return String(a).localeCompare(String(b),undefined,{numeric:true})}
 function aggregate(rs,group,measure){var map={};rs.forEach(function(r){var v=n(r[measure]);if(!isFinite(v))return;var k=group?String(r[group]):'Overall';if(k===''||k==='null'||k==='undefined')k='Blank';map[k]=(map[k]||0)+v});var keys=Object.keys(map);var g=col(group),time=group&&isTime(group,g);keys.sort(function(a,b){return sortKey(a,b,time)});if(!time&&keys.length>12){keys.sort(function(a,b){return map[b]-map[a]});keys=keys.slice(0,12)}return {labels:keys,values:keys.map(function(k){return map[k]}),time:time,group:group}}
