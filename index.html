@@ -9871,138 +9871,171 @@ function findCol(cols,q){
   });
 }
 function answer(q){
-  var rs=rows();
-  if(!rs.length) return '<b>No live dataset was found.</b><br>Please load a file first.';
-
-  var ms=measures(rs);
-  var ql=String(q||'').toLowerCase().replace(/[?.,:;()\-]/g,' ').replace(/\s+/g,' ').trim();
-  function norm(s){return String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').replace(/\s+/g,' ').trim();}
-  function tokens(s){return norm(s).split(' ').filter(function(x){return x.length>1;});}
+  /* v17.7 Ask Me engine — self-contained so it does not depend on helpers
+     inside other dashboard modules. Existing dashboard functions are untouched. */
+  function app(){return window.__INSTANTDASH_APP__||window.APP||{};}
+  function liveRows(){
+    var a=app();
+    if(Array.isArray(a.filtered)&&a.filtered.length)return a.filtered;
+    if(Array.isArray(a.rows)&&a.rows.length)return a.rows;
+    if(Array.isArray(window.filteredData)&&window.filteredData.length)return window.filteredData;
+    if(Array.isArray(window.currentData)&&window.currentData.length)return window.currentData;
+    return [];
+  }
+  function num(v){
+    if(typeof v==='number')return isFinite(v)?v:NaN;
+    if(v===null||v===undefined||String(v).trim()==='')return NaN;
+    var x=Number(String(v).replace(/[₹$€£¥₩₽,%\s]/g,'').replace(/,/g,''));
+    return isFinite(x)?x:NaN;
+  }
+  function clean(s){return String(s==null?'':s).toLowerCase().replace(/[^a-z0-9]+/g,' ').replace(/\s+/g,' ').trim();}
   function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  function idField(k){return /(^|[^a-z])(id|code|account|acct|a\/c|ac no|serial|sno|sr no|phone|mobile|email|pan|gst|aadhaar|pincode|reference|invoice|key)([^a-z]|$)/i.test(String(k));}
+  function dateField(k){return /(^|[^a-z])(date|time|period|month|year|quarter|week|fy|timestamp)([^a-z]|$)/i.test(String(k));}
+  function rateField(k){return /%|rate|ratio|margin|yield|attendance|completion|pass|dropout|growth|achievement|coverage|utili[sz]ation|share|percentage/i.test(String(k));}
+  function moneyField(k){return /amount|revenue|sales|income|profit|cost|expense|loan|value|turnover|cash|asset|debt|price|budget|fund|expenditure|saving|charge/i.test(String(k));}
+  function fmt(v,k){
+    if(!isFinite(v))return '—';
+    if(rateField(k))return Number(v).toFixed(2)+'%';
+    if(moneyField(k))return '₹'+Number(v).toLocaleString('en-IN',{maximumFractionDigits:2});
+    return Number(v).toLocaleString('en-IN',{maximumFractionDigits:2});
+  }
   function pct(a,b){return a?((b-a)/Math.abs(a))*100:(b?100:0);}
   function avg(v){return v.length?v.reduce(function(a,b){return a+b;},0)/v.length:NaN;}
   function sum(v){return v.reduce(function(a,b){return a+b;},0);}
-  function stdev(v){if(v.length<2)return 0;var m=avg(v),s=0;v.forEach(function(x){s+=(x-m)*(x-m);});return Math.sqrt(s/(v.length-1));}
+
+  var rs=liveRows();
+  if(!rs.length)return '<b>No live dataset was found.</b><br>Please load a file first.';
+  var keys=Object.keys(rs[0]||{});
+  var measures=keys.map(function(k){
+    if(idField(k)||dateField(k))return null;
+    var vals=rs.map(function(r){return num(r[k]);}).filter(isFinite);
+    return vals.length>=Math.max(2,Math.ceil(rs.length*.5))?{k:k,v:vals}:null;
+  }).filter(Boolean);
+  var ql=clean(q);
+
   function findMeasure(question){
-    var nq=norm(question), best=null, bestScore=0;
-    ms.forEach(function(x){
-      var nk=norm(x.k); if(!nk)return;
-      var score=0, kt=tokens(nk), qt=tokens(nq);
-      if(nq.indexOf(nk)>=0) score=120+nk.length;
-      var hits=kt.filter(function(t){return qt.indexOf(t)>=0;}).length;
-      if(kt.length && hits===kt.length) score=Math.max(score,95+hits*5);
-      if(hits) score=Math.max(score,(hits/Math.max(1,kt.length))*80);
-      if(score>bestScore){bestScore=score;best=x;}
+    var nq=clean(question),best=null,bestScore=0;
+    measures.forEach(function(m){
+      var nk=clean(m.k),score=0;
+      if(!nk)return;
+      if(nq.indexOf(nk)>=0)score=130+nk.length;
+      var words=nk.split(' ').filter(function(x){return x.length>2;});
+      var hits=words.filter(function(w){return nq.indexOf(w)>=0;}).length;
+      if(hits)score=Math.max(score,(hits/Math.max(1,words.length))*100+hits*4);
+      if(score>bestScore){bestScore=score;best=m;}
     });
-    return bestScore>=40?best:null;
+    return bestScore>=38?best:null;
   }
-  function fieldNameMatches(k, words){var n=norm(k);return words.some(function(w){return n.indexOf(w)>=0;});}
   function groupColumns(){
-    return Object.keys(rs[0]||{}).filter(function(k){
-      if(isDateKey(k)||isIdKey(k))return false;
+    return keys.filter(function(k){
+      if(idField(k)||dateField(k))return false;
       var vals=rs.map(function(r){return r[k];}).filter(function(v){return v!==null&&v!==undefined&&String(v).trim()!=='';});
-      var u={}; vals.forEach(function(v){u[String(v)]=1;});
-      return vals.length>=2 && Object.keys(u).length>=2 && Object.keys(u).length<=50;
+      var u={};vals.forEach(function(v){u[String(v)]=1;});
+      return vals.length>=2&&Object.keys(u).length>=2&&Object.keys(u).length<=50;
     });
   }
   function findGroup(question){
-    var gs=groupColumns(), nq=norm(question), best=null,score=0;
-    gs.forEach(function(g){var n=norm(g),sc=nq.indexOf(n)>=0?100:n.split(' ').filter(function(t){return nq.indexOf(t)>=0;}).length*20;if(sc>score){score=sc;best=g;}});
-    return best||gs[0]||null;
+    var gs=groupColumns(),nq=clean(question),best=null,score=0;
+    gs.forEach(function(g){
+      var ng=clean(g),sc=nq.indexOf(ng)>=0?120:ng.split(' ').filter(function(w){return w.length>2&&nq.indexOf(w)>=0;}).length*22;
+      if(sc>score){score=sc;best=g;}
+    });
+    return best;
   }
-  function movement(x){return {x:x,a:x.v[0],b:x.v[x.v.length-1],p:pct(x.v[0],x.v[x.v.length-1])};}
-  function movements(){return ms.map(movement).sort(function(a,b){return Math.abs(b.p)-Math.abs(a.p);});}
-  function latestRows(){return rs.slice().reverse();}
-  function findNamedField(words){return Object.keys(rs[0]||{}).find(function(k){return fieldNameMatches(k,words);});}
-  function targetActual(){
-    var target=findMeasure('target') || ms.find(function(x){return /target|budget|plan|goal/i.test(x.k);});
-    var actual=findMeasure('actual') || ms.find(function(x){return /actual|achiev|achievement|performance|result/i.test(x.k);});
-    if(target && actual && target.k!==actual.k)return {target:target,actual:actual};
-    var pair={t:null,a:null};
-    ms.forEach(function(x){var n=norm(x.k);if(!pair.t&&/target|budget|plan|goal/.test(n))pair.t=x;if(!pair.a&&/actual|achiev|achievement|performance|result/.test(n))pair.a=x;});
-    return pair.t&&pair.a?pair:null;
-  }
-  function groupAnalysis(metric, group){
+  function movement(m){return {a:m.v[0],b:m.v[m.v.length-1],p:pct(m.v[0],m.v[m.v.length-1])};}
+  function movements(){return measures.map(function(m){var z=movement(m);return {x:m,a:z.a,b:z.b,p:z.p};}).sort(function(a,b){return Math.abs(b.p)-Math.abs(a.p);});}
+  function groupAnalysis(metric,group){
     if(!metric||!group)return [];
-    var bucket={};
-    rs.forEach(function(r){var key=String(r[group]==null?'':r[group]).trim(),v=num(r[metric.k]);if(key&&isFinite(v)){if(!bucket[key])bucket[key]={s:0,n:0};bucket[key].s+=v;bucket[key].n++;}});
-    return Object.keys(bucket).map(function(k){return {k:k,v:bucket[k].s/bucket[k].n,n:bucket[k].n};}).sort(function(a,b){return b.v-a.v;});
+    var b={};
+    rs.forEach(function(r){var g=String(r[group]==null?'':r[group]).trim(),v=num(r[metric.k]);if(g&&isFinite(v)){if(!b[g])b[g]={s:0,n:0};b[g].s+=v;b[g].n++;}});
+    return Object.keys(b).map(function(g){return {k:g,v:b[g].s/b[g].n,n:b[g].n};}).sort(function(a,b){return b.v-a.v;});
   }
-  function answerForTargetFailure(){
+  function targetActual(){
+    var t=measures.find(function(m){return /(^|\s)(target|budget|plan|goal)(\s|$)/i.test(clean(m.k))||/target|budget|plan|goal/i.test(m.k);});
+    var a=measures.find(function(m){return /actual|achiev|achievement|performance|result|attainment/i.test(m.k);});
+    return t&&a&&t.k!==a.k?{target:t,actual:a}:null;
+  }
+  function targetAnswer(){
     var ta=targetActual();
-    if(!ta)return '<b>Why the target was not achieved:</b><br>The current dataset does not contain a sufficiently clear Target-versus-Actual pair. Please ensure the target and actual/performance fields are present in the uploaded data. I will not invent a reason unsupported by the file.';
-    var gaps=[];
-    var n=Math.min(ta.target.v.length,ta.actual.v.length);
-    for(var i=0;i<n;i++) gaps.push({i:i,t:ta.target.v[i],a:ta.actual.v[i],gap:ta.actual.v[i]-ta.target.v[i],pct:ta.target.v[i]?((ta.actual.v[i]-ta.target.v[i])/Math.abs(ta.target.v[i]))*100:0});
-    var bad=gaps.filter(function(x){return x.gap<0;});
-    var overallT=sum(ta.target.v.slice(0,n)),overallA=sum(ta.actual.v.slice(0,n)),gp=overallT?((overallA-overallT)/Math.abs(overallT))*100:0;
-    var group=findGroup(ql), metric=ta.actual, rank=groupAnalysis(metric,group);
-    var html='<b>Why the target was not achieved</b><br><b>Target:</b> '+fmt(overallT,ta.target.k)+' &nbsp; <b>Actual:</b> '+fmt(overallA,ta.actual.k)+' &nbsp; <b>Gap:</b> '+fmt(overallA-overallT,ta.actual.k)+' ('+gp.toFixed(1)+'%).';
-    if(bad.length){var worst=bad.slice().sort(function(a,b){return a.pct-b.pct;})[0];html+='<br><br><b>Evidence in the data:</b> '+bad.length+' of '+n+' comparable observations are below target; the largest shortfall is '+Math.abs(worst.pct).toFixed(1)+'%.';}
-    if(rank.length>=2) html+='<br><br><b>Possible performance driver:</b> '+esc(group)+' varies materially, with '+esc(rank[0].k)+' highest at '+fmt(rank[0].v,metric.k)+' and '+esc(rank[rank.length-1].k)+' lowest at '+fmt(rank[rank.length-1].v,metric.k)+'. This identifies where management should investigate first; it does not prove causation.';
+    if(!ta)return '<b>Why was the target not achieved?</b><br>The uploaded data does not contain a sufficiently clear Target-versus-Actual pair. I will not invent a reason that is not supported by the file.';
+    var n=Math.min(ta.target.v.length,ta.actual.v.length),T=sum(ta.target.v.slice(0,n)),A=sum(ta.actual.v.slice(0,n)),gap=A-T,gp=T?gap/Math.abs(T)*100:0;
+    var html='<b>Target achievement analysis</b><br><b>Target:</b> '+fmt(T,ta.target.k)+' &nbsp; <b>Actual:</b> '+fmt(A,ta.actual.k)+' &nbsp; <b>Gap:</b> '+fmt(gap,ta.actual.k)+' ('+(gp>=0?'+':'')+gp.toFixed(1)+'%).';
+    if(gap<0)html+='<br><br><b>What the data shows:</b> actual performance is below target. To identify the reason, compare the target gap with the available volume, productivity, quality, transaction, cost and segment fields. The dataset can identify relationships, but cannot prove causation unless the cause is recorded.';
+    else html+='<br><br><b>Result:</b> the aggregate actual is not below the aggregate target in the current data.';
     return html;
   }
-  function improvementAnswer(){
-    var col=findMeasure(ql), moves=movements(), target=col||moves[0]&&moves[0].x;
-    if(!target)return '<b>How can we improve?</b><br>No usable numeric KPI is available in the current dataset.';
-    var name=norm(target.k), ta=target.v[0],tb=target.v[target.v.length-1],tp=pct(ta,tb), action;
-    if(/expense|cost|expenditure|spend|charge/.test(name)) action='Break the expense into its components, identify the largest cost driver and its variance, set a measurable cost-per-unit or monthly ceiling, and monitor the driver rather than only the total expense.';
-    else if(/transaction|txn|volume|count|enrol|customer|sale|sales|revenue|income|collection|recovery/.test(name)) action='Identify the lowest-volume or lowest-conversion segment, compare it with the best-performing segment, find the operational bottleneck and set a measurable activity target with period-wise review.';
-    else if(/drop|attrition|churn|failure|denial|reject|defect|error|complaint|grievance/.test(name)) action='Analyse the records behind the failures, rank the major reasons or categories, assign ownership for the largest cause and set a measurable reduction target.';
-    else action='Compare the KPI with its target and related operational measures, identify the largest measurable driver of the gap, assign one corrective action and review the next period.';
-    return '<b>How can we improve '+esc(target.k)+'?</b><br>'+action+'<br><br><b>Current movement:</b> '+fmt(ta,target.k)+' → '+fmt(tb,target.k)+' ('+(tp>=0?'+':'')+tp.toFixed(1)+'%).';
-  }
-  function expenseControl(){
-    var expense=ms.filter(function(x){return /expense|cost|expenditure|spend|charge/i.test(x.k);}).sort(function(a,b){return sum(b.v)-sum(a.v);});
-    if(!expense.length)return '<b>How can we control expenses?</b><br>No field is clearly identified as an expense/cost measure in the current dataset. I will not invent expense drivers.';
-    var html='<b>How can we control expenses?</b><br>Focus first on the largest expense measures in the uploaded data:<br>';
-    html+=expense.slice(0,5).map(function(x,i){return (i+1)+'. <b>'+esc(x.k)+'</b>: total '+fmt(sum(x.v),x.k)+', latest '+fmt(x.v[x.v.length-1],x.k)+'.';}).join('<br>');
-    var top=expense[0], p=pct(top.v[0],top.v[top.v.length-1]);
-    html+='<br><br><b>Control action:</b> compare each major expense with the activity/volume it supports, investigate the largest adverse movement ('+(p>=0?'+':'')+p.toFixed(1)+'% for '+esc(top.k)+'), set a driver-based ceiling and review exceptions periodically.';
-    return html;
+  function expenseAnswer(){
+    var ex=measures.filter(function(m){return /expense|cost|expenditure|spend|charge/i.test(m.k);}).sort(function(a,b){return sum(b.v)-sum(a.v);});
+    if(!ex.length)return '<b>How can we control expenses?</b><br>No clearly identifiable expense/cost field is present in the current upload.';
+    return '<b>How can we control expenses?</b><br>'+ex.slice(0,6).map(function(m,i){var z=movement(m);return (i+1)+'. <b>'+esc(m.k)+'</b> — total '+fmt(sum(m.v),m.k)+', latest '+fmt(z.b,m.k)+', movement '+(z.p>=0?'+':'')+z.p.toFixed(1)+'%. ';}).join('<br>')+'<br><br><b>Management action:</b> break the largest expense into its components, compare it with the activity or volume it supports, investigate the largest adverse movement, set a measurable ceiling and review exceptions regularly.';
   }
   function variationAnswer(){
-    var moves=movements().slice(0,6);
-    return '<b>Reasons for the variation</b><br>'+moves.map(function(z){var dir=z.p>=0?'increase':'decrease';return '<b>'+esc(z.x.k)+'</b>: '+fmt(z.a,z.x.k)+' → '+fmt(z.b,z.x.k)+' ('+(z.p>=0?'+':'')+z.p.toFixed(1)+'%). The data shows the variation, but does not by itself establish the underlying cause; compare this KPI with related operational fields and segment-level performance.';}).join('<br>');
+    var mv=movements().slice(0,7);
+    return '<b>Reasons for the variation</b><br>'+mv.map(function(z){return '<b>'+esc(z.x.k)+'</b>: '+fmt(z.a,z.x.k)+' → '+fmt(z.b,z.x.k)+' ('+(z.p>=0?'+':'')+z.p.toFixed(1)+'%).';}).join('<br>')+'<br><br>The file establishes the observed variations. It does not by itself establish the underlying causes; compare the affected KPI with related operational fields and segment-level performance to investigate the driver.';
+  }
+  function improveAnswer(){
+    var m=findMeasure(ql)||movements()[0]&&movements()[0].x;
+    if(!m)return '<b>How can we improve?</b><br>No sufficiently reliable numeric KPI is available.';
+    var n=clean(m.k),z=movement(m),action;
+    if(/expense|cost|expenditure|spend|charge/.test(n))action='Control the largest cost driver, compare it with the activity it supports, investigate adverse exceptions and set a driver-based ceiling.';
+    else if(/transaction|txn|volume|count|sale|sales|revenue|income|collection|recovery|enrol|customer/.test(n))action='Identify the weakest segment, compare it with the strongest segment, find the operational bottleneck and set a measurable activity target with periodic review.';
+    else if(/drop|attrition|churn|failure|reject|defect|error|complaint/.test(n))action='Classify the failures, identify the largest recorded reason, assign ownership and set a measurable reduction target.';
+    else action='Compare the KPI with target and related operational measures, identify the largest measurable gap or driver, assign one corrective action and review the next period.';
+    return '<b>How can we improve '+esc(m.k)+'?</b><br>'+action+'<br><br><b>Observed movement:</b> '+fmt(z.a,m.k)+' → '+fmt(z.b,m.k)+' ('+(z.p>=0?'+':'')+z.p.toFixed(1)+'%).';
+  }
+  function topIssues(){
+    var mv=movements().slice(0,3);
+    return '<b>Top 3 management issues</b><br>'+mv.map(function(z,i){return (i+1)+'. <b>'+esc(z.x.k)+'</b>: '+fmt(z.a,z.x.k)+' → '+fmt(z.b,z.x.k)+' ('+(z.p>=0?'+':'')+z.p.toFixed(1)+'%).';}).join('<br>');
+  }
+  function summary(){
+    var mv=movements().slice(0,5);
+    return '<b>Executive summary</b><br><b>Dataset:</b> '+rs.length.toLocaleString('en-IN')+' rows, '+keys.length+' fields.<br><br><b>Key movements:</b><br>'+mv.map(function(z){return '• <b>'+esc(z.x.k)+'</b>: '+fmt(z.a,z.x.k)+' → '+fmt(z.b,z.x.k)+' ('+(z.p>=0?'+':'')+z.p.toFixed(1)+'%).';}).join('<br>')+'<br><br><b>Management focus:</b> investigate the largest adverse movements, compare strong and weak segments and link each gap to a measurable operational driver before drawing causal conclusions.';
+  }
+  function bestWorst(){
+    var g=findGroup(ql)||groupColumns()[0],m=findMeasure(ql)||measures[0];
+    if(!g||!m)return '<b>Best/worst analysis:</b><br>The current dataset does not contain a clear grouping field and numeric measure for this question.';
+    var r=groupAnalysis(m,g),worst=/worst|lowest|bottom|needs attention/.test(ql);
+    if(!r.length)return '<b>No comparable groups were found.</b>';
+    var x=worst?r[r.length-1]:r[0];
+    return '<b>'+(worst?'Worst / needs attention':'Best overall')+' '+esc(g)+': '+esc(x.k)+'</b><br>'+esc(m.k)+' average is '+fmt(x.v,m.k)+' across '+x.n+' populated records.';
+  }
+  function district(){
+    var g=groupColumns().find(function(k){return /district|region|branch|area|zone|location/i.test(k);});
+    var m=findMeasure(ql)||measures[0];
+    if(!g||!m)return '<b>District analysis:</b><br>No clear district/region grouping and numeric measure were found in the current file.';
+    var r=groupAnalysis(m,g),worst=/attention|worst|lowest|needs/.test(ql),x=worst?r[r.length-1]:r[0];
+    return '<b>'+(worst?'District needing attention':'Best district')+': '+esc(x.k)+'</b><br>'+esc(m.k)+' average is '+fmt(x.v,m.k)+' across '+x.n+' populated records.';
   }
 
-  var col=findMeasure(ql), moves=movements();
-
-  /* Built-in questions remain unchanged in purpose; arbitrary questions now use the same live-data engine. */
-  if(/\b(3|three)\b.*\b(important|issue|problem|concern|priority|focus)\b|what are.*(issues|problems|concerns)/.test(ql))
-    return '<b>Top 3 management issues / movements</b><br>'+moves.slice(0,3).map(function(z,i){return (i+1)+'. <b>'+esc(z.x.k)+'</b>: '+fmt(z.a,z.x.k)+' → '+fmt(z.b,z.x.k)+' ('+(z.p>=0?'+':'')+z.p.toFixed(1)+'%).';}).join('<br>');
-  if(/going well|positive|favourable|favorable|good|doing well/.test(ql)){
-    var good=moves.find(function(z){return /revenue|sales|income|profit|completion|attendance|resolved|collection|output|productivity|achievement|coverage|utili[sz]ation|success|pass/i.test(z.x.k)?z.p>0:z.p<0;});
-    return good?'<b>What is going well:</b> '+esc(good.x.k)+' moved from '+fmt(good.a,good.x.k)+' to '+fmt(good.b,good.x.k)+' ('+(good.p>=0?'+':'')+good.p.toFixed(1)+'%).':'<b>No clear favourable movement was identified.</b>';
+  var col=findMeasure(ql), mv=movements();
+  if(/3 most important|three most important|important issues|top.*issues|priority.*issues/.test(ql))return topIssues();
+  if(/executive summary|management summary|overall summary|summarize|summarise/.test(ql))return summary();
+  if(/going well|positive|favourable|favorable|what.*good/.test(ql)){
+    var good=mv.find(function(z){var n=clean(z.x.k);return /dropout|cost|expense|error|complaint|defect|absence/.test(n)?z.p<0:z.p>0;});
+    return good?'<b>What is going well:</b> '+esc(good.x.k)+' moved from '+fmt(good.a,good.x.k)+' to '+fmt(good.b,good.x.k)+' ('+(good.p>=0?'+':'')+good.p.toFixed(1)+'%).':'No clear favourable movement was identified from the available numeric fields.';
   }
-  if(/executive summary|management summary|give me a summary|summarise|summarize|overall summary/.test(ql)){
-    var top=moves[0];return '<b>Executive summary</b><br>'+(top?'<b>'+esc(top.x.k)+'</b> has the largest relative movement, from '+fmt(top.a,top.x.k)+' to '+fmt(top.b,top.x.k)+' ('+(top.p>=0?'+':'')+top.p.toFixed(1)+'%).':'No dominant movement identified.')+'<br><br><b>Other key movements:</b><br>'+moves.slice(1,4).map(function(z){return '<b>'+esc(z.x.k)+'</b>: '+fmt(z.a,z.x.k)+' → '+fmt(z.b,z.x.k)+' ('+(z.p>=0?'+':'')+z.p.toFixed(1)+'%).';}).join('<br>')+'<br><br>Review these movements alongside related operational drivers; the data alone does not establish causation.';
+  if(/target.*not|why.*target|target.*achiev|target.*miss|shortfall|below.*target/.test(ql))return targetAnswer();
+  if(/control.*expense|expense.*control|reduce.*expense|reduce.*cost|control.*cost|cut.*cost|cost.*saving/.test(ql))return expenseAnswer();
+  if(/reason.*variation|variation.*reason|why.*variation|reason.*change|why.*change|cause.*variation|driver.*variation/.test(ql))return variationAnswer();
+  if(/how.*improve|how.*better|what.*improve|improvement|recommend|what.*should.*do|action plan|next step/.test(ql))return improveAnswer();
+  if(/increase.*transaction|more.*transaction|transaction.*increase|increase.*volume/.test(ql))return '<b>How can we increase transactions?</b><br>Identify the lowest transaction-volume groups, compare them with the best-performing groups, examine the available activity/productivity fields for bottlenecks and set a measurable transaction target for the weak groups.';
+  if(/reduce.*drop|drop.*out|dropout/.test(ql))return '<b>How can we reduce drop-outs?</b><br>Use the uploaded records to identify the groups or periods with the highest drop-out levels, compare them with successful groups and investigate the operational fields associated with the difference. Set a measurable reduction target and assign ownership.';
+  if(/which.*district|district.*best|district.*attention/.test(ql))return district();
+  if(/which.*region|region.*best|region.*worst|region.*overall/.test(ql))return bestWorst();
+  if(/which.*kpi.*attention|kpi.*attention|needs attention|what is worse|what.*worst|performance gaps|biggest.*gap/.test(ql)){
+    var att=mv[0];return att?'<b>Priority performance gap:</b> <b>'+esc(att.x.k)+'</b> moved '+fmt(att.a,att.x.k)+' → '+fmt(att.b,att.x.k)+' ('+(att.p>=0?'+':'')+att.p.toFixed(1)+'%). Investigate this movement against target and related operational drivers.':'No measurable performance gap was identified.';
   }
-
-  /* Natural-language management questions. */
-  if(/why.*target|target.*not.*achiev|target.*miss|shortfall|below.*target|under.*target/.test(ql)) return answerForTargetFailure();
-  if(/control.*expense|expense.*control|reduce.*expense|reduce.*cost|control.*cost|cut.*cost|cost.*saving/.test(ql)) return expenseControl();
-  if(/reason.*variation|variation.*reason|why.*variation|reason.*change|why.*change|cause.*variation|driver.*variation/.test(ql)) return variationAnswer();
-  if(/how.*improve|how.*better|what.*improve|improvement|recommend|recommendation|what.*should.*do|next.*step|action.*plan/.test(ql)) return improvementAnswer();
-
-  if(col && /how many|how much|number of|no of|total|sum/.test(ql)) return '<b>Total '+esc(col.k)+':</b> '+fmt(sum(col.v),col.k)+' across '+col.v.length+' populated records.';
-  if(col && /average|mean|avg/.test(ql)) return '<b>Average '+esc(col.k)+':</b> '+fmt(avg(col.v),col.k)+' across '+col.v.length+' populated records.';
-  if(col && /highest|maximum|max|largest|peak|top value/.test(ql)) return '<b>Highest '+esc(col.k)+':</b> '+fmt(Math.max.apply(Math,col.v),col.k)+'.';
-  if(col && /lowest|minimum|min|smallest|bottom value/.test(ql)) return '<b>Lowest '+esc(col.k)+':</b> '+fmt(Math.min.apply(Math,col.v),col.k)+'.';
-  if(col && /current|latest|present|now|today/.test(ql)) return '<b>Latest '+esc(col.k)+':</b> '+fmt(col.v[col.v.length-1],col.k)+'.';
-  if(col && /first|earliest|initial/.test(ql)) return '<b>First '+esc(col.k)+':</b> '+fmt(col.v[0],col.k)+'.';
-  if(col && /changed|change|trend|movement|compare|comparison|versus|\bvs\b/.test(ql)){var z=movement(col);return '<b>Trend for '+esc(col.k)+':</b> '+fmt(z.a,col.k)+' → '+fmt(z.b,col.k)+' ('+(z.p>=0?'+':'')+z.p.toFixed(1)+'%).';}
-
-  var group=findGroup(ql);
-  if(group && /best|top|highest|perform|lowest|bottom|which|rank|worst/.test(ql)){
-    var metric=col||ms[0],rank=groupAnalysis(metric,group),desc=/lowest|bottom|worst/.test(ql);
-    if(rank.length){if(desc)rank.reverse();return '<b>'+(desc?'Lowest / needs attention':'Best performing')+' '+esc(group)+': '+esc(rank[0].k)+'</b><br>'+esc(metric.k)+' averages '+fmt(rank[0].v,metric.k)+' for this group.';}
-  }
-  if(/row|record|data|dataset size|how many records/.test(ql) && !col) return '<b>Current dataset:</b> '+rs.length.toLocaleString('en-IN')+' rows and '+Object.keys(rs[0]||{}).length+' fields.';
-
-  /* Last-resort natural-language response: answer from the strongest available live evidence instead of only listing four canned questions. */
-  if(col){var m=movement(col);return '<b>Analysis of '+esc(col.k)+'</b><br>Current/latest value: '+fmt(m.b,col.k)+'. First available value: '+fmt(m.a,col.k)+'. Change: '+(m.p>=0?'+':'')+m.p.toFixed(1)+'%. Ask about this KPI using words such as target, reason, improvement, cost, trend, average, highest or lowest.';}
-  if(moves.length)return '<b>Analysis of the current dataset</b><br>The largest measurable movement is <b>'+esc(moves[0].x.k)+'</b>: '+fmt(moves[0].a,moves[0].x.k)+' → '+fmt(moves[0].b,moves[0].x.k)+' ('+(moves[0].p>=0?'+':'')+moves[0].p.toFixed(1)+'%). The uploaded data supports identifying patterns and gaps, but not proving causes that are not recorded in the file.';
+  if(col&&/how many|how much|number of|no of|total|sum/.test(ql))return '<b>Total '+esc(col.k)+':</b> '+fmt(sum(col.v),col.k)+' across '+col.v.length+' populated records.';
+  if(col&&/average|mean|avg/.test(ql))return '<b>Average '+esc(col.k)+':</b> '+fmt(avg(col.v),col.k)+' across '+col.v.length+' populated records.';
+  if(col&&/highest|maximum|max|largest|peak|top value/.test(ql))return '<b>Highest '+esc(col.k)+':</b> '+fmt(Math.max.apply(Math,col.v),col.k)+'.';
+  if(col&&/lowest|minimum|min|smallest|bottom value/.test(ql))return '<b>Lowest '+esc(col.k)+':</b> '+fmt(Math.min.apply(Math,col.v),col.k)+'.';
+  if(col&&/current|latest|present|now|today/.test(ql))return '<b>Latest '+esc(col.k)+':</b> '+fmt(col.v[col.v.length-1],col.k)+'.';
+  if(col&&/first|earliest|initial/.test(ql))return '<b>First '+esc(col.k)+':</b> '+fmt(col.v[0],col.k)+'.';
+  if(col&&/change|changed|trend|movement|compare|comparison|versus| vs /.test(' '+ql+' ')){var z=movement(col);return '<b>Trend for '+esc(col.k)+':</b> '+fmt(z.a,col.k)+' → '+fmt(z.b,col.k)+' ('+(z.p>=0?'+':'')+z.p.toFixed(1)+'%).';}
+  if(/dataset|data|records|rows|fields/.test(ql))return '<b>Current dataset:</b> '+rs.length.toLocaleString('en-IN')+' rows and '+keys.length+' fields. Analysis uses the currently loaded dataset only.';
+  if(col){var cm=movement(col);return '<b>Analysis of '+esc(col.k)+'</b><br>First available value: '+fmt(cm.a,col.k)+'. Latest available value: '+fmt(cm.b,col.k)+'. Change: '+(cm.p>=0?'+':'')+cm.p.toFixed(1)+'%. Ask about target, reason, improvement, cost, trend, average, highest or lowest.';}
+  if(mv.length)return '<b>Analysis of the current dataset</b><br>The largest measurable movement is <b>'+esc(mv[0].x.k)+'</b>: '+fmt(mv[0].a,mv[0].x.k)+' → '+fmt(mv[0].b,mv[0].x.k)+' ('+(mv[0].p>=0?'+':'')+mv[0].p.toFixed(1)+'%). The data shows the movement but does not by itself prove the cause.';
   return '<b>I could not find enough relevant data in the current upload to answer that question reliably.</b>';
 }
 
