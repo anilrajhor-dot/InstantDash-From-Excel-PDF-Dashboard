@@ -4273,15 +4273,13 @@ function instantDashSpeak(text){
     var synth=window.speechSynthesis || window.webkitSpeechSynthesis;
     var Utter=window.SpeechSynthesisUtterance || window.webkitSpeechSynthesisUtterance;
     if(!synth || !Utter) return false;
-    try{synth.cancel();}catch(_){ }
-    try{synth.resume();}catch(_){ }
     var u=new Utter(String(text));
     u.lang='en-IN';
     u.rate=.92;
     u.pitch=1;
     u.volume=1;
-    /* iOS can expose voices asynchronously. Do not wait for them: the
-       utterance itself remains a direct user-gesture initiated action. */
+    /* Keep this call synchronous with the iOS touch/click event. */
+    try{ if(synth.speaking || synth.pending) synth.cancel(); }catch(_){ }
     synth.speak(u);
     return true;
   }catch(err){
@@ -4307,7 +4305,7 @@ function instantDashChartSpeechText(measure, group, labels, values, idx){
   }
   if(compareValue!==null&&isFinite(compareValue)){
     var diff=value-compareValue, pct=compareValue!==0?(diff/Math.abs(compareValue))*100:null;
-    text+=' Compared with '+compareLabel+', the difference is '+fmtByField(diff,measure)+(pct===null?'':' ('+(pct>=0?'+':'')+pct.toFixed(1)+'%).');
+    text+=' Compared with '+compareLabel+', the difference is '+fmtByField(diff,measure)+(pct===null?'':' ('+(pct>=0?'+':'')+pct.toFixed(1)+' percent).');
   }
   try{
     if(group){
@@ -4327,11 +4325,8 @@ function instantDashChartSpeechText(measure, group, labels, values, idx){
           if(!chosen||Math.abs(chg)>Math.abs(chosen.chg)) chosen={name:m.name,cur:cur,cmp:cmp,chg:chg};
         }
       });
-      if(chosen){
-        text+=' A possible data-supported driver is '+niceName(chosen.name)+', which changed '+(chosen.chg>=0?'+':'')+chosen.chg.toFixed(1)+'% on the same comparison. This indicates a possible relationship, not proven causation.';
-      }else{
-        text+=' The loaded data does not provide enough comparable driver information to establish a reason for the difference.';
-      }
+      if(chosen) text+=' A possible data-supported driver is '+niceName(chosen.name)+', which changed '+(chosen.chg>=0?'+':'')+chosen.chg.toFixed(1)+' percent on the same comparison. This indicates a possible relationship, not proven causation.';
+      else text+=' The loaded data does not provide enough comparable driver information to establish a reason for the difference.';
     }
   }catch(_){ }
   return text;
@@ -4342,41 +4337,58 @@ function instantDashSpeakChartPoint(spec, labels, values, idx){
     return instantDashSpeak(text);
   }catch(_){ return false; }
 }
-/* Reliable touch hit for SVG AI charts. The visible chart is unchanged; this
-   only makes the existing bars/points easier to activate on touch screens. */
+/* iPhone-safe AI chart touch handler. The visible chart is unchanged. */
 function instantDashBindAISvgSpeech(host,spec){
-  if(!host || host.__instantDashSpeakBound) return;
+  if(!host) return;
+  var root=host.querySelector('svg');
+  if(!root) return;
+  if(host.__instantDashSpeakBound) return;
   host.__instantDashSpeakBound=true;
   var lastTouch=0;
-  function handle(e){
-    try{
-      var now=Date.now();
-      if(e.type==='click' && now-lastTouch<700) return;
-      if(e.type!=='click') lastTouch=now;
-      var root=host.querySelector('svg'); if(!root) return;
-      var target=e.target&&e.target.closest?e.target.closest('[data-chart-index]'):null;
-      var idx=target?Number(target.getAttribute('data-chart-index')):-1;
-      /* If the exact tiny point/bar was not hit, select the nearest existing
-         chart mark within a generous touch radius. */
-      if(idx<0 || !isFinite(idx)){
-        var x=e.clientX,y=e.clientY,best=Infinity,bestIdx=-1;
-        root.querySelectorAll('[data-chart-index]').forEach(function(el){
-          var r=el.getBoundingClientRect(), cx=r.left+r.width/2, cy=r.top+r.height/2;
-          var d=Math.hypot(x-cx,y-cy);
-          if(d<best){best=d;bestIdx=Number(el.getAttribute('data-chart-index'));}
-        });
-        if(best<=48){idx=bestIdx;}
-      }
-      if(idx<0 || !isFinite(idx)) return;
-      var label=spec.data&&spec.data.labels?spec.data.labels[idx]:'';
-      var value=spec.data&&spec.data.values?spec.data.values[idx]:0;
-      var detail=spec.detailEl;
-      if(detail) detail.textContent=niceName(spec.measure)+' · '+String(label)+' · '+fmtByField(Number(value),spec.measure);
-      instantDashSpeakChartPoint({x:spec.group,y:spec.measure,value:spec.measure},spec.data.labels,spec.data.values,idx);
-    }catch(err){console.warn('InstantDash AI chart touch speech failed',err);}
+  function speakIndex(idx,e){
+    idx=Number(idx);
+    if(!isFinite(idx) || idx<0) return false;
+    var labels=(spec.data&&spec.data.labels)||[], values=(spec.data&&spec.data.values)||[];
+    if(idx>=labels.length || idx>=values.length) return false;
+    if(e && e.type==='touchend') { try{e.preventDefault();}catch(_){} }
+    if(e && e.type!=='click') lastTouch=Date.now();
+    var label=labels[idx], value=values[idx];
+    if(spec.detailEl) spec.detailEl.textContent=niceName(spec.measure)+' · '+String(label)+' · '+fmtByField(Number(value),spec.measure);
+    return instantDashSpeakChartPoint({x:spec.group,y:spec.measure,value:spec.measure},labels,values,idx);
   }
-  host.addEventListener('pointerup',handle,{passive:true});
-  host.addEventListener('click',handle,{passive:true});
+  /* Bind directly to every real SVG mark. This is the most reliable iOS path. */
+  root.querySelectorAll('[data-chart-index]').forEach(function(mark){
+    var idx=mark.getAttribute('data-chart-index');
+    mark.style.pointerEvents='auto';
+    mark.addEventListener('touchend',function(e){speakIndex(idx,e);},{passive:false});
+    mark.addEventListener('pointerup',function(e){
+      if(e.pointerType==='touch') speakIndex(idx,e);
+    },{passive:false});
+    mark.addEventListener('click',function(e){
+      if(Date.now()-lastTouch<900) return;
+      speakIndex(idx,e);
+    },{passive:false});
+  });
+  /* Fallback for tapping near a small point/bar rather than exactly on it. */
+  function nearest(e){
+    var x=(e.clientX!=null?e.clientX:(e.changedTouches&&e.changedTouches[0]?e.changedTouches[0].clientX:0));
+    var y=(e.clientY!=null?e.clientY:(e.changedTouches&&e.changedTouches[0]?e.changedTouches[0].clientY:0));
+    var best=Infinity,bestIdx=-1;
+    root.querySelectorAll('[data-chart-index]').forEach(function(el){
+      var r=el.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;
+      /* For bars, use the whole bar rectangle; for points use a 55px radius. */
+      var inside=x>=r.left-10&&x<=r.right+10&&y>=r.top-10&&y<=r.bottom+10;
+      var d=inside?0:Math.hypot(x-cx,y-cy);
+      if(d<best){best=d;bestIdx=Number(el.getAttribute('data-chart-index'));}
+    });
+    if(bestIdx>=0 && best<=55) speakIndex(bestIdx,e);
+  }
+  host.addEventListener('touchend',nearest,{passive:false});
+  host.addEventListener('pointerup',function(e){if(e.pointerType==='touch')nearest(e);},{passive:false});
+  host.addEventListener('click',function(e){
+    if(Date.now()-lastTouch<900) return;
+    nearest(e);
+  },{passive:false});
 }
 
 function drawChart(spec){
@@ -9169,7 +9181,7 @@ function render(){
   card.querySelector('.ai-chart-wrap').addEventListener('click',function(e){if(e.target.tagName==='CANVAS')openExpand(s)});
  });
 }
-function openExpand(s){var ov=$('aiChartOverlay'),cv=$('aiOverlayCanvas');if(!ov||!cv)return;$('aiOverlayTitle').textContent=niceName(s.title)+' · '+niceName(s.type==='hbar'?'Horizontal Bar':s.type);$('aiOverlaySub').textContent=s.subtitle+' · Parameter: '+niceName(s.measure);ov.classList.add('open');ov.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';requestAnimationFrame(function(){try{drawNativeAIChart(s,cv)}catch(e){console.warn('InstantDash expanded chart failed',e)}})}
+function openExpand(s){var ov=$('aiChartOverlay'),cv=$('aiOverlayCanvas');if(!ov||!cv)return;$('aiOverlayTitle').textContent=niceName(s.title)+' · '+niceName(s.type==='hbar'?'Horizontal Bar':s.type);$('aiOverlaySub').textContent=s.subtitle+' · Parameter: '+niceName(s.measure);ov.classList.add('open');ov.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';requestAnimationFrame(function(){try{var host=cv.parentElement;drawNativeAIChart(s,cv);instantDashBindAISvgSpeech(host,s)}catch(e){console.warn('InstantDash expanded chart failed',e)}})}
 function closeExpand(){var ov=$('aiChartOverlay');if(!ov)return;ov.classList.remove('open');ov.setAttribute('aria-hidden','true');if(overlayChart){overlayChart.destroy();overlayChart=null}document.body.style.overflow=''}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 function watch(){
