@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v22.4","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v22.5","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
@@ -284,9 +284,13 @@ body.dark .landing-hero{box-shadow:0 18px 70px rgba(0,0,0,.42)}
 .icon-btn{border-radius:999px!important}
 .section-head h2{position:relative;padding-left:2px}
 .section-head{border-bottom:1px solid var(--border);padding-bottom:10px;margin-bottom:16px!important}
-.card,.ai-chart-card,.kpi,.mi-card,.smart-detail{animation:id22FadeUp .35s ease both}
-@keyframes id22FadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-@media (prefers-reduced-motion:reduce){.card,.ai-chart-card,.kpi,.mi-card,.smart-detail{animation:none}}
+/* v22.5 — the fade-up entrance animation was removed here. It targeted
+   .kpi and .mi-card, both of which get torn down and rebuilt on every
+   filter/search/data change — an animation restarting mid-flight on
+   frequently-mutated content is a known way for opacity to get stuck near
+   zero. Given how much of today's work was spent chasing near-invisible
+   text, a minor visual flourish isn't worth reintroducing that risk. */
+
 ::-webkit-scrollbar{height:8px;width:8px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:color-mix(in srgb,var(--muted) 45%,transparent);border-radius:999px}
@@ -339,6 +343,7 @@ thead th{
 thead th:hover{color:var(--text)}
 tbody tr:hover{background:var(--card-2)}
 td.num{text-align:right;font-variant-numeric:tabular-nums}
+#dataTable td,#dataTable th,.pivot-tbl td,.pivot-tbl th{color:var(--text)!important}
 .pager{display:flex;align-items:center;gap:10px;padding:10px 14px;font-size:12.5px;color:var(--muted)}
 .pivot-tbl td.num{font-variant-numeric:tabular-nums}
 .pivot-tbl tr.total td, .pivot-tbl td.total{font-weight:700;background:var(--card-2)}
@@ -1252,7 +1257,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v22.4">
+<meta name="instantdash-build" content="v22.5">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2113,7 +2118,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v22.4';
+      s.textContent='v22.5';
       b.appendChild(s);
     }
   }
@@ -2171,8 +2176,8 @@ body{
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v22.4</span>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v22.4</span></div>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v22.5</span>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v22.5</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
       <button class="id-health-btn no-print" id="aiModeToggleBtn" type="button" aria-label="Real AI settings">🤖 Real AI: Off</button>
@@ -2756,7 +2761,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v22.4',
+  VERSION: 'v22.5',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
