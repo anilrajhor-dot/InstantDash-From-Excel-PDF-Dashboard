@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v24.6","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v24.7","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
@@ -1301,7 +1301,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v24.6">
+<meta name="instantdash-build" content="v24.7">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2162,7 +2162,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v24.6';
+      s.textContent='v24.7';
       b.appendChild(s);
     }
   }
@@ -2220,8 +2220,8 @@ body{
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v24.6</span>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v24.6</span></div>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v24.7</span>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v24.7</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
       <button class="id-health-btn no-print" id="aiModeToggleBtn" type="button" aria-label="Real AI settings">🤖 Real AI: Off</button>
@@ -2945,7 +2945,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v24.6',
+  VERSION: 'v24.7',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -5043,7 +5043,7 @@ function buildChartCard(spec){
     if (groupOpts.length) tools.appendChild(mkSelect(groupOpts, spec.x, v => { spec.x = v; spec.granularity = null; refreshChart(spec, true); }, 'Group by'));
     const measOpts = [['__count__','Count of rows']].concat(measures().map(c => [c.name, c.name]));
     tools.appendChild(mkSelect(measOpts, spec.agg === 'count' ? '__count__' : spec.y, v => {
-      if (v === '__count__'){ spec.agg = 'count'; spec.y = null; } else { spec.y = v; if (spec.agg === 'count') spec.agg = 'sum'; }
+      if (v === '__count__'){ spec.agg = 'count'; spec.y = null; } else { spec.y = v; if (spec.agg === 'count') spec.agg = 'auto'; }
       refreshChart(spec, true);
     }, 'Value'));
     if (spec.agg !== 'count') tools.appendChild(mkSelect(Object.keys(AGGS).filter(a => a !== 'count').map(a => [a, AGGS[a].label]), spec.agg, v => { spec.agg = v; refreshChart(spec, true); }, 'Aggregation'));
@@ -10063,14 +10063,14 @@ function parameterProfile(name,drows,cols){
    return {name:name,type:ratio>=.20?'number':(c.type||'text'),kind:'technical',agg:'none',ratio:ratio,unique:unique,numeric:nums.length,display:niceName(name)};
  }
  var categoricalName=/(name|state|district|branch|category|segment|type|class|group|channel|region|zone|mid|code|account|acct|pan|mobile|phone|email|pincode|key)/.test(x);
- var agg='sum',kind='amount';
+ var agg='auto',kind='amount';
  if(time){kind='time';agg='none'}
  else if(id){kind='identifier';agg='count'}
  else if(categoricalName && (ratio<.95 || unique<Math.max(2,Math.floor(vals.length*.95)))){kind='category';agg='count'}
  else if(ratio>=.20){
    var sem=semantic(name,{rows:drows});
    kind=sem.kind||'amount';
-   agg=(kind==='count'?'sum':'sum');
+   agg='auto';
  } else {kind='other';agg='none'}
  return {name:name,type:ratio>=.20?'number':(c.type||'text'),kind:kind,agg:agg,ratio:ratio,unique:unique,numeric:nums.length,display:niceName(name)};
 }
@@ -10417,6 +10417,16 @@ function metricValue(rows,m){
  var metaM=state.model.measures.find(function(x){return x.name===m})||{name:m,agg:'auto'};
  if(metaM.agg==='count')return rows.filter(function(r){var v=r[m];return v!==null&&v!==undefined&&String(v).trim()!==''}).length;
  if(metaM.agg==='unique')return new Set(rows.map(function(r){return String(r[m]??'')}).filter(function(v){return v!==''})).size;
+ /* v24.7 — thin wrapper around the central engine. Previously this
+    always summed regardless of what agg said (even 'auto'), making it a
+    fourth independent calculation path. */
+ if(typeof window.__instantDashAggregate==='function'){
+   try{
+     var agg=window.__instantDashAggregate(m,rows);
+     if(agg && agg.count) return agg.value;
+     return 0;
+   }catch(_){ }
+ }
  var vals=rows.map(function(r){return num(r[m])}).filter(isFinite);
  return vals.reduce(function(a,b){return a+b},0);
 }
@@ -10551,30 +10561,35 @@ function getMeasures(rs){var cs=cols(),names=[];if(cs.length){cs.forEach(functio
 function getGroups(rs){var cs=cols(),out=[];cs.forEach(function(c){if(c.type==='number'||isId(c.name)||isTime(c.name,c))return;var nm=String(c.name||'').trim();/* v1.13.09: MID is commonly a metadata/code field (e.g. 0 / Blank / P), not a management dimension. Do not let AI choose it as the default grouping field. It remains available to the manual Group By selector. */if(/^mid$/i.test(nm))return;var u=uniqueValues(rs,c.name);if(u.length>=2&&u.length<=36)out.push({name:c.name,unique:u.length,kind:'category'})});cs.forEach(function(c){if(isTime(c.name,c)){var u=uniqueValues(rs,c.name);if(u.length>=2)out.unshift({name:c.name,unique:u.length,kind:'time'})}});return out}
 function sortKey(a,b,time){if(!time)return String(a).localeCompare(String(b),undefined,{numeric:true});var da=new Date(a),db=new Date(b);if(!isNaN(da)&&!isNaN(db))return da-db;return String(a).localeCompare(String(b),undefined,{numeric:true})}
 function aggregate(rs,group,measure){
-  var mode='sum';
-  try{
-    if(typeof window.__instantDashAggMode==='function' && typeof window.__instantDashClassifyType==='function'){
-      var mtype=window.__instantDashClassifyType(measure);
-      var m=window.__instantDashAggMode(measure,mtype);
-      if(m==='avg'||m==='balance') mode=m;
-    }
-  }catch(_){ mode='sum'; }
-  var map={},count={},last={};
+  /* v24.7 — thin wrapper around the central engine. Grouping rows by
+     category is legitimate, unique logic that belongs here; the actual
+     sum/avg/latest decision and math for each group is now fully
+     delegated to window.__instantDashAggregate (the same function
+     aggregateColumn uses everywhere else), so there is no independent
+     accumulation left in this function at all. */
+  var groups={};
   rs.forEach(function(r){
     var v=n(r[measure]);
     if(!isFinite(v))return;
     var k=group?String(r[group]):'Overall';
     if(k===''||k==='null'||k==='undefined')k='Blank';
-    map[k]=(map[k]||0)+v; count[k]=(count[k]||0)+1; last[k]=v;
+    (groups[k]=groups[k]||[]).push(r);
   });
-  var keys=Object.keys(map);
+  var keys=Object.keys(groups);
   var g=col(group),time=group&&isTime(group,g);
   keys.sort(function(a,b){return sortKey(a,b,time)});
-  var valueFor=function(k){
-    if(mode==='avg') return count[k]?map[k]/count[k]:0;
-    if(mode==='balance') return last[k];
-    return map[k];
-  };
+  var mode='sum', valueCache={};
+  keys.forEach(function(k){
+    if(typeof window.__instantDashAggregate==='function'){
+      try{
+        var agg=window.__instantDashAggregate(measure, groups[k]);
+        if(agg){ mode=agg.mode==='balance'?'balance':(agg.mode==='avg'?'avg':'sum'); valueCache[k]=agg.count?agg.value:0; return; }
+      }catch(_){ }
+    }
+    var nums=groups[k].map(function(r){return n(r[measure]);}).filter(isFinite);
+    valueCache[k]=nums.reduce(function(a,b){return a+b;},0);
+  });
+  var valueFor=function(k){ return valueCache[k]; };
   if(!time&&keys.length>12){keys.sort(function(a,b){return Math.abs(valueFor(b))-Math.abs(valueFor(a))});keys=keys.slice(0,12)}
   return {labels:keys,values:keys.map(valueFor),time:time,group:group,aggMode:mode}
 }
@@ -11405,23 +11420,17 @@ function ensureOptions(){
 }
 function vals(rs,n,agg){
  if(agg==='count')return rs.filter(function(r){var v=r[n];return v!==null&&v!==undefined&&String(v).trim()!==''}).length;
- /* v24.5 — this was an independent, unaudited sum — a third calculation
-    path (the Smart Chart / Interactive Charts engine) that the earlier
-    v24.4 fix to the two aggregate() functions never touched, since this
-    is a differently-named function entirely. Now checks the same
-    central classifier before defaulting to sum. */
- var mode='sum';
- if((agg==null||agg==='sum'||agg==='auto') && typeof window.__instantDashAggMode==='function' && typeof window.__instantDashClassifyType==='function'){
+ /* v24.7 — full thin wrapper: the sum/avg/latest decision AND the actual
+    math are both now delegated to the central engine, rather than this
+    function re-implementing the arithmetic after just borrowing the
+    mode decision. */
+ if(typeof window.__instantDashAggregate==='function'){
    try{
-     var mtype=window.__instantDashClassifyType(n);
-     var m=window.__instantDashAggMode(n,mtype);
-     if(m==='avg'||m==='balance') mode=m;
+     var result=window.__instantDashAggregate(n, rs);
+     if(result) return result.count ? result.value : 0;
    }catch(_){ }
  }
  var nums=rs.map(function(r){return num(r[n])}).filter(isFinite);
- if(!nums.length)return 0;
- if(mode==='avg') return nums.reduce(function(a,b){return a+b},0)/nums.length;
- if(mode==='balance') return nums[nums.length-1];
  return nums.reduce(function(a,b){return a+b},0);
 }
 function grouped(f,group,measure){
