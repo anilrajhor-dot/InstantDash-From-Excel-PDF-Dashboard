@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.0.10","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.0.11","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
@@ -1386,7 +1386,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v26.0.10">
+<meta name="instantdash-build" content="v26.0.11">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2252,7 +2252,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v26.0.10';
+      s.textContent='v26.0.11';
       b.appendChild(s);
     }
   }
@@ -2312,10 +2312,10 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v26.0.10</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v26.0.11</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.0.10</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.0.11</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
       <button class="id-health-btn no-print" id="aiModeToggleBtn" type="button" aria-label="Real AI settings">🤖 Real AI: Off</button>
@@ -3420,7 +3420,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v26.0.10',
+  VERSION: 'v26.0.11',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -12404,7 +12404,21 @@ function mount(){
   root.parentNode.insertBefore(host,root.nextSibling);
   render();
 }
-window.addEventListener('load',function(){setTimeout(mount,500);setTimeout(render,1200);});
+/* v26.0.11 — same fix as the Advanced AI Executive Intelligence section:
+   this previously only rendered once via window.addEventListener('load',...),
+   showing stale results from whatever was loaded at that single moment
+   regardless of later uploads. Now polls APP.__dataVersion. */
+var __lastRenderedVersion146 = null;
+function syncOnDataChange146(){
+  try{
+    var v = (window.APP && window.APP.__dataVersion) || 0;
+    var hasData = !!(window.APP && window.APP.rows && window.APP.rows.length);
+    if(!hasData){ __lastRenderedVersion146 = null; return; }
+    if(v !== __lastRenderedVersion146){ __lastRenderedVersion146 = v; render(); }
+  }catch(_){ }
+}
+window.addEventListener('load',function(){setTimeout(mount,500);setTimeout(syncOnDataChange146,1200);});
+setInterval(syncOnDataChange146, 700);
 })();
 </script>
 
@@ -12543,7 +12557,23 @@ function render(){
  '<div class="ai47-meta">AI analysis uses only the currently loaded dataset. It is an analytical aid and does not replace management judgement.</div></section>';
 }
 function mount(){if(document.getElementById('aiAdvanced47'))return;var root=document.querySelector('main')||document.body,h=document.createElement('div');h.id='aiAdvanced47';root.appendChild(h);render();}
-window.addEventListener('load',function(){setTimeout(mount,700);setTimeout(render,1400);});
+/* v26.0.11 — this previously only rendered once via window.addEventListener('load',...),
+   with no mechanism to re-render on a later file upload, meaning it showed
+   stale results from whatever was loaded at that single moment regardless
+   of subsequent uploads. Now polls APP.__dataVersion (the same signal
+   every other "current file" section this session relies on) and only
+   re-renders when the data has genuinely changed. */
+var __lastRenderedVersion = null;
+function syncOnDataChange(){
+  try{
+    var v = (window.APP && window.APP.__dataVersion) || 0;
+    var hasData = !!(window.APP && window.APP.rows && window.APP.rows.length);
+    if(!hasData){ __lastRenderedVersion = null; return; }
+    if(v !== __lastRenderedVersion){ __lastRenderedVersion = v; render(); }
+  }catch(_){ }
+}
+window.addEventListener('load',function(){setTimeout(mount,700);setTimeout(syncOnDataChange,1400);});
+setInterval(syncOnDataChange, 700);
 })();
 </script>
 
