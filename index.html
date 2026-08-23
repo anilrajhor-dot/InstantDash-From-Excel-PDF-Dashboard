@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v25.0.3","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v25.0.4","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
@@ -1321,7 +1321,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v25.0.3">
+<meta name="instantdash-build" content="v25.0.4">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2182,7 +2182,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v25.0.3';
+      s.textContent='v25.0.4';
       b.appendChild(s);
     }
   }
@@ -2240,8 +2240,8 @@ body{
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v25.0.3</span>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v25.0.3</span></div>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v25.0.4</span>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v25.0.4</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
       <button class="id-health-btn no-print" id="aiModeToggleBtn" type="button" aria-label="Real AI settings">🤖 Real AI: Off</button>
@@ -3043,7 +3043,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v25.0.3',
+  VERSION: 'v25.0.4',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -10771,7 +10771,62 @@ function aggregate(rs,group,measure){
 }
 function histogram(rs,measure){var vals=rs.map(function(r){return n(r[measure])}).filter(isFinite);if(!vals.length)return {labels:[],values:[]};var min=Math.min.apply(Math,vals),max=Math.max.apply(Math,vals);if(min===max)return {labels:[niceName(measure)],values:[vals.length]};var bins=Math.min(8,Math.max(4,Math.round(Math.sqrt(vals.length))));var step=(max-min)/bins,map=new Array(bins).fill(0);vals.forEach(function(v){var i=Math.min(bins-1,Math.floor((v-min)/step));map[i]++});return {labels:map.map(function(_,i){var a=min+i*step,b=i===bins-1?max:min+(i+1)*step;return a.toLocaleString('en-IN',{maximumFractionDigits:0})+'–'+b.toLocaleString('en-IN',{maximumFractionDigits:0})}),values:map,time:false,group:''}}
 function chartType(m,group){var x=norm(m.name);if(group&&group.kind==='time')return 'line';if(/growth|rate|ratio|margin|percentage|percent|share|yield/.test(x)&&group)return 'line';return 'bar'}
-function makeSpecs(){var rs=rows();if(!rs.length)return [];var ms=getMeasures(rs),gs=getGroups(rs),g=gs[0]||null,specs=[];ms.slice(0,4).forEach(function(m,i){var rx=norm(m.name);var rateLike=/rate|ratio|margin|percentage|percent|share|yield|growth/.test(rx);var data=g?aggregate(rs,g.name,m.name):(rateLike?histogram(rs,m.name):{labels:['Total'],values:[rs.reduce(function(a,r){var v=n(r[m.name]);return a+(isFinite(v)?v:0)},0)],time:false,group:''});var type=g?chartType(m,g):(rateLike?'bar':'bar');specs.push({id:'ai-'+i,measure:m.name,group:g?g.name:'',type:type,data:data,title:niceName(m.name),subtitle:g?'AI selected '+niceName(type)+' chart grouped by '+niceName(g.name):'AI selected a total chart because no reliable management grouping field was found.',foot:g?'Each bar/point is calculated from '+rs.length.toLocaleString()+' loaded rows.':'Total calculated from '+rs.length.toLocaleString()+' loaded rows.'})});return specs}
+function makeSpecs(){
+  var rs=rows(); if(!rs.length) return [];
+  var ms=getMeasures(rs), gs=getGroups(rs), specs=[];
+  if(!ms.length) return [];
+  var timeGroup = gs.find(function(x){ return x.kind==='time'; }) || null;
+  var catGroup = gs.find(function(x){ return x.kind==='category'; }) || null;
+  var topMeasure = ms[0];
+  var secondMeasure = ms[1] || ms[0];
+  var thirdMeasure = ms[2] || topMeasure;
+  var idx = 0;
+  /* Performance Trend — only when a genuine time field exists. Evidence-
+     honest: no time field means no trend can be shown, so this category
+     is skipped rather than faked with row order. */
+  if (timeGroup){
+    var trendData = aggregate(rs, timeGroup.name, topMeasure.name);
+    specs.push({id:'ai-'+(idx++), measure:topMeasure.name, group:timeGroup.name, type:'line', data:trendData,
+      title:niceName(topMeasure.name), subtitle:'Performance Trend — '+niceName(topMeasure.name)+' over '+niceName(timeGroup.name),
+      foot:'Each point is calculated from '+rs.length.toLocaleString()+' loaded rows.'});
+  }
+  /* Comparison — the top measure across the leading category dimension
+     (e.g. Region, Branch). Uses the second measure instead if the top
+     one was already used for the trend, so the two charts say something
+     different rather than repeating the same figure two ways. */
+  if (catGroup){
+    var cmpMeasure = timeGroup ? secondMeasure : topMeasure;
+    var cmpData = aggregate(rs, catGroup.name, cmpMeasure.name);
+    specs.push({id:'ai-'+(idx++), measure:cmpMeasure.name, group:catGroup.name, type:'bar', data:cmpData,
+      title:niceName(cmpMeasure.name), subtitle:'Comparison — '+niceName(cmpMeasure.name)+' by '+niceName(catGroup.name),
+      foot:'Each bar is calculated from '+rs.length.toLocaleString()+' loaded rows.'});
+  }
+  /* Distribution/Contribution — share of total by category when a
+     category exists (donut), otherwise the spread of values across all
+     records (histogram). Uses a third measure where possible so all
+     three charts add distinct information. */
+  var distMeasure = (timeGroup && catGroup) ? thirdMeasure : (timeGroup || catGroup) ? secondMeasure : topMeasure;
+  if (catGroup && catGroup.unique <= 8){
+    var distData = aggregate(rs, catGroup.name, distMeasure.name);
+    specs.push({id:'ai-'+(idx++), measure:distMeasure.name, group:catGroup.name, type:'donut', data:distData,
+      title:niceName(distMeasure.name), subtitle:'Contribution — share of '+niceName(distMeasure.name)+' by '+niceName(catGroup.name),
+      foot:'Shares are calculated from '+rs.length.toLocaleString()+' loaded rows.'});
+  } else {
+    var histData = histogram(rs, distMeasure.name);
+    specs.push({id:'ai-'+(idx++), measure:distMeasure.name, group:'', type:'bar', data:histData,
+      title:niceName(distMeasure.name), subtitle:'Distribution — spread of '+niceName(distMeasure.name)+' across all records',
+      foot:'Distribution calculated from '+rs.length.toLocaleString()+' loaded rows.'});
+  }
+  /* If neither a time nor category field exists at all, fall back to a
+     single total figure for the top measure rather than showing nothing. */
+  if (!specs.length){
+    specs.push({id:'ai-0', measure:topMeasure.name, group:'', type:'bar',
+      data:{labels:['Total'], values:[rs.reduce(function(a,r){var v=n(r[topMeasure.name]); return a+(isFinite(v)?v:0);},0)], time:false, group:''},
+      title:niceName(topMeasure.name), subtitle:'AI selected a total chart because no reliable management grouping field was found.',
+      foot:'Total calculated from '+rs.length.toLocaleString()+' loaded rows.'});
+  }
+  return specs;
+}
 function chartJsType(s){
  var t=s.type;
  if(t==='donut')return 'doughnut';
