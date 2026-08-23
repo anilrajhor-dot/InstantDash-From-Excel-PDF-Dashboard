@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v24.2","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v24.3","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
@@ -1301,7 +1301,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v24.2">
+<meta name="instantdash-build" content="v24.3">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2162,7 +2162,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v24.2';
+      s.textContent='v24.3';
       b.appendChild(s);
     }
   }
@@ -2220,8 +2220,8 @@ body{
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v24.2</span>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v24.2</span></div>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v24.3</span>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v24.3</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
       <button class="id-health-btn no-print" id="aiModeToggleBtn" type="button" aria-label="Real AI settings">🤖 Real AI: Off</button>
@@ -2945,7 +2945,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v24.2',
+  VERSION: 'v24.3',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -3146,7 +3146,7 @@ window.__instantDashUnderstand = (function(){
      and progressively charts/Ask Me/Brief Me — should compute a
      column's headline figure through this function rather than writing
      their own sum/average loop, so a fix here fixes everywhere at once. */
-  function aggregateColumn(name, rows){
+  function aggregateColumnCore(name, rows){
     rows = rows || ((window.APP && (window.APP.filtered || window.APP.rows)) || []);
     var vals = [];
     for (var i=0;i<rows.length;i++){ var v=rows[i][name]; if (typeof v==='number' && isFinite(v)) vals.push(v); }
@@ -3171,33 +3171,92 @@ window.__instantDashUnderstand = (function(){
     var sum = vals.reduce(function(a,b){return a+b;},0);
     return {mode:'sum', mtype:mtype, value:sum, label:'Total', count:vals.length};
   }
-  /* v24.2 — derived (weighted) rate: for a percentage/rate measure, try to
-     find its underlying numerator/denominator columns by name keywords
-     (e.g. "Attended" over "Nominated") and compute sum(numerator) /
-     sum(denominator) — the mathematically correct "overall rate" across
-     uneven group sizes, as distinct from a simple average of per-row
-     percentages. Only returned when both columns are confidently found;
-     never silently substituted for the row average. */
-  var NUMERATOR_WORDS = /attended|achieved|passed|completed|actual|approved|collected|recovered|converted|closed(?!.*loop)|won|success(?:ful)?/i;
-  var DENOMINATOR_WORDS = /nominated|planned|target|eligible|applied|total|scheduled|assigned|allocated|budget(?:ed)?|opened|opportunit/i;
+  window.__instantDashCalcRegistry = window.__instantDashCalcRegistry || {};
+  function showCalcIntegrityBanner(msg){
+    try{
+      var b = document.getElementById('v24CalcIntegrityBanner');
+      if(!b){
+        b = document.createElement('div');
+        b.id = 'v24CalcIntegrityBanner';
+        b.style.cssText = 'position:fixed;left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);z-index:99997;padding:10px 14px;border-radius:10px;background:#E2582B;color:#fff;font:700 12px Poppins,sans-serif;box-shadow:0 4px 16px rgba(0,0,0,.3)';
+        document.body.appendChild(b);
+      }
+      b.textContent = '⚠️ Calculation consistency check: ' + msg;
+      b.style.display = 'block';
+    }catch(_){ }
+  }
+  function aggregateColumn(name, rows){
+    var result = aggregateColumnCore(name, rows);
+    try{
+      var scopeRows = rows || ((window.APP && (window.APP.filtered || window.APP.rows)) || []);
+      var key = name + '|' + scopeRows.length + '|' + ((window.APP && window.APP.__dataVersion) || 0);
+      var reg = window.__instantDashCalcRegistry;
+      if (result && result.value!=null && reg[key]!==undefined && Math.abs(reg[key]-result.value) > 0.0001){
+        var msg = '"'+name+'" produced '+result.value+' but a different value ('+reg[key]+') was previously calculated for the identical dataset. Please reload before relying on this figure.';
+        console.warn('InstantDash calculation consistency failure:', msg);
+        showCalcIntegrityBanner(msg);
+      } else if (result && result.value!=null){
+        reg[key] = result.value;
+      }
+    }catch(_){ }
+    return result;
+  }
+  /* v24.3 — derived (weighted) rate: for a percentage/rate measure, try to
+     find its underlying numerator/denominator columns and compute
+     sum(numerator) / sum(denominator) — the mathematically correct
+     "overall rate" across uneven group sizes, as distinct from a simple
+     average of per-row percentages. Deliberately conservative: narrow,
+     specific outcome/base-count words only (broad words like "total",
+     "target", "planned", "actual" were removed — they matched too many
+     unrelated columns), a preference for columns that share real words
+     with the rate's own name, and a confidence check that REJECTS the
+     pairing outright if the weighted result diverges too far from the
+     simple average, since that divergence itself signals a false match. */
+  var NUMERATOR_WORDS = /\battended\b|\bachieved\b|\bpassed\b|\bcompleted\b|\bapproved\b|\bcollected\b|\brecovered\b|\bconverted\b|\bwon\b|\bsuccessful\b|\bqualified\b/i;
+  var DENOMINATOR_WORDS = /\bnominated\b|\beligible\b|\bscheduled\b|\bassigned\b|\bopportunit\w*\b|\bapplied\b|\bregistered\b|\benrolled\b/i;
+  function rateStemWords(rateName){
+    var s = String(rateName||'').toLowerCase()
+      .replace(/%|\(|\)/g,' ')
+      .replace(/\brate\b|\bratio\b|\bpercent(?:age)?\b|\bpct\b/g,' ')
+      .replace(/[_\-]+/g,' ').replace(/\s+/g,' ').trim();
+    return s.split(' ').filter(function(w){ return w.length>2; });
+  }
+  function relatedness(colName, stemWords){
+    var cl=String(colName||'').toLowerCase(); var score=0;
+    stemWords.forEach(function(w){ if(cl.indexOf(w)>=0) score+=1; });
+    return score;
+  }
   function findDerivedRate(rateName, rows){
     rows = rows || ((window.APP && (window.APP.filtered || window.APP.rows)) || []);
     var cols = ((window.APP && window.APP.columns) || []).map(function(c){return c.name;}).filter(function(n){return n!==rateName;});
-    var numCol=null, denCol=null;
-    cols.forEach(function(c){
-      var cl=String(c).toLowerCase();
-      if(!numCol && NUMERATOR_WORDS.test(cl)) numCol=c;
-      if(!denCol && DENOMINATOR_WORDS.test(cl)) denCol=c;
-    });
-    if(!numCol || !denCol) return null;
+    var stemWords = rateStemWords(rateName);
+    var numCands = cols.filter(function(c){ return NUMERATOR_WORDS.test(String(c)); })
+      .sort(function(a,b){ return relatedness(b,stemWords)-relatedness(a,stemWords); });
+    var denCands = cols.filter(function(c){ return DENOMINATOR_WORDS.test(String(c)); })
+      .sort(function(a,b){ return relatedness(b,stemWords)-relatedness(a,stemWords); });
+    if(!numCands.length || !denCands.length) return null;
+    var numCol=numCands[0], denCol=denCands[0];
+    if(numCol===denCol) return null;
     var numSum=0, denSum=0, n=0;
     for(var i=0;i<rows.length;i++){
       var nv=rows[i][numCol], dv=rows[i][denCol];
       if(typeof nv==='number' && isFinite(nv) && typeof dv==='number' && isFinite(dv)){ numSum+=nv; denSum+=dv; n++; }
     }
     if(!n || denSum===0) return null;
-    return {numerator:numCol, denominator:denCol, value:(numSum/denSum)*100, numeratorSum:numSum, denominatorSum:denSum, count:n};
+    var derivedValue = (numSum/denSum)*100;
+    /* Confidence check: for a genuine numerator/denominator pair describing
+       the SAME underlying rate, the weighted overall figure and the simple
+       row-average should land reasonably close together. A large gap means
+       these two columns probably describe different things that happened
+       to match a keyword — reject rather than show a misleading number. */
+    var rateVals=[]; for(var j=0;j<rows.length;j++){ var rv=rows[j][rateName]; if(typeof rv==='number' && isFinite(rv)) rateVals.push(rv); }
+    if(rateVals.length){
+      var rowAvg = rateVals.reduce(function(a,b){return a+b;},0)/rateVals.length;
+      if(Math.abs(derivedValue-rowAvg) > 20) return null;
+    }
+    return {numerator:numCol, denominator:denCol, value:derivedValue, numeratorSum:numSum, denominatorSum:denSum, count:n};
   }
+  window.__instantDashClassifyType = classifyMeasureType;
   window.__instantDashAggMode = classifyAggMode;
   window.__instantDashAggregate = aggregateColumn;
   window.__instantDashDerivedRate = findDerivedRate;
@@ -5338,43 +5397,48 @@ function buildKPIs(){
 
   cards.push({val: rows.length.toLocaleString(), lbl:'Rows', sub: rows.length !== all.length ? `filtered from ${all.length.toLocaleString()}` : `${APP.columns.length} columns`});
 
-  // Aggregate the three most useful measures through the central engine —
-  // never sum a percentage/rate, and read balances as a latest value.
+  // Aggregate the three most useful measures — EXCLUSIVELY through the
+  // central engine. No independent calculation exists here any more: if
+  // the engine can't produce a value, that's shown honestly rather than
+  // computed some other way.
   rankMeasures().slice(0, 3).forEach((c, i) => {
     const agg = (typeof window.__instantDashAggregate === 'function')
       ? window.__instantDashAggregate(c.name, rows)
       : null;
     let val, lbl, sub;
-    if (agg && agg.count){
-      if (agg.mode==='avg'){
+    if (!agg || !agg.count){
+      val = '⚠️ Calculation unavailable';
+      lbl = c.name;
+      sub = 'Data Integrity: the central calculation engine could not produce a reliable value for this measure.';
+    } else if (agg.mode==='avg'){
+      if (agg.suspicious){
+        val = '⚠️ Check data';
         lbl = c.name;
-        if (agg.suspicious){
-          val = '⚠️ Check data';
-          sub = 'Calculated average (' + agg.value.toFixed(1) + '%) is outside the expected 0–100% range for this KPI — likely a data issue, not a display bug.';
+        sub = 'Data Integrity: calculated average (' + agg.value.toFixed(1) + '%) is outside the expected 0–100% range for this KPI.';
+      } else {
+        const derived = (typeof window.__instantDashDerivedRate === 'function') ? window.__instantDashDerivedRate(c.name, rows) : null;
+        if (derived && Math.abs(derived.value - agg.value) > 0.05){
+          // A reliable numerator/denominator pair was found — this becomes
+          // the PRIMARY figure, clearly labeled "Overall", never blended
+          // with the row-average number.
+          val = derived.value.toFixed(2) + '%';
+          lbl = 'Overall ' + c.name;
+          sub = derived.numerator + ' ÷ ' + derived.denominator + ' · Average ' + fmtByField(agg.value, c.name) + ' (' + agg.count + ' records)';
         } else {
           val = fmtByField(agg.value, c.name);
+          lbl = 'Average ' + c.name;
           sub = 'Average of ' + agg.count.toLocaleString() + ' record' + (agg.count===1?'':'s');
-          const derived = (typeof window.__instantDashDerivedRate === 'function') ? window.__instantDashDerivedRate(c.name, rows) : null;
-          if (derived && Math.abs(derived.value - agg.value) > 0.05){
-            sub += ' · Overall (weighted) ' + derived.value.toFixed(2) + '% — ' + derived.numerator + ' ÷ ' + derived.denominator;
-          }
         }
-      } else if (agg.mode==='balance'){
-        lbl = c.name;
-        val = fmtByField(agg.value, c.name);
-        sub = 'Latest of ' + agg.count.toLocaleString() + ' record' + (agg.count===1?'':'s') + ' (not summed — this is a balance)';
-      } else {
-        lbl = 'Total ' + c.name;
-        val = fmtByField(agg.value, c.name);
-        const avgOfSum = agg.count ? agg.value/agg.count : 0;
-        sub = 'Average ' + fmtByField(avgOfSum, c.name);
       }
+    } else if (agg.mode==='balance'){
+      val = fmtByField(agg.value, c.name);
+      lbl = 'Latest ' + c.name;
+      sub = agg.count.toLocaleString() + ' record' + (agg.count===1?'':'s') + ' (not summed — this is a balance)';
     } else {
-      // Fallback if the central engine isn't available for any reason —
-      // matches the previous (buggy) behaviour only as a last resort.
-      let sum = 0, n = 0;
-      for (let r = 0; r < rows.length; r++){ const v = rows[r][c.name]; if (typeof v === 'number' && isFinite(v)){ sum += v; n++; } }
-      val = fmtByField(sum,c.name); lbl = 'Total ' + c.name; sub = 'Average ' + fmtByField(n ? sum/n : 0,c.name);
+      val = fmtByField(agg.value, c.name);
+      lbl = 'Total ' + c.name;
+      const avgOfSum = agg.count ? agg.value/agg.count : 0;
+      sub = 'Average ' + fmtByField(avgOfSum, c.name);
     }
     cards.push({val, lbl, sub, alt: i === 1, trend: kpiTrendBadge(c.name)});
   });
@@ -5749,13 +5813,14 @@ function buildInsights(){
     let mx = -Infinity, mn = Infinity, n = 0;
     for (let i = 0; i < rows.length; i++){ const v = rows[i][c.name]; if (typeof v === 'number' && isFinite(v)){ n++; if (v > mx) mx = v; if (v < mn) mn = v; } }
     if (!n) return;
-    if (agg && agg.mode==='avg'){
+    if (!agg || !agg.count){
+      lines.push(`${c.name}: calculation unavailable (Data Integrity: the central calculation engine could not produce a reliable value).`);
+    } else if (agg.mode==='avg'){
       lines.push(`${c.name}: average ${fmtFull(agg.value)} (not summed — this is a rate/percentage), ranging ${fmtFull(mn)} to ${fmtFull(mx)}.`);
-    } else if (agg && agg.mode==='balance'){
+    } else if (agg.mode==='balance'){
       lines.push(`${c.name}: latest ${fmtFull(agg.value)} (not summed — this is a balance), ranging ${fmtFull(mn)} to ${fmtFull(mx)}.`);
     } else {
-      const sum = agg ? agg.value : (() => { let s=0; for (let i=0;i<rows.length;i++){ const v=rows[i][c.name]; if (typeof v==='number' && isFinite(v)) s+=v; } return s; })();
-      lines.push(`${c.name}: total ${fmtFull(sum)}, average ${fmtFull(sum/n)}, ranging ${fmtFull(mn)} to ${fmtFull(mx)}.`);
+      lines.push(`${c.name}: total ${fmtFull(agg.value)}, average ${fmtFull(agg.value/n)}, ranging ${fmtFull(mn)} to ${fmtFull(mx)}.`);
     }
   });
 
@@ -5876,19 +5941,30 @@ function miLatestPeriodRows(rows,dateCol){
    management comparisons stable and prevents percentages such as occupancy
    from being added across months. */
 function miAggMode(name){
+  /* v24.3 — delegate to the one shared classifier (window.__instantDashAggMode)
+     so this can never disagree with KPI cards / Ask Me on the same column.
+     Falls back to the original regex only if the central engine somehow
+     isn't loaded yet, as a defensive last resort, not a parallel source of
+     truth. */
+  if (typeof window.__instantDashAggMode==='function' && typeof window.__instantDashClassifyType==='function'){
+    try{ return window.__instantDashAggMode(name, window.__instantDashClassifyType(name)); }catch(_){ }
+  }
   const n=String(name||'').toLowerCase().replace(/[%()]/g,' ');
+  if(/\bbalance\b|\boutstanding\b|\bo\/s\b|\bbook\s*value\b/.test(n)) return 'balance';
   if(/(^|\b)(average|avg|mean|median)\b|\b(per|ratio|rate|margin|yield|occupancy|utili[sz]ation|compliance|satisfaction|conversion|denial|percentage|percent|share|mix|index|score)\b/i.test(n)) return 'avg';
   return 'sum';
 }
 function miMetricValue(rows,col){
   const vals=rows.map(r=>miNum(r[col])).filter(v=>v!==null);
   if(!vals.length)return null;
-  if(miAggMode(col)==='avg') return vals.reduce((a,b)=>a+b,0)/vals.length;
+  const mode=miAggMode(col);
+  if(mode==='avg') return vals.reduce((a,b)=>a+b,0)/vals.length;
+  if(mode==='balance') return vals[vals.length-1];
   return vals.reduce((a,b)=>a+b,0);
 }
 function miSum(rows,col){ return miMetricValue(rows,col) ?? 0; }
 function miChange(a,b){ return {abs:b-a,pct:a!==0?(b-a)/Math.abs(a):null}; }
-function miAggregationLabel(name){ return miAggMode(name)==='avg'?'Average across comparable records':'Total across comparable records'; }
+function miAggregationLabel(name){ const m=miAggMode(name); return m==='avg'?'Average across comparable records':m==='balance'?'Latest value across comparable records (not summed — this is a balance)':'Total across comparable records'; }
 /* v1.11.14 — domain-aware interpretation layer.
    The dashboard must distinguish a true performance KPI from a contextual
    activity/capacity measure. It must also recognise common ESG and healthcare
@@ -11743,9 +11819,10 @@ function answer(q){
     return html;
   }
   function expenseAnswer(){
-    var ex=measures.filter(function(m){return /expense|cost|expenditure|spend|charge/i.test(m.k);}).sort(function(a,b){return sum(b.v)-sum(a.v);});
+    function total(v,k){ var a=(typeof window.__instantDashAggregate==='function')?window.__instantDashAggregate(k,rs):null; return (a&&a.count)?a.value:sum(v); }
+    var ex=measures.filter(function(m){return /expense|cost|expenditure|spend|charge/i.test(m.k);}).sort(function(a,b){return total(b.v,b.k)-total(a.v,a.k);});
     if(!ex.length)return '<b>How can we control expenses?</b><br>No clearly identifiable expense/cost field is present in the current upload.';
-    return '<b>How can we control expenses?</b><br>'+ex.slice(0,6).map(function(m,i){var z=movement(m);return (i+1)+'. <b>'+esc(m.k)+'</b> — total '+fmt(sum(m.v),m.k)+', latest '+fmt(z.b,m.k)+', movement '+(z.p>=0?'+':'')+z.p.toFixed(1)+'%. ';}).join('<br>')+'<br><br><b>Management action:</b> break the largest expense into its components, compare it with the activity or volume it supports, investigate the largest adverse movement, set a measurable ceiling and review exceptions regularly.';
+    return '<b>How can we control expenses?</b><br>'+ex.slice(0,6).map(function(m,i){var z=movement(m);return (i+1)+'. <b>'+esc(m.k)+'</b> — total '+fmt(total(m.v,m.k),m.k)+', latest '+fmt(z.b,m.k)+', movement '+(z.p>=0?'+':'')+z.p.toFixed(1)+'%. ';}).join('<br>')+'<br><br><b>Management action:</b> break the largest expense into its components, compare it with the activity or volume it supports, investigate the largest adverse movement, set a measurable ceiling and review exceptions regularly.';
   }
   function variationAnswer(){
     var mv=movements().slice(0,7);
@@ -11805,9 +11882,10 @@ function answer(q){
   }
   if(col&&/how many|how much|number of|no of|total|sum/.test(ql)){
     var aggQ = (typeof window.__instantDashAggregate==='function') ? window.__instantDashAggregate(col.k, rs) : null;
-    if(aggQ && aggQ.mode==='avg') return '<b>'+esc(col.k)+' cannot be meaningfully "summed"</b> — it is a percentage/rate measure. <b>Average '+esc(col.k)+':</b> '+fmt(aggQ.value,col.k)+' across '+aggQ.count+' populated records.';
-    if(aggQ && aggQ.mode==='balance') return '<b>'+esc(col.k)+' is a balance/outstanding measure and should not be summed.</b> <b>Latest '+esc(col.k)+':</b> '+fmt(aggQ.value,col.k)+' (most recent of '+aggQ.count+' populated records).';
-    return '<b>Total '+esc(col.k)+':</b> '+fmt(sum(col.v),col.k)+' across '+col.v.length+' populated records.';
+    if(!aggQ || !aggQ.count) return '<b>⚠️ Calculation unavailable for '+esc(col.k)+'.</b> Data Integrity: the central calculation engine could not produce a reliable value.';
+    if(aggQ.mode==='avg') return '<b>'+esc(col.k)+' cannot be meaningfully "summed"</b> — it is a percentage/rate measure. <b>Average '+esc(col.k)+':</b> '+fmt(aggQ.value,col.k)+' across '+aggQ.count+' populated records.';
+    if(aggQ.mode==='balance') return '<b>'+esc(col.k)+' is a balance/outstanding measure and should not be summed.</b> <b>Latest '+esc(col.k)+':</b> '+fmt(aggQ.value,col.k)+' (most recent of '+aggQ.count+' populated records).';
+    return '<b>Total '+esc(col.k)+':</b> '+fmt(aggQ.value,col.k)+' across '+aggQ.count+' populated records.';
   }
   if(col&&/average|mean|avg/.test(ql))return '<b>Average '+esc(col.k)+':</b> '+fmt(avg(col.v),col.k)+' across '+col.v.length+' populated records.';
   if(col&&/highest|maximum|max|largest|peak|top value/.test(ql))return '<b>Highest '+esc(col.k)+':</b> '+fmt(Math.max.apply(Math,col.v),col.k)+'.';
