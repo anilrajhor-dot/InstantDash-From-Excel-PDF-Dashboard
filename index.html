@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v24.8","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v24.9","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
@@ -1301,7 +1301,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v24.8">
+<meta name="instantdash-build" content="v24.9">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2162,7 +2162,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v24.8';
+      s.textContent='v24.9';
       b.appendChild(s);
     }
   }
@@ -2220,8 +2220,8 @@ body{
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v24.8</span>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v24.8</span></div>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v24.9</span>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v24.9</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
       <button class="id-health-btn no-print" id="aiModeToggleBtn" type="button" aria-label="Real AI settings">🤖 Real AI: Off</button>
@@ -2945,7 +2945,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v24.8',
+  VERSION: 'v24.9',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -3303,6 +3303,25 @@ window.__instantDashUnderstand = (function(){
     const fullVal = aggregateColumn('Sales', t6full).value;
     const filteredVal = aggregateColumn('Sales', t6filtered).value;
     results.push({name:'6. Filtering recalculates (full 60 vs filtered 10)', actual:filteredVal, expected:10, pass: filteredVal===10 && fullVal===60});
+    // Test 7 — simulate the central engine being unavailable. Every
+    // consumer touched in v24.9 (miMetricValue, metricValue, vals,
+    // aggregate) must return null, never silently fall back to an
+    // independently recalculated SUM/AVG/LATEST.
+    (function(){
+      const saved = window.__instantDashAggregate;
+      try{
+        window.__instantDashAggregate = undefined;
+        const t7rows = [{Sales:10},{Sales:20},{Sales:30}];
+        const checks = [];
+        if (typeof miMetricValue==='function') checks.push(['miMetricValue', miMetricValue(t7rows,'Sales')]);
+        if (typeof metricValue==='function' && typeof state!=='undefined') { try{ checks.push(['metricValue', metricValue(t7rows,'Sales')]); }catch(_){ } }
+        if (typeof vals==='function') checks.push(['vals', vals(t7rows,'Sales')]);
+        const allNull = checks.every(c => c[1]===null || c[1]===undefined);
+        results.push({name:'7. Engine unavailable → consumers return null, not a fallback sum ('+checks.map(c=>c[0]+':'+c[1]).join(', ')+')', actual: allNull, expected:true, pass: allNull});
+      } finally {
+        window.__instantDashAggregate = saved;
+      }
+    })();
     const allPass = results.every(r => r.pass);
     console.log('%cInstantDash calculation regression suite: ' + (allPass?'ALL PASS':'FAILURES FOUND'), 'font-weight:bold;color:'+(allPass?'#2E8B57':'#E2582B'));
     console.table(results);
@@ -4746,14 +4765,15 @@ function aggregate(rows, spec){
     // this is the explicit, architectural "figure it out semantically"
     // signal automatic chart generation should use, rather than a bare
     // 'sum' that happens to get intercepted.
-    if ((requested==null || requested==='auto') && canClassify){
+    if (requested==null || requested==='auto'){
+      if (!canClassify) return '__unavailable__';
       try{
         const mtype = window.__instantDashClassifyType(spec.y);
         const mode = window.__instantDashAggMode(spec.y, mtype);
         if (mode==='avg') return 'avg';
         if (mode==='balance') return 'latest';
-      }catch(_){ }
-      return 'sum';
+        return 'sum';
+      }catch(_){ return '__unavailable__'; }
     }
     // An explicit 'sum' request is still checked — summing a balance or
     // percentage is never mathematically valid, no matter who asked for
@@ -4805,6 +4825,7 @@ function aggregate(rows, spec){
   const finish = (acc) => {
     if (!acc) return null;
     switch (agg){
+      case '__unavailable__': return null;
       case 'count':    return acc.n;
       case 'distinct': return acc.set ? acc.set.size : 0;
       case 'avg':      return acc.n ? acc.sum / acc.n : null;
@@ -6062,24 +6083,13 @@ function miAggMode(name){
   return 'sum';
 }
 function miMetricValue(rows,col){
-  /* v24.5 — thin wrapper around the central engine (per the explicit
-     v24.5 requirement). miNum() used the identical strict numeric check
-     the central engine already uses, so this cannot change any existing
-     result — it only removes a second, independent implementation of
-     the same sum/avg/latest math. */
-  if (typeof window.__instantDashAggregate==='function'){
-    try{
-      const agg=window.__instantDashAggregate(col, rows);
-      if (agg && agg.count) return agg.value;
-      return null;
-    }catch(_){ }
-  }
-  const vals=rows.map(r=>miNum(r[col])).filter(v=>v!==null);
-  if(!vals.length)return null;
-  const mode=miAggMode(col);
-  if(mode==='avg') return vals.reduce((a,b)=>a+b,0)/vals.length;
-  if(mode==='balance') return vals[vals.length-1];
-  return vals.reduce((a,b)=>a+b,0);
+  /* v24.9 — no fallback. If the central engine is unavailable or fails,
+     this returns null rather than independently recalculating. */
+  if (typeof window.__instantDashAggregate!=='function') return null;
+  try{
+    const agg=window.__instantDashAggregate(col, rows);
+    return (agg && agg.count) ? agg.value : null;
+  }catch(_){ return null; }
 }
 function miSum(rows,col){ return miMetricValue(rows,col) ?? 0; }
 function miChange(a,b){ return {abs:b-a,pct:a!==0?(b-a)/Math.abs(a):null}; }
@@ -10434,18 +10444,13 @@ function metricValue(rows,m){
  var metaM=state.model.measures.find(function(x){return x.name===m})||{name:m,agg:'auto'};
  if(metaM.agg==='count')return rows.filter(function(r){var v=r[m];return v!==null&&v!==undefined&&String(v).trim()!==''}).length;
  if(metaM.agg==='unique')return new Set(rows.map(function(r){return String(r[m]??'')}).filter(function(v){return v!==''})).size;
- /* v24.7 — thin wrapper around the central engine. Previously this
-    always summed regardless of what agg said (even 'auto'), making it a
-    fourth independent calculation path. */
- if(typeof window.__instantDashAggregate==='function'){
-   try{
-     var agg=window.__instantDashAggregate(m,rows);
-     if(agg && agg.count) return agg.value;
-     return 0;
-   }catch(_){ }
- }
- var vals=rows.map(function(r){return num(r[m])}).filter(isFinite);
- return vals.reduce(function(a,b){return a+b},0);
+ /* v24.9 — no fallback. If the central engine is unavailable or fails,
+    this returns null rather than independently recalculating. */
+ if(typeof window.__instantDashAggregate!=='function') return null;
+ try{
+   var agg=window.__instantDashAggregate(m,rows);
+   return (agg && agg.count) ? agg.value : null;
+ }catch(_){ return null; }
 }
 function seriesData(){
  var a=aggregate(),ps=state.params.filter(Boolean),series=[];
@@ -10597,14 +10602,14 @@ function aggregate(rs,group,measure){
   keys.sort(function(a,b){return sortKey(a,b,time)});
   var mode='sum', valueCache={};
   keys.forEach(function(k){
-    if(typeof window.__instantDashAggregate==='function'){
-      try{
-        var agg=window.__instantDashAggregate(measure, groups[k]);
-        if(agg){ mode=agg.mode==='balance'?'balance':(agg.mode==='avg'?'avg':'sum'); valueCache[k]=agg.count?agg.value:0; return; }
-      }catch(_){ }
-    }
-    var nums=groups[k].map(function(r){return n(r[measure]);}).filter(isFinite);
-    valueCache[k]=nums.reduce(function(a,b){return a+b;},0);
+    /* v24.9 — no fallback. If the central engine can't produce a value
+       for this group, it's null, not an independently recalculated sum. */
+    if(typeof window.__instantDashAggregate!=='function'){ valueCache[k]=null; return; }
+    try{
+      var agg=window.__instantDashAggregate(measure, groups[k]);
+      if(agg){ mode=agg.mode==='balance'?'balance':(agg.mode==='avg'?'avg':'sum'); valueCache[k]=agg.count?agg.value:null; }
+      else valueCache[k]=null;
+    }catch(_){ valueCache[k]=null; }
   });
   var valueFor=function(k){ return valueCache[k]; };
   if(!time&&keys.length>12){keys.sort(function(a,b){return Math.abs(valueFor(b))-Math.abs(valueFor(a))});keys=keys.slice(0,12)}
@@ -11437,18 +11442,13 @@ function ensureOptions(){
 }
 function vals(rs,n,agg){
  if(agg==='count')return rs.filter(function(r){var v=r[n];return v!==null&&v!==undefined&&String(v).trim()!==''}).length;
- /* v24.7 — full thin wrapper: the sum/avg/latest decision AND the actual
-    math are both now delegated to the central engine, rather than this
-    function re-implementing the arithmetic after just borrowing the
-    mode decision. */
- if(typeof window.__instantDashAggregate==='function'){
-   try{
-     var result=window.__instantDashAggregate(n, rs);
-     if(result) return result.count ? result.value : 0;
-   }catch(_){ }
- }
- var nums=rs.map(function(r){return num(r[n])}).filter(isFinite);
- return nums.reduce(function(a,b){return a+b},0);
+ /* v24.9 — no fallback. If the central engine is unavailable or fails,
+    this returns null rather than independently recalculating. */
+ if(typeof window.__instantDashAggregate!=='function') return null;
+ try{
+   var result=window.__instantDashAggregate(n, rs);
+   return (result && result.count) ? result.value : null;
+ }catch(_){ return null; }
 }
 function grouped(f,group,measure){
  if(!group)return [{label:'Overall',rows:f.rs}];
