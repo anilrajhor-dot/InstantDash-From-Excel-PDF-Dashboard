@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v25.0.6","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.0.7","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
@@ -188,6 +188,7 @@ main{max-width:1360px;margin:0 auto;padding:24px}
 .mac-title{font-size:15px;font-weight:800;letter-spacing:-.01em}
 .mac-hint{font-size:11px;color:var(--muted);line-height:1.45}
 .mac-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.mac-grid:has(.mac-focus-card){grid-template-columns:1fr}
 .mac-card{border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:14px;background:var(--card-2);padding:13px;min-width:0}
 .mac-card.attention{border-left-color:var(--accent-2)}
 .mac-card.performance{border-left-color:var(--ok)}
@@ -214,7 +215,44 @@ main{max-width:1360px;margin:0 auto;padding:24px}
 .mac-buttons button{border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:9px;padding:7px 9px;font-size:10px;font-weight:800;cursor:pointer}
 .mac-buttons button.primary{background:var(--accent);color:#111;border-color:var(--accent)}
 .mac-empty{padding:13px;border:1px dashed var(--border);border-radius:12px;color:var(--muted);font-size:11px}
+
+/* v26.0 — Focus/Investigate/Act/Monitor single-card format */
+.mac-focus-card{border:1px solid var(--border);border-radius:16px;background:var(--card);padding:18px}
+.mac-focus-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.mac-focus-badge{font-size:11px;font-weight:800;padding:5px 11px;border-radius:999px}
+.mac-focus-badge.attention{background:color-mix(in srgb,var(--warn) 16%,transparent);color:var(--warn)}
+.mac-focus-badge.performance{background:color-mix(in srgb,var(--ok) 16%,transparent);color:var(--ok)}
+.mac-focus-kpi{font-size:16px;font-weight:900;letter-spacing:-.01em}
+.mac-focus-steps{display:flex;flex-direction:column;gap:12px}
+.mac-focus-step{display:flex;gap:12px;align-items:flex-start}
+.mac-focus-num{flex:0 0 auto;width:24px;height:24px;border-radius:50%;background:var(--accent);color:#151515;font-size:12px;font-weight:900;display:flex;align-items:center;justify-content:center}
+.mac-focus-label{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.mac-focus-text{font-size:13px;line-height:1.5;margin-top:2px;color:var(--text)}
 @media(max-width:900px){.mac-grid{grid-template-columns:1fr 1fr}}
+
+/* v26.0 — What to Watch Next list */
+.v26-watch-list{display:flex;flex-direction:column;gap:8px}
+.v26-watch-item{display:flex;gap:11px;align-items:flex-start;padding:11px 13px;border-radius:12px;background:var(--card-2);border:1px solid var(--border)}
+.v26-watch-icon{font-size:16px;flex:0 0 auto;line-height:1.3}
+.v26-watch-type{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.v26-watch-what{font-size:12.5px;font-weight:800;margin-top:2px}
+.v26-watch-why{font-size:11px;line-height:1.45;color:var(--text);margin-top:3px}
+
+/* v26.0 — "Why?" single-movement evidence panel */
+.v26-why-overlay{position:fixed;inset:0;z-index:99996;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.5);padding:16px}
+.v26-why-overlay.on{display:flex}
+.v26-why-card{width:min(560px,100%);max-height:88vh;overflow-y:auto;background:var(--panel,var(--card));border:1px solid var(--border);border-radius:18px;padding:20px;box-shadow:0 20px 50px rgba(0,0,0,.3)}
+.v26-why-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:14px}
+.v26-why-kicker{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--accent)}
+.v26-why-head h3{margin:2px 0 0;font-size:18px;font-weight:900;letter-spacing:-.01em}
+.v26-why-close{border:1px solid var(--border);background:var(--card-2);color:var(--text);width:32px;height:32px;border-radius:50%;font-size:14px;cursor:pointer;flex:0 0 auto}
+.v26-why-field{margin-bottom:14px}
+.v26-why-field:last-child{margin-bottom:0}
+.v26-why-field b{display:block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:4px}
+.v26-why-field p{margin:0;font-size:13px;line-height:1.55;color:var(--text)}
+.v26-why-caution{padding:10px 12px;border-radius:10px;background:color-mix(in srgb,var(--warn) 10%,var(--card-2));border-left:3px solid var(--warn)}
+.v26-why-caution b{color:var(--warn)}
+.v26-why-btn{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:800;color:var(--accent);background:none;border:none;padding:0;margin-top:6px;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
 @media(max-width:640px){.mac-grid{grid-template-columns:1fr}.mac-card .mac-why{min-height:0}.mac-title{font-size:14px}}
 @media print{.management-action-centre{break-inside:avoid}.mac-grid{grid-template-columns:1fr 1fr}.mac-buttons{display:none}}
 
@@ -284,7 +322,8 @@ body.dark .landing-hero{box-shadow:0 18px 70px rgba(0,0,0,.42)}
 .kpi .val{font-family:Poppins,sans-serif;font-size:29px;font-weight:800;letter-spacing:-.02em;line-height:1.15;word-break:break-word}
 .kpi .lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-top:7px;font-weight:700}
 .kpi .sub{font-size:12px;color:var(--muted);margin-top:9px;padding-top:9px;border-top:1px dashed var(--border)}
-.kpi-trend{display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:800;padding:2px 8px;border-radius:999px;margin-left:8px;vertical-align:middle;letter-spacing:0}
+.kpi-trend{display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:800;padding:2px 8px;border-radius:999px;margin-left:8px;vertical-align:middle;letter-spacing:0;border:none;cursor:pointer;font-family:inherit}
+.kpi-trend:hover{filter:brightness(1.1)}
 .kpi-trend-good{background:color-mix(in srgb,var(--ok) 16%,transparent);color:var(--ok)}
 .kpi-trend-bad{background:color-mix(in srgb,var(--warn) 16%,transparent);color:var(--warn)}
 
@@ -353,6 +392,28 @@ body.dark .landing-hero{box-shadow:0 18px 70px rgba(0,0,0,.42)}
 .v25-status-card.v25-bad{background:color-mix(in srgb,var(--warn) 10%,var(--card));border-color:color-mix(in srgb,var(--warn) 35%,var(--border))}
 .v25-status-card.v25-bad .v25-status-value{color:var(--warn)}
 .v25-status-card.v25-neutral .v25-status-value{color:var(--text)}
+
+/* v26.0 — Data Context line: technical metadata demoted from KPI cards */
+.v26-data-context{font-size:11.5px;color:var(--muted);margin:0 0 10px;padding:8px 12px;background:var(--card-2);border-radius:8px;border:1px solid var(--border)}
+.v26-data-context b{color:var(--text);font-weight:700}
+
+/* v26.0 — Going Well / Needs Attention two-column executive view */
+.v26-gwa-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:0 0 16px}
+@media(max-width:760px){.v26-gwa-grid{grid-template-columns:1fr}}
+.v26-gwa-col{border-radius:16px;padding:16px;border:1px solid var(--border)}
+.v26-gwa-good{background:color-mix(in srgb,var(--ok) 6%,var(--card));border-color:color-mix(in srgb,var(--ok) 25%,var(--border))}
+.v26-gwa-bad{background:color-mix(in srgb,var(--warn) 6%,var(--card));border-color:color-mix(in srgb,var(--warn) 25%,var(--border))}
+.v26-gwa-head{font-size:14px;font-weight:900;letter-spacing:-.01em;margin-bottom:10px}
+.v26-gwa-item{background:var(--card);border-radius:12px;padding:11px 13px;margin-bottom:8px;border:1px solid var(--border)}
+.v26-gwa-item:last-child{margin-bottom:0}
+.v26-gwa-kpi{font-size:12.5px;font-weight:800}
+.v26-gwa-move{display:flex;align-items:center;gap:6px;margin-top:6px;font-size:12px;font-weight:700;color:var(--muted)}
+.v26-gwa-move .arrow{color:var(--muted);opacity:.6}
+.v26-gwa-change{margin-top:5px;font-size:15px;font-weight:900}
+.v26-gwa-change.good{color:var(--ok)}
+.v26-gwa-note{margin-top:6px;font-size:11px;line-height:1.5;color:var(--text)}
+.v26-gwa-note b{color:var(--muted);text-transform:uppercase;font-size:9px;letter-spacing:.05em;display:block;margin-bottom:2px}
+.v26-gwa-empty{font-size:12px;color:var(--muted);padding:6px 2px}
 
 ::-webkit-scrollbar{height:8px;width:8px}
 ::-webkit-scrollbar-track{background:transparent}
@@ -1321,7 +1382,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v25.0.6">
+<meta name="instantdash-build" content="v26.0.7">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2182,7 +2243,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v25.0.6';
+      s.textContent='v26.0.7';
       b.appendChild(s);
     }
   }
@@ -2240,8 +2301,8 @@ body{
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v25.0.6</span>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v25.0.6</span></div>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v26.0.7</span>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.0.7</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
       <button class="id-health-btn no-print" id="aiModeToggleBtn" type="button" aria-label="Real AI settings">🤖 Real AI: Off</button>
@@ -2330,6 +2391,60 @@ body{
         html += card('🔴','Attention', att, att>0 ? att+' item'+(att===1?'':'s')+' need'+(att===1?'s':'')+' review' : 'Nothing flagged for attention', attCls);
         html += card('🩺','Data Quality', completeness.toFixed(completeness===100?0:1)+'%', missing.toLocaleString('en-IN')+' missing cell'+(missing===1?'':'s'), dqCls);
         html += card('📊','Overall Status', status, 'Based on current comparable evidence', stCls);
+        body.innerHTML = html;
+      }
+      setInterval(render, 700);
+      if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', render);
+      else render();
+    })();
+    </script>
+
+    <section id="v26GoingWellAttention" class="no-print" hidden>
+      <div id="v26GWABody" class="v26-gwa-grid"></div>
+    </section>
+    <script id="instantdash-v26-gwa-wire">
+    (function(){
+      function esc4(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+      function stripHtml4(s){return String(s||'').replace(/<[^>]*>/g,'').trim();}
+      function facts(plain){
+        var m=plain.match(/(?:moved from|decreased from|increased from)\s+([^()]+?)\s+to\s+([^()]+?)\s+\(([+-]?(?:\d+(?:\.\d+)?))%\)/i);
+        if(!m) return null;
+        var pct=Number(m[3]);
+        return {from:m[1].trim(), to:m[2].trim(), change:(pct>=0?'+':'')+pct.toFixed(1)+'%'};
+      }
+      function titleFrom(plain){
+        var m=plain.match(/^([^:]+):/);
+        return m ? m[1].trim() : plain.split(' ')[0];
+      }
+      function render(){
+        var section=document.getElementById('v26GoingWellAttention');
+        var body=document.getElementById('v26GWABody');
+        if(!section||!body) return;
+        var mi=window.__miItems;
+        var hasData=!!(window.APP&&window.APP.rows&&window.APP.rows.length);
+        section.hidden=!hasData;
+        if(!hasData) return;
+        var perf=(mi&&Array.isArray(mi.performance))?mi.performance.slice(0,3):[];
+        var att=(mi&&Array.isArray(mi.attention))?mi.attention.slice(0,3):[];
+        var leftItems = perf.map(function(item){
+          var plain=stripHtml4(item), f=facts(plain), title=titleFrom(plain);
+          var whyBtn='<button type="button" class="v26-why-btn" data-why-kpi="'+esc4(title)+'">Why? →</button>';
+          return f
+            ? '<div class="v26-gwa-item"><div class="v26-gwa-kpi">'+esc4(title)+'</div><div class="v26-gwa-move"><span>'+esc4(f.from)+'</span><span class="arrow">→</span><span>'+esc4(f.to)+'</span></div><div class="v26-gwa-change good">'+esc4(f.change)+'</div>'+whyBtn+'</div>'
+            : '<div class="v26-gwa-item"><div class="v26-gwa-kpi">'+esc4(title)+'</div><div class="v26-gwa-note">'+esc4(plain.replace(/^([^:]+):\s*/,'').slice(0,140))+'</div>'+whyBtn+'</div>';
+        });
+        var rightItems = att.map(function(item){
+          var plain=stripHtml4(item), title=titleFrom(plain);
+          var evidence=plain.replace(/^([^:]+):\s*/,'');
+          var whyBtn='<button type="button" class="v26-why-btn" data-why-kpi="'+esc4(title)+'">Why? →</button>';
+          return '<div class="v26-gwa-item"><div class="v26-gwa-kpi">'+esc4(title)+'</div><div class="v26-gwa-note"><b>Evidence:</b> '+esc4(evidence.slice(0,160))+(evidence.length>160?'…':'')+'</div><div class="v26-gwa-note"><b>Why it matters:</b> This movement is directionally adverse based on the KPI meaning; review the underlying driver.</div>'+whyBtn+'</div>';
+        });
+        var html = '<div class="v26-gwa-col v26-gwa-good"><div class="v26-gwa-head">🟢 What is Going Well</div>'
+          + (leftItems.length ? leftItems.join('') : '<div class="v26-gwa-empty">No material favourable movement identified from the available evidence.</div>')
+          + '</div>';
+        html += '<div class="v26-gwa-col v26-gwa-bad"><div class="v26-gwa-head">🔴 What Needs Attention</div>'
+          + (rightItems.length ? rightItems.join('') : '<div class="v26-gwa-empty">🟢 No material adverse movement identified.</div>')
+          + '</div>';
         body.innerHTML = html;
       }
       setInterval(render, 700);
@@ -2522,6 +2637,7 @@ body{
         <span class="v23-brief-icon">🔊</span>
         <span class="v23-brief-text"><b>Brief me</b><span>Hear the full executive summary read aloud</span></span>
       </button>
+      <div id="v26DataContext" class="v26-data-context" hidden></div>
       <div class="kpi-grid" id="kpiRow"><div class="kpi"><div class="val">16</div><div class="lbl">Rows</div><div class="sub">15 columns</div></div><div class="kpi"><div class="val">3,018</div><div class="lbl">Total Staff Nominated</div><div class="sub">Average 188.63</div></div><div class="kpi alt"><div class="val">2,863</div><div class="lbl">Total Staff Attended</div><div class="sub">Average 178.94</div></div><div class="kpi"><div class="val">94.76</div><div class="lbl">Attendance Rate %</div><div class="sub">Average of 16 records</div></div><div class="kpi alt"><div class="val">4</div><div class="lbl">Distinct Region</div><div class="sub">most common: North</div></div></div>
     </div>
     <script id="instantdash-v23-brief-me">
@@ -2673,6 +2789,159 @@ body{
         </div>
         <div class="mac-grid" id="managementActionGrid"><div class="mac-empty">No material movement is currently established. Add a comparable period, target or linked KPI for stronger management review.</div></div>
       </div>
+
+      <section id="v26WatchNext" class="exec-card no-print" hidden>
+        <div class="mac-head">
+          <div><div class="exec-label">👁 What Management Should Watch Next</div><div class="mac-title">Up to 5 items, prioritised by type</div></div>
+        </div>
+        <div id="v26WatchNextBody" class="v26-watch-list"></div>
+      </section>
+      <script id="instantdash-v26-watch-wire">
+      (function(){
+        function esc5(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+        function stripHtml5(s){return String(s||'').replace(/<[^>]*>/g,'').trim();}
+        function titleFrom(plain){ var m=plain.match(/^([^:]+):/); return m?m[1].trim():plain.split(' ')[0]; }
+        function build(){
+          var items=[];
+          var mi=window.__miItems||{};
+          var app=window.APP||{};
+          var rows=app.filtered||app.rows||[];
+          try{
+            // 1. KPI at risk — the second-ranked attention item (the top
+            // one is already the Focus of the Action Centre above).
+            var att=Array.isArray(mi.attention)?mi.attention:[];
+            if(att.length>1){
+              var plain1=stripHtml5(att[1]);
+              items.push({icon:'⚠️',type:'KPI at risk',what:titleFrom(plain1),why:plain1.replace(/^([^:]+):\s*/,'').slice(0,140)});
+            }
+            // 2. Target gap — only if target/actual columns genuinely exist.
+            var targetCol=(app.columns||[]).find(function(c){return /target/i.test(c.name);});
+            var actualCol=(app.columns||[]).find(function(c){return /actual/i.test(c.name);});
+            if(targetCol && actualCol && typeof window.__instantDashAggregate==='function'){
+              var tAgg=window.__instantDashAggregate(targetCol.name, rows);
+              var aAgg=window.__instantDashAggregate(actualCol.name, rows);
+              if(tAgg&&tAgg.count&&aAgg&&aAgg.count){
+                var gapPct = tAgg.value ? ((aAgg.value-tAgg.value)/Math.abs(tAgg.value)*100) : null;
+                if(gapPct!=null) items.push({icon:'🎯',type:'Target gap',what:actualCol.name+' vs '+targetCol.name,why:'Currently '+(gapPct>=0?'+':'')+gapPct.toFixed(1)+'% versus target — confirm whether this gap is closing or widening next period.'});
+              }
+            }
+            // 3. Negative trend — a third distinct attention item, if one exists.
+            if(att.length>2){
+              var plain3=stripHtml5(att[2]);
+              items.push({icon:'📉',type:'Negative trend',what:titleFrom(plain3),why:plain3.replace(/^([^:]+):\s*/,'').slice(0,140)});
+            }
+            // 4. Regional/district variation — reusing the same category
+            // comparison already computed for the Action Centre.
+            var topMeasure=(typeof rankMeasures==='function')?rankMeasures()[0]:null;
+            var topDim=(app.columns||[]).find(function(c){return (c.role==='dimension'||c.role==='highdim');});
+            if(topMeasure && topDim && typeof window.__instantDashAggregate==='function'){
+              var groups={};
+              rows.forEach(function(r){ var k=String(r[topDim.name]??'Blank'); (groups[k]=groups[k]||[]).push(r); });
+              var vals=Object.keys(groups).map(function(k){ var g=window.__instantDashAggregate(topMeasure.name, groups[k]); return g&&g.count?{k:k,v:g.value}:null; }).filter(Boolean);
+              if(vals.length>=2){
+                vals.sort(function(a,b){return b.v-a.v;});
+                var spread=vals[0].v-vals[vals.length-1].v;
+                var scale=Math.max(Math.abs(vals[0].v),1e-9);
+                if(Math.abs(spread)/scale>0.05){
+                  items.push({icon:'🗺️',type:'Regional variation',what:topMeasure.name+' by '+topDim.name,why:vals[0].k+' leads at '+fmtByField(vals[0].v,topMeasure.name)+', '+vals[vals.length-1].k+' lowest at '+fmtByField(vals[vals.length-1].v,topMeasure.name)+' — a material spread worth investigating.'});
+                }
+              }
+            }
+            // 5. Data-quality issue — genuine missing-data or constant-column findings.
+            var missing=(app.columns||[]).filter(function(c){return (c.missingPct||0)>=10;});
+            if(missing.length){
+              items.push({icon:'🩺',type:'Data quality',what:missing[0].name,why:missing[0].missingPct.toFixed(0)+'% missing — conclusions involving this field should be treated with caution until resolved.'});
+            }
+          }catch(_){ }
+          return items.slice(0,5);
+        }
+        function render(){
+          var section=document.getElementById('v26WatchNext');
+          var body=document.getElementById('v26WatchNextBody');
+          if(!section||!body) return;
+          var app=window.APP||{};
+          var hasData=!!(app.rows&&app.rows.length);
+          section.hidden=!hasData;
+          if(!hasData) return;
+          var items=build();
+          body.innerHTML = items.length
+            ? items.map(function(it){ return '<div class="v26-watch-item"><span class="v26-watch-icon">'+it.icon+'</span><div><div class="v26-watch-type">'+esc5(it.type)+'</div><div class="v26-watch-what">'+esc5(it.what)+'</div><div class="v26-watch-why">'+esc5(it.why)+'</div></div></div>'; }).join('')
+            : '<div class="mac-empty">Nothing currently flagged to watch — no material risk, gap, trend, variation or data-quality issue was identified from the available evidence.</div>';
+        }
+        setInterval(render, 700);
+        if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', render);
+        else render();
+      })();
+      </script>
+
+      <div id="v26WhyPanel" class="v26-why-overlay" aria-hidden="true">
+        <div class="v26-why-card" role="dialog" aria-modal="true" aria-labelledby="v26WhyTitle">
+          <div class="v26-why-head">
+            <div><div class="v26-why-kicker">Why?</div><h3 id="v26WhyTitle">Loading…</h3></div>
+            <button type="button" class="v26-why-close" aria-label="Close">✕</button>
+          </div>
+          <div id="v26WhyBody" class="v26-why-body"></div>
+        </div>
+      </div>
+      <script id="instantdash-v26-why-wire">
+      (function(){
+        function esc6(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+        function stripHtml6(s){return String(s||'').replace(/<[^>]*>/g,'').trim();}
+        function findIn(arr, kpiName){
+          if(!Array.isArray(arr)) return null;
+          var nk=kpiName.toLowerCase();
+          for(var i=0;i<arr.length;i++){
+            var plain=stripHtml6(arr[i]);
+            if(plain.toLowerCase().indexOf(nk)>=0) return plain;
+          }
+          return null;
+        }
+        function openWhyPanel(kpiName){
+          var panel=document.getElementById('v26WhyPanel');
+          var title=document.getElementById('v26WhyTitle');
+          var body=document.getElementById('v26WhyBody');
+          if(!panel||!title||!body) return;
+          var mi=window.__miItems||{};
+          title.textContent=kpiName;
+          var whatChanged = findIn(mi.attention,kpiName) || findIn(mi.performance,kpiName);
+          var relatedDriver = findIn(mi.drivers,kpiName) || findIn(mi.relationships,kpiName);
+          var relatedKpis = [];
+          ['performance','attention'].forEach(function(bucket){
+            (mi[bucket]||[]).forEach(function(item){
+              var plain=stripHtml6(item);
+              if(plain.toLowerCase().indexOf(kpiName.toLowerCase())<0){
+                var m=plain.match(/^([^:]+):/);
+                if(m && relatedKpis.indexOf(m[1].trim())<0 && relatedKpis.length<3) relatedKpis.push(m[1].trim());
+              }
+            });
+          });
+          var action = (typeof miActionForKpi==='function') ? miActionForKpi(kpiName) : 'Review this measure against target, benchmark and related KPIs.';
+          var html='';
+          html+='<div class="v26-why-field"><b>What changed</b><p>'+(whatChanged?esc6(whatChanged.replace(/^([^:]+):\s*/,'')):'No comparable-period movement has been established for this measure from the available data.')+'</p></div>';
+          html+='<div class="v26-why-field"><b>Evidence</b><p>'+(whatChanged?'Based on the comparable period identified in the currently loaded dataset.':'Insufficient comparable evidence is currently available.')+'</p></div>';
+          html+='<div class="v26-why-field"><b>Related KPIs</b><p>'+(relatedKpis.length?esc6(relatedKpis.join(', ')):'No other measure was identified as moving alongside this one in the current data.')+'</p></div>';
+          html+='<div class="v26-why-field"><b>Possible driver</b><p>'+(relatedDriver?esc6(relatedDriver.replace(/^([^:]+):\s*/,'')):'No specific driver could be identified from the available data.')+'</p></div>';
+          html+='<div class="v26-why-field v26-why-caution"><b>⚠️ Is this proven?</b><p>Relationship observed; causation requires management validation. This is context and correlation only, not proof of cause.</p></div>';
+          html+='<div class="v26-why-field"><b>What to investigate</b><p>'+esc6(action)+'</p></div>';
+          body.innerHTML=html;
+          panel.classList.add('on');
+          panel.setAttribute('aria-hidden','false');
+        }
+        function closeWhyPanel(){
+          var panel=document.getElementById('v26WhyPanel');
+          if(panel){ panel.classList.remove('on'); panel.setAttribute('aria-hidden','true'); }
+        }
+        window.__openWhyPanel = openWhyPanel;
+        document.addEventListener('click', function(e){
+          var t=e.target;
+          var whyBtn = t.closest ? t.closest('[data-why-kpi]') : null;
+          if(whyBtn){ e.preventDefault(); openWhyPanel(whyBtn.getAttribute('data-why-kpi')); return; }
+          if(t.closest && t.closest('.v26-why-close')){ closeWhyPanel(); return; }
+          if(t.id==='v26WhyPanel') closeWhyPanel();
+        });
+        document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeWhyPanel(); });
+      })();
+      </script>
 
       <div class="exec-card tt-intel" id="trendTargetIntelligence">
         <div class="tt-head">
@@ -3048,7 +3317,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v25.0.6',
+  VERSION: 'v26.0.7',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -5612,7 +5881,7 @@ function kpiTrendBadge(measureName){
         if(!isFinite(pct)) continue;
         var up = pct >= 0;
         var cls = pools[p].favourable ? 'kpi-trend-good' : 'kpi-trend-bad';
-        return ' <span class="kpi-trend '+cls+'">'+(up?'▲':'▼')+' '+Math.abs(pct).toFixed(1)+'%</span>';
+        return ' <button type="button" class="kpi-trend '+cls+'" data-why-kpi="'+String(measureName).replace(/"/g,'&quot;')+'" title="Why? — tap for evidence">'+(up?'▲':'▼')+' '+Math.abs(pct).toFixed(1)+'%</button>';
       }
     }
   }catch(_){ }
@@ -5622,13 +5891,11 @@ function buildKPIs(){
   const rows = APP.filtered, all = APP.rows;
   const cards = [];
 
-  cards.push({val: rows.length.toLocaleString(), lbl:'Rows', sub: rows.length !== all.length ? `filtered from ${all.length.toLocaleString()}` : `${APP.columns.length} columns`});
-
-  // Aggregate the three most useful measures — EXCLUSIVELY through the
+  // Aggregate up to 4 business measures — EXCLUSIVELY through the
   // central engine. No independent calculation exists here any more: if
   // the engine can't produce a value, that's shown honestly rather than
   // computed some other way.
-  rankMeasures().slice(0, 3).forEach((c, i) => {
+  rankMeasures().slice(0, 4).forEach((c, i) => {
     const agg = (typeof window.__instantDashAggregate === 'function')
       ? window.__instantDashAggregate(c.name, rows)
       : null;
@@ -5671,10 +5938,11 @@ function buildKPIs(){
   });
 
   const topDim = rankDimensions()[0];
+  let dimText = '';
   if (topDim){
     const s = new Set();
     for (let r = 0; r < rows.length; r++){ const v = rows[r][topDim.name]; if (v !== null && v !== undefined && v !== '') s.add(v); }
-    cards.push({val: s.size.toLocaleString(), lbl: 'Distinct ' + topDim.name, sub: topDim.top[0] ? `most common: ${topDim.top[0].value}` : '', alt:true});
+    dimText = ` · ${s.size.toLocaleString()} ${topDim.name.toLowerCase()}${s.size===1?'':'s'}`;
   }
 
   const t = timeCols()[0];
@@ -5683,6 +5951,19 @@ function buildKPIs(){
     for (let r = 0; r < rows.length; r++){ const v = rows[r][t.name]; if (v instanceof Date && !isNaN(v)){ if (!lo || v < lo) lo = v; if (!hi || v > hi) hi = v; } }
     const days = (lo && hi) ? Math.round((hi - lo) / 86400000) + 1 : 0;
     cards.push({val: lo ? fmtDate(lo).replace(/,/,'') : '—', lbl: t.name + ' range', sub: hi ? `to ${fmtDate(hi)} · ${days.toLocaleString()} days` : ''});
+  }
+
+  // v26.0 — technical metadata (records/fields/dimension count/
+  // completeness) lives here, in a small line, not as prominent KPI
+  // cards competing for attention with actual business measures.
+  const dcEl = $('v26DataContext');
+  if (dcEl){
+    let missing=0; for(let ci=0; ci<APP.columns.length; ci++) missing += (APP.columns[ci].missing||0);
+    const cells = Math.max(1, rows.length*Math.max(1, APP.columns.length));
+    const completeness = Math.max(0, Math.min(100, (1-missing/cells)*100));
+    const filteredNote = rows.length !== all.length ? ` (filtered from ${all.length.toLocaleString()})` : '';
+    dcEl.innerHTML = `<b>${rows.length.toLocaleString()}</b> records${filteredNote} · <b>${APP.columns.length}</b> fields${dimText} · <b>${completeness.toFixed(completeness===100?0:1)}%</b> completeness`;
+    dcEl.hidden = !(all && all.length);
   }
 
   $('kpiRow').innerHTML = cards.slice(0, 6).map(c =>
@@ -6620,69 +6901,71 @@ function buildManagementActionCentre(items){
   if(!grid)return;
   const perf=Array.isArray(items?.performance)?items.performance:[];
   const att=Array.isArray(items?.attention)?items.attention:[];
-  const watch=Array.isArray(items?.contextual)?items.contextual:[];
   const clean=v=>miStrip(v||'');
-  const facts=plain=>{
-    const m=plain.match(/(?:moved from|decreased from|increased from)\s+([^()]+?)\s+to\s+([^()]+?)\s+\(([+-]?(?:\d+(?:\.\d+)?))%\)/i);
-    if(!m)return null;
-    return {from:m[1].trim(),to:m[2].trim(),change:(Number(m[3])>=0?'+':'')+Number(m[3]).toFixed(1)+'%',negative:Number(m[3])<0};
-  };
-  const score=item=>{
+  const titleFrom=plain=>{ const m=plain.match(/^([^:]+):/); return m?m[1].trim():plain.split(' ')[0]; };
+  const scoreOf=item=>{
     const p=clean(item);
     const m=p.match(/\(([+-]?(?:\d+(?:\.\d+)?))%\)/);
-    if(m)return Math.abs(Number(m[1]));
-    const pp=p.match(/from\s+([+-]?(?:\d+(?:\.\d+)?)%)\s+to\s+([+-]?(?:\d+(?:\.\d+)?)%)/i);
-    return pp?Math.abs(Number(pp[2])-Number(pp[1])):0;
+    return m ? Math.abs(Number(m[1])) : 0;
   };
-  const topOf=(arr,bucket)=>{
-    if(!arr.length)return null;
-    const ranked=arr.map((item,index)=>({item,index,bucket,score:score(item)})).sort((a,b)=>b.score-a.score||a.index-b.index);
-    return ranked[0];
-  };
-  /* v25.0 — exactly one slot per category (🔴 Attention, 🟢 Performance,
-     🟡 Watch — reusing the existing "contextual movements, do not
-     pre-classify" bucket, which was already the right evidence-honest
-     category for "watch this, don't act on it yet"), rather than a
-     single magnitude-ranked mix of just two buckets. */
-  const ranked=[topOf(att,'attention'),topOf(perf,'performance'),topOf(watch,'watch')].filter(Boolean);
-  if(!ranked.length){
+  /* v26.0 — FOCUS: the single highest-magnitude attention item, since
+     that's what genuinely deserves management's limited attention first.
+     Falls back to sustaining the top favourable movement if nothing
+     needs attention — never fabricated, always the real top mover. */
+  const attSorted=[...att].sort((a,b)=>scoreOf(b)-scoreOf(a));
+  const perfSorted=[...perf].sort((a,b)=>scoreOf(b)-scoreOf(a));
+  const focusItem = attSorted[0] || perfSorted[0] || null;
+  if(!focusItem){
     grid.innerHTML='<div class="mac-empty">No material movement is currently established. Add a comparable period, target or linked KPI for stronger management review.</div>';
     return;
   }
-  const actionFor=(entry,plain)=>{
-    const n=plain.toLowerCase();
-    if(entry.bucket==='attention'){
-      if(/rate|denial|rejection|failure|complaint|error|risk|incident|claim|backlog|outstanding|pending/.test(n)) return 'Investigate the underlying cases, rate/intensity and supporting operational KPI before deciding corrective action.';
-      if(/cost|expense|spend|salary|wage/.test(n)) return 'Investigate cost composition, workload/output, operating scale and the approved budget or target.';
-      return 'Investigate the underlying activity, mix, quality and supporting KPI; confirm the business reason before taking corrective action.';
-    }
-    if(entry.bucket==='watch') return 'Not yet classified as favourable or adverse from the available data. Review against the closest supporting KPI before drawing a conclusion.';
-    if(/cost|expense|spend/.test(n)) return 'Sustain only after confirming output, scale, mix and quality are comparable; record the efficiency driver.';
-    return 'Validate that the improvement is sustained and supported by the closest volume, quality, productivity or target KPI.';
-  };
-  const titleFor=(plain,bucket)=>{
-    const m=plain.match(/^([^:]+):/);
-    return (m?m[1]:plain.split(' moved from ')[0]).replace(/[:\s]+$/,'').trim() || (bucket==='attention'?'Attention movement':bucket==='watch'?'Movement to watch':'Favourable movement');
-  };
-  const iconFor=bucket=>bucket==='attention'?'🔴':bucket==='performance'?'🟢':'🟡';
-  const labelFor=bucket=>bucket==='attention'?'Attention':bucket==='performance'?'Performance':'Watch';
-  grid.innerHTML=ranked.map((entry,i)=>{
-    const plain=clean(entry.item), f=facts(plain);
-    const title=titleFor(plain,entry.bucket);
-    const whyText=plain.replace(/^([^:]+):\s*/,'').slice(0,220)+(plain.replace(/^([^:]+):\s*/,'').length>220?'…':'');
-    const action=actionFor(entry,plain);
-    return `<article class="mac-card ${entry.bucket}">
-      <div class="mac-top"><div><div class="mac-kpi">${iconFor(entry.bucket)} ${esc(title)}</div><div class="mac-status">${labelFor(entry.bucket)}</div></div><span class="mac-rank">Priority ${i+1}</span></div>
-      <div class="mac-field"><b>What:</b> ${esc(title)}${f?` — ${esc(f.from)} → ${esc(f.to)} (${esc(f.change)})`:''}</div>
-      <div class="mac-field"><b>Why:</b> ${esc(whyText)}</div>
-      ${f?`<div class="mac-movement"><div><small>FROM</small><b>${esc(f.from)}</b></div><div class="arrow">→</div><div><small>TO</small><b>${esc(f.to)}</b></div></div><div class="mac-change">Evidence: change ${esc(f.change)}</div>`:'<div class="mac-field"><b>Evidence:</b> Based on the comparable period available in the current data.</div>'}
-      <div class="mac-action"><b>Recommended action:</b> ${esc(action)}</div>
-      <div class="mac-buttons">
-        <button type="button" class="primary mac-details" data-mac-bucket="${entry.bucket}">View details</button>
-        <button type="button" class="mac-raw">Underlying data</button>
-      </div>
-    </article>`;
-  }).join('');
+  const isAttention = attSorted.length>0 && focusItem===attSorted[0];
+  const focusPlain = clean(focusItem);
+  const focusKpi = titleFrom(focusPlain);
+
+  /* INVESTIGATE — find the worst-performing category for the focus KPI,
+     using the same central aggregation engine as everywhere else, so
+     this is a genuine comparison, not a template sentence. */
+  const investigate = (()=>{
+    try{
+      const rows = APP.filtered||[];
+      const dims = (APP.columns||[]).filter(c=>(c.role==='dimension'||c.role==='highdim') && c.name!==focusKpi);
+      if(!dims.length || typeof window.__instantDashAggregate!=='function') return null;
+      const dim = dims[0];
+      const overall = window.__instantDashAggregate(focusKpi, rows);
+      if(!overall || !overall.count) return null;
+      const groups = {};
+      rows.forEach(r=>{ const k=String(r[dim.name]??'Blank'); (groups[k]=groups[k]||[]).push(r); });
+      const below = [];
+      Object.keys(groups).forEach(k=>{
+        const g = window.__instantDashAggregate(focusKpi, groups[k]);
+        if(g && g.count && g.value < overall.value) below.push({k, value:g.value});
+      });
+      if(!below.length) return null;
+      below.sort((a,b)=>a.value-b.value);
+      return `${dim.name}s with ${focusKpi} below the overall average (${fmtByField(overall.value,focusKpi)}) — ${below[0].k} is currently lowest at ${fmtByField(below[0].value,focusKpi)}.`;
+    }catch(_){ return null; }
+  })() || `The specific operational driver behind this ${isAttention?'movement':'improvement'} in ${focusKpi} — no comparison dimension was reliably available in this dataset.`;
+
+  /* ACT — reuses the same specific, KPI-keyword-matched advice already
+     proven in Management Insights, so Focus and Action never disagree. */
+  const act = isAttention ? miActionForKpi(focusKpi) : `Confirm what drove this improvement in ${focusKpi} and convert it into a repeatable practice; ${miActionForKpi(focusKpi).charAt(0).toLowerCase()}${miActionForKpi(focusKpi).slice(1)}`;
+
+  const monitor = `${focusKpi} next reporting period${investigate.includes('lowest at')?', with particular attention to the region identified above':''}.`;
+
+  grid.innerHTML = `<article class="mac-focus-card">
+    <div class="mac-focus-head"><span class="mac-focus-badge ${isAttention?'attention':'performance'}">${isAttention?'🔴':'🟢'} ${isAttention?'Attention':'Sustain performance'}</span><span class="mac-focus-kpi">${esc(focusKpi)}</span></div>
+    <div class="mac-focus-steps">
+      <div class="mac-focus-step"><div class="mac-focus-num">1</div><div><div class="mac-focus-label">Focus</div><div class="mac-focus-text">${esc(focusKpi)}</div></div></div>
+      <div class="mac-focus-step"><div class="mac-focus-num">2</div><div><div class="mac-focus-label">Investigate</div><div class="mac-focus-text">${esc(investigate)}</div></div></div>
+      <div class="mac-focus-step"><div class="mac-focus-num">3</div><div><div class="mac-focus-label">Act</div><div class="mac-focus-text">${esc(act)}</div></div></div>
+      <div class="mac-focus-step"><div class="mac-focus-num">4</div><div><div class="mac-focus-label">Monitor</div><div class="mac-focus-text">${esc(monitor)}</div></div></div>
+    </div>
+    <div class="mac-buttons">
+      <button type="button" class="primary mac-details" data-mac-bucket="${isAttention?'attention':'performance'}">View details</button>
+      <button type="button" class="mac-raw">Underlying data</button>
+    </div>
+  </article>`;
   grid.querySelectorAll('.mac-details').forEach(btn=>btn.onclick=()=>{
     if(typeof window.__openMovementDetails==='function') window.__openMovementDetails(btn.dataset.macBucket);
   });
@@ -6848,7 +7131,19 @@ function miAddOperationalRelationships(rows, lr, items){
 
 function buildManagementInsights(){
   const grid=$('managementInsightsGrid'); if(!grid)return;
-  const rows=APP.filtered||[]; if(!rows.length){grid.innerHTML=miCard('Management view',[],'neutral');return;}
+  const rows=APP.filtered||[];
+  if(!rows.length){
+    /* v26.0 — data isolation: explicitly reset the shared globals here,
+       not just the grid HTML. Every newer section (Status Strip, Going
+       Well/Attention, Watch Next, Why panel, Brief Me, KPI trend badges)
+       reads window.__miItems/__miStatus directly, and without this reset
+       they would keep showing the previous file's analysis during a
+       zero-row state (Clear Data, or a momentary gap mid-upload). */
+    window.__miItems={performance:[],attention:[],contextual:[],drivers:[],relationships:[],actions:[]};
+    window.__miStatus='Limited evidence';
+    grid.innerHTML=miCard('Management view',[],'neutral');
+    return;
+  }
   const items={performance:[],attention:[],contextual:[],drivers:[],relationships:[],actions:[]};
   const dateCol=timeCols()[0];
   const lr=miLatestPeriodRows(rows,dateCol);
@@ -7838,6 +8133,7 @@ function wireRest(){
     var msg = n>1 ? ('This will clear all '+n+' loaded departments and return to the start screen. This cannot be undone.') : 'This will clear the loaded data and return to the start screen. This cannot be undone.';
     if(!window.confirm(msg)) return;
     try{ resetDataForNewFile(); }catch(_){ }
+    try{ window.__miItems={performance:[],attention:[],contextual:[],drivers:[],relationships:[],actions:[]}; window.__miStatus='Limited evidence'; }catch(_){ }
     try{ window.__instantDashDepartments = []; window.__instantDashActiveDeptId = null; if(typeof idRenderDeptTabs==='function') idRenderDeptTabs(); }catch(_){ }
     try{ if(typeof window.__instantDashResetAskAIForNewFile==='function') window.__instantDashResetAskAIForNewFile(); }catch(_){ }
     $('app').hidden = true;
@@ -12349,6 +12645,33 @@ function answer(q){
   if(col&&/current|latest|present|now|today/.test(ql))return '<b>Latest '+esc(col.k)+':</b> '+fmt(col.v[col.v.length-1],col.k)+'.';
   if(col&&/first|earliest|initial/.test(ql))return '<b>First '+esc(col.k)+':</b> '+fmt(col.v[0],col.k)+'.';
   if(col&&/change|changed|trend|movement|compare|comparison|versus| vs /.test(' '+ql+' ')){var z=movement(col);return '<b>Trend for '+esc(col.k)+':</b> '+fmt(z.a,col.k)+' → '+fmt(z.b,col.k)+(isFinite(z.p)?' ('+(z.p>=0?'+':'')+z.p.toFixed(1)+'%).':'. The starting value is zero or unreliable, so a percentage change is not meaningful here.');}
+  if(/biggest.*concern|management concern|main concern/.test(ql))return topIssues();
+  if(/which kpi.*focus|focus on first|focus.*first/.test(ql)){
+    var focusAtt=(window.__miItems&&window.__miItems.attention&&window.__miItems.attention[0])?window.__miItems.attention[0]:null;
+    var focusPerf=(window.__miItems&&window.__miItems.performance&&window.__miItems.performance[0])?window.__miItems.performance[0]:null;
+    var focusItem=focusAtt||focusPerf;
+    if(!focusItem)return '<b>Which KPI should I focus on first?</b><br>No material movement has been established yet from the available evidence — add a comparable period, target or linked KPI for a confident recommendation.';
+    var fm=String(focusItem).replace(/<[^>]+>/g,'');
+    return '<b>Which KPI should I focus on first?</b><br>'+esc(fm)+(focusAtt?' This is the highest-priority item because it needs management attention.':' This is the strongest positive movement worth sustaining.');
+  }
+  if(/evidence.*support|support.*conclusion|what evidence/.test(ql)){
+    var evLines=[];
+    if(window.__miItems){
+      if(window.__miItems.relationships&&window.__miItems.relationships[0])evLines.push(String(window.__miItems.relationships[0]).replace(/<[^>]+>/g,''));
+      if(window.__miItems.drivers&&window.__miItems.drivers[0])evLines.push(String(window.__miItems.drivers[0]).replace(/<[^>]+>/g,''));
+    }
+    return '<b>What evidence supports this conclusion?</b><br>'+(evLines.length?evLines.join('<br>'):'Limited supporting evidence is currently available — add a comparable period, target or linked KPI to strengthen the basis for management conclusions.')+'<br><br>Relationship observed; causation requires management validation.';
+  }
+  if(/conclusion reliable|reliable.*conclusion|how reliable|confidence.*level/.test(ql)){
+    var u=(typeof window.__instantDashUnderstand==='function')?window.__instantDashUnderstand():null;
+    if(!u)return '<b>Is the conclusion reliable?</b><br>Confidence could not be assessed for the currently loaded data.';
+    return '<b>Is the conclusion reliable?</b><br>Confidence: <b>'+esc(u.confidenceLabel)+'</b> ('+u.confidence+'/100). Based on '+u.usableMeasures.length+' of '+u.measures.length+' detected measures having enough coverage and variation to be trusted, and '+(u.dateFields.length?'a date field being available for trend analysis.':'no date field being available, which limits trend analysis.');
+  }
+  if(/information.*missing|what.*missing|data.*gap|missing.*data/.test(ql)){
+    var missCols=(APP.columns||[]).filter(function(c){return (c.missingPct||0)>0;}).sort(function(a,b){return (b.missingPct||0)-(a.missingPct||0);});
+    if(!missCols.length)return '<b>What information is missing?</b><br>No missing values were detected in the currently loaded data. However, no comparable period, target or benchmark may be present — check Data Understanding for full context.';
+    return '<b>What information is missing?</b><br>'+missCols.slice(0,5).map(function(c){return esc(c.name)+': '+(c.missingPct||0).toFixed(0)+'% missing';}).join('<br>');
+  }
   if(/dataset|data|records|rows|fields/.test(ql))return '<b>Current dataset:</b> '+rs.length.toLocaleString('en-IN')+' rows and '+keys.length+' fields. Analysis uses the currently loaded dataset only.';
   if(col){var cm=movement(col);return '<b>Analysis of '+esc(col.k)+'</b><br>First available value: '+fmt(cm.a,col.k)+'. Latest available value: '+fmt(cm.b,col.k)+'. Change: '+(isFinite(cm.p)?(cm.p>=0?'+':'')+cm.p.toFixed(1)+'%.':'not meaningful — the starting value is zero or unreliable.')+' Ask about target, reason, improvement, cost, trend, average, highest or lowest.';}
   if(mv.length)return '<b>Analysis of the current dataset</b><br>The largest measurable movement is <b>'+esc(mv[0].x.k)+'</b>: '+fmt(mv[0].a,mv[0].x.k)+' → '+fmt(mv[0].b,mv[0].x.k)+' ('+(mv[0].p>=0?'+':'')+mv[0].p.toFixed(1)+'%). The data shows the movement but does not by itself prove the cause.';
@@ -12400,6 +12723,23 @@ function show(q){
 }
 
 window.__instantDashAskMeAnswer=show;
+
+/* v26.0 — data isolation fix: this function was called from three
+   places (new upload, department switch, Clear Data) but never actually
+   defined anywhere, so window.__instantDashResetAskAIForNewFile was
+   silently a no-op every time. This meant Ask AI's previous question and
+   answer text could remain visible after loading a new file or clearing
+   data — exactly the stale-data problem flagged as critical. */
+window.__instantDashResetAskAIForNewFile = function(){
+  try{
+    var answerBox = document.getElementById('ai48Answer');
+    if(answerBox){ answerBox.innerHTML=''; answerBox.classList.remove('show','busy'); }
+    var input = document.getElementById('ai48Input');
+    if(input) input.value='';
+    var copyBtn = document.getElementById('ai48Copy');
+    if(copyBtn){ copyBtn.style.display='none'; copyBtn.textContent='📋 Copy answer'; }
+  }catch(_){ }
+};
 
 /* v22.9 — Copy answer button. A MutationObserver (rather than hooking every
    branch inside show()) means this works no matter which path populated
@@ -12521,6 +12861,13 @@ function mountAskMe(){
     '<button type="button" class="ai48-q">Why did performance fall?</button>'+ 
     '<button type="button" class="ai48-q">Which region needs attention?</button>'+ 
     '<button type="button" class="ai48-q">What should management do?</button>'+ 
+    '<button type="button" class="ai48-q">Why did this KPI change?</button>'+ 
+    '<button type="button" class="ai48-q">What is the biggest management concern?</button>'+ 
+    '<button type="button" class="ai48-q">Which KPI should I focus on first?</button>'+ 
+    '<button type="button" class="ai48-q">What should management do tomorrow?</button>'+ 
+    '<button type="button" class="ai48-q">What evidence supports this conclusion?</button>'+ 
+    '<button type="button" class="ai48-q">Is the conclusion reliable?</button>'+ 
+    '<button type="button" class="ai48-q">What information is missing?</button>'+ 
     '</div>'+ 
     '<div class="ai48-row"><input id="ai48Input" class="ai48-input" autocomplete="off" placeholder="Type your own question about this dataset…" aria-label="Ask Executive AI a question"><button type="button" id="ai48Ask" class="ai48-ask">Ask</button></div><div id="ai48Answer" class="ai48-answer" aria-live="polite"></div><button type="button" id="ai48Copy" class="btn sm no-print" style="display:none;margin-top:8px">📋 Copy answer</button>';
   document.body.appendChild(p);
