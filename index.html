@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.0.8","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.0.9","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
@@ -1370,6 +1370,10 @@ html,body{overflow-anchor:none!important;}
 #v21CombinedOut .ai-chart-card h4{color:var(--accent-2,var(--accent))}
 .ai-chart-foot{margin-top:7px;font-size:10px;color:var(--muted);line-height:1.35}
 .ai-chart-so-what{margin-top:8px;padding:8px 10px;border-radius:8px;background:var(--card-2);border-left:3px solid var(--accent);font-size:11.5px;font-weight:700;color:var(--text);line-height:1.4}
+.chart-tap-cmp{display:inline-flex;align-items:center;gap:2px;font-size:10px;font-weight:800;padding:2px 6px;border-radius:999px;margin-left:6px}
+.chart-tap-cmp.good{background:color-mix(in srgb,var(--ok) 16%,transparent);color:var(--ok)}
+.chart-tap-cmp.bad{background:color-mix(in srgb,var(--warn) 16%,transparent);color:var(--warn)}
+.chart-tap-why{display:inline-block;margin-left:8px;background:none;border:none;padding:0;font-size:10.5px;font-weight:800;color:var(--accent);cursor:pointer;text-decoration:underline;text-underline-offset:2px}
 .ai-empty{padding:28px 12px;text-align:center;color:var(--muted);font-size:12px;border:1px dashed var(--border);border-radius:12px}
 .ai-chart-overlay{position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:100000;display:none;align-items:center;justify-content:center;padding:12px}
 .ai-chart-overlay.open{display:flex}
@@ -1382,7 +1386,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v26.0.8">
+<meta name="instantdash-build" content="v26.0.9">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2248,7 +2252,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v26.0.8';
+      s.textContent='v26.0.9';
       b.appendChild(s);
     }
   }
@@ -2308,10 +2312,10 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v26.0.8</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v26.0.9</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.0.8</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.0.9</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
       <button class="id-health-btn no-print" id="aiModeToggleBtn" type="button" aria-label="Real AI settings">🤖 Real AI: Off</button>
@@ -3416,7 +3420,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v26.0.8',
+  VERSION: 'v26.0.9',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -5961,6 +5965,43 @@ function deep(a, b){
    up/down % badge on any KPI card whose measure has a known movement —
    turns a flat number into an at-a-glance signal, with zero new analysis
    logic and zero extra computation cost. */
+/* v26.0.9 — returns just the comparative badge + "Why?" link for a
+   measure, as a small HTML fragment. Shared by chartTapDetailHtml()
+   below and directly by chart engines that build their own base text. */
+function chartTapExtraHtml(measureName){
+  var extra = '';
+  try{
+    var mi = window.__miItems;
+    if(mi && measureName){
+      var pools = [{arr:mi.performance, cls:'good'}, {arr:mi.attention, cls:'bad'}];
+      for(var p=0; p<pools.length; p++){
+        var arr = pools[p].arr || [];
+        for(var i=0; i<arr.length; i++){
+          var item = String(arr[i]);
+          var m = item.match(/^<b>(.*?)<\/b>/);
+          if(!m) continue;
+          var name = m[1].replace(/<[^>]+>/g,'').trim();
+          if(name.toLowerCase() !== String(measureName).toLowerCase()) continue;
+          var pctMatch = item.match(/\(([+-]?[\d.]+)%\)/);
+          if(pctMatch){
+            extra += ' <span class="chart-tap-cmp '+(pools[p].cls==='good'?'good':'bad')+'">'+(Number(pctMatch[1])>=0?'▲':'▼')+' '+Math.abs(Number(pctMatch[1])).toFixed(1)+'% vs prior period</span>';
+          }
+          p = pools.length; break;
+        }
+      }
+    }
+  }catch(_){ }
+  if(typeof window.__openWhyPanel==='function'){
+    var esc9b = (typeof esc==='function') ? esc : function(s){return String(s==null?'':s);};
+    extra += ' <button type="button" class="chart-tap-why" data-why-kpi="'+esc9b(measureName)+'">Why? →</button>';
+  }
+  return extra;
+}
+function chartTapDetailHtml(measureName, labelText, valueText){
+  var esc9 = (typeof esc==='function') ? esc : function(s){return String(s==null?'':s);};
+  var base = esc9(niceName(measureName)) + ' · ' + esc9(labelText) + ' · ' + esc9(valueText);
+  return base + chartTapExtraHtml(measureName);
+}
 function kpiTrendBadge(measureName){
   try{
     var mi = window.__miItems;
@@ -8840,7 +8881,21 @@ function wireRest(){
   }
   async function nativeShareHtml(){
     if(!hasData()){ note('Load a file first — there is nothing to share yet.'); return; }
+    note('Preparing your dashboard file…');
     var html=buildShareHtml(), filename=shareFileName();
+    var sizeMb = (html.length / (1024*1024));
+    console.log('InstantDash Share: payload size ~'+sizeMb.toFixed(2)+' MB');
+    /* v26.0.9 — iOS Safari has known, undocumented size limits on
+       navigator.share() with files. A large embedded dataset can produce
+       a multi-megabyte file that silently fails to open the share sheet
+       at all, which looks identical to "the button does nothing." Skip
+       straight to a guaranteed-working download above this threshold
+       rather than risk that silent failure. */
+    if(sizeMb > 4){
+      if(downloadHtml(html,filename)) note('Your dashboard is large ('+sizeMb.toFixed(1)+' MB), so it was saved as a file instead of using Share — send that file manually.');
+      else note('Could not prepare the dashboard file. Try Save or Copy instead.');
+      return;
+    }
     try{
       var file=new File([html],filename,{type:'text/html'});
       if(navigator.canShare && navigator.canShare({files:[file]})){
@@ -8848,8 +8903,11 @@ function wireRest(){
         note('Shared.');
         return;
       }
-    }catch(e){ if(e && e.name==='AbortError') return; }
-    // Fallback for browsers without file-sharing support: just download it.
+    }catch(e){
+      console.warn('InstantDash Share: navigator.share failed —', e && e.name, e && e.message);
+      if(e && e.name==='AbortError') return;
+    }
+    // Fallback for browsers without file-sharing support, or any share error: just download it.
     if(downloadHtml(html,filename)) note('Sharing isn\u2019t available here, so the dashboard was saved instead — send that file manually.');
     else note('Could not prepare the dashboard file. Try Save or Copy instead.');
   }
@@ -11284,7 +11342,7 @@ function makeConfig(s){
          var el=active[0], idx=el.index;
          var label=(labels[idx]!==undefined?labels[idx]:'');
          var value=(vals[idx]!==undefined?vals[idx]:0);
-         s.detailEl.textContent=niceName(s.measure)+' · '+(typeof instantDashCleanLabel==='function'?instantDashCleanLabel(label):label)+' · '+fmtByField(value,s.measure);
+         s.detailEl.innerHTML=chartTapDetailHtml(s.measure, (typeof instantDashCleanLabel==='function'?instantDashCleanLabel(label):label), fmtByField(value,s.measure));
        }catch(_){ }
      },
    }
@@ -11378,7 +11436,7 @@ function redrawAICard(s,card){
    var __rawLabel=s.data.labels[idx];
    var label=(__rawLabel instanceof Date)?fmtDate(__rawLabel):(__rawLabel!==undefined?(typeof instantDashCleanLabel==='function'?instantDashCleanLabel(String(__rawLabel)):String(__rawLabel)):'Selected');
    var value=Number(s.data.values[idx]||0);
-   if(s.detailEl)s.detailEl.textContent=niceName(s.measure)+' · '+label+' · '+fmtByField(value,s.measure);
+   if(s.detailEl)s.detailEl.innerHTML=chartTapDetailHtml(s.measure, label, fmtByField(value,s.measure));
    window.__instantDashActiveDetailEl = s.detailEl || null;
    window.__instantDashActiveDetailBase = s.detailEl ? s.detailEl.textContent : '';
    try{
@@ -12178,7 +12236,7 @@ function renderFallback(){
  wrap.innerHTML='<div class="id-chart-visual">'+svg.join('')+'</div>'+note;
  wrap.querySelectorAll('[data-fallback]').forEach(function(el){el.addEventListener('click',function(){
    var q=el.getAttribute('data-fallback').split(':'),si=+q[0],i=+q[1],s=series[si],g=gs[i],d=$('smartChartDetail');
-   if(d)d.innerHTML='<b>'+esc(s.name)+'</b><div class="id-touch-value"><span>'+esc(typeof instantDashCleanLabel==='function'?instantDashCleanLabel(g.label):g.label)+'</span><strong>'+esc(fmt(s.values[i]))+'</strong></div>';
+   if(d)d.innerHTML='<b>'+esc(s.name)+'</b><div class="id-touch-value"><span>'+esc(typeof instantDashCleanLabel==='function'?instantDashCleanLabel(g.label):g.label)+'</span><strong>'+esc(fmt(s.values[i]))+'</strong></div>'+(typeof chartTapExtraHtml==='function'?chartTapExtraHtml(s.name):'');
    /* v19.14 — this chart engine (Interactive Charts / parameter fallback
       renderer) never called any speech function at all; wired directly here,
       inline, mirroring the approach already proven to work elsewhere.
