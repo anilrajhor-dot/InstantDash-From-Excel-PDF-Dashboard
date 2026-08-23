@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v23.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v23.1","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
@@ -283,6 +283,30 @@ body.dark .landing-hero{box-shadow:0 18px 70px rgba(0,0,0,.42)}
 .kpi-trend{display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:800;padding:2px 8px;border-radius:999px;margin-left:8px;vertical-align:middle;letter-spacing:0}
 .kpi-trend-good{background:color-mix(in srgb,var(--ok) 16%,transparent);color:var(--ok)}
 .kpi-trend-bad{background:color-mix(in srgb,var(--warn) 16%,transparent);color:var(--warn)}
+
+/* v23.1 — "Brief Me" signature feature. Distinct treatment on purpose —
+   this is meant to feel different from every other button in the app,
+   since it's the one genuinely unusual thing here: a one-tap spoken
+   executive briefing, which no mainstream BI tool offers. */
+.v23-brief-btn{
+  display:flex; align-items:center; gap:12px; width:100%; text-align:left;
+  border:none; border-radius:16px; cursor:pointer; margin-bottom:14px;
+  padding:14px 18px;
+  background:linear-gradient(120deg,var(--accent),var(--accent-2));
+  color:#151515; box-shadow:0 8px 24px color-mix(in srgb,var(--accent) 40%,transparent);
+  transition:transform .15s ease, box-shadow .15s ease;
+}
+.v23-brief-btn:hover{transform:translateY(-2px);box-shadow:0 12px 30px color-mix(in srgb,var(--accent) 50%,transparent)}
+.v23-brief-btn:active{transform:translateY(0)}
+.v23-brief-btn[hidden]{display:none}
+.v23-brief-icon{font-size:22px;flex:0 0 auto;animation:v23Pulse 2.4s ease-in-out infinite}
+.v23-brief-text{display:flex;flex-direction:column;gap:2px;min-width:0}
+.v23-brief-text b{font-size:14.5px;font-weight:800;letter-spacing:-.01em}
+.v23-brief-text span{font-size:11.5px;font-weight:600;opacity:.78}
+.v23-brief-btn.speaking{animation:v23GlowPulse 1.4s ease-in-out infinite}
+@keyframes v23Pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+@keyframes v23GlowPulse{0%,100%{box-shadow:0 8px 24px color-mix(in srgb,var(--accent) 40%,transparent)}50%{box-shadow:0 8px 34px color-mix(in srgb,var(--accent) 70%,transparent)}}
+@media (prefers-reduced-motion:reduce){.v23-brief-icon{animation:none}.v23-brief-btn.speaking{animation:none}}
 .kpi.alt{border-top-color:var(--accent-2);background:linear-gradient(160deg,var(--card),color-mix(in srgb,var(--accent-2) 4%,var(--card)))}
 
 /* =====================================================================
@@ -1273,7 +1297,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v23.0">
+<meta name="instantdash-build" content="v23.1">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2134,7 +2158,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v23.0';
+      s.textContent='v23.1';
       b.appendChild(s);
     }
   }
@@ -2192,8 +2216,8 @@ body{
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v23.0</span>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v23.0</span></div>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v23.1</span>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v23.1</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
       <button class="id-health-btn no-print" id="aiModeToggleBtn" type="button" aria-label="Real AI settings">🤖 Real AI: Off</button>
@@ -2344,8 +2368,75 @@ body{
     <div id="alerts" class="section"></div>
 
     <div class="section" id="kpiSection">
+      <button type="button" id="v23BriefMeBtn" class="v23-brief-btn no-print" hidden>
+        <span class="v23-brief-icon">🔊</span>
+        <span class="v23-brief-text"><b>Brief me</b><span>Hear the full executive summary read aloud</span></span>
+      </button>
       <div class="kpi-grid" id="kpiRow"><div class="kpi"><div class="val">16</div><div class="lbl">Rows</div><div class="sub">15 columns</div></div><div class="kpi"><div class="val">3,018</div><div class="lbl">Total Staff Nominated</div><div class="sub">Average 188.63</div></div><div class="kpi alt"><div class="val">2,863</div><div class="lbl">Total Staff Attended</div><div class="sub">Average 178.94</div></div><div class="kpi"><div class="val">1,516.2</div><div class="lbl">Total Attendance Rate %</div><div class="sub">Average 94.76</div></div><div class="kpi alt"><div class="val">4</div><div class="lbl">Distinct Region</div><div class="sub">most common: North</div></div></div>
     </div>
+    <script id="instantdash-v23-brief-me">
+    (function(){
+      /* v23.1 — "Brief me". Deliberately offline-only, unlike the Real AI
+         features elsewhere: the whole point is a private, always-available
+         spoken summary, so it's built purely from window.__miItems and the
+         live KPI values already on screen — no network call, no key needed. */
+      function stripHtml(s){ return String(s||'').replace(/<[^>]*>/g,'').replace(/\s+/g,' ').trim(); }
+      function buildBriefingText(){
+        var app = window.APP || window.__INSTANTDASH_APP__ || {};
+        var lines = [];
+        lines.push('Executive briefing for '+(app.fileName||'the current dataset')+'.');
+        lines.push((app.rows?app.rows.length.toLocaleString('en-IN'):'0')+' rows analysed.');
+        try{
+          var mi = window.__miItems;
+          if(mi){
+            if(mi.performance && mi.performance.length) lines.push('Favourable development: '+stripHtml(mi.performance[0]));
+            if(mi.attention && mi.attention.length) lines.push('Priority concern: '+stripHtml(mi.attention[0]));
+            if(mi.actions && mi.actions.length) lines.push('Recommended action: '+stripHtml(mi.actions[0]));
+            if((!mi.performance || !mi.performance.length) && (!mi.attention || !mi.attention.length)){
+              lines.push('No comparable-period movement has been established from the current data yet.');
+            }
+          }
+        }catch(_){ }
+        return lines.join(' ');
+      }
+      function setSpeaking(on){
+        var btn=document.getElementById('v23BriefMeBtn');
+        if(btn) btn.classList.toggle('speaking', !!on);
+      }
+      function speakBriefing(){
+        try{
+          var synth=window.speechSynthesis;
+          if(!synth) return;
+          if(synth.speaking||synth.pending) synth.cancel();
+          synth.resume();
+          var text=buildBriefingText();
+          var u=new SpeechSynthesisUtterance(text);
+          u.rate=.95;
+          u.onstart=function(){ setSpeaking(true); };
+          u.onend=function(){ setSpeaking(false); };
+          u.onerror=function(){ setSpeaking(false); };
+          window.__instantDashUtterance=u;
+          synth.speak(u);
+        }catch(_){ setSpeaking(false); }
+      }
+      function wire(){
+        var btn=document.getElementById('v23BriefMeBtn');
+        if(!btn || btn.__id23Wired) return;
+        btn.__id23Wired=1;
+        btn.addEventListener('click', speakBriefing);
+      }
+      function sync(){
+        var btn=document.getElementById('v23BriefMeBtn');
+        if(!btn) return;
+        var hasData=false;
+        try{ hasData = !!(window.APP && APP.rows && APP.rows.length); }catch(_){ }
+        btn.hidden = !hasData;
+      }
+      wire();
+      setInterval(function(){ wire(); sync(); }, 700);
+      if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', function(){ wire(); sync(); });
+    })();
+    </script>
 
 
     <div class="section executive-cockpit" id="executiveCockpit">
@@ -2777,7 +2868,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v23.0',
+  VERSION: 'v23.1',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
