@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v24.7","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v24.8","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
@@ -1301,7 +1301,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v24.7">
+<meta name="instantdash-build" content="v24.8">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2162,7 +2162,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v24.7';
+      s.textContent='v24.8';
       b.appendChild(s);
     }
   }
@@ -2220,8 +2220,8 @@ body{
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v24.7</span>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v24.7</span></div>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v24.8</span>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v24.8</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
       <button class="id-health-btn no-print" id="aiModeToggleBtn" type="button" aria-label="Real AI settings">🤖 Real AI: Off</button>
@@ -2945,7 +2945,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v24.7',
+  VERSION: 'v24.8',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -3137,7 +3137,7 @@ window.__instantDashUnderstand = (function(){
     /* Opening/closing balances and outstanding amounts must never be
        summed across rows — a balance is a snapshot, not a flow. The
        correct read is the latest available value. */
-    if (/\b(opening|closing)\s*balance\b|\bbalance\b|\boutstanding\b|\bo\/s\b|\bbook\s*value\b|\bnav\b/.test(n)) return 'balance';
+    if (/\b(opening|closing)\s*(balance|stock|cash|inventory|bank)\b|\bbalance\b|\boutstanding\b|\bo\/s\b|\bbook\s*value\b|\bnav\b/.test(n)) return 'balance';
     if (mtype==='percentage') return 'avg';
     if (/\b(average|avg|mean|median|score|index)\b|\bper\s|\/\s*unit|\bunit\s*cost\b/.test(n)) return 'avg';
     return 'sum';
@@ -3286,6 +3286,11 @@ window.__instantDashUnderstand = (function(){
     const t4rows = [{'Staff Nominated':100,'Staff Attended':90,'Attendance Rate %':90},{'Staff Nominated':900,'Staff Attended':810,'Attendance Rate %':90}];
     const derived = findDerivedRate('Attendance Rate %', t4rows);
     check('4. Weighted rate (900/1000 → 90%)', derived ? derived.value : null, 90);
+    // Test 4b — regression lock: "Closing X" / "Opening X" must not be
+    // treated as a balance unless X is an actual balance-like noun. This
+    // exact mistake was made and caught during v24.8 development.
+    const t4bRows = [{'Closing Ratio %':40},{'Closing Ratio %':60}];
+    check('4b. "Closing Ratio %" averages, is not treated as a balance', aggregateColumn('Closing Ratio %', t4bRows).value, 50);
     // Test 5 — KPI-path and chart-path aggregation must agree for the same column/rows.
     const t5rows = [{'Completion Rate %':50},{'Completion Rate %':70}];
     const kpiVal = aggregateColumn('Completion Rate %', t5rows).value;
@@ -10070,6 +10075,18 @@ function parameterProfile(name,drows,cols){
  else if(ratio>=.20){
    var sem=semantic(name,{rows:drows});
    kind=sem.kind||'amount';
+   /* v24.8 — this is a genuinely separate classifier from the central
+      engine's classifyMeasureType(). It's kept (it distinguishes
+      amount/count/growth/duration/score, which the simpler central
+      classifier doesn't), but for the one thing that matters for
+      calculation integrity — is this a percentage — the central
+      classifier is the authority. If they'd disagree, prefer it. */
+   try{
+     if(typeof window.__instantDashClassifyType==='function'){
+       var centralType=window.__instantDashClassifyType(name);
+       if(centralType==='percentage' && kind!=='percentage') kind='percentage';
+     }
+   }catch(_){ }
    agg='auto';
  } else {kind='other';agg='none'}
  return {name:name,type:ratio>=.20?'number':(c.type||'text'),kind:kind,agg:agg,ratio:ratio,unique:unique,numeric:nums.length,display:niceName(name)};
