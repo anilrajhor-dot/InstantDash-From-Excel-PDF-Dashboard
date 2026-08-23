@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v24.9","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v24.10","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
@@ -1301,7 +1301,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v24.9">
+<meta name="instantdash-build" content="v24.10">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2162,7 +2162,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v24.9';
+      s.textContent='v24.10';
       b.appendChild(s);
     }
   }
@@ -2220,8 +2220,8 @@ body{
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v24.9</span>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v24.9</span></div>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v24.10</span>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v24.10</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
       <button class="id-health-btn no-print" id="aiModeToggleBtn" type="button" aria-label="Real AI settings">🤖 Real AI: Off</button>
@@ -2945,7 +2945,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v24.9',
+  VERSION: 'v24.10',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -3189,7 +3189,18 @@ window.__instantDashUnderstand = (function(){
     var result = aggregateColumnCore(name, rows);
     try{
       var scopeRows = rows || ((window.APP && (window.APP.filtered || window.APP.rows)) || []);
-      var key = name + '|' + scopeRows.length + '|' + ((window.APP && window.APP.__dataVersion) || 0);
+      /* v24.10 — a cheap content fingerprint, not just row count. Two
+         different row subsets that happen to have the same length (e.g.
+         the full filtered set vs. a "latest period only" subset used by
+         a target/actual comparison elsewhere) are NOT the same dataset
+         scope, and comparing their results as if they must agree was
+         producing false-positive consistency warnings. */
+      var fingerprint = 0;
+      for (var fi=0; fi<scopeRows.length; fi++){
+        var fv = scopeRows[fi][name];
+        if (typeof fv==='number' && isFinite(fv)) fingerprint += fv;
+      }
+      var key = name + '|' + scopeRows.length + '|' + fingerprint.toFixed(2) + '|' + ((window.APP && window.APP.__dataVersion) || 0);
       var reg = window.__instantDashCalcRegistry;
       if (result && result.value!=null && reg[key]!==undefined && Math.abs(reg[key]-result.value) > 0.0001){
         var msg = '"'+name+'" produced '+result.value+' but a different value ('+reg[key]+') was previously calculated for the identical dataset. Please reload before relying on this figure.';
@@ -7443,18 +7454,19 @@ function buildExecutiveCockpit(){
 
   const ml = $('execMeasuresList');
   if(ml){
-    const rateLike = name => {
-      const n = String(name||'').toLowerCase();
-      return /%|\brate\b|\bratio\b|\bmargin\b|\byield\b|\boccupancy\b|\butili[sz]ation\b|\bcompliance\b|\bsatisfaction\b|\bconversion\b|\bshare\b|\bdenial\b/.test(n);
-    };
     ml.innerHTML = ms.length ? ms.map(c=>{
-      let sum=0,n=0;
-      for(const r of rows){ const v=r[c.name]; if(typeof v==='number' && isFinite(v)){sum+=v;n++;} }
-      const avg = n ? sum/n : 0;
-      if(rateLike(c.name)){
-        return `<div class="exec-measure"><b title="${esc(c.name)}">${esc(c.name)}</b><strong>${fmtFull(avg)}</strong><span>average across ${n.toLocaleString()} records · total not applicable</span></div>`;
+      const agg = (typeof window.__instantDashAggregate==='function') ? window.__instantDashAggregate(c.name, rows) : null;
+      if(!agg || !agg.count){
+        return `<div class="exec-measure"><b title="${esc(c.name)}">${esc(c.name)}</b><strong>⚠️</strong><span>Calculation unavailable</span></div>`;
       }
-      return `<div class="exec-measure"><b title="${esc(c.name)}">${esc(c.name)}</b><strong>${fmtByField(sum,c.name)}</strong><span>total · avg ${fmtByField(avg,c.name)}</span></div>`;
+      if(agg.mode==='avg'){
+        return `<div class="exec-measure"><b title="${esc(c.name)}">${esc(c.name)}</b><strong>${fmtFull(agg.value)}</strong><span>average across ${agg.count.toLocaleString()} records · total not applicable</span></div>`;
+      }
+      if(agg.mode==='balance'){
+        return `<div class="exec-measure"><b title="${esc(c.name)}">${esc(c.name)}</b><strong>${fmtByField(agg.value,c.name)}</strong><span>latest of ${agg.count.toLocaleString()} records · not summed (balance)</span></div>`;
+      }
+      const avgOfSum = agg.count ? agg.value/agg.count : 0;
+      return `<div class="exec-measure"><b title="${esc(c.name)}">${esc(c.name)}</b><strong>${fmtByField(agg.value,c.name)}</strong><span>total · avg ${fmtByField(avgOfSum,c.name)}</span></div>`;
     }).join('') : `<div class="exec-measure"><b>No numeric measures</b><span>Counts and distributions are still available.</span></div>`;
   }
 
