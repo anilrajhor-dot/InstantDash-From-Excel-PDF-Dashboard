@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v23.2","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v24.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
@@ -324,12 +324,16 @@ body.dark .landing-hero{box-shadow:0 18px 70px rgba(0,0,0,.42)}
 .icon-btn{border-radius:999px!important}
 .section-head h2{position:relative;padding-left:2px}
 .section-head{border-bottom:1px solid var(--border);padding-bottom:10px;margin-bottom:16px!important}
-/* v22.5 — the fade-up entrance animation was removed here. It targeted
-   .kpi and .mi-card, both of which get torn down and rebuilt on every
-   filter/search/data change — an animation restarting mid-flight on
-   frequently-mutated content is a known way for opacity to get stuck near
-   zero. Given how much of today's work was spent chasing near-invisible
-   text, a minor visual flourish isn't worth reintroducing that risk. */
+/* v24.0 — Data Understanding panel */
+.v24-conf-badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:800;padding:5px 12px;border-radius:999px;letter-spacing:.02em}
+.v24-conf-high{background:color-mix(in srgb,var(--ok) 18%,transparent);color:var(--ok)}
+.v24-conf-medium{background:color-mix(in srgb,var(--accent) 20%,transparent);color:color-mix(in srgb,var(--accent) 70%,#7a5600)}
+.v24-conf-low{background:color-mix(in srgb,var(--warn) 18%,transparent);color:var(--warn)}
+.v24-conf-insufficient{background:var(--card-2);color:var(--muted)}
+.v24-stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-top:12px}
+.v24-stat{background:var(--card-2);border:1px solid var(--border);border-radius:10px;padding:10px 12px}
+.v24-stat b{display:block;font-size:18px;font-weight:800;color:var(--text)}
+.v24-stat span{display:block;font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-top:2px}
 
 ::-webkit-scrollbar{height:8px;width:8px}
 ::-webkit-scrollbar-track{background:transparent}
@@ -1297,7 +1301,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v23.2">
+<meta name="instantdash-build" content="v24.0">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2158,7 +2162,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v23.2';
+      s.textContent='v24.0';
       b.appendChild(s);
     }
   }
@@ -2216,8 +2220,8 @@ body{
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v23.2</span>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v23.2</span></div>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v24.0</span>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v24.0</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
       <button class="id-health-btn no-print" id="aiModeToggleBtn" type="button" aria-label="Real AI settings">🤖 Real AI: Off</button>
@@ -2309,6 +2313,52 @@ body{
 
     <div id="deptTabsBar" class="dept-tabs-bar" hidden></div>
 
+    <section id="v24Understand" class="card no-print" style="padding:16px 18px;margin:0 0 16px" hidden>
+      <div class="section-head" style="border:none;margin-bottom:10px!important;padding-bottom:0">
+        <h2 style="margin:0;font-size:16px">🧭 Data Understanding</h2>
+        <span class="hint">What the app detected in this file, and how confident it is</span>
+      </div>
+      <div id="v24UnderstandBody"></div>
+    </section>
+    <script id="instantdash-v24-understand-wire">
+    (function(){
+      function esc2(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+      function render(u){
+        var body=document.getElementById('v24UnderstandBody');
+        if(!body) return;
+        if(!u){ body.innerHTML='<p style="color:var(--muted);font-size:12.5px;margin:0">Not enough data loaded yet to analyse.</p>'; return; }
+        var cls = u.confidence>=70 ? 'v24-conf-high' : u.confidence>=40 ? 'v24-conf-medium' : (u.measures.length ? 'v24-conf-low' : 'v24-conf-insufficient');
+        var icon = u.confidence>=70 ? '🟢' : u.confidence>=40 ? '🟡' : '🟠';
+        var html = '<div class="v24-conf-badge '+cls+'">'+icon+' '+esc2(u.confidenceLabel)+' confidence ('+u.confidence+'/100)</div>';
+        html += '<div class="v24-stat-grid">';
+        html += '<div class="v24-stat"><b>'+u.rowCount.toLocaleString('en-IN')+'</b><span>Rows</span></div>';
+        html += '<div class="v24-stat"><b>'+u.usableMeasures.length+' / '+u.measures.length+'</b><span>Usable measures</span></div>';
+        html += '<div class="v24-stat"><b>'+u.dimensions.length+'</b><span>Dimensions</span></div>';
+        html += '<div class="v24-stat"><b>'+(u.dateFields.length?'Yes':'No')+'</b><span>Date field found</span></div>';
+        html += '<div class="v24-stat"><b>'+u.targetActualPairs.length+'</b><span>Target/Actual pairs</span></div>';
+        html += '</div>';
+        if(u.measures.length && u.usableMeasures.length < u.measures.length){
+          var weak = u.measures.filter(function(m){return !m.usable;}).slice(0,4).map(function(m){return esc2(m.name);}).join(', ');
+          html += '<p style="margin:10px 0 0;font-size:11.5px;color:var(--muted)">Excluded as unreliable (too many gaps or almost no variation): '+weak+(u.measures.length-u.usableMeasures.length>4?', and others':'')+'.</p>';
+        }
+        if(u.targetActualPairs.length){
+          html += '<p style="margin:8px 0 0;font-size:11.5px;color:var(--muted)">Detected pairing: '+u.targetActualPairs.map(function(p){return esc2(p.actual)+' vs '+esc2(p.target);}).join('; ')+'.</p>';
+        }
+        body.innerHTML = html;
+      }
+      function sync(){
+        var section=document.getElementById('v24Understand');
+        if(!section) return;
+        var u = (typeof window.__instantDashUnderstand==='function') ? window.__instantDashUnderstand() : null;
+        section.hidden = !u;
+        if(u) render(u);
+      }
+      setInterval(sync, 700);
+      if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', sync);
+      else sync();
+    })();
+    </script>
+
     <section id="v22AIAssistant" class="card no-print" style="padding:16px 18px;margin:0 0 16px" hidden>
       <div class="section-head" style="border:none;margin-bottom:10px!important;padding-bottom:0">
         <h2 style="margin:0;font-size:16px">🤖 AI Data Assistant</h2>
@@ -2327,6 +2377,7 @@ body{
 
     <nav id="v21QuickNav" class="v21-quicknav no-print" aria-label="Jump to section" hidden>
       <span class="v21-quicknav-label">Jump to</span>
+      <button type="button" data-jump="v24Understand">🧭 Understanding</button>
       <button type="button" data-jump="v22AIAssistant">🤖 AI Assistant</button>
       <button type="button" data-jump="kpiSection">📌 KPIs</button>
       <button type="button" data-jump="smartChartsSection">📊 Charts</button>
@@ -2385,17 +2436,42 @@ body{
       function buildBriefingText(){
         var app = window.APP || window.__INSTANTDASH_APP__ || {};
         var lines = [];
+        var u = (typeof window.__instantDashUnderstand==='function') ? window.__instantDashUnderstand() : null;
+        /* v24.0 — restructured into the five parts asked for: performance,
+           problems, evidence, actions, what to watch next. Still built
+           entirely from already-computed data (window.__miItems, the
+           central Data Understanding engine) — no new analysis, purely a
+           better spoken structure over what the app already knows. */
         lines.push('Executive briefing for '+(app.fileName||'the current dataset')+'.');
-        lines.push((app.rows?app.rows.length.toLocaleString('en-IN'):'0')+' rows analysed.');
+        lines.push((app.rows?app.rows.length.toLocaleString('en-IN'):'0')+' rows analysed'+(u?', confidence '+u.confidenceLabel.toLowerCase()+'.':'.'));
         try{
           var mi = window.__miItems;
           if(mi){
-            if(mi.performance && mi.performance.length) lines.push('Favourable development: '+stripHtml(mi.performance[0]));
-            if(mi.attention && mi.attention.length) lines.push('Priority concern: '+stripHtml(mi.attention[0]));
-            if(mi.actions && mi.actions.length) lines.push('Recommended action: '+stripHtml(mi.actions[0]));
-            if((!mi.performance || !mi.performance.length) && (!mi.attention || !mi.attention.length)){
-              lines.push('No comparable-period movement has been established from the current data yet.');
+            var hasPerf = mi.performance && mi.performance.length;
+            var hasAtt = mi.attention && mi.attention.length;
+            if(hasPerf){
+              lines.push('Performance. '+stripHtml(mi.performance[0]));
             }
+            if(hasAtt){
+              lines.push('Problem. '+stripHtml(mi.attention[0]));
+            }
+            if(!hasPerf && !hasAtt){
+              lines.push('Performance and problems. No comparable-period movement has been established from the current data yet — treat any single-period figures as informational only.');
+            }
+            if(mi.relationships && mi.relationships.length){
+              lines.push('Evidence. '+stripHtml(mi.relationships[0]));
+            } else if(hasPerf || hasAtt){
+              lines.push('Evidence. This is based on the comparable period already identified in the data; open Management Insights for the full supporting figures.');
+            }
+            if(mi.actions && mi.actions.length){
+              lines.push('Recommended action. '+stripHtml(mi.actions[0]));
+            }
+            var watchParts=[];
+            if(hasAtt && mi.attention.length>1) watchParts.push(stripHtml(mi.attention[1]));
+            if(u && u.usableMeasures && u.usableMeasures.length < u.measures.length) watchParts.push('some measures in this file have too many gaps or too little variation to trust yet');
+            if(watchParts.length) lines.push('What to watch next. '+watchParts.join('. ')+'.');
+          } else if(u){
+            lines.push('Performance and problems. Not enough comparable data has been found yet to identify a clear movement.');
           }
         }catch(_){ }
         return lines.join(' ');
@@ -2869,7 +2945,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v23.2',
+  VERSION: 'v24.0',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -2957,6 +3033,109 @@ function fmtNum(n){
     ? n.toLocaleString('en-IN')
     : Number(n.toFixed(2)).toLocaleString('en-IN');
 }
+/* =====================================================================
+   v24.0 — CENTRAL DATA UNDERSTANDING ENGINE
+   One canonical analysis of the currently loaded dataset: which columns
+   are measures vs dimensions vs dates vs identifiers, what kind of
+   measure each one is (amount / percentage / count / duration), whether
+   higher or lower is better for it, any target/actual pairs, and an
+   overall confidence score for how much the AI can safely conclude.
+   Built fresh (and cached) from APP.rows / APP.columns — the same data
+   every other part of the app already reads — so it can't drift out of
+   sync with what's actually loaded. New features (the Data Understanding
+   panel, an upgraded Brief Me, Ask AI) are built on this from here on,
+   without rewiring the existing chart-rendering engines that already
+   work correctly today.
+   ===================================================================== */
+window.__instantDashUnderstand = (function(){
+  var cache = null, cacheVersion = null;
+  function classifyMeasureType(name){
+    var n = String(name||'').toLowerCase();
+    if (/%|percent|\brate\b|\bratio\b|margin|yield|utili[sz]ation|occupancy|compliance|satisfaction|conversion|attendance|completion|pass(?:ing)?\s*rate|dropout/.test(n)) return 'percentage';
+    if (/count|number|orders?|customers?|cases?|units?|visits?|transactions?|employees?|tasks?|applications?|volume|nominated|attended|assessed|passed/.test(n)) return 'count';
+    if (/days?|hours?|duration|lead\s*time|turnaround|tat\b|age\b/.test(n)) return 'duration';
+    return 'amount';
+  }
+  function classifyDirection(name){
+    var n = String(name||'').toLowerCase();
+    if (/defect|reject|cancel|complaint|error|failure|npa\b|overdue|delay|downtime|attrition|dropout|churn|incident|readmission|abandon|denial|cost|expense|shrinkage|waste|leakage/.test(n)) return 'lower';
+    if (/revenue|sales|profit|income|margin|growth|attendance|satisfaction|completion|pass(?:ing)?|retention|availability|uptime|conversion|recovery|collection|efficiency|productivity/.test(n)) return 'higher';
+    return 'neutral';
+  }
+  function findTargetActualPairs(measureNames){
+    var pairs = [];
+    var targets = measureNames.filter(function(n){ return /target|budget|plan(?:ned)?|goal|benchmark/i.test(n); });
+    var actuals = measureNames.filter(function(n){ return /actual|achieved|completed|produced|realised|realized|result/i.test(n); });
+    targets.forEach(function(t){
+      var base = t.replace(/target|budget|plan(?:ned)?|goal|benchmark/ig,'').trim().toLowerCase();
+      var match = actuals.find(function(a){
+        var abase = a.replace(/actual|achieved|completed|produced|realised|realized|result/ig,'').trim().toLowerCase();
+        return abase && base && (abase===base || abase.indexOf(base)>=0 || base.indexOf(abase)>=0);
+      });
+      if(match) pairs.push({target:t, actual:match});
+    });
+    return pairs;
+  }
+  function analyse(){
+    var app = window.APP || {};
+    var rows = app.rows || [], cols = app.columns || [];
+    if(!rows.length || !cols.length) return null;
+    var measures=[], dimensions=[], dateFields=[], idFields=[];
+    cols.forEach(function(c){
+      var name=c.name, role=c.role, type=c.type;
+      if(role==='measure' && type==='number'){
+        var vals=rows.map(function(r){return r[name];}).filter(function(v){return typeof v==='number' && isFinite(v);});
+        var coverage = rows.length ? vals.length/rows.length : 0;
+        var unique = new Set(vals.map(String)).size;
+        /* Confidence per measure: needs decent coverage AND real variation.
+           A column that's 95% populated but never changes value tells you
+           nothing comparable, so it shouldn't be treated as a strong signal
+           even though it looks "complete". */
+        var confidence = Math.round(Math.min(100, coverage*70 + Math.min(30, unique*3)));
+        measures.push({
+          name:name, mtype:classifyMeasureType(name), direction:classifyDirection(name),
+          coverage:coverage, unique:unique, confidence:confidence,
+          usable: coverage>=0.5 && unique>=2
+        });
+      } else if(role==='dimension' || role==='highdim'){
+        dimensions.push({name:name, unique:c.unique||0});
+      } else if(role==='time' || type==='date'){
+        dateFields.push(name);
+      } else if(c.idLike || /\bid$/i.test(name)){
+        idFields.push(name);
+      }
+    });
+    var usableMeasures = measures.filter(function(m){return m.usable;});
+    var pairs = findTargetActualPairs(usableMeasures.map(function(m){return m.name;}));
+    /* Overall confidence: blends how much of the sheet is actually usable
+       signal (vs identifiers/near-constant columns) with average per-measure
+       confidence and whether a date field exists for trend analysis. */
+    var overall = 0;
+    if(measures.length){
+      var avgConf = usableMeasures.length ? usableMeasures.reduce(function(a,m){return a+m.confidence;},0)/usableMeasures.length : 0;
+      var usableRatio = measures.length ? usableMeasures.length/measures.length : 0;
+      overall = Math.round(avgConf*0.6 + usableRatio*100*0.25 + (dateFields.length?15:0));
+      overall = Math.max(0, Math.min(100, overall));
+    }
+    var label = overall>=70 ? 'High' : overall>=40 ? 'Medium' : (measures.length ? 'Low' : 'Insufficient');
+    return {
+      rowCount: rows.length, columnCount: cols.length,
+      measures: measures, usableMeasures: usableMeasures,
+      dimensions: dimensions, dateFields: dateFields, idFields: idFields,
+      targetActualPairs: pairs,
+      confidence: overall, confidenceLabel: label,
+      fileName: app.fileName || ''
+    };
+  }
+  return function(){
+    var v = (window.APP && window.APP.__dataVersion) || 0;
+    if(cache && cacheVersion===v) return cache;
+    cache = analyse();
+    cacheVersion = v;
+    return cache;
+  };
+})();
+
 function isMoneyField(name){
   const s=String(name||'').toLowerCase().replace(/[^a-z0-9]+/g,' ');
   if (/\b(rate|ratio|margin|percentage|percent|share|growth|change|yoy|mom|qoq|count|number|qty|quantity|days?|months?|years?)\b/.test(s)) return false;
@@ -10677,7 +10856,24 @@ window.__instantDashAIMultiChartsRefresh=render;
     if(ms.length){var top=ms[0];out.push({kind:'info',label:'KPI SNAPSHOT',title:nice(top.name)+' · '+format(top.avg,top.type),body:'Average '+nice(top.name)+' across '+top.values.length+' populated records; range '+format(top.min,top.type)+' to '+format(top.max,top.type)+'.'});
       var mover=ms.slice(0,5).sort(function(a,b){return Math.abs(b.change)-Math.abs(a.change)})[0];
       if(mover&&isFinite(mover.change)&&Math.abs(mover.change)>=.05)out.push({kind:mover.change>0?'positive':'warning',label:'MATERIAL MOVEMENT',title:nice(mover.name),body:(mover.change>0?'Increased ':'Decreased ')+Math.abs(mover.change*100).toFixed(1)+'% from the first available value to the latest available value.'});
-      if(p.category){var rank=categoryRank(top,p.category);if(rank&&rank.length>=2)out.push({kind:'info',label:'TOP CONTRIBUTOR',title:nice(p.category)+' · '+nice(rank[0].k),body:nice(top.name)+' averages '+format(rank[0].v,top.type)+' for this group, versus '+format(rank[rank.length-1].v,top.type)+' for the lowest populated group.'})}
+      if(p.category){
+        var rank=categoryRank(top,p.category);
+        if(rank && rank.length>=2){
+          /* v24.0 — a group average built from a single row isn't a real
+             comparison, and if every group is effectively the same value,
+             calling one of them "top" and another "bottom" is a false
+             conclusion even though the sort is mathematically valid. */
+          var strongRank = rank.filter(function(x){return x.n>=2;});
+          if(strongRank.length>=2){
+            var topV=strongRank[0].v, botV=strongRank[strongRank.length-1].v;
+            var scale = Math.max(Math.abs(topV), Math.abs(botV), 1e-9);
+            var meaningful = Math.abs(topV-botV)/scale > 0.02;
+            if(meaningful){
+              out.push({kind:'info',label:'TOP CONTRIBUTOR',title:nice(p.category)+' · '+nice(strongRank[0].k),body:nice(top.name)+' averages '+format(strongRank[0].v,top.type)+' for this group, versus '+format(strongRank[strongRank.length-1].v,top.type)+' for the lowest populated group.'});
+            }
+          }
+        }
+      }
     }
     var poor=columns().filter(function(c){return c.coverage<.9}).sort(function(a,b){return a.coverage-b.coverage})[0];
     if(poor)out.push({kind:'warning',label:'DATA QUALITY',title:nice(poor.name)+' · '+(poor.coverage*100).toFixed(0)+'% populated',body:poor.missing.toLocaleString('en-IN')+' of '+rs.length.toLocaleString('en-IN')+' rows are blank. Interpret conclusions involving this field cautiously.'});
@@ -11349,7 +11545,7 @@ function answer(q){
     if(moneyField(k))return '₹'+Number(v).toLocaleString('en-IN',{maximumFractionDigits:2});
     return Number(v).toLocaleString('en-IN',{maximumFractionDigits:2});
   }
-  function pct(a,b){return a?((b-a)/Math.abs(a))*100:(b?100:0);}
+  function pct(a,b){ return (a && isFinite(a)) ? ((b-a)/Math.abs(a))*100 : NaN; }
   function avg(v){return v.length?v.reduce(function(a,b){return a+b;},0)/v.length:NaN;}
   function sum(v){return v.reduce(function(a,b){return a+b;},0);}
 
@@ -11393,7 +11589,7 @@ function answer(q){
     return best;
   }
   function movement(m){return {a:m.v[0],b:m.v[m.v.length-1],p:pct(m.v[0],m.v[m.v.length-1])};}
-  function movements(){return measures.map(function(m){var z=movement(m);return {x:m,a:z.a,b:z.b,p:z.p};}).sort(function(a,b){return Math.abs(b.p)-Math.abs(a.p);});}
+  function movements(){return measures.map(function(m){var z=movement(m);return {x:m,a:z.a,b:z.b,p:z.p};}).filter(function(z){return isFinite(z.p);}).sort(function(a,b){return Math.abs(b.p)-Math.abs(a.p);});}
   function groupAnalysis(metric,group){
     if(!metric||!group)return [];
     var b={};
@@ -11431,7 +11627,7 @@ function answer(q){
     else if(/transaction|txn|volume|count|sale|sales|revenue|income|collection|recovery|enrol|customer/.test(n))action='Identify the weakest segment, compare it with the strongest segment, find the operational bottleneck and set a measurable activity target with periodic review.';
     else if(/drop|attrition|churn|failure|reject|defect|error|complaint/.test(n))action='Classify the failures, identify the largest recorded reason, assign ownership and set a measurable reduction target.';
     else action='Compare the KPI with target and related operational measures, identify the largest measurable gap or driver, assign one corrective action and review the next period.';
-    return '<b>How can we improve '+esc(m.k)+'?</b><br>'+action+'<br><br><b>Observed movement:</b> '+fmt(z.a,m.k)+' → '+fmt(z.b,m.k)+' ('+(z.p>=0?'+':'')+z.p.toFixed(1)+'%).';
+    return '<b>How can we improve '+esc(m.k)+'?</b><br>'+action+'<br><br><b>Observed movement:</b> '+fmt(z.a,m.k)+' → '+fmt(z.b,m.k)+(isFinite(z.p)?' ('+(z.p>=0?'+':'')+z.p.toFixed(1)+'%).':'. The starting value is zero or unreliable, so a percentage change is not meaningful here.');
   }
   function topIssues(){
     var mv=movements().slice(0,3);
@@ -11481,9 +11677,9 @@ function answer(q){
   if(col&&/lowest|minimum|min|smallest|bottom value/.test(ql))return '<b>Lowest '+esc(col.k)+':</b> '+fmt(Math.min.apply(Math,col.v),col.k)+'.';
   if(col&&/current|latest|present|now|today/.test(ql))return '<b>Latest '+esc(col.k)+':</b> '+fmt(col.v[col.v.length-1],col.k)+'.';
   if(col&&/first|earliest|initial/.test(ql))return '<b>First '+esc(col.k)+':</b> '+fmt(col.v[0],col.k)+'.';
-  if(col&&/change|changed|trend|movement|compare|comparison|versus| vs /.test(' '+ql+' ')){var z=movement(col);return '<b>Trend for '+esc(col.k)+':</b> '+fmt(z.a,col.k)+' → '+fmt(z.b,col.k)+' ('+(z.p>=0?'+':'')+z.p.toFixed(1)+'%).';}
+  if(col&&/change|changed|trend|movement|compare|comparison|versus| vs /.test(' '+ql+' ')){var z=movement(col);return '<b>Trend for '+esc(col.k)+':</b> '+fmt(z.a,col.k)+' → '+fmt(z.b,col.k)+(isFinite(z.p)?' ('+(z.p>=0?'+':'')+z.p.toFixed(1)+'%).':'. The starting value is zero or unreliable, so a percentage change is not meaningful here.');}
   if(/dataset|data|records|rows|fields/.test(ql))return '<b>Current dataset:</b> '+rs.length.toLocaleString('en-IN')+' rows and '+keys.length+' fields. Analysis uses the currently loaded dataset only.';
-  if(col){var cm=movement(col);return '<b>Analysis of '+esc(col.k)+'</b><br>First available value: '+fmt(cm.a,col.k)+'. Latest available value: '+fmt(cm.b,col.k)+'. Change: '+(cm.p>=0?'+':'')+cm.p.toFixed(1)+'%. Ask about target, reason, improvement, cost, trend, average, highest or lowest.';}
+  if(col){var cm=movement(col);return '<b>Analysis of '+esc(col.k)+'</b><br>First available value: '+fmt(cm.a,col.k)+'. Latest available value: '+fmt(cm.b,col.k)+'. Change: '+(isFinite(cm.p)?(cm.p>=0?'+':'')+cm.p.toFixed(1)+'%.':'not meaningful — the starting value is zero or unreliable.')+' Ask about target, reason, improvement, cost, trend, average, highest or lowest.';}
   if(mv.length)return '<b>Analysis of the current dataset</b><br>The largest measurable movement is <b>'+esc(mv[0].x.k)+'</b>: '+fmt(mv[0].a,mv[0].x.k)+' → '+fmt(mv[0].b,mv[0].x.k)+' ('+(mv[0].p>=0?'+':'')+mv[0].p.toFixed(1)+'%). The data shows the movement but does not by itself prove the cause.';
   return '<b>I could not find enough relevant data in the current upload to answer that question reliably.</b>';
 }
@@ -11646,6 +11842,11 @@ function mountAskMe(){
     '<button type="button" class="ai48-q">Which district is best?</button>'+ 
     '<button type="button" class="ai48-q">Which district needs attention?</button>'+ 
     '<button type="button" class="ai48-q">What are the biggest performance gaps?</button>'+ 
+    '<button type="button" class="ai48-q">What should I tell my board or committee?</button>'+ 
+    '<button type="button" class="ai48-q">What is the single biggest risk right now?</button>'+ 
+    '<button type="button" class="ai48-q">If I could only fix one thing, what should it be?</button>'+ 
+    '<button type="button" class="ai48-q">How reliable is this data for decisions?</button>'+ 
+    '<button type="button" class="ai48-q">What should I watch next period?</button>'+ 
     '</div>'+ 
     '<div class="ai48-row"><input id="ai48Input" class="ai48-input" autocomplete="off" placeholder="Type your own question about this dataset…" aria-label="Ask Executive AI a question"><button type="button" id="ai48Ask" class="ai48-ask">Ask</button></div><div id="ai48Answer" class="ai48-answer" aria-live="polite"></div><button type="button" id="ai48Copy" class="btn sm no-print" style="display:none;margin-top:8px">📋 Copy answer</button>';
   document.body.appendChild(p);
