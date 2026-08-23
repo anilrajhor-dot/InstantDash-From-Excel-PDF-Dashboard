@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.0.9","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.0.10","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
@@ -574,7 +574,7 @@ details.panel[open] > summary::before{transform:rotate(90deg)}
 .modal .frow{display:grid;gap:5px;margin-bottom:12px}
 .modal .frow label{font-size:12px;color:var(--muted)}
 .modal .frow select{width:100%}
-#toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,20px);background:var(--text);color:var(--bg);padding:10px 18px;border-radius:999px;font-size:13px;opacity:0;pointer-events:none;transition:.25s ease;z-index:300}
+#toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,20px);background:var(--text);color:var(--bg);padding:10px 18px;border-radius:999px;font-size:13px;opacity:0;pointer-events:none;transition:.25s ease;z-index:999999}
 #toast.on{opacity:1;transform:translate(-50%,0)}
 .alert{padding:12px 14px;border-radius:10px;background:color-mix(in srgb,var(--warn) 12%,var(--card));border:1px solid color-mix(in srgb,var(--warn) 40%,transparent);font-size:13px;margin-bottom:14px}
 .insight-box{white-space:pre-wrap;font-size:13px;line-height:1.7;padding:14px 16px;background:var(--card-2);border-radius:10px;margin:0}
@@ -676,7 +676,7 @@ body{overflow-x:hidden}
   }
   .v154-share-tab:hover{background:rgba(128,128,128,.10)}
   .v154-share-panel{
-    position:fixed;inset:0;z-index:9999;display:none;
+    position:fixed;inset:0;z-index:999998;display:none;
     align-items:center;justify-content:center;
     background:rgba(0,0,0,.55);backdrop-filter:blur(5px);
     padding:18px;
@@ -1386,7 +1386,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v26.0.9">
+<meta name="instantdash-build" content="v26.0.10">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2252,7 +2252,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v26.0.9';
+      s.textContent='v26.0.10';
       b.appendChild(s);
     }
   }
@@ -2312,10 +2312,10 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v26.0.9</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v26.0.10</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.0.9</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.0.10</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
       <button class="id-health-btn no-print" id="aiModeToggleBtn" type="button" aria-label="Real AI settings">🤖 Real AI: Off</button>
@@ -3420,7 +3420,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v26.0.9',
+  VERSION: 'v26.0.10',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -5917,12 +5917,17 @@ function drawChart(spec){
         if(kind==='scatter'){
           var raw=el.raw||{};
           window.__instantDashActiveDetailEl = note || null;
+          if(note && typeof chartTapDetailHtml==='function') note.innerHTML=chartTapDetailHtml(spec.y||spec.x, spec.x+' is '+fmtByField(Number(raw.x),spec.x), fmtByField(Number(raw.y),spec.y));
           window.__instantDashActiveDetailBase = note ? note.textContent : '';
           instantDashSpeak(spec.x+' is '+fmtByField(Number(raw.x),spec.x)+' and '+spec.y+' is '+fmtByField(Number(raw.y),spec.y)+'.');
         }else{
           var labs=data.labels||[];
           var vals=(data.datasets&&data.datasets[0]&&data.datasets[0].data)||[];
           window.__instantDashActiveDetailEl = note || null;
+          var __ckLabel = (labs[idx]!==undefined) ? (typeof instantDashCleanLabel==='function'?instantDashCleanLabel(String(labs[idx])):String(labs[idx])) : '';
+          var __ckVal = (vals[idx]!==undefined) ? vals[idx] : 0;
+          var __ckMeasure = spec.y || spec.value || spec.x;
+          if(note && typeof chartTapDetailHtml==='function') note.innerHTML=chartTapDetailHtml(__ckMeasure, __ckLabel, fmtByField(__ckVal,__ckMeasure));
           window.__instantDashActiveDetailBase = note ? note.textContent : '';
           instantDashSpeakChartPoint(spec,labs,vals,idx);
         }
@@ -8822,6 +8827,14 @@ function wireRest(){
   function hasData(){ try{ return !!(window.APP && APP.rows && APP.rows.length); }catch(_){ return false; } }
   function openPanel(){
     try{ if(typeof toast==='function') toast('Opening share panel…'); }catch(_){ }
+    /* v26.0.10 — stop any active speech and hide the Stop Speech button
+       before showing this panel, so there is no possibility of it
+       visually overlapping the share buttons regardless of z-index. */
+    try{
+      if(window.speechSynthesis){ window.speechSynthesis.cancel(); }
+      var stopBtn = document.querySelector('[id*="StopSpeech"], .id-stop-speech-btn');
+      if(stopBtn) stopBtn.style.display='none';
+    }catch(_){ }
     var p=panel(); if(!p) return;
     p.classList.add('is-open'); p.setAttribute('aria-hidden','false');
     note(hasData()
