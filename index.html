@@ -1,5 +1,106 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.0.11","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.0.12","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-v26-error-catcher">
+/* v26.0.12 — installed as early as possible, before any other script
+   runs, so it can catch errors from every subsequent script tag on the
+   page. No Mac/remote-debugging access is available for this user, so
+   this is the most direct way to get real diagnostic evidence instead
+   of continuing to guess blind at root causes. */
+(function(){
+  window.__instantDashErrors = [];
+  function record(entry){
+    try{
+      window.__instantDashErrors.push(entry);
+      renderBadge();
+    }catch(_){ }
+  }
+  window.addEventListener('error', function(e){
+    record({
+      type: 'error',
+      message: (e && e.message) || String(e),
+      source: (e && e.filename) ? (e.filename.split('/').pop() + ':' + e.lineno + ':' + e.colno) : '',
+      stack: (e && e.error && e.error.stack) ? String(e.error.stack).slice(0, 400) : '',
+      time: new Date().toLocaleTimeString()
+    });
+  });
+  window.addEventListener('unhandledrejection', function(e){
+    var reason = e && e.reason;
+    record({
+      type: 'promise rejection',
+      message: (reason && reason.message) ? reason.message : String(reason),
+      source: '',
+      stack: (reason && reason.stack) ? String(reason.stack).slice(0, 400) : '',
+      time: new Date().toLocaleTimeString()
+    });
+  });
+  function ensureBadge(){
+    var b = document.getElementById('idErrCatcherBadge');
+    if(b) return b;
+    b = document.createElement('button');
+    b.id = 'idErrCatcherBadge';
+    b.type = 'button';
+    b.style.cssText = 'position:fixed;top:10px;right:10px;z-index:9999999;display:none;background:#E2582B;color:#fff;border:none;border-radius:999px;padding:8px 14px;font:800 12px Poppins,-apple-system,sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.35);cursor:pointer';
+    document.body ? document.body.appendChild(b) : document.addEventListener('DOMContentLoaded', function(){ document.body.appendChild(b); });
+    b.addEventListener('click', showPanel);
+    return b;
+  }
+  function renderBadge(){
+    var n = window.__instantDashErrors.length;
+    if(!n) return;
+    var b = ensureBadge();
+    b.textContent = '⚠️ ' + n + ' error' + (n===1?'':'s') + ' — tap to view';
+    b.style.display = 'block';
+  }
+  function ensurePanel(){
+    var p = document.getElementById('idErrCatcherPanel');
+    if(p) return p;
+    p = document.createElement('div');
+    p.id = 'idErrCatcherPanel';
+    p.style.cssText = 'position:fixed;inset:0;z-index:9999998;display:none;background:rgba(0,0,0,.7);padding:16px;align-items:center;justify-content:center';
+    p.innerHTML = '<div style="width:100%;max-width:520px;max-height:80vh;overflow-y:auto;background:#1c1c20;color:#f4ede2;border-radius:16px;padding:18px;font-family:-apple-system,sans-serif">'
+      + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><b style="font-size:16px">JavaScript Errors</b><button id="idErrCatcherClose" type="button" style="background:#333;color:#fff;border:none;border-radius:50%;width:30px;height:30px;font-size:14px">✕</button></div>'
+      + '<div id="idErrCatcherList" style="font-size:12px;line-height:1.5"></div>'
+      + '<button id="idErrCatcherCopy" type="button" style="margin-top:14px;width:100%;padding:10px;background:#f5b301;color:#151515;border:none;border-radius:10px;font-weight:800;font-size:13px">📋 Copy all errors</button>'
+      + '</div>';
+    document.body ? document.body.appendChild(p) : document.addEventListener('DOMContentLoaded', function(){ document.body.appendChild(p); });
+    p.addEventListener('click', function(e){ if(e.target===p) hidePanel(); });
+    return p;
+  }
+  function escE(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function showPanel(){
+    var p = ensurePanel();
+    var list = document.getElementById('idErrCatcherList');
+    if(list){
+      list.innerHTML = window.__instantDashErrors.map(function(e, i){
+        return '<div style="margin-bottom:10px;padding:8px;background:#26262c;border-radius:8px;border-left:3px solid #E2582B">'
+          + '<div style="color:#9C968C;font-size:10px">#' + (i+1) + ' · ' + escE(e.type) + ' · ' + escE(e.time) + '</div>'
+          + '<div style="font-weight:700;margin-top:3px">' + escE(e.message) + '</div>'
+          + (e.source ? '<div style="color:#9C968C;font-size:10.5px;margin-top:2px">' + escE(e.source) + '</div>' : '')
+          + '</div>';
+      }).join('') || '<p>No errors captured.</p>';
+    }
+    p.style.display = 'flex';
+    document.getElementById('idErrCatcherClose').onclick = hidePanel;
+    document.getElementById('idErrCatcherCopy').onclick = function(){
+      var text = window.__instantDashErrors.map(function(e, i){
+        return '#' + (i+1) + ' [' + e.type + '] ' + e.time + '\n' + e.message + (e.source ? '\n  at ' + e.source : '') + (e.stack ? '\n' + e.stack : '');
+      }).join('\n\n');
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(function(){
+          document.getElementById('idErrCatcherCopy').textContent = '✅ Copied — paste it in your message';
+        }).catch(function(){ window.prompt('Copy this text:', text); });
+      } else {
+        window.prompt('Copy this text:', text);
+      }
+    };
+  }
+  function hidePanel(){
+    var p = document.getElementById('idErrCatcherPanel');
+    if(p) p.style.display = 'none';
+  }
+})();
+</script></head>
+<body class="dark" style="">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
@@ -1386,7 +1487,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v26.0.11">
+<meta name="instantdash-build" content="v26.0.12">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2252,7 +2353,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v26.0.11';
+      s.textContent='v26.0.12';
       b.appendChild(s);
     }
   }
@@ -2312,10 +2413,10 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v26.0.11</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v26.0.12</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.0.11</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.0.12</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
       <button class="id-health-btn no-print" id="aiModeToggleBtn" type="button" aria-label="Real AI settings">🤖 Real AI: Off</button>
@@ -3420,7 +3521,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v26.0.11',
+  VERSION: 'v26.0.12',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
