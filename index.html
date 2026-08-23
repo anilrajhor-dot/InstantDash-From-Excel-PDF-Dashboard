@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v24.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v24.1","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
@@ -1301,7 +1301,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v24.0">
+<meta name="instantdash-build" content="v24.1">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2162,7 +2162,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v24.0';
+      s.textContent='v24.1';
       b.appendChild(s);
     }
   }
@@ -2220,8 +2220,8 @@ body{
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v24.0</span>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v24.0</span></div>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v24.1</span>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v24.1</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
       <button class="id-health-btn no-print" id="aiModeToggleBtn" type="button" aria-label="Real AI settings">🤖 Real AI: Off</button>
@@ -2945,7 +2945,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v24.0',
+  VERSION: 'v24.1',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -3127,6 +3127,44 @@ window.__instantDashUnderstand = (function(){
       fileName: app.fileName || ''
     };
   }
+  /* v24.1 — CALCULATION INTEGRITY: the aggregation mode classifier.
+     Reuses classifyMeasureType() above rather than duplicating its regex
+     logic, so there is exactly one place that decides what a column
+     "is" and exactly one place that decides how it should be combined
+     across rows. */
+  function classifyAggMode(name, mtype){
+    var n = String(name||'').toLowerCase();
+    /* Opening/closing balances and outstanding amounts must never be
+       summed across rows — a balance is a snapshot, not a flow. The
+       correct read is the latest available value. */
+    if (/\b(opening|closing)\s*balance\b|\bbalance\b|\boutstanding\b|\bo\/s\b|\bbook\s*value\b|\bnav\b/.test(n)) return 'balance';
+    if (mtype==='percentage') return 'avg';
+    if (/\b(average|avg|mean|median|score|index)\b|\bper\s|\/\s*unit|\bunit\s*cost\b/.test(n)) return 'avg';
+    return 'sum';
+  }
+  /* The single aggregation entry point. Every caller — KPI cards today,
+     and progressively charts/Ask Me/Brief Me — should compute a
+     column's headline figure through this function rather than writing
+     their own sum/average loop, so a fix here fixes everywhere at once. */
+  function aggregateColumn(name, rows){
+    rows = rows || ((window.APP && (window.APP.filtered || window.APP.rows)) || []);
+    var vals = [];
+    for (var i=0;i<rows.length;i++){ var v=rows[i][name]; if (typeof v==='number' && isFinite(v)) vals.push(v); }
+    var mtype = classifyMeasureType(name);
+    var mode = classifyAggMode(name, mtype);
+    if (!vals.length) return {mode:mode, mtype:mtype, value:null, label:'No data', count:0};
+    if (mode==='avg'){
+      var avg = vals.reduce(function(a,b){return a+b;},0)/vals.length;
+      return {mode:'avg', mtype:mtype, value:avg, label:'Average', count:vals.length};
+    }
+    if (mode==='balance'){
+      return {mode:'balance', mtype:mtype, value:vals[vals.length-1], label:'Latest', count:vals.length};
+    }
+    var sum = vals.reduce(function(a,b){return a+b;},0);
+    return {mode:'sum', mtype:mtype, value:sum, label:'Total', count:vals.length};
+  }
+  window.__instantDashAggMode = classifyAggMode;
+  window.__instantDashAggregate = aggregateColumn;
   return function(){
     var v = (window.APP && window.APP.__dataVersion) || 0;
     if(cache && cacheVersion===v) return cache;
@@ -5264,11 +5302,32 @@ function buildKPIs(){
 
   cards.push({val: rows.length.toLocaleString(), lbl:'Rows', sub: rows.length !== all.length ? `filtered from ${all.length.toLocaleString()}` : `${APP.columns.length} columns`});
 
-  // Sum + average for the three most useful measures, recomputed live.
+  // Aggregate the three most useful measures through the central engine —
+  // never sum a percentage/rate, and read balances as a latest value.
   rankMeasures().slice(0, 3).forEach((c, i) => {
-    let sum = 0, n = 0;
-    for (let r = 0; r < rows.length; r++){ const v = rows[r][c.name]; if (typeof v === 'number' && isFinite(v)){ sum += v; n++; } }
-    cards.push({val: fmtByField(sum,c.name), lbl: 'Total ' + c.name, sub: 'Average ' + fmtByField(n ? sum/n : 0,c.name), alt: i === 1, trend: kpiTrendBadge(c.name)});
+    const agg = (typeof window.__instantDashAggregate === 'function')
+      ? window.__instantDashAggregate(c.name, rows)
+      : null;
+    let val, lbl, sub;
+    if (agg && agg.count){
+      val = fmtByField(agg.value, c.name);
+      lbl = agg.label + ' ' + c.name;
+      if (agg.mode==='sum'){
+        const avgOfSum = agg.count ? agg.value/agg.count : 0;
+        sub = 'Average ' + fmtByField(avgOfSum, c.name);
+      } else if (agg.mode==='balance'){
+        sub = agg.count + ' populated records';
+      } else {
+        sub = 'Across ' + agg.count.toLocaleString() + ' populated records';
+      }
+    } else {
+      // Fallback if the central engine isn't available for any reason —
+      // matches the previous (buggy) behaviour only as a last resort.
+      let sum = 0, n = 0;
+      for (let r = 0; r < rows.length; r++){ const v = rows[r][c.name]; if (typeof v === 'number' && isFinite(v)){ sum += v; n++; } }
+      val = fmtByField(sum,c.name); lbl = 'Total ' + c.name; sub = 'Average ' + fmtByField(n ? sum/n : 0,c.name);
+    }
+    cards.push({val, lbl, sub, alt: i === 1, trend: kpiTrendBadge(c.name)});
   });
 
   const topDim = rankDimensions()[0];
@@ -6084,14 +6143,24 @@ function miStatus(items){
   return 'Limited evidence';
 }
 function miStrip(v){return String(v||'').replace(/<[^>]*>/g,'').replace(/\s+/g,' ').trim();}
-function miCard(title,items,cls='neutral',open=false,maxItems=null){
+function miCard(title,items,cls='neutral',open=false,maxItems=null,evidence=true){
   const arr=(Array.isArray(items)?items:[]).filter(x=>miStrip(x));
   const limit=maxItems==null?(cls==='executive'?3:(cls==='good'||cls==='warn'?5:4)):maxItems;
-  const fallback={
-    good:'Cannot be established from the available data. Add a comparable period, target or linked KPI.',
-    warn:'Cannot be assessed from the available data. Add a comparable period, target or numeric KPI.',
-    neutral:'The available data does not establish a material relationship; add a comparable period, target or linked KPI for stronger management interpretation.',
-    executive:'Evidence is limited. A comparable period, target or linked KPI is needed before drawing a strong management conclusion.'
+  /* v24.1 — two genuinely different situations were previously shown with
+     identical "cannot be assessed" wording: (a) there IS a comparable
+     period/target and the AI checked but found no material movement, vs
+     (b) there is no comparable period/target at all, so nothing could be
+     checked. Only the second is actually "insufficient evidence". */
+  const fallback = evidence ? {
+    good:'No material favourable movement was identified from the available evidence.',
+    warn:'No material adverse movement was identified from the available evidence.',
+    neutral:'No material relationship was identified from the available evidence.',
+    executive:'The available comparable evidence does not show a material movement requiring escalation.'
+  } : {
+    good:'Insufficient evidence — cannot be established from the available data. Add a comparable period, target or linked KPI.',
+    warn:'Insufficient evidence — cannot be assessed from the available data. Add a comparable period, target or numeric KPI.',
+    neutral:'Insufficient evidence — the available data does not include a comparable period, target or linked KPI to establish a relationship.',
+    executive:'Insufficient evidence. A comparable period, target or linked KPI is needed before drawing a management conclusion.'
   };
   let list='';
   if(arr.length){
@@ -6682,6 +6751,9 @@ function buildManagementInsights(){
   if(items.attention.length){
     const topNames=items.attention.slice(0,3).map(x=>{const m=String(x).match(/^<b>(.*?)<\/b>/);return m?m[1].replace(/<[^>]+>/g,''):null;}).filter(Boolean);
     topNames.forEach(name=>items.actions.push(`<b>${miEsc(name)}:</b> ${miActionForKpi(name)}`));
+  } else if(items.performance.length){
+    const topPerfName=(()=>{const m=String(items.performance[0]).match(/^<b>(.*?)<\/b>/);return m?m[1].replace(/<[^>]+>/g,''):null;})();
+    if(topPerfName) items.actions.push(`<b>${miEsc(topPerfName)}:</b> Confirm what drove this improvement and convert it into a repeatable practice; ${miActionForKpi(topPerfName).charAt(0).toLowerCase()+miActionForKpi(topPerfName).slice(1)}`);
   }
   if(items.relationships.length)items.actions.push('Review the derived ratios and KPI relationships before assessing individual movements; they provide context but do not establish causation.');
   if(items.drivers.length)items.actions.push('Use data-supported relationships and concentrations as the starting point for management review; contribution or correlation must not be treated as proof of causation.');
@@ -6728,13 +6800,16 @@ function buildManagementInsights(){
   if(items.performance.length) top.push(`<b>Favourable development:</b> ${miStrip(items.performance[0])}`);
   if(items.relationships.length) top.push(`<b>Key context:</b> ${miStrip(items.relationships[0])}`);
   if(!top.length) top.push('The available data does not provide enough comparable evidence for a strong management conclusion.');
-  grid.innerHTML=miCard('Executive takeaway',top,'executive',true,3)+
-    miCard('What is going well',items.performance,'good',false,5)+
-    miCard('Variations requiring attention',items.attention,'warn',false,5)+
-    miCard('Contextual movements — review, do not pre-classify',items.contextual,'neutral',false,5)+
-    miCard('Management interpretation & possible drivers',items.drivers,'neutral',false,4)+
-    miCard('Key relationships & derived ratios',items.relationships,'neutral',false,4)+
-    miCard('Management action',items.actions,'neutral',false,3);
+  const hasComparativeEvidence = !!lr;
+  const hasTargetStructure = !!(miFindCol(/target/i) && miFindCol(/actual/i));
+  const mcEvidence = hasComparativeEvidence || hasTargetStructure;
+  grid.innerHTML=miCard('Executive takeaway',top,'executive',true,3,mcEvidence)+
+    miCard('What is going well',items.performance,'good',false,5,mcEvidence)+
+    miCard('Variations requiring attention',items.attention,'warn',false,5,mcEvidence)+
+    miCard('Contextual movements — review, do not pre-classify',items.contextual,'neutral',false,5,mcEvidence)+
+    miCard('Management interpretation & possible drivers',items.drivers,'neutral',false,4,mcEvidence)+
+    miCard('Key relationships & derived ratios',items.relationships,'neutral',false,4,mcEvidence)+
+    miCard('Management action',items.actions,'neutral',false,3,mcEvidence);
   miSyncAccordions(); miWireMore();
   wireMovementSummaryLinks();
 }
