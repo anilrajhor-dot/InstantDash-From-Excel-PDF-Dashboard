@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v24.3","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v24.4","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
@@ -1301,7 +1301,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v24.3">
+<meta name="instantdash-build" content="v24.4">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2162,7 +2162,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v24.3';
+      s.textContent='v24.4';
       b.appendChild(s);
     }
   }
@@ -2220,8 +2220,8 @@ body{
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v24.3</span>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v24.3</span></div>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v24.4</span>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v24.4</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
       <button class="id-health-btn no-print" id="aiModeToggleBtn" type="button" aria-label="Real AI settings">🤖 Real AI: Off</button>
@@ -2945,7 +2945,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v24.3',
+  VERSION: 'v24.4',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -4679,7 +4679,26 @@ function aggregate(rows, spec){
   const xCol = colByName(spec.x);
   const gran = spec.granularity || (xCol && xCol.type === 'date' ? pickGranularity(xCol) : null);
   const sCol = spec.series ? colByName(spec.series) : null;
-  const agg  = spec.agg || 'sum';
+  /* v24.4 — do not trust a hard-coded 'sum' at face value. Charts across
+     the app pass agg:'sum' as a generic starting default regardless of
+     what the measure actually is; only count/distinct/min/max (explicit,
+     deliberate choices) are left alone. Everything that would otherwise
+     default to sum/avg gets checked against the same central classifier
+     the KPI cards use, so "Attendance Rate by Region" can never sum
+     percentages and "Closing Balance by Branch" can never sum balances. */
+  const agg = (() => {
+    const requested = spec.agg;
+    if ((requested==null || requested==='sum' || requested==='avg') && spec.y &&
+        typeof window.__instantDashAggMode==='function' && typeof window.__instantDashClassifyType==='function'){
+      try{
+        const mtype = window.__instantDashClassifyType(spec.y);
+        const mode = window.__instantDashAggMode(spec.y, mtype);
+        if (mode==='avg') return 'avg';
+        if (mode==='balance') return 'latest';
+      }catch(_){ }
+    }
+    return requested || 'sum';
+  })();
   const yName = spec.y;
 
   const labelInfo = new Map();          // label → sort key
@@ -4695,7 +4714,7 @@ function aggregate(rows, spec){
     let sm = seriesMap.get(sk);
     if (!sm){ sm = new Map(); seriesMap.set(sk, sm); }
     let acc = sm.get(k);
-    if (!acc){ acc = {sum:0, n:0, min:Infinity, max:-Infinity, set:null}; sm.set(k, acc); }
+    if (!acc){ acc = {sum:0, n:0, min:Infinity, max:-Infinity, set:null, last:undefined}; sm.set(k, acc); }
 
     if (agg === 'count'){ acc.n++; continue; }
     const v = r[yName];
@@ -4706,7 +4725,7 @@ function aggregate(rows, spec){
       continue;
     }
     if (typeof v !== 'number' || !isFinite(v)) continue;
-    acc.sum += v; acc.n++;
+    acc.sum += v; acc.n++; acc.last = v;
     if (v < acc.min) acc.min = v;
     if (v > acc.max) acc.max = v;
   }
@@ -4717,6 +4736,7 @@ function aggregate(rows, spec){
       case 'count':    return acc.n;
       case 'distinct': return acc.set ? acc.set.size : 0;
       case 'avg':      return acc.n ? acc.sum / acc.n : null;
+      case 'latest':   return acc.last===undefined ? null : acc.last;
       case 'min':      return acc.min === Infinity ? null : acc.min;
       case 'max':      return acc.max === -Infinity ? null : acc.max;
       default:         return acc.sum;
@@ -5830,9 +5850,24 @@ function buildInsights(){
     const res = aggregate(rows, {x:d.name, y:m.name, agg:'sum', topN:0});
     if (res.labels.length){
       const data = res.series[0].data;
-      const total = data.reduce((a,b) => a + (b||0), 0);
       const best = data.indexOf(Math.max(...data.map(v => v == null ? -Infinity : v)));
-      if (best >= 0 && total) lines.push(`${res.labels[best]} leads on ${m.name} with ${fmtFull(data[best])} — ${(data[best]/total*100).toFixed(1)}% of the total across ${res.labels.length} ${d.name} values.`);
+      if (best >= 0){
+        let measureMode = 'sum';
+        try{
+          if (typeof window.__instantDashAggMode==='function' && typeof window.__instantDashClassifyType==='function'){
+            const mt = window.__instantDashClassifyType(m.name);
+            measureMode = window.__instantDashAggMode(m.name, mt);
+          }
+        }catch(_){ }
+        if (measureMode==='avg'){
+          lines.push(`${res.labels[best]} has the highest ${m.name} at ${fmtFull(data[best])} among ${res.labels.length} ${d.name} values.`);
+        } else if (measureMode==='balance'){
+          lines.push(`${res.labels[best]} has the highest latest ${m.name} at ${fmtFull(data[best])} among ${res.labels.length} ${d.name} values (not summed — this is a balance).`);
+        } else {
+          const total = data.reduce((a,b) => a + (b||0), 0);
+          if (total) lines.push(`${res.labels[best]} leads on ${m.name} with ${fmtFull(data[best])} — ${(data[best]/total*100).toFixed(1)}% of the total across ${res.labels.length} ${d.name} values.`);
+        }
+      }
     }
   }
 
@@ -8205,15 +8240,28 @@ function wireRest(){
     try{ await navigator.clipboard.writeText(text); note('Copied — paste it into WhatsApp, email, etc.'); }
     catch(_){ window.prompt('Copy this text:',text); }
   }
-  function wire(id,fn){ var b=document.getElementById(id); if(b && !b.__id20Wired){ b.__id20Wired=1; b.addEventListener('click',function(e){ e.preventDefault(); fn(); }); } }
-  wire('topShareBtn',openPanel);
-  wire('v154ShareClose',closePanel);
-  wire('v154NativeShare',nativeShareHtml);
-  wire('v154SaveShare',saveHtml);
-  wire('v154CopyShare',copyShareText);
-  wire('v154MailShare',nativeShareHtml); // lets the OS share-sheet's Mail option handle it
-  var p=panel();
-  if(p && !p.__id20Wired){ p.__id20Wired=1; p.addEventListener('click',function(e){ if(e.target===p) closePanel(); }); }
+  /* v24.4 — switched from direct element wiring to event delegation on
+     document. The direct-wiring version looked correct on inspection but
+     was reported as not firing at all; delegation is immune to any
+     timing/reference issue since it resolves the actual clicked element
+     fresh on every click, rather than depending on a reference captured
+     once when this script first ran. */
+  var ACTIONS = {
+    topShareBtn: openPanel,
+    v154ShareClose: closePanel,
+    v154NativeShare: nativeShareHtml,
+    v154SaveShare: saveHtml,
+    v154CopyShare: copyShareText,
+    v154MailShare: nativeShareHtml
+  };
+  document.addEventListener('click', function(e){
+    var el = e.target;
+    for (var id in ACTIONS){
+      var match = el.closest ? el.closest('#'+id) : null;
+      if (match){ e.preventDefault(); ACTIONS[id](); return; }
+    }
+    if (el.id==='v154SharePanel' || (el.closest && el.closest('#v154SharePanel')===el)) closePanel();
+  });
   document.addEventListener('keydown',function(e){ if(e.key==='Escape') closePanel(); });
 })();
 </script>
@@ -10423,7 +10471,34 @@ function getMeasures(rs){var cs=cols(),names=[];if(cs.length){cs.forEach(functio
  }).filter(function(x){return x.ratio>=.20}).sort(function(a,b){return b.score-a.score||b.count-a.count})}
 function getGroups(rs){var cs=cols(),out=[];cs.forEach(function(c){if(c.type==='number'||isId(c.name)||isTime(c.name,c))return;var nm=String(c.name||'').trim();/* v1.13.09: MID is commonly a metadata/code field (e.g. 0 / Blank / P), not a management dimension. Do not let AI choose it as the default grouping field. It remains available to the manual Group By selector. */if(/^mid$/i.test(nm))return;var u=uniqueValues(rs,c.name);if(u.length>=2&&u.length<=36)out.push({name:c.name,unique:u.length,kind:'category'})});cs.forEach(function(c){if(isTime(c.name,c)){var u=uniqueValues(rs,c.name);if(u.length>=2)out.unshift({name:c.name,unique:u.length,kind:'time'})}});return out}
 function sortKey(a,b,time){if(!time)return String(a).localeCompare(String(b),undefined,{numeric:true});var da=new Date(a),db=new Date(b);if(!isNaN(da)&&!isNaN(db))return da-db;return String(a).localeCompare(String(b),undefined,{numeric:true})}
-function aggregate(rs,group,measure){var map={};rs.forEach(function(r){var v=n(r[measure]);if(!isFinite(v))return;var k=group?String(r[group]):'Overall';if(k===''||k==='null'||k==='undefined')k='Blank';map[k]=(map[k]||0)+v});var keys=Object.keys(map);var g=col(group),time=group&&isTime(group,g);keys.sort(function(a,b){return sortKey(a,b,time)});if(!time&&keys.length>12){keys.sort(function(a,b){return map[b]-map[a]});keys=keys.slice(0,12)}return {labels:keys,values:keys.map(function(k){return map[k]}),time:time,group:group}}
+function aggregate(rs,group,measure){
+  var mode='sum';
+  try{
+    if(typeof window.__instantDashAggMode==='function' && typeof window.__instantDashClassifyType==='function'){
+      var mtype=window.__instantDashClassifyType(measure);
+      var m=window.__instantDashAggMode(measure,mtype);
+      if(m==='avg'||m==='balance') mode=m;
+    }
+  }catch(_){ mode='sum'; }
+  var map={},count={},last={};
+  rs.forEach(function(r){
+    var v=n(r[measure]);
+    if(!isFinite(v))return;
+    var k=group?String(r[group]):'Overall';
+    if(k===''||k==='null'||k==='undefined')k='Blank';
+    map[k]=(map[k]||0)+v; count[k]=(count[k]||0)+1; last[k]=v;
+  });
+  var keys=Object.keys(map);
+  var g=col(group),time=group&&isTime(group,g);
+  keys.sort(function(a,b){return sortKey(a,b,time)});
+  var valueFor=function(k){
+    if(mode==='avg') return count[k]?map[k]/count[k]:0;
+    if(mode==='balance') return last[k];
+    return map[k];
+  };
+  if(!time&&keys.length>12){keys.sort(function(a,b){return Math.abs(valueFor(b))-Math.abs(valueFor(a))});keys=keys.slice(0,12)}
+  return {labels:keys,values:keys.map(valueFor),time:time,group:group,aggMode:mode}
+}
 function histogram(rs,measure){var vals=rs.map(function(r){return n(r[measure])}).filter(isFinite);if(!vals.length)return {labels:[],values:[]};var min=Math.min.apply(Math,vals),max=Math.max.apply(Math,vals);if(min===max)return {labels:[niceName(measure)],values:[vals.length]};var bins=Math.min(8,Math.max(4,Math.round(Math.sqrt(vals.length))));var step=(max-min)/bins,map=new Array(bins).fill(0);vals.forEach(function(v){var i=Math.min(bins-1,Math.floor((v-min)/step));map[i]++});return {labels:map.map(function(_,i){var a=min+i*step,b=i===bins-1?max:min+(i+1)*step;return a.toLocaleString('en-IN',{maximumFractionDigits:0})+'–'+b.toLocaleString('en-IN',{maximumFractionDigits:0})}),values:map,time:false,group:''}}
 function chartType(m,group){var x=norm(m.name);if(group&&group.kind==='time')return 'line';if(/growth|rate|ratio|margin|percentage|percent|share|yield/.test(x)&&group)return 'line';return 'bar'}
 function makeSpecs(){var rs=rows();if(!rs.length)return [];var ms=getMeasures(rs),gs=getGroups(rs),g=gs[0]||null,specs=[];ms.slice(0,4).forEach(function(m,i){var rx=norm(m.name);var rateLike=/rate|ratio|margin|percentage|percent|share|yield|growth/.test(rx);var data=g?aggregate(rs,g.name,m.name):(rateLike?histogram(rs,m.name):{labels:['Total'],values:[rs.reduce(function(a,r){var v=n(r[m.name]);return a+(isFinite(v)?v:0)},0)],time:false,group:''});var type=g?chartType(m,g):(rateLike?'bar':'bar');specs.push({id:'ai-'+i,measure:m.name,group:g?g.name:'',type:type,data:data,title:niceName(m.name),subtitle:g?'AI selected '+niceName(type)+' chart grouped by '+niceName(g.name):'AI selected a total chart because no reliable management grouping field was found.',foot:g?'Each bar/point is calculated from '+rs.length.toLocaleString()+' loaded rows.':'Total calculated from '+rs.length.toLocaleString()+' loaded rows.'})});return specs}
