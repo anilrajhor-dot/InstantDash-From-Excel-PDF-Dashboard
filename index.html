@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v24.11","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v25.0.3","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
@@ -191,10 +191,13 @@ main{max-width:1360px;margin:0 auto;padding:24px}
 .mac-card{border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:14px;background:var(--card-2);padding:13px;min-width:0}
 .mac-card.attention{border-left-color:var(--accent-2)}
 .mac-card.performance{border-left-color:var(--ok)}
+.mac-card.watch{border-left-color:var(--accent)}
 .mac-card .mac-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
 .mac-rank{font-size:9px;font-weight:800;border:1px solid var(--border);border-radius:999px;padding:4px 7px;background:var(--card);white-space:nowrap}
 .mac-kpi{font-size:13px;font-weight:800;line-height:1.3}
 .mac-status{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:800;margin-top:4px}
+.mac-field{font-size:10.5px;line-height:1.5;color:var(--text);margin-top:8px}
+.mac-field b{font-weight:800;color:var(--muted);text-transform:uppercase;font-size:9px;letter-spacing:.05em;display:block;margin-bottom:2px}
 .mac-movement{display:grid;grid-template-columns:1fr 18px 1fr;gap:6px;margin:10px 0}
 .mac-movement div{padding:7px 8px;border-radius:9px;background:var(--card);border:1px solid var(--border);min-width:0}
 .mac-movement small{display:block;font-size:8px;letter-spacing:.12em;color:var(--muted);font-weight:800}
@@ -203,6 +206,7 @@ main{max-width:1360px;margin:0 auto;padding:24px}
 .mac-change{font-size:12px;font-weight:800;margin:2px 0 8px}
 .mac-card.attention .mac-change{color:var(--accent-2)}
 .mac-card.performance .mac-change{color:var(--ok)}
+.mac-card.watch .mac-change{color:var(--accent)}
 .mac-why{font-size:10.5px;line-height:1.45;color:var(--muted);min-height:43px}
 .mac-action{margin-top:9px;padding:8px 9px;border-radius:9px;background:color-mix(in srgb,var(--accent) 8%,var(--card));font-size:10.5px;line-height:1.4}
 .mac-action b{font-weight:800}
@@ -334,6 +338,21 @@ body.dark .landing-hero{box-shadow:0 18px 70px rgba(0,0,0,.42)}
 .v24-stat{background:var(--card-2);border:1px solid var(--border);border-radius:10px;padding:10px 12px}
 .v24-stat b{display:block;font-size:18px;font-weight:800;color:var(--text)}
 .v24-stat span{display:block;font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-top:2px}
+
+/* v25.0 — Performance/Attention/Data Quality/Overall Status strip */
+.v25-status-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:0 0 16px}
+.v25-status-card{border-radius:14px;padding:14px 16px;border:1px solid var(--border);background:var(--card)}
+.v25-status-icon{font-size:15px;line-height:1}
+.v25-status-label{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-top:6px}
+.v25-status-value{font-size:22px;font-weight:900;margin-top:3px;letter-spacing:-.01em}
+.v25-status-sub{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.35}
+.v25-status-card.v25-good{background:color-mix(in srgb,var(--ok) 10%,var(--card));border-color:color-mix(in srgb,var(--ok) 35%,var(--border))}
+.v25-status-card.v25-good .v25-status-value{color:var(--ok)}
+.v25-status-card.v25-warn{background:color-mix(in srgb,var(--accent) 10%,var(--card));border-color:color-mix(in srgb,var(--accent) 35%,var(--border))}
+.v25-status-card.v25-warn .v25-status-value{color:color-mix(in srgb,var(--accent) 75%,#7a5600)}
+.v25-status-card.v25-bad{background:color-mix(in srgb,var(--warn) 10%,var(--card));border-color:color-mix(in srgb,var(--warn) 35%,var(--border))}
+.v25-status-card.v25-bad .v25-status-value{color:var(--warn)}
+.v25-status-card.v25-neutral .v25-status-value{color:var(--text)}
 
 ::-webkit-scrollbar{height:8px;width:8px}
 ::-webkit-scrollbar-track{background:transparent}
@@ -1289,6 +1308,7 @@ html,body{overflow-anchor:none!important;}
 #v21CombinedOut .ai-chart-card{border:1px solid var(--accent)!important;background:linear-gradient(160deg,rgba(245,179,1,.07),rgba(255,255,255,.96))!important;box-shadow:0 10px 28px rgba(245,179,1,.14)!important}
 #v21CombinedOut .ai-chart-card h4{color:var(--accent-2,var(--accent))}
 .ai-chart-foot{margin-top:7px;font-size:10px;color:var(--muted);line-height:1.35}
+.ai-chart-so-what{margin-top:8px;padding:8px 10px;border-radius:8px;background:var(--card-2);border-left:3px solid var(--accent);font-size:11.5px;font-weight:700;color:var(--text);line-height:1.4}
 .ai-empty{padding:28px 12px;text-align:center;color:var(--muted);font-size:12px;border:1px dashed var(--border);border-radius:12px}
 .ai-chart-overlay{position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:100000;display:none;align-items:center;justify-content:center;padding:12px}
 .ai-chart-overlay.open{display:flex}
@@ -1301,7 +1321,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v24.11">
+<meta name="instantdash-build" content="v25.0.3">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2162,7 +2182,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v24.11';
+      s.textContent='v25.0.3';
       b.appendChild(s);
     }
   }
@@ -2220,8 +2240,8 @@ body{
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v24.11</span>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v24.11</span></div>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v25.0.3</span>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v25.0.3</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
       <button class="id-health-btn no-print" id="aiModeToggleBtn" type="button" aria-label="Real AI settings">🤖 Real AI: Off</button>
@@ -2271,6 +2291,80 @@ body{
   <!-- ============ APP ============ -->
   <section id="app" data-v11306-auto-scrolled="1">
 
+
+    <section id="v25Snapshot" class="card no-print" style="padding:16px 18px;margin:0 0 16px" hidden>
+      <div id="v25SnapshotBody"></div>
+    </section>
+
+    <section id="v25StatusStrip" class="no-print" hidden>
+      <div id="v25StatusStripBody" class="v25-status-grid"></div>
+    </section>
+    <script id="instantdash-v25-status-wire">
+    (function(){
+      function render(){
+        var section=document.getElementById('v25StatusStrip');
+        var body=document.getElementById('v25StatusStripBody');
+        if(!section||!body) return;
+        var app=window.APP||{};
+        var hasData=!!(app.rows&&app.rows.length);
+        section.hidden=!hasData;
+        if(!hasData) return;
+        var rows=app.filtered||app.rows||[];
+        var cols=app.columns||[];
+        var missing=cols.reduce(function(s,c){return s+(c.missing||0);},0);
+        var cells=Math.max(1, rows.length*Math.max(1,cols.length));
+        var completeness=Math.max(0,Math.min(100,(1-missing/cells)*100));
+        var mi=window.__miItems||{};
+        var perf=Array.isArray(mi.performance)?mi.performance.length:0;
+        var att=Array.isArray(mi.attention)?mi.attention.length:0;
+        var status=window.__miStatus||'Mixed';
+        function card(icon,label,value,sub,cls){
+          return '<div class="v25-status-card '+cls+'"><div class="v25-status-icon">'+icon+'</div><div class="v25-status-label">'+label+'</div><div class="v25-status-value">'+value+'</div><div class="v25-status-sub">'+sub+'</div></div>';
+        }
+        var perfCls = perf>0 ? 'v25-good' : 'v25-neutral';
+        var attCls = att>0 ? 'v25-bad' : 'v25-good';
+        var dqCls = completeness>=95?'v25-good':completeness>=80?'v25-warn':'v25-bad';
+        var stCls = status==='Favourable' ? 'v25-good' : status==='Attention required' ? 'v25-bad' : status==='Limited evidence' ? 'v25-neutral' : 'v25-warn';
+        var html = '';
+        html += card('🟢','Performance', perf, perf>0 ? perf+' favourable movement'+(perf===1?'':'s')+' found' : 'No favourable movement identified yet', perfCls);
+        html += card('🔴','Attention', att, att>0 ? att+' item'+(att===1?'':'s')+' need'+(att===1?'s':'')+' review' : 'Nothing flagged for attention', attCls);
+        html += card('🩺','Data Quality', completeness.toFixed(completeness===100?0:1)+'%', missing.toLocaleString('en-IN')+' missing cell'+(missing===1?'':'s'), dqCls);
+        html += card('📊','Overall Status', status, 'Based on current comparable evidence', stCls);
+        body.innerHTML = html;
+      }
+      setInterval(render, 700);
+      if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', render);
+      else render();
+    })();
+    </script>
+    <script id="instantdash-v25-snapshot-wire">
+    (function(){
+      function esc3(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+      function render(){
+        var section=document.getElementById('v25Snapshot');
+        var body=document.getElementById('v25SnapshotBody');
+        if(!section||!body) return;
+        var app=window.APP||{};
+        var hasData=!!(app.rows&&app.rows.length);
+        section.hidden=!hasData;
+        if(!hasData) return;
+        var u=(typeof window.__instantDashUnderstand==='function')?window.__instantDashUnderstand():null;
+        var status=window.__miStatus||'Mixed';
+        var statusCls = status==='Favourable' ? 'v24-conf-high' : status==='Attention required' ? 'v24-conf-low' : status==='Limited evidence' ? 'v24-conf-insufficient' : 'v24-conf-medium';
+        var statusIcon = status==='Favourable' ? '🟢' : status==='Attention required' ? '🔴' : status==='Limited evidence' ? '⚪' : '🟡';
+        var confBadge = u ? '<span class="v24-conf-badge '+(u.confidence>=70?'v24-conf-high':u.confidence>=40?'v24-conf-medium':'v24-conf-low')+'" style="margin-left:8px">'+(u.confidence>=70?'🟢':u.confidence>=40?'🟡':'🟠')+' '+esc3(u.confidenceLabel)+' confidence</span>' : '';
+        var html = '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap">';
+        html += '<div style="min-width:0"><div style="font:900 18px/1.25 Poppins,sans-serif;letter-spacing:-.01em">📊 '+esc3(app.fileName||'Current dataset')+'</div>';
+        html += '<div style="font-size:12.5px;color:var(--muted);margin-top:4px">'+(app.rows.length.toLocaleString('en-IN'))+' records analysed'+confBadge+'</div></div>';
+        html += '<div class="v24-conf-badge '+statusCls+'" style="font-size:13px;padding:7px 14px">'+statusIcon+' '+esc3(status)+'</div>';
+        html += '</div>';
+        body.innerHTML = html;
+      }
+      setInterval(render, 700);
+      if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', render);
+      else render();
+    })();
+    </script>
 
     <div class="id-post-upload-health no-print" id="postUploadHealth" aria-live="polite">
       <div class="copy">
@@ -2377,11 +2471,14 @@ body{
 
     <nav id="v21QuickNav" class="v21-quicknav no-print" aria-label="Jump to section" hidden>
       <span class="v21-quicknav-label">Jump to</span>
+      <button type="button" data-jump="v25Snapshot">📊 Snapshot</button>
+      <button type="button" data-jump="v25StatusStrip">🚦 Status</button>
       <button type="button" data-jump="v24Understand">🧭 Understanding</button>
-      <button type="button" data-jump="v22AIAssistant">🤖 AI Assistant</button>
+      <button type="button" data-jump="idV1400">🎯 Takeaway</button>
       <button type="button" data-jump="kpiSection">📌 KPIs</button>
       <button type="button" data-jump="smartChartsSection">📊 Charts</button>
-      <button type="button" data-jump="idV1400">🧭 Executive Brief</button>
+      <button type="button" data-jump="managementInsightsSection">🔎 Insights</button>
+      <button type="button" data-jump="v22AIAssistant">🤖 AI Assistant</button>
       <button type="button" data-jump="idV143Report">📋 Full Report</button>
       <button type="button" data-jump-health="1">🩺 Health Check</button>
     </nav>
@@ -2879,6 +2976,7 @@ body{
     <div class="section">
       <div class="section-head">
         <span id="summary"></span><h2>Management Summary</h2>
+        <span class="hint">Data profile, plus additional measures beyond the top KPIs shown above</span>
         <div class="spacer"></div>
         <button class="btn sm no-print" id="copyInsightsBtn">Copy summary</button>
         <button class="btn sm no-print" id="printBtn">Print / Save as PDF</button>
@@ -2945,7 +3043,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v24.11',
+  VERSION: 'v25.0.3',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -5886,7 +5984,13 @@ function buildManagementSummaryCards(){
   const grid=$('managementSummaryGrid');
   if(!grid) return;
   const rows=APP.filtered||[];
-  const measures=rankMeasures().slice(0,4);
+  const allMeasures=rankMeasures();
+  /* v25.0 — de-duplication: the top 3 measures are already shown
+     prominently in the KPI row above this section, with identical
+     figures. Showing them again here added no new information — this
+     now surfaces the next tier (ranks 4-7) instead, which genuinely is
+     new to the reader. */
+  const measures=allMeasures.slice(3,7);
   const missing=APP.columns.reduce((sum,c)=>sum+(c.missing||0),0);
   const cells=Math.max(1,rows.length*Math.max(1,APP.columns.length));
   const completeness=Math.max(0,Math.min(100,(1-missing/cells)*100));
@@ -5899,7 +6003,7 @@ function buildManagementSummaryCards(){
   if(t && t.dateMin){
     cards.push(`<div class="management-summary-card"><div class="msc-label">Period covered</div><div class="msc-value" style="font-size:16px">${esc(fmtDate(t.dateMin))} – ${esc(fmtDate(t.dateMax))}</div><div class="msc-sub">Based on ${esc(t.name)}</div></div>`);
   } else {
-    cards.push(`<div class="management-summary-card"><div class="msc-label">Measures</div><div class="msc-value">${measures.length || measuresCount()}</div><div class="msc-sub">Numeric fields available for analysis</div></div>`);
+    cards.push(`<div class="management-summary-card"><div class="msc-label">Measures</div><div class="msc-value">${allMeasures.length || measuresCount()}</div><div class="msc-sub">Numeric fields available for analysis</div></div>`);
   }
   if(perf||att){
     cards.push(`<div class="management-summary-card ${att?'warn':'good'}"><div class="msc-label">Material movements</div><div class="msc-value">${perf+att}</div><div class="msc-sub">${perf} favourable · ${att} attention · <button type="button" class="btn sm" style="margin-top:7px" id="summaryMovementBtn" data-open-movement="auto">View details →</button></div></div>`);
@@ -6511,6 +6615,7 @@ function buildManagementActionCentre(items){
   if(!grid)return;
   const perf=Array.isArray(items?.performance)?items.performance:[];
   const att=Array.isArray(items?.attention)?items.attention:[];
+  const watch=Array.isArray(items?.contextual)?items.contextual:[];
   const clean=v=>miStrip(v||'');
   const facts=plain=>{
     const m=plain.match(/(?:moved from|decreased from|increased from)\s+([^()]+?)\s+to\s+([^()]+?)\s+\(([+-]?(?:\d+(?:\.\d+)?))%\)/i);
@@ -6524,8 +6629,17 @@ function buildManagementActionCentre(items){
     const pp=p.match(/from\s+([+-]?(?:\d+(?:\.\d+)?)%)\s+to\s+([+-]?(?:\d+(?:\.\d+)?)%)/i);
     return pp?Math.abs(Number(pp[2])-Number(pp[1])):0;
   };
-  const ranked=[...att.map((item,index)=>({item,index,bucket:'attention',score:score(item)})),...perf.map((item,index)=>({item,index,bucket:'performance',score:score(item)}))]
-    .sort((a,b)=>b.score-a.score||a.bucket.localeCompare(b.bucket)||a.index-b.index).slice(0,3);
+  const topOf=(arr,bucket)=>{
+    if(!arr.length)return null;
+    const ranked=arr.map((item,index)=>({item,index,bucket,score:score(item)})).sort((a,b)=>b.score-a.score||a.index-b.index);
+    return ranked[0];
+  };
+  /* v25.0 — exactly one slot per category (🔴 Attention, 🟢 Performance,
+     🟡 Watch — reusing the existing "contextual movements, do not
+     pre-classify" bucket, which was already the right evidence-honest
+     category for "watch this, don't act on it yet"), rather than a
+     single magnitude-ranked mix of just two buckets. */
+  const ranked=[topOf(att,'attention'),topOf(perf,'performance'),topOf(watch,'watch')].filter(Boolean);
   if(!ranked.length){
     grid.innerHTML='<div class="mac-empty">No material movement is currently established. Add a comparable period, target or linked KPI for stronger management review.</div>';
     return;
@@ -6537,23 +6651,27 @@ function buildManagementActionCentre(items){
       if(/cost|expense|spend|salary|wage/.test(n)) return 'Investigate cost composition, workload/output, operating scale and the approved budget or target.';
       return 'Investigate the underlying activity, mix, quality and supporting KPI; confirm the business reason before taking corrective action.';
     }
+    if(entry.bucket==='watch') return 'Not yet classified as favourable or adverse from the available data. Review against the closest supporting KPI before drawing a conclusion.';
     if(/cost|expense|spend/.test(n)) return 'Sustain only after confirming output, scale, mix and quality are comparable; record the efficiency driver.';
     return 'Validate that the improvement is sustained and supported by the closest volume, quality, productivity or target KPI.';
   };
   const titleFor=(plain,bucket)=>{
     const m=plain.match(/^([^:]+):/);
-    return (m?m[1]:plain.split(' moved from ')[0]).replace(/[:\s]+$/,'').trim() || (bucket==='attention'?'Attention movement':'Favourable movement');
+    return (m?m[1]:plain.split(' moved from ')[0]).replace(/[:\s]+$/,'').trim() || (bucket==='attention'?'Attention movement':bucket==='watch'?'Movement to watch':'Favourable movement');
   };
+  const iconFor=bucket=>bucket==='attention'?'🔴':bucket==='performance'?'🟢':'🟡';
+  const labelFor=bucket=>bucket==='attention'?'Attention':bucket==='performance'?'Performance':'Watch';
   grid.innerHTML=ranked.map((entry,i)=>{
     const plain=clean(entry.item), f=facts(plain);
     const title=titleFor(plain,entry.bucket);
-    const type=entry.bucket==='attention'?'Attention':'Favourable';
+    const whyText=plain.replace(/^([^:]+):\s*/,'').slice(0,220)+(plain.replace(/^([^:]+):\s*/,'').length>220?'…':'');
     const action=actionFor(entry,plain);
     return `<article class="mac-card ${entry.bucket}">
-      <div class="mac-top"><div><div class="mac-kpi">${esc(title)}</div><div class="mac-status">${type} movement</div></div><span class="mac-rank">Priority ${i+1}</span></div>
-      ${f?`<div class="mac-movement"><div><small>FROM</small><b>${esc(f.from)}</b></div><div class="arrow">→</div><div><small>TO</small><b>${esc(f.to)}</b></div></div><div class="mac-change">Change ${esc(f.change)}</div>`:''}
-      <div class="mac-why">${esc(plain.replace(/^([^:]+):\s*/,'').slice(0,220))}${plain.replace(/^([^:]+):\s*/,'').length>220?'…':''}</div>
-      <div class="mac-action"><b>Suggested action:</b> ${esc(action)}</div>
+      <div class="mac-top"><div><div class="mac-kpi">${iconFor(entry.bucket)} ${esc(title)}</div><div class="mac-status">${labelFor(entry.bucket)}</div></div><span class="mac-rank">Priority ${i+1}</span></div>
+      <div class="mac-field"><b>What:</b> ${esc(title)}${f?` — ${esc(f.from)} → ${esc(f.to)} (${esc(f.change)})`:''}</div>
+      <div class="mac-field"><b>Why:</b> ${esc(whyText)}</div>
+      ${f?`<div class="mac-movement"><div><small>FROM</small><b>${esc(f.from)}</b></div><div class="arrow">→</div><div><small>TO</small><b>${esc(f.to)}</b></div></div><div class="mac-change">Evidence: change ${esc(f.change)}</div>`:'<div class="mac-field"><b>Evidence:</b> Based on the comparable period available in the current data.</div>'}
+      <div class="mac-action"><b>Recommended action:</b> ${esc(action)}</div>
       <div class="mac-buttons">
         <button type="button" class="primary mac-details" data-mac-bucket="${entry.bucket}">View details</button>
         <button type="button" class="mac-raw">Underlying data</button>
@@ -7365,7 +7483,7 @@ function wireChartBuilder(){
 function buildExecutiveCockpit(){
   const rows = APP.filtered || [];
   const all = APP.rows || [];
-  const ms = rankMeasures().slice(0,3);
+  const ms = rankMeasures().slice(3,6);
 
   const setText = (id, value) => { const n=$(id); if(n) n.textContent=value; };
   setText('execRows', rows.length.toLocaleString());
@@ -7467,7 +7585,7 @@ function buildExecutiveCockpit(){
       }
       const avgOfSum = agg.count ? agg.value/agg.count : 0;
       return `<div class="exec-measure"><b title="${esc(c.name)}">${esc(c.name)}</b><strong>${fmtByField(agg.value,c.name)}</strong><span>total · avg ${fmtByField(avgOfSum,c.name)}</span></div>`;
-    }).join('') : `<div class="exec-measure"><b>No numeric measures</b><span>Counts and distributions are still available.</span></div>`;
+    }).join('') : `<div class="exec-measure"><b>All key measures shown above</b><span>This dataset's measures are already covered by the KPI cards and Management Summary.</span></div>`;
   }
 
   const attention=[];
@@ -10842,9 +10960,30 @@ function render(){
  grid.innerHTML='';
  if(!specs.length){grid.innerHTML='<div class="ai-empty">No reliable numeric parameters were detected for automatic chart creation. Use the manual parameter selectors below.</div>';return}
  var sub=$('aiDashboardSub');if(sub)sub.textContent='AI automatically created '+specs.length+' key chart'+(specs.length>1?'s':'')+' from the loaded data. These charts are independent of the manual parameter selector below.';
+ function soWhatFor(measureName){
+   try{
+     var mi=window.__miItems; if(!mi||!measureName) return null;
+     var pools=[{arr:mi.performance,icon:'🟢'},{arr:mi.attention,icon:'🔴'}];
+     for(var p=0;p<pools.length;p++){
+       var arr=pools[p].arr||[];
+       for(var i=0;i<arr.length;i++){
+         var item=String(arr[i]);
+         var m=item.match(/^<b>(.*?)<\/b>/);
+         if(!m) continue;
+         var name=m[1].replace(/<[^>]+>/g,'').trim();
+         if(name.toLowerCase()!==String(measureName).toLowerCase()) continue;
+         var stripped=item.replace(/<[^>]+>/g,'').replace(/^\s*:\s*/,'').trim();
+         var firstSentence=stripped.split(/\.\s/)[0];
+         return pools[p].icon+' So what: '+firstSentence+(firstSentence.endsWith('.')?'':'.');
+       }
+     }
+   }catch(_){ }
+   return null;
+ }
  specs.forEach(function(s){
   var card=document.createElement('article');card.className='ai-chart-card';
-  card.innerHTML='<div class="ai-chart-card-head"><div><h4>'+esc(niceName(s.title))+'</h4><p class="ai-chart-sub">'+esc(s.subtitle)+'</p></div><div class="ai-chart-actions"><label style="font-size:9px;color:var(--muted);font-weight:800">Chart <select class="ai-chart-type" aria-label="Change chart type for '+esc(niceName(s.title))+'">'+chartTypeOptions(s.type)+'</select></label><button type="button" class="ai-chart-expand">⛶ Expand</button></div></div><div class="ai-chart-wrap"><canvas></canvas></div><div class="ai-chart-touch-detail">Tap a bar or point to see the exact figure.</div><div class="ai-chart-foot">'+esc(s.foot)+'</div>';
+  var soWhat=soWhatFor(s.measure);
+  card.innerHTML='<div class="ai-chart-card-head"><div><h4>'+esc(niceName(s.title))+'</h4><p class="ai-chart-sub">'+esc(s.subtitle)+'</p></div><div class="ai-chart-actions"><label style="font-size:9px;color:var(--muted);font-weight:800">Chart <select class="ai-chart-type" aria-label="Change chart type for '+esc(niceName(s.title))+'">'+chartTypeOptions(s.type)+'</select></label><button type="button" class="ai-chart-expand">⛶ Expand</button></div></div><div class="ai-chart-wrap"><canvas></canvas></div><div class="ai-chart-touch-detail">Tap a bar or point to see the exact figure.</div>'+(soWhat?'<div class="ai-chart-so-what">'+esc(soWhat)+'</div>':'')+'<div class="ai-chart-foot">'+esc(s.foot)+'</div>';
   grid.appendChild(card);redrawAICard(s,card);
   card.querySelector('.ai-chart-type').addEventListener('change',function(e){
     s.type=e.target.value;
@@ -12320,6 +12459,9 @@ function mountAskMe(){
     '<button type="button" class="ai48-q">If I could only fix one thing, what should it be?</button>'+ 
     '<button type="button" class="ai48-q">How reliable is this data for decisions?</button>'+ 
     '<button type="button" class="ai48-q">What should I watch next period?</button>'+ 
+    '<button type="button" class="ai48-q">Why did performance fall?</button>'+ 
+    '<button type="button" class="ai48-q">Which region needs attention?</button>'+ 
+    '<button type="button" class="ai48-q">What should management do?</button>'+ 
     '</div>'+ 
     '<div class="ai48-row"><input id="ai48Input" class="ai48-input" autocomplete="off" placeholder="Type your own question about this dataset…" aria-label="Ask Executive AI a question"><button type="button" id="ai48Ask" class="ai48-ask">Ask</button></div><div id="ai48Answer" class="ai48-answer" aria-live="polite"></div><button type="button" id="ai48Copy" class="btn sm no-print" style="display:none;margin-top:8px">📋 Copy answer</button>';
   document.body.appendChild(p);
