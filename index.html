@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v24.10","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v24.11","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
@@ -1301,7 +1301,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v24.10">
+<meta name="instantdash-build" content="v24.11">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2162,7 +2162,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v24.10';
+      s.textContent='v24.11';
       b.appendChild(s);
     }
   }
@@ -2220,8 +2220,8 @@ body{
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v24.10</span>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v24.10</span></div>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v24.11</span>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v24.11</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
       <button class="id-health-btn no-print" id="aiModeToggleBtn" type="button" aria-label="Real AI settings">🤖 Real AI: Off</button>
@@ -2945,7 +2945,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v24.10',
+  VERSION: 'v24.11',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -8263,6 +8263,7 @@ function wireRest(){
   function note(msg){ var n=document.getElementById('v154ShareNote'); if(n) n.textContent=msg||''; }
   function hasData(){ try{ return !!(window.APP && APP.rows && APP.rows.length); }catch(_){ return false; } }
   function openPanel(){
+    try{ if(typeof toast==='function') toast('Opening share panel…'); }catch(_){ }
     var p=panel(); if(!p) return;
     p.classList.add('is-open'); p.setAttribute('aria-hidden','false');
     note(hasData()
@@ -8369,6 +8370,29 @@ function wireRest(){
     if (el.id==='v154SharePanel' || (el.closest && el.closest('#v154SharePanel')===el)) closePanel();
   });
   document.addEventListener('keydown',function(e){ if(e.key==='Escape') closePanel(); });
+
+  /* v24.11 — this is a repeat report of the exact same symptom after the
+     v24.4 delegation fix, which should have been sufficient. Rather than
+     guess again, add a second, fully independent wiring mechanism as
+     redundancy (direct .onclick attachment, re-applied periodically —
+     the same reliable pattern already used for Brief Me), plus console
+     logging so a person checking DevTools can see exactly what's
+     happening if this still doesn't resolve it. */
+  function directWire(){
+    Object.keys(ACTIONS).forEach(function(id){
+      var el = document.getElementById(id);
+      if (el){
+        el.onclick = function(ev){
+          ev.preventDefault();
+          console.log('InstantDash Share: "'+id+'" clicked (direct handler)');
+          ACTIONS[id]();
+        };
+      }
+    });
+  }
+  console.log('InstantDash Share: wiring script ran. topShareBtn found:', !!document.getElementById('topShareBtn'), 'v154SharePanel found:', !!document.getElementById('v154SharePanel'));
+  directWire();
+  setInterval(directWire, 700);
 })();
 </script>
 
