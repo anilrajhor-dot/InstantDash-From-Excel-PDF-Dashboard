@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.0.7","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.0.8","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
@@ -1382,7 +1382,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v26.0.7">
+<meta name="instantdash-build" content="v26.0.8">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -1862,6 +1862,11 @@ body{
 .brand small{
   color:var(--ex-muted)!important;
 }
+.v26-brand-text{display:flex;flex-direction:column;min-width:0;gap:1px}
+.v26-cockpit-subtitle{font-size:11px;font-weight:800;color:var(--accent);letter-spacing:.01em;line-height:1.2}
+.v26-cockpit-tagline{font-size:9.5px;color:var(--muted);font-weight:500;line-height:1.2}
+.v26-diag-link{display:block;margin-top:10px;background:none;border:none;padding:0;font-size:11px;font-weight:700;color:var(--accent);cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+@media(max-width:640px){.v26-cockpit-tagline{display:none}}
 
 /* File/source card */
 #fileCard,.file-card{
@@ -2243,7 +2248,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v26.0.7';
+      s.textContent='v26.0.8';
       b.appendChild(s);
     }
   }
@@ -2300,9 +2305,13 @@ body{
     <div class="mark" aria-hidden="true">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
-    <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v26.0.7</span>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.0.7</span></div>
+    <div class="v26-brand-text">
+      <h1 id="appName">InstantDash</h1>
+      <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v26.0.8</span>
+      <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
+    </div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.0.8</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
       <button class="id-health-btn no-print" id="aiModeToggleBtn" type="button" aria-label="Real AI settings">🤖 Real AI: Off</button>
@@ -2399,6 +2408,59 @@ body{
     })();
     </script>
 
+    <section id="v26Takeaway" class="card no-print" style="padding:18px 20px;margin:0 0 16px" hidden>
+      <div class="section-head" style="border:none;margin-bottom:8px!important;padding-bottom:0">
+        <h2 style="margin:0;font-size:15px">🎯 Executive Takeaway</h2>
+      </div>
+      <div id="v26TakeawayBody"></div>
+    </section>
+    <script id="instantdash-v26-takeaway-wire">
+    (function(){
+      function esc8(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+      function stripHtml8(s){return String(s||'').replace(/<[^>]*>/g,'').trim();}
+      function render(){
+        var section=document.getElementById('v26Takeaway');
+        var body=document.getElementById('v26TakeawayBody');
+        if(!section||!body) return;
+        var app=window.APP||{};
+        var hasData=!!(app.rows&&app.rows.length);
+        section.hidden=!hasData;
+        if(!hasData) return;
+        var mi=window.__miItems||{};
+        var status=window.__miStatus||'Mixed';
+        var perf=(mi.performance||[]).map(stripHtml8);
+        var att=(mi.attention||[]).map(stripHtml8);
+        var sentence='';
+        var basisParts=[];
+        if(perf.length||att.length){
+          var parts=[];
+          if(status==='Favourable') parts.push('Overall performance is favourable');
+          else if(status==='Attention required') parts.push('Overall performance requires management attention');
+          else if(status==='Limited evidence') parts.push('The overall position cannot yet be confidently classified');
+          else parts.push('Overall performance is mixed');
+          if(perf.length){
+            var pName=(perf[0].match(/^([^:]+):/)||[])[1];
+            if(pName) parts.push('with '+pName.trim()+' improving');
+          }
+          if(att.length){
+            var aName=(att[0].match(/^([^:]+):/)||[])[1];
+            if(aName) parts.push((perf.length?'while ':'')+aName.trim()+' needs review');
+          }
+          sentence = parts.join(', ')+'. Management should review the priority item in the Action Centre below and sustain any favourable movement identified.';
+          if(att.length) basisParts.push('current period vs previous comparable period');
+          basisParts.push('available Management Insights evidence');
+        } else {
+          sentence = 'Comparable evidence is limited; conclusions are based on currently available data only.';
+        }
+        body.innerHTML = '<p style="margin:0;font-size:14px;line-height:1.6;font-weight:600">'+esc8(sentence)+'</p>'
+          + (basisParts.length ? '<p style="margin:10px 0 0;font-size:10.5px;color:var(--muted)">Based on: '+esc8(basisParts.join(' / '))+'.</p>' : '');
+      }
+      setInterval(render, 700);
+      if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', render);
+      else render();
+    })();
+    </script>
+
     <section id="v26GoingWellAttention" class="no-print" hidden>
       <div id="v26GWABody" class="v26-gwa-grid"></div>
     </section>
@@ -2446,6 +2508,42 @@ body{
           + (rightItems.length ? rightItems.join('') : '<div class="v26-gwa-empty">🟢 No material adverse movement identified.</div>')
           + '</div>';
         body.innerHTML = html;
+      }
+      setInterval(render, 700);
+      if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', render);
+      else render();
+    })();
+    </script>
+
+    <section id="v26Evidence" class="card no-print" style="padding:16px 18px;margin:0 0 16px" hidden>
+      <div class="section-head" style="border:none;margin-bottom:10px!important;padding-bottom:0">
+        <h2 style="margin:0;font-size:15px">🔍 Evidence Behind the Conclusion</h2>
+        <span class="hint">Supporting evidence for the Executive Takeaway — context and correlation, not proof of cause</span>
+      </div>
+      <div id="v26EvidenceBody"></div>
+    </section>
+    <script id="instantdash-v26-evidence-wire">
+    (function(){
+      function esc7(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+      function stripHtml7(s){return String(s||'').replace(/<[^>]*>/g,'').trim();}
+      function render(){
+        var section=document.getElementById('v26Evidence');
+        var body=document.getElementById('v26EvidenceBody');
+        if(!section||!body) return;
+        var app=window.APP||{};
+        var hasData=!!(app.rows&&app.rows.length);
+        section.hidden=!hasData;
+        if(!hasData) return;
+        var mi=window.__miItems||{};
+        var points=[];
+        (mi.relationships||[]).forEach(function(item){ points.push(stripHtml7(item)); });
+        (mi.drivers||[]).forEach(function(item){ points.push(stripHtml7(item)); });
+        if(mi.performance&&mi.performance[0]) points.push('Favourable movement: '+stripHtml7(mi.performance[0]));
+        if(mi.attention&&mi.attention[0]) points.push('Attention movement: '+stripHtml7(mi.attention[0]));
+        points = points.slice(0,4);
+        body.innerHTML = points.length
+          ? '<ul style="margin:0;padding-left:18px">'+points.map(function(p){return '<li style="font-size:12px;line-height:1.6;margin-bottom:7px">'+esc7(p)+'</li>';}).join('')+'</ul><p style="margin:8px 0 0;font-size:10.5px;color:var(--muted)">⚠️ Relationship observed; causation requires management validation.</p>'
+          : '<p style="margin:0;font-size:12px;color:var(--muted)">Comparable evidence is limited; conclusions are based on currently available data only. Add a comparable period, target or linked KPI to strengthen the evidence base.</p>';
       }
       setInterval(render, 700);
       if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', render);
@@ -2553,6 +2651,7 @@ body{
         if(u.targetActualPairs.length){
           html += '<p style="margin:8px 0 0;font-size:11.5px;color:var(--muted)">Detected pairing: '+u.targetActualPairs.map(function(p){return esc2(p.actual)+' vs '+esc2(p.target);}).join('; ')+'.</p>';
         }
+        html += '<button type="button" class="v26-diag-link" onclick="var t=document.getElementById(\'v25DetailedHeader\'); if(t) t.scrollIntoView({behavior:\'smooth\',block:\'start\'});">View detailed data diagnostics →</button>';
         body.innerHTML = html;
       }
       function sync(){
@@ -2635,7 +2734,7 @@ body{
     <div class="section" id="kpiSection">
       <button type="button" id="v23BriefMeBtn" class="v23-brief-btn no-print" hidden>
         <span class="v23-brief-icon">🔊</span>
-        <span class="v23-brief-text"><b>Brief me</b><span>Hear the full executive summary read aloud</span></span>
+        <span class="v23-brief-text"><b>Brief Me</b><span>Hear a 60–90 second management briefing</span></span>
       </button>
       <div id="v26DataContext" class="v26-data-context" hidden></div>
       <div class="kpi-grid" id="kpiRow"><div class="kpi"><div class="val">16</div><div class="lbl">Rows</div><div class="sub">15 columns</div></div><div class="kpi"><div class="val">3,018</div><div class="lbl">Total Staff Nominated</div><div class="sub">Average 188.63</div></div><div class="kpi alt"><div class="val">2,863</div><div class="lbl">Total Staff Attended</div><div class="sub">Average 178.94</div></div><div class="kpi"><div class="val">94.76</div><div class="lbl">Attendance Rate %</div><div class="sub">Average of 16 records</div></div><div class="kpi alt"><div class="val">4</div><div class="lbl">Distinct Region</div><div class="sub">most common: North</div></div></div>
@@ -3317,7 +3416,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v26.0.7',
+  VERSION: 'v26.0.8',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -12834,7 +12933,7 @@ function mountAskMe(){
   p.className='ai48-panel';
   p.setAttribute('role','dialog');
   p.setAttribute('aria-label','Ask Executive AI');
-  p.innerHTML='<div class="ai48-head"><div><div class="ai48-title">💬 Ask Executive AI</div><div class="ai48-hint">Ask your own question about the currently loaded dashboard data — including how to improve any parameter</div></div><span class="badge">LIVE DATA</span></div>'+
+  p.innerHTML='<div class="ai48-head"><div><div class="ai48-title">💬 Ask Executive AI</div><div class="ai48-hint">Ask anything about the current dashboard — including how to improve any parameter</div></div><span class="badge">LIVE DATA</span></div>'+
     '<div class="ai48-questions">'+
     '<button type="button" class="ai48-q">What are the 3 most important issues?</button>'+ 
     '<button type="button" class="ai48-q">What is going well?</button>'+ 
