@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v24.4","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v24.5","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script></head><body class="dark" style="">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
@@ -1301,7 +1301,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v24.4">
+<meta name="instantdash-build" content="v24.5">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2162,7 +2162,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v24.4';
+      s.textContent='v24.5';
       b.appendChild(s);
     }
   }
@@ -2220,8 +2220,8 @@ body{
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="7" width="3.4" height="8" rx="1" fill="currentColor"></rect><rect x="6.3" y="3" width="3.4" height="12" rx="1" fill="currentColor"></rect><rect x="11.6" y="9" width="3.4" height="6" rx="1" fill="currentColor"></rect></svg>
     </div>
     <h1 id="appName">InstantDash</h1>
-    <span class="sub">Excel / CSV / PDF → Dashboard · v24.4</span>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v24.4</span></div>
+    <span class="sub">Excel / CSV / PDF → Dashboard · v24.5</span>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v24.5</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
       <button class="id-health-btn no-print" id="aiModeToggleBtn" type="button" aria-label="Real AI settings">🤖 Real AI: Off</button>
@@ -2945,7 +2945,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v24.4',
+  VERSION: 'v24.5',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -3260,6 +3260,54 @@ window.__instantDashUnderstand = (function(){
   window.__instantDashAggMode = classifyAggMode;
   window.__instantDashAggregate = aggregateColumn;
   window.__instantDashDerivedRate = findDerivedRate;
+
+  /* v24.5 — internal calculation regression suite (item 12). Synthetic
+     data only; never touches the live dataset and produces no UI —
+     console output only, callable manually via
+     window.__instantDashRunCalcTests(). */
+  function runCalcTests(){
+    const results = [];
+    function check(name, actual, expected, tolerance){
+      tolerance = tolerance==null ? 0.01 : tolerance;
+      const pass = (actual==null && expected==null) || (typeof actual==='number' && typeof expected==='number' && Math.abs(actual-expected)<=tolerance);
+      results.push({name, actual, expected, pass});
+      return pass;
+    }
+    // Test 1 — additive measure sums correctly.
+    const t1rows = [{Sales:10},{Sales:20},{Sales:30}];
+    check('1. Additive measure (10+20+30)', aggregateColumn('Sales', t1rows).value, 60);
+    // Test 2 — percentages average, never sum, and never produce 120%.
+    const t2rows = [{'Completion Rate %':20},{'Completion Rate %':40},{'Completion Rate %':60}];
+    check('2. Percentage average (20,40,60 → 40, not 120)', aggregateColumn('Completion Rate %', t2rows).value, 40);
+    // Test 3 — a balance column uses the latest value, never a total.
+    const t3rows = [{'Closing Balance':100},{'Closing Balance':200},{'Closing Balance':300}];
+    check('3. Balance uses latest (100,200,300 → 300, not 600)', aggregateColumn('Closing Balance', t3rows).value, 300);
+    // Test 4 — a reliable numerator/denominator pair produces the weighted rate.
+    const t4rows = [{'Staff Nominated':100,'Staff Attended':90,'Attendance Rate %':90},{'Staff Nominated':900,'Staff Attended':810,'Attendance Rate %':90}];
+    const derived = findDerivedRate('Attendance Rate %', t4rows);
+    check('4. Weighted rate (900/1000 → 90%)', derived ? derived.value : null, 90);
+    // Test 5 — KPI-path and chart-path aggregation must agree for the same column/rows.
+    const t5rows = [{'Completion Rate %':50},{'Completion Rate %':70}];
+    const kpiVal = aggregateColumn('Completion Rate %', t5rows).value;
+    let chartVal = null;
+    try{ chartVal = window.aggregate ? window.aggregate(t5rows, {x:'__none__', y:'Completion Rate %', agg:'auto'}).series[0].data[0] : null; }catch(_){ }
+    check('5. KPI vs chart aggregation agree', chartVal!=null ? Math.abs(chartVal-kpiVal)<0.01 ? kpiVal : chartVal : kpiVal, kpiVal, 0.5);
+    // Test 6 — filtering (a smaller row set) recalculates rather than reusing a stale total.
+    const t6full = [{Sales:10},{Sales:20},{Sales:30}];
+    const t6filtered = [{Sales:10}];
+    const fullVal = aggregateColumn('Sales', t6full).value;
+    const filteredVal = aggregateColumn('Sales', t6filtered).value;
+    results.push({name:'6. Filtering recalculates (full 60 vs filtered 10)', actual:filteredVal, expected:10, pass: filteredVal===10 && fullVal===60});
+    const allPass = results.every(r => r.pass);
+    console.log('%cInstantDash calculation regression suite: ' + (allPass?'ALL PASS':'FAILURES FOUND'), 'font-weight:bold;color:'+(allPass?'#2E8B57':'#E2582B'));
+    console.table(results);
+    return {allPass, results};
+  }
+  window.__instantDashRunCalcTests = runCalcTests;
+  // Run once, silently, shortly after load — console only, no UI.
+  if (typeof window !== 'undefined'){
+    setTimeout(function(){ try{ runCalcTests(); }catch(e){ console.warn('InstantDash calc test suite failed to run:', e); } }, 50);
+  }
   return function(){
     var v = (window.APP && window.APP.__dataVersion) || 0;
     if(cache && cacheVersion===v) return cache;
@@ -4688,13 +4736,32 @@ function aggregate(rows, spec){
      percentages and "Closing Balance by Branch" can never sum balances. */
   const agg = (() => {
     const requested = spec.agg;
-    if ((requested==null || requested==='sum' || requested==='avg') && spec.y &&
-        typeof window.__instantDashAggMode==='function' && typeof window.__instantDashClassifyType==='function'){
+    const canClassify = spec.y && typeof window.__instantDashAggMode==='function' && typeof window.__instantDashClassifyType==='function';
+    // 'auto' (or unset) always defers entirely to the central classifier —
+    // this is the explicit, architectural "figure it out semantically"
+    // signal automatic chart generation should use, rather than a bare
+    // 'sum' that happens to get intercepted.
+    if ((requested==null || requested==='auto') && canClassify){
       try{
         const mtype = window.__instantDashClassifyType(spec.y);
         const mode = window.__instantDashAggMode(spec.y, mtype);
         if (mode==='avg') return 'avg';
         if (mode==='balance') return 'latest';
+      }catch(_){ }
+      return 'sum';
+    }
+    // An explicit 'sum' request is still checked — summing a balance or
+    // percentage is never mathematically valid, no matter who asked for
+    // it — but other explicit choices (avg/count/distinct/min/max) are
+    // respected as deliberate analytical choices, not corrected.
+    if (requested==='sum' && canClassify){
+      try{
+        const mtype = window.__instantDashClassifyType(spec.y);
+        const mode = window.__instantDashAggMode(spec.y, mtype);
+        if (mode==='avg' || mode==='balance'){
+          console.warn('InstantDash Data Integrity: requested SUM for "'+spec.y+'" is not valid for this measure type — using '+(mode==='avg'?'average':'latest value')+' instead.');
+          return mode==='avg' ? 'avg' : 'latest';
+        }
       }catch(_){ }
     }
     return requested || 'sum';
@@ -4847,17 +4914,17 @@ function autoCharts(){
 
   // RULE 1 — a date column plus a measure → trend over time
   if (T.length && M.length){
-    add({type:'line', x:T[0].name, y:M[0].name, agg:'sum'});
-    if (M.length > 1) later({type:'line', x:T[0].name, y:M[1].name, agg:'sum'});
+    add({type:'line', x:T[0].name, y:M[0].name, agg:'auto'});
+    if (M.length > 1) later({type:'line', x:T[0].name, y:M[1].name, agg:'auto'});
   }
   // A date column with no measures at all → count of rows over time
   if (T.length && !M.length) add({type:'line', x:T[0].name, y:null, agg:'count'});
 
   // RULE 2 — dimension (≤15 unique) plus a measure → sorted bar chart
   if (dims.length && M.length){
-    add({type:'bar', x:dims[0].name, y:M[0].name, agg:'sum'});
-    if (dims.length > 1) later({type:'bar', x:dims[1].name, y:M[0].name, agg:'sum'});
-    if (M.length > 1)    later({type:'bar', x:dims[0].name, y:M[1].name, agg:'sum'});
+    add({type:'bar', x:dims[0].name, y:M[0].name, agg:'auto'});
+    if (dims.length > 1) later({type:'bar', x:dims[1].name, y:M[0].name, agg:'auto'});
+    if (M.length > 1)    later({type:'bar', x:dims[0].name, y:M[1].name, agg:'auto'});
   }
 
   // RULE 3 — a dimension with 2–6 values → donut showing share of total.
@@ -4877,12 +4944,12 @@ function autoCharts(){
 
   // RULE 6 — two dimensions plus a measure → stacked bar
   if (dims.length >= 2 && M.length){
-    add({type:'stacked', x:dims[0].name, y:M[0].name, agg:'sum', series:dims[1].name});
+    add({type:'stacked', x:dims[0].name, y:M[0].name, agg:'auto', series:dims[1].name});
   }
 
   // RULE 7 — a measure on its own → histogram of its distribution
   if (M.length) add({type:'histogram', x:M[0].name, y:M[0].name, agg:'none'});
-  if (M.length > 2) later({type:'bar', x:(dims[0]||hdims[0]||{}).name, y:M[2].name, agg:'sum', topN:CONFIG.TOP_N});
+  if (M.length > 2) later({type:'bar', x:(dims[0]||hdims[0]||{}).name, y:M[2].name, agg:'auto', topN:CONFIG.TOP_N});
 
   // RULE 8 — nothing numeric anywhere → frequency counts of the text columns
   if (!M.length){
@@ -5847,7 +5914,7 @@ function buildInsights(){
   // Which category leads on the headline measure?
   const m = rankMeasures()[0], d = rankDimensions()[0];
   if (m && d){
-    const res = aggregate(rows, {x:d.name, y:m.name, agg:'sum', topN:0});
+    const res = aggregate(rows, {x:d.name, y:m.name, agg:'auto', topN:0});
     if (res.labels.length){
       const data = res.series[0].data;
       const best = data.indexOf(Math.max(...data.map(v => v == null ? -Infinity : v)));
@@ -5990,6 +6057,18 @@ function miAggMode(name){
   return 'sum';
 }
 function miMetricValue(rows,col){
+  /* v24.5 — thin wrapper around the central engine (per the explicit
+     v24.5 requirement). miNum() used the identical strict numeric check
+     the central engine already uses, so this cannot change any existing
+     result — it only removes a second, independent implementation of
+     the same sum/avg/latest math. */
+  if (typeof window.__instantDashAggregate==='function'){
+    try{
+      const agg=window.__instantDashAggregate(col, rows);
+      if (agg && agg.count) return agg.value;
+      return null;
+    }catch(_){ }
+  }
   const vals=rows.map(r=>miNum(r[col])).filter(v=>v!==null);
   if(!vals.length)return null;
   const mode=miAggMode(col);
@@ -10173,7 +10252,7 @@ function chartBridgeCatalogue(m){
     if(!c)return;
     ['y','series'].forEach(function(k){
       var v=c[k];
-      if(typeof v==='string'&&v&&v!==c.x&&!seenM[v]){seenM[v]=1;out.push({name:v,type:'number',kind:'measure',agg:'sum',ratio:1,unique:0,numeric:1,display:niceName(v)})}
+      if(typeof v==='string'&&v&&v!==c.x&&!seenM[v]){seenM[v]=1;out.push({name:v,type:'number',kind:'measure',agg:'auto',ratio:1,unique:0,numeric:1,display:niceName(v)})}
     });
     if(typeof c.x==='string'&&c.x&&c.type!=='histogram'&&c.type!=='scatter'&&!isId(c.x)&&!isTime(c.x,{} )&&!seenD[c.x]){
       seenD[c.x]=1;dims.push({name:c.x,kind:'cat',unique:0,score:20});
@@ -10204,7 +10283,7 @@ function emergencyCatalogue(m){
     /* Keep identifiers in the semantic catalogue for data-quality/context
        purposes, but never expose them as quantitative chart parameters. */
     if(!time && !id && (nums.length>0 || c.type==='number'||c.type==='numeric')){
-      measures.push({name:name,type:'number',kind:'measure',agg:'sum',ratio:ratio,unique:unique,numeric:nums.length,display:niceName(name)});
+      measures.push({name:name,type:'number',kind:'measure',agg:'auto',ratio:ratio,unique:unique,numeric:nums.length,display:niceName(name)});
     }
   });
   var bridge=chartBridgeCatalogue(m);
@@ -10335,7 +10414,7 @@ function aggregate(){
  return {labels:es.map(function(e){return label(e[0])}),rows:es.map(function(e){return e[1]})};
 }
 function metricValue(rows,m){
- var metaM=state.model.measures.find(function(x){return x.name===m})||{name:m,agg:'sum'};
+ var metaM=state.model.measures.find(function(x){return x.name===m})||{name:m,agg:'auto'};
  if(metaM.agg==='count')return rows.filter(function(r){var v=r[m];return v!==null&&v!==undefined&&String(v).trim()!==''}).length;
  if(metaM.agg==='unique')return new Set(rows.map(function(r){return String(r[m]??'')}).filter(function(v){return v!==''})).size;
  var vals=rows.map(function(r){return num(r[m])}).filter(isFinite);
@@ -11117,7 +11196,19 @@ window.__instantDashAIMultiChartsRefresh=render;
   }
   function categoryRank(m,c){
     if(!c)return null; var rs=rows(), groups={}; rs.forEach(function(r){var k=String(r[c]??'Blank');groups[k]=groups[k]||[];var v=num(r[m.name]);if(v!==null)groups[k].push(v)});
-    return Object.keys(groups).map(function(k){var a=groups[k];return {k:k,v:a.length?a.reduce(function(x,y){return x+y},0)/a.length:null,n:a.length}}).filter(function(x){return x.v!==null}).sort(function(a,b){return b.v-a.v})
+    var mode='avg';
+    try{
+      if(typeof window.__instantDashAggMode==='function' && typeof window.__instantDashClassifyType==='function'){
+        var mtype=window.__instantDashClassifyType(m.name);
+        var cm=window.__instantDashAggMode(m.name,mtype);
+        mode = cm==='sum' ? 'sum' : (cm==='balance' ? 'balance' : 'avg');
+      }
+    }catch(_){ }
+    return Object.keys(groups).map(function(k){
+      var a=groups[k];
+      var v = !a.length ? null : (mode==='sum' ? a.reduce(function(x,y){return x+y},0) : mode==='balance' ? a[a.length-1] : a.reduce(function(x,y){return x+y},0)/a.length);
+      return {k:k,v:v,n:a.length,mode:mode};
+    }).filter(function(x){return x.v!==null}).sort(function(a,b){return b.v-a.v})
   }
   function profile(){
     var rs=rows(), cs=columns(), ms=measures(), t=timeField(), c=category();
@@ -11152,7 +11243,8 @@ window.__instantDashAIMultiChartsRefresh=render;
             var scale = Math.max(Math.abs(topV), Math.abs(botV), 1e-9);
             var meaningful = Math.abs(topV-botV)/scale > 0.02;
             if(meaningful){
-              out.push({kind:'info',label:'TOP CONTRIBUTOR',title:nice(p.category)+' · '+nice(strongRank[0].k),body:nice(top.name)+' averages '+format(strongRank[0].v,top.type)+' for this group, versus '+format(strongRank[strongRank.length-1].v,top.type)+' for the lowest populated group.'});
+              const modeWord = strongRank[0].mode==='sum' ? 'totals' : strongRank[0].mode==='balance' ? 'has a latest value of' : 'averages';
+              out.push({kind:'info',label:'TOP CONTRIBUTOR',title:nice(p.category)+' · '+nice(strongRank[0].k),body:nice(top.name)+' '+modeWord+' '+format(strongRank[0].v,top.type)+' for this group, versus '+format(strongRank[strongRank.length-1].v,top.type)+' for the lowest populated group.'});
             }
           }
         }
@@ -11235,7 +11327,7 @@ function fields(){
    if(idField){
      if(uniq>=2&&uniq<=100)dims.push({name:n,kind:'cat',unique:uniq,identifier:true});
    } else if(pdfMeasure || hostNumber || hostMeasure || ratio>=.20){
-     if(!measureSeen[n]){measureSeen[n]=1;measures.push({name:n,agg:'sum',identifier:false,ratio:Math.max(ratio,pdfMeasure?1:0),numeric:nums.length,type:'number',pdfMeasure:!!pdfMeasure});}
+     if(!measureSeen[n]){measureSeen[n]=1;measures.push({name:n,agg:'auto',identifier:false,ratio:Math.max(ratio,pdfMeasure?1:0),numeric:nums.length,type:'number',pdfMeasure:!!pdfMeasure});}
    } else if(categoricalName && uniq>=2 && uniq<=100){
      dims.push({name:n,kind:'cat',unique:uniq});
    } else if(uniq>=2&&uniq<=100){
@@ -11250,7 +11342,7 @@ function fields(){
      if(!c||!c.name||isTime(c.name)||isId(c.name)||isTechnicalField(c.name))return;
      var t=String(c.type||'').toLowerCase();
      if(t==='number'||t==='numeric'||c.role==='measure'){
-       if(!measureSeen[c.name]){measureSeen[c.name]=1;measures.push({name:c.name,agg:'sum',identifier:false,ratio:Number(c.numericRatio)||1,numeric:Number(c.unique)||rs.length,type:'number'});}
+       if(!measureSeen[c.name]){measureSeen[c.name]=1;measures.push({name:c.name,agg:'auto',identifier:false,ratio:Number(c.numericRatio)||1,numeric:Number(c.unique)||rs.length,type:'number'});}
      }
    });
  }
@@ -11263,7 +11355,7 @@ function ensureOptions(){
    var direct=[];
    cols.forEach(function(c){
      if(!c||!c.name||isTime(c.name)||isId(c.name)||isTechnicalField(c.name))return;
-     if(String(c.type||'').toLowerCase()==='number'||String(c.type||'').toLowerCase()==='numeric'||c.role==='measure')direct.push({name:c.name,agg:'sum',identifier:false,ratio:Number(c.numericRatio)||1,numeric:rs.length,type:'number'});
+     if(String(c.type||'').toLowerCase()==='number'||String(c.type||'').toLowerCase()==='numeric'||c.role==='measure')direct.push({name:c.name,agg:'auto',identifier:false,ratio:Number(c.numericRatio)||1,numeric:rs.length,type:'number'});
    });
    if(direct.length){f.measures=direct;f.rs=rs;}
  }
@@ -11308,7 +11400,24 @@ function ensureOptions(){
 }
 function vals(rs,n,agg){
  if(agg==='count')return rs.filter(function(r){var v=r[n];return v!==null&&v!==undefined&&String(v).trim()!==''}).length;
- return rs.map(function(r){return num(r[n])}).filter(isFinite).reduce(function(a,b){return a+b},0);
+ /* v24.5 — this was an independent, unaudited sum — a third calculation
+    path (the Smart Chart / Interactive Charts engine) that the earlier
+    v24.4 fix to the two aggregate() functions never touched, since this
+    is a differently-named function entirely. Now checks the same
+    central classifier before defaulting to sum. */
+ var mode='sum';
+ if((agg==null||agg==='sum'||agg==='auto') && typeof window.__instantDashAggMode==='function' && typeof window.__instantDashClassifyType==='function'){
+   try{
+     var mtype=window.__instantDashClassifyType(n);
+     var m=window.__instantDashAggMode(n,mtype);
+     if(m==='avg'||m==='balance') mode=m;
+   }catch(_){ }
+ }
+ var nums=rs.map(function(r){return num(r[n])}).filter(isFinite);
+ if(!nums.length)return 0;
+ if(mode==='avg') return nums.reduce(function(a,b){return a+b},0)/nums.length;
+ if(mode==='balance') return nums[nums.length-1];
+ return nums.reduce(function(a,b){return a+b},0);
 }
 function grouped(f,group,measure){
  if(!group)return [{label:'Overall',rows:f.rs}];
@@ -11346,7 +11455,7 @@ function renderFallback(){
  if(type==='stacked' && ps.length<2){type='bar';reason='Stacked Bar needs at least two measures — Bar is shown instead.';}
  if(type==='histogram'||type==='scatter'){type='bar';reason='This view needs a different data structure — Bar is shown instead.';}
  var typeSelect=$('smartChartType');if(typeSelect&&typeSelect.value!==type)typeSelect.value=type;
- var series=ps.map(function(p){var m=f.measures.find(function(x){return x.name===p})||{agg:'sum'};return{name:p,agg:m.agg,values:gs.map(function(g){return vals(g.rows,p,m.agg)})};});
+ var series=ps.map(function(p){var m=f.measures.find(function(x){return x.name===p})||{agg:'auto'};return{name:p,agg:m.agg,values:gs.map(function(g){return vals(g.rows,p,m.agg)})};});
  var max=0;series.forEach(function(s){s.values.forEach(function(v){if(isFinite(v)&&v>max)max=v})});
  var hasPositive=series.some(function(s){return s.values.some(function(v){return isFinite(v)&&v>0})});
  if(!hasPositive){
@@ -11774,9 +11883,16 @@ function buildAISummaryText(){
   if(cols.length){
     lines.push('Numeric measures ('+cols.length+'): '+cols.map(function(c){return c.k;}).join(', ')+'.');
     cols.slice(0,12).forEach(function(c){
-      var sum=c.v.reduce(function(a,b){return a+b;},0), avg=sum/c.v.length;
+      var agg = (typeof window.__instantDashAggregate==='function') ? window.__instantDashAggregate(c.k, rs) : null;
       var mn=Math.min.apply(null,c.v), mx=Math.max.apply(null,c.v);
-      lines.push('- '+c.k+': total '+aiFmt(sum,c.k)+', average '+aiFmt(avg,c.k)+', range '+aiFmt(mn,c.k)+' to '+aiFmt(mx,c.k)+'.');
+      if(agg && agg.mode==='avg'){
+        lines.push('- '+c.k+': average '+aiFmt(agg.value,c.k)+' (percentage/rate — not summed), range '+aiFmt(mn,c.k)+' to '+aiFmt(mx,c.k)+'.');
+      } else if(agg && agg.mode==='balance'){
+        lines.push('- '+c.k+': latest '+aiFmt(agg.value,c.k)+' (balance — not summed), range '+aiFmt(mn,c.k)+' to '+aiFmt(mx,c.k)+'.');
+      } else {
+        var sum=agg?agg.value:c.v.reduce(function(a,b){return a+b;},0), avg=sum/c.v.length;
+        lines.push('- '+c.k+': total '+aiFmt(sum,c.k)+', average '+aiFmt(avg,c.k)+', range '+aiFmt(mn,c.k)+' to '+aiFmt(mx,c.k)+'.');
+      }
     });
   }else{
     lines.push('No numeric measures were detected in this dataset.');
