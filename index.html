@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.0.17","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.0.18","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -97,6 +97,36 @@
   function hidePanel(){
     var p = document.getElementById('idErrCatcherPanel');
     if(p) p.style.display = 'none';
+  }
+})();
+</script>
+<script id="instantdash-v26-window-app-alias">
+/* v26.0.18 — THE root-cause fix for this entire session's "same data in
+   every file" reports. window.APP was never actually set anywhere in
+   the real app: APP is declared `const APP = {...}` at the top level,
+   and top-level const/let declarations do NOT become window properties
+   in modern JS — only `window.__INSTANTDASH_APP__ = APP;` bridges it to
+   the global scope. Every new section built this session (Executive
+   Snapshot, Status Strip, Going Well/Attention, Watch Next, Executive
+   Takeaway, KPI Library wiring, the Executive Brief/Management Summary
+   fixes, the Why panel, and more) checks window.APP as its "has data"
+   gate — which was always undefined in real use, confirmed via an
+   actual headless-browser test with the real uploaded data (not static
+   code review). This installs a live getter so window.APP always
+   reflects the current real app object, fixing all existing references
+   at their one true source rather than risking missing one of the
+   roughly 40 places across this file that check it. Installed as early
+   as possible, before any other script runs. */
+(function(){
+  try{
+    Object.defineProperty(window, 'APP', {
+      configurable: true,
+      enumerable: true,
+      get: function(){ return window.__INSTANTDASH_APP__; },
+      set: function(v){ window.__INSTANTDASH_APP__ = v; }
+    });
+  }catch(e){
+    console.warn('InstantDash: could not install window.APP alias —', e);
   }
 })();
 </script></head>
@@ -1490,7 +1520,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v26.0.17">
+<meta name="instantdash-build" content="v26.0.18">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2356,7 +2386,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v26.0.17';
+      s.textContent='v26.0.18';
       b.appendChild(s);
     }
   }
@@ -2416,10 +2446,10 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v26.0.17</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v26.0.18</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.0.17</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.0.18</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
       <button class="id-health-btn no-print" id="aiModeToggleBtn" type="button" aria-label="Real AI settings">🤖 Real AI: Off</button>
@@ -3741,7 +3771,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v26.0.17',
+  VERSION: 'v26.0.18',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
