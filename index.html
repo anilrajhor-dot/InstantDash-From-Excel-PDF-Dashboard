@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.0.13","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.0.14","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -1487,7 +1487,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v26.0.13">
+<meta name="instantdash-build" content="v26.0.14">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2353,7 +2353,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v26.0.13';
+      s.textContent='v26.0.14';
       b.appendChild(s);
     }
   }
@@ -2413,10 +2413,10 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v26.0.13</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v26.0.14</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.0.13</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.0.14</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
       <button class="id-health-btn no-print" id="aiModeToggleBtn" type="button" aria-label="Real AI settings">🤖 Real AI: Off</button>
@@ -3521,7 +3521,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v26.0.13',
+  VERSION: 'v26.0.14',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -11192,6 +11192,141 @@ function seriesData(){
    series.push({name:p,values:vals,agg:(state.model.measures.find(function(m){return m.name===p})||{}).agg||'sum'});
  });
  return {labels:a.labels,series:series,rows:a.rows};
+}
+/* v26.0.14 — these three functions were called by draw() below but never
+   defined anywhere in the file, confirmed via a systematic scan of every
+   function call against every function actually defined in this scope.
+   This was a real, reproducible crash (ReferenceError), not a guess —
+   found via the in-app error catcher. A static example SVG already
+   embedded in this page's HTML was used as the visual reference so the
+   output matches the app's established style (gridlines, gradients,
+   drop-shadow, colour palette) rather than looking bolted-on. */
+function drawCartesian(wrap, d, type){
+  try{
+    var labels=d.labels||[], series=d.series||[];
+    var n=labels.length;
+    if(!n || !series.length){ wrap.innerHTML='<div style="padding:30px;color:var(--muted)">No data to chart.</div>'; return; }
+    var W=760, H=390, padL=68, padR=28, padT=28, padB=64;
+    var plotW=W-padL-padR, plotH=H-padT-padB;
+    var allVals=[0];
+    series.forEach(function(s){ (s.values||[]).forEach(function(v){ if(typeof v==='number' && isFinite(v)) allVals.push(v); }); });
+    var maxV=Math.max.apply(null,allVals), minV=Math.min.apply(null,allVals);
+    if(maxV===minV) maxV=minV+1;
+    var range=maxV-minV;
+    var pal=['#F5B301','#E2582B','#2E86AB','#3FB07A','#8E5BC9','#D9455F'];
+    var svg=['<svg viewBox="0 0 '+W+' '+H+'" width="100%" height="100%" style="touch-action:manipulation;display:block;font-family:Poppins,sans-serif"><defs><linearGradient id="idChartFade2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff8df"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient><filter id="idChartShadow2" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="4" stdDeviation="5" flood-opacity=".12"/></filter></defs><rect x="'+padL+'" y="'+padT+'" width="'+plotW+'" height="'+plotH+'" rx="16" fill="url(#idChartFade2)"/>'];
+    for(var g=0; g<=4; g++){
+      var gy=padT+plotH-(g/4)*plotH, gv=minV+(g/4)*range;
+      svg.push('<line x1="'+padL+'" y1="'+gy+'" x2="'+(W-padR)+'" y2="'+gy+'" stroke="#eadfce" stroke-width="1" stroke-dasharray="4 6"/><text x="'+(padL-12)+'" y="'+(gy+4)+'" text-anchor="end" font-size="11" font-weight="600" fill="#827b72">'+esc(fmt(gv))+'</text>');
+    }
+    if(type==='line' || type==='area'){
+      series.forEach(function(s, si){
+        var color=pal[si%pal.length];
+        var pts=(s.values||[]).map(function(v,i){
+          var x=padL+(n===1?plotW/2:i*plotW/(n-1));
+          var y=padT+plotH-((Number(v)||0)-minV)/range*plotH;
+          return [x,y];
+        });
+        if(type==='area'){
+          var baseline=padT+plotH;
+          var areaPath='M'+pts[0][0]+','+baseline+' '+pts.map(function(p){return 'L'+p[0]+','+p[1];}).join(' ')+' L'+pts[pts.length-1][0]+','+baseline+' Z';
+          svg.push('<path d="'+areaPath+'" fill="'+color+'" fill-opacity="0.15" stroke="none"/>');
+        }
+        svg.push('<polyline points="'+pts.map(function(p){return p[0]+','+p[1];}).join(' ')+'" fill="none" stroke="'+color+'" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>');
+        pts.forEach(function(p,i){
+          svg.push('<g data-fallback="'+si+':'+i+'"><circle cx="'+p[0]+'" cy="'+p[1]+'" r="14" fill="transparent"/><circle cx="'+p[0]+'" cy="'+p[1]+'" r="3.5" fill="'+color+'" stroke="#fff" stroke-width="1.5"/></g>');
+        });
+      });
+    } else {
+      var groupW=plotW/n, barGap=type==='stacked'?14:8;
+      if(type==='stacked'){
+        labels.forEach(function(lab,i){
+          var x0=padL+i*groupW, runningBase=0;
+          series.forEach(function(s,si){
+            var v=Number(s.values[i])||0, color=pal[si%pal.length];
+            var barH=(v/range)*plotH, y=padT+plotH-(runningBase/range*plotH)-barH;
+            svg.push('<rect data-fallback="'+si+':'+i+'" x="'+(x0+barGap/2)+'" y="'+y+'" width="'+Math.max(1,groupW-barGap)+'" height="'+Math.max(0,barH)+'" rx="4" fill="'+color+'" filter="url(#idChartShadow2)"><title>'+esc(niceName(s.name))+' · '+esc(String(lab))+' · '+esc(fmt(v))+'</title></rect>');
+            runningBase+=v;
+          });
+        });
+      } else {
+        var barW=(groupW-barGap)/Math.max(1,series.length);
+        labels.forEach(function(lab,i){
+          var x0=padL+i*groupW+barGap/2;
+          series.forEach(function(s,si){
+            var v=Number(s.values[i])||0, color=pal[si%pal.length];
+            var barH=Math.max(0,(v-Math.min(0,minV))/range*plotH), y=padT+plotH-barH;
+            svg.push('<rect data-fallback="'+si+':'+i+'" x="'+(x0+si*barW)+'" y="'+y+'" width="'+Math.max(1,barW-3)+'" height="'+barH+'" rx="6" fill="'+color+'" filter="url(#idChartShadow2)"><title>'+esc(niceName(s.name))+' · '+esc(String(lab))+' · '+esc(fmt(v))+'</title></rect>');
+          });
+        });
+      }
+    }
+    labels.forEach(function(lab,i){
+      var lx = (type==='line'||type==='area') ? padL+(n===1?plotW/2:i*plotW/(n-1)) : padL+i*plotW/n+plotW/n/2;
+      svg.push('<text x="'+lx+'" y="'+(H-24)+'" text-anchor="middle" font-size="10" font-weight="700" fill="#777">'+esc(String(lab).slice(0,12))+'</text>');
+    });
+    svg.push('</svg>');
+    wrap.innerHTML='<div class="id-chart-visual">'+svg.join('')+'</div><div class="id-chart-note">Tap a bar, point or segment for the exact figure · '+ (d.rows?d.rows.reduce(function(a,r){return a+(r?r.length:0);},0):0).toLocaleString()+' loaded rows</div>';
+    wrap.querySelectorAll('[data-fallback]').forEach(function(el){
+      el.style.cursor='pointer';
+      el.addEventListener('click', function(){
+        var parts=el.getAttribute('data-fallback').split(':');
+        var idx=Number(parts[1]);
+        if(isFinite(idx)){ state.selected=idx; detail(idx,d); }
+      });
+    });
+  }catch(e){ console.warn('InstantDash Smart Chart: drawCartesian failed —', e); wrap.innerHTML='<div style="padding:30px;color:var(--warn)">Chart could not be drawn.</div>'; }
+}
+function drawPie(wrap, d, isDonut){
+  try{
+    var labels=d.labels||[], s=d.series&&d.series[0];
+    if(!s || !labels.length){ wrap.innerHTML='<div style="padding:30px;color:var(--muted)">No data to chart.</div>'; return; }
+    var vals=s.values.map(function(v){ return Math.max(0, Number(v)||0); });
+    var total=vals.reduce(function(a,b){return a+b;},0);
+    if(!total){ wrap.innerHTML='<div style="padding:30px;color:var(--muted)">No data to chart.</div>'; return; }
+    var pal=['#F5B301','#E2582B','#2E86AB','#3FB07A','#8E5BC9','#D9455F','#0E9AA7','#B0793E'];
+    var W=760, H=390, cx=W/2, cy=H/2-10, r=Math.min(W,H)/2-60, innerR=isDonut? r*0.55 : 0;
+    var angle=-Math.PI/2;
+    var svg=['<svg viewBox="0 0 '+W+' '+H+'" width="100%" height="100%" style="touch-action:manipulation;display:block;font-family:Poppins,sans-serif">'];
+    vals.forEach(function(v,i){
+      var frac=v/total, a0=angle, a1=angle+frac*2*Math.PI;
+      var x0=cx+r*Math.cos(a0), y0=cy+r*Math.sin(a0);
+      var x1=cx+r*Math.cos(a1), y1=cy+r*Math.sin(a1);
+      var large=(a1-a0)>Math.PI?1:0, color=pal[i%pal.length], path;
+      if(isDonut){
+        var ix0=cx+innerR*Math.cos(a0), iy0=cy+innerR*Math.sin(a0);
+        var ix1=cx+innerR*Math.cos(a1), iy1=cy+innerR*Math.sin(a1);
+        path='M'+x0+','+y0+' A'+r+','+r+' 0 '+large+' 1 '+x1+','+y1+' L'+ix1+','+iy1+' A'+innerR+','+innerR+' 0 '+large+' 0 '+ix0+','+iy0+' Z';
+      } else {
+        path='M'+cx+','+cy+' L'+x0+','+y0+' A'+r+','+r+' 0 '+large+' 1 '+x1+','+y1+' Z';
+      }
+      svg.push('<path data-fallback="0:'+i+'" d="'+path+'" fill="'+color+'" stroke="var(--card)" stroke-width="2"><title>'+esc(String(labels[i]))+': '+esc(fmt(v))+' ('+(frac*100).toFixed(1)+'%)</title></path>');
+      angle=a1;
+    });
+    svg.push('</svg>');
+    wrap.innerHTML='<div class="id-chart-visual">'+svg.join('')+'</div><div class="id-chart-note">Tap a segment for the exact figure · '+total.toLocaleString()+' total</div>';
+    wrap.querySelectorAll('[data-fallback]').forEach(function(el){
+      el.style.cursor='pointer';
+      el.addEventListener('click', function(){
+        var parts=el.getAttribute('data-fallback').split(':');
+        var idx=Number(parts[1]);
+        if(isFinite(idx)){ state.selected=idx; detail(idx,d); }
+      });
+    });
+  }catch(e){ console.warn('InstantDash Smart Chart: drawPie failed —', e); wrap.innerHTML='<div style="padding:30px;color:var(--warn)">Chart could not be drawn.</div>'; }
+}
+function detail(idx, d){
+  try{
+    var box=$('smartChartDetail'); if(!box) return;
+    var labels=d.labels||[], series=d.series||[];
+    if(!series.length || idx==null || idx<0 || idx>=labels.length){ box.textContent='Tap a bar, point or segment to see the exact figure.'; return; }
+    var lines=series.map(function(s){
+      var v=s.values[idx];
+      return niceName(s.name)+': '+(typeof v==='number'&&isFinite(v)?fmt(v,s.name):'—');
+    });
+    box.innerHTML='<b>'+esc(String(labels[idx]))+'</b><br>'+lines.map(esc).join(' · ')
+      + (typeof chartTapExtraHtml==='function' && series[0] ? chartTapExtraHtml(series[0].name) : '');
+  }catch(e){ console.warn('InstantDash Smart Chart: detail failed —', e); }
 }
 function draw(){
  var wrap=$('smartChartCanvas');if(!wrap)return;
