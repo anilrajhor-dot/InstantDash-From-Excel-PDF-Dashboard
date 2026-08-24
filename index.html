@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.0.19","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.0.20","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -1508,6 +1508,8 @@ html,body{overflow-anchor:none!important;}
 .chart-tap-cmp.good{background:color-mix(in srgb,var(--ok) 16%,transparent);color:var(--ok)}
 .chart-tap-cmp.bad{background:color-mix(in srgb,var(--warn) 16%,transparent);color:var(--warn)}
 .chart-tap-why{display:inline-block;margin-left:8px;background:none;border:none;padding:0;font-size:10.5px;font-weight:800;color:var(--accent);cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+.chart-tap-why-inline{display:block;margin-top:5px;font-size:11px;line-height:1.4;color:var(--text);font-style:italic}
+.smart-detail .chart-tap-why-inline{color:#4a4238!important}
 .ai-empty{padding:28px 12px;text-align:center;color:var(--muted);font-size:12px;border:1px dashed var(--border);border-radius:12px}
 .ai-chart-overlay{position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:100000;display:none;align-items:center;justify-content:center;padding:12px}
 .ai-chart-overlay.open{display:flex}
@@ -1520,7 +1522,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v26.0.19">
+<meta name="instantdash-build" content="v26.0.20">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2386,7 +2388,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v26.0.19';
+      s.textContent='v26.0.20';
       b.appendChild(s);
     }
   }
@@ -2446,10 +2448,10 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v26.0.19</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v26.0.20</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.0.19</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.0.20</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
       <button class="id-health-btn no-print" id="aiModeToggleBtn" type="button" aria-label="Real AI settings">🤖 Real AI: Off</button>
@@ -3367,6 +3369,8 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
       if(status150) status150.innerHTML = '<b>0 recognised KPIs</b> from 0 current columns. Load a file to scan for KPIs.';
       if(status160) status160.innerHTML = '<b>No file loaded.</b> Upload a dataset to detect its KPIs automatically.';
       if(summary170) summary170.innerHTML = '<b>0</b> known KPI matches · <b>0</b> recognised new KPI patterns · <b>0</b> data-driven measures.';
+      activeMode150 = null; activeMode160 = null; activeMode170 = null;
+      showList('idV150Results', [], true); showList('idV160List', [], true); showList('idV170AllBox', [], true);
       return;
     }
     var usable = u.usableMeasures || [];
@@ -3376,10 +3380,19 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
     if(summary170) summary170.innerHTML = '<b>'+usable.length+'</b> known KPI matches · <b>0</b> recognised new KPI patterns · <b>'+(u.measures.length-usable.length)+'</b> data-driven measures excluded as unreliable.';
     var cards160 = document.getElementById('idV160Cards');
     if(cards160) cards160.innerHTML = (highConf.length?highConf:usable).slice(0,3).map(measureCardHtml).join('') || '<p style="font-size:11px;color:var(--muted)">No confidently-recognised KPIs in this file yet.</p>';
+    /* v26.0.20 — re-render whichever detail list is currently open with
+       fresh data every poll cycle, so it can never keep showing a
+       previous file's results after a new upload. */
+    if(activeMode150==='all') showList('idV150Results', u.usableMeasures);
+    if(activeMode160==='top') showList('idV160List', highConf);
+    if(activeMode160==='all') showList('idV160List', usable);
+    if(activeMode170==='all') showList('idV170AllBox', u.measures);
   }
-  function showList(targetId, list){
+  var activeMode150 = null, activeMode160 = null, activeMode170 = null;
+  function showList(targetId, list, closed){
     var el = document.getElementById(targetId);
     if(!el) return;
+    if(closed){ el.innerHTML = ''; return; }
     el.innerHTML = list.length ? list.map(libraryItemHtml).join('') : '<p style="font-size:11px;color:var(--muted);padding:8px 0">No measures found.</p>';
   }
   function wire(id, fn){
@@ -3389,19 +3402,30 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
   function wireAll(){
     wire('idV150Refresh', refreshAll);
     wire('idV170Refresh', refreshAll);
+    /* v26.0.20 — clicking the same button again now hides the list
+       (toggle), matching the request to keep details hidden until
+       deliberately opened, rather than only ever expanding. */
     wire('idV150ShowAll', function(){
+      if(activeMode150==='all'){ activeMode150=null; showList('idV150Results', [], true); return; }
+      activeMode150 = 'all';
       var u = getUnderstanding();
       showList('idV150Results', u ? u.usableMeasures : []);
     });
     wire('idV170All', function(){
+      if(activeMode170==='all'){ activeMode170=null; showList('idV170AllBox', [], true); return; }
+      activeMode170 = 'all';
       var u = getUnderstanding();
       showList('idV170AllBox', u ? u.measures : []);
     });
     wire('idV160ShowTop', function(){
+      if(activeMode160==='top'){ activeMode160=null; showList('idV160List', [], true); return; }
+      activeMode160 = 'top';
       var u = getUnderstanding();
       showList('idV160List', u ? u.usableMeasures.filter(function(m){return m.confidence>=70;}) : []);
     });
     wire('idV160ShowAll', function(){
+      if(activeMode160==='all'){ activeMode160=null; showList('idV160List', [], true); return; }
+      activeMode160 = 'all';
       var u = getUnderstanding();
       showList('idV160List', u ? u.usableMeasures : []);
     });
@@ -3771,7 +3795,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v26.0.19',
+  VERSION: 'v26.0.20',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -6364,9 +6388,33 @@ function chartTapExtraHtml(measureName, seriesValues, idx){
       }
     }catch(_){ }
   }
+  /* v26.0.20 — show a brief "why" reason inline, immediately, rather than
+     requiring a separate tap on "Why?" first to see any explanation at
+     all. Reuses the same evidence already computed for the full Why
+     panel, just condensed to one short line here. */
+  try{
+    var mi2 = window.__miItems;
+    if(mi2 && measureName){
+      var reason = null;
+      ['drivers','relationships'].forEach(function(bucket){
+        if(reason) return;
+        (mi2[bucket]||[]).forEach(function(item){
+          if(reason) return;
+          var plain = String(item).replace(/<[^>]*>/g,'').trim();
+          if(plain.toLowerCase().indexOf(String(measureName).toLowerCase())>=0){
+            reason = plain.replace(/^([^:]+):\s*/,'');
+          }
+        });
+      });
+      if(reason){
+        var esc9c = (typeof esc==='function') ? esc : function(s){return String(s==null?'':s);};
+        extra += '<div class="chart-tap-why-inline">'+esc9c(reason.slice(0,140))+(reason.length>140?'…':'')+'</div>';
+      }
+    }
+  }catch(_){ }
   if(typeof window.__openWhyPanel==='function'){
     var esc9b = (typeof esc==='function') ? esc : function(s){return String(s==null?'':s);};
-    extra += ' <button type="button" class="chart-tap-why" data-why-kpi="'+esc9b(measureName)+'">Why? →</button>';
+    extra += ' <button type="button" class="chart-tap-why" data-why-kpi="'+esc9b(measureName)+'">Full explanation →</button>';
   }
   return extra;
 }
@@ -9263,34 +9311,48 @@ function wireRest(){
   async function nativeShareHtml(){
     if(!hasData()){ note('Load a file first — there is nothing to share yet.'); return; }
     note('Preparing your dashboard file…');
-    var html=buildShareHtml(), filename=shareFileName();
-    var sizeMb = (html.length / (1024*1024));
-    console.log('InstantDash Share: payload size ~'+sizeMb.toFixed(2)+' MB');
-    /* v26.0.9 — iOS Safari has known, undocumented size limits on
-       navigator.share() with files. A large embedded dataset can produce
-       a multi-megabyte file that silently fails to open the share sheet
-       at all, which looks identical to "the button does nothing." Skip
-       straight to a guaranteed-working download above this threshold
-       rather than risk that silent failure. */
-    if(sizeMb > 4){
-      if(downloadHtml(html,filename)) note('Your dashboard is large ('+sizeMb.toFixed(1)+' MB), so it was saved as a file instead of using Share — send that file manually.');
-      else note('Could not prepare the dashboard file. Try Save or Copy instead.');
-      return;
-    }
     try{
-      var file=new File([html],filename,{type:'text/html'});
-      if(navigator.canShare && navigator.canShare({files:[file]})){
-        await navigator.share({files:[file],title:'InstantDash Dashboard',text:'InstantDash dashboard: '+(APP.fileName||'')});
-        note('Shared.');
+      var html=buildShareHtml(), filename=shareFileName();
+      var sizeMb = (html.length / (1024*1024));
+      console.log('InstantDash Share: payload size ~'+sizeMb.toFixed(2)+' MB');
+      /* v26.0.9 — iOS Safari has known, undocumented size limits on
+         navigator.share() with files. A large embedded dataset can produce
+         a multi-megabyte file that silently fails to open the share sheet
+         at all, which looks identical to "the button does nothing." Skip
+         straight to a guaranteed-working download above this threshold
+         rather than risk that silent failure. */
+      if(sizeMb > 4){
+        if(downloadHtml(html,filename)) note('Your dashboard is large ('+sizeMb.toFixed(1)+' MB), so it was saved as a file instead of using Share — send that file manually.');
+        else note('Could not prepare the dashboard file. Try Save or Copy instead.');
         return;
       }
-    }catch(e){
-      console.warn('InstantDash Share: navigator.share failed —', e && e.name, e && e.message);
-      if(e && e.name==='AbortError') return;
+      try{
+        var file=new File([html],filename,{type:'text/html'});
+        if(navigator.canShare && navigator.canShare({files:[file]})){
+          await navigator.share({files:[file],title:'InstantDash Dashboard',text:'InstantDash dashboard: '+(APP.fileName||'')});
+          note('Shared.');
+          return;
+        }
+      }catch(e){
+        console.warn('InstantDash Share: navigator.share failed —', e && e.name, e && e.message);
+        /* v26.0.20 — this previously just returned on cancellation without
+           ever updating the note, leaving "Preparing your dashboard file…"
+           permanently stuck on screen — exactly matching a confirmed real
+           screenshot. The panel staying visibly open also meant it kept
+           blocking taps to the rest of the page underneath it. */
+        if(e && e.name==='AbortError'){ note('Share cancelled. Choose another option below, or close this panel.'); return; }
+      }
+      // Fallback for browsers without file-sharing support, or any share error: just download it.
+      if(downloadHtml(html,filename)) note('Sharing isn\u2019t available here, so the dashboard was saved instead — send that file manually.');
+      else note('Could not prepare the dashboard file. Try Save or Copy instead.');
+    }catch(fatalErr){
+      /* v26.0.20 — defensive outer safety net: if literally anything else
+         unanticipated throws (e.g. buildShareHtml() itself), this is now
+         structurally guaranteed to still replace the "Preparing…" text
+         rather than leaving the panel stuck, no matter what goes wrong. */
+      console.error('InstantDash Share: unexpected failure —', fatalErr);
+      note('Something went wrong preparing the file. Try Copy share text instead, or close this panel and try again.');
     }
-    // Fallback for browsers without file-sharing support, or any share error: just download it.
-    if(downloadHtml(html,filename)) note('Sharing isn\u2019t available here, so the dashboard was saved instead — send that file manually.');
-    else note('Could not prepare the dashboard file. Try Save or Copy instead.');
   }
   function saveHtml(){
     if(!hasData()){ note('Load a file first — there is nothing to share yet.'); return; }
