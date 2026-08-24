@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.0.28","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.0.29","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -1542,7 +1542,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v26.0.28">
+<meta name="instantdash-build" content="v26.0.29">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2417,7 +2417,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v26.0.28';
+      s.textContent='v26.0.29';
       b.appendChild(s);
     }
   }
@@ -2477,10 +2477,10 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v26.0.28</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v26.0.29</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.0.28</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.0.29</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
       <button class="id-health-btn no-print" id="aiModeToggleBtn" type="button" aria-label="Real AI settings">🤖 Real AI: Off</button>
@@ -3824,7 +3824,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v26.0.28',
+  VERSION: 'v26.0.29',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -9339,6 +9339,15 @@ function wireRest(){
       rawColumnNames:APP.rawColumnNames||[],
       pdfMeta:APP.__pdfMeta?deepConvertDates(APP.__pdfMeta):null
     };
+    /* v26.0.29 — defensive check for a real reported scenario: a
+       received file showed empty rows despite data being confirmed
+       loaded and visible before sharing. If APP genuinely has rows at
+       this exact moment but the state object we're about to embed
+       doesn't, something has gone wrong in this function itself —
+       surface it loudly rather than silently producing a broken file. */
+    if((APP.rows||[]).length > 0 && state.rows.length === 0){
+      console.error('InstantDash Share: APP has '+APP.rows.length+' rows but the state object to embed has 0 — this should never happen.');
+    }
     var stateJson=JSON.stringify(state).replace(/</g,'\\u003c');
     var html='<!doctype html>\n'+document.documentElement.outerHTML;
     /* v26.0.26 — strip every runtime-set wiring guard flag before
@@ -9352,10 +9361,21 @@ function wireRest(){
        session, re-introduced here specifically for every share
        recipient. */
     html=html.replace(/\s*data-v\d{2,3}="1"/g,'');
+    var htmlBeforeStateSwap = html;
     html=html.replace(
       /<script id="instantdash-shared-state">[\s\S]*?<\/script>/,
       '<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__='+stateJson+';<\/script>'
     );
+    /* v26.0.29 — verify the swap actually happened. If the placeholder
+       tag wasn't found for any reason, the .replace() above silently
+       returns the string unchanged — exactly matching a real report of
+       a received file still containing the original empty placeholder
+       state. Surface this loudly instead of returning a broken file
+       without any indication anything went wrong. */
+    if(html === htmlBeforeStateSwap){
+      console.error('InstantDash Share: the shared-state placeholder script tag was not found — the embedded state was NOT updated. The shared file will show empty/default data.');
+      try{ if(typeof toast==='function') toast('Warning: the shared file may not include your data — please report this.'); }catch(_){ }
+    }
     return html;
   }
   function shareFileName(){
