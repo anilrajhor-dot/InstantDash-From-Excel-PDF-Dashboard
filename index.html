@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.0.29","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.0.30","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -1542,7 +1542,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v26.0.29">
+<meta name="instantdash-build" content="v26.0.30">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2417,7 +2417,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v26.0.29';
+      s.textContent='v26.0.30';
       b.appendChild(s);
     }
   }
@@ -2477,10 +2477,10 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v26.0.29</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v26.0.30</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.0.29</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.0.30</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
       <button class="id-health-btn no-print" id="aiModeToggleBtn" type="button" aria-label="Real AI settings">🤖 Real AI: Off</button>
@@ -3824,7 +3824,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v26.0.29',
+  VERSION: 'v26.0.30',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -9361,6 +9361,21 @@ function wireRest(){
        session, re-introduced here specifically for every share
        recipient. */
     html=html.replace(/\s*data-v\d{2,3}="1"/g,'');
+    /* v26.0.30 — the real, confirmed cause of a received file showing
+       the Share panel itself frozen open mid-"Preparing your dashboard
+       file…". outerHTML captures the sender's own live DOM at this
+       exact instant — and since the user necessarily has this very
+       panel open (with the is-open class and this note text set) at
+       the moment they tap "Share current dashboard", that frozen state
+       gets baked directly into what's sent. Reset the panel's open
+       state and note text in the captured snapshot before embedding it,
+       so the receiver opens a clean, closed dashboard rather than a
+       screenshot of the sender's own mid-share screen. */
+    html = html.replace(
+      /<div[^>]*\bid="v154SharePanel"[^>]*>/,
+      '<div class="v154-share-panel" id="v154SharePanel" aria-hidden="true">'
+    );
+    html = html.replace(/(<[^>]+id="v154ShareNote"[^>]*>)[^<]*(<\/)/, '$1$2');
     var htmlBeforeStateSwap = html;
     html=html.replace(
       /<script id="instantdash-shared-state">[\s\S]*?<\/script>/,
