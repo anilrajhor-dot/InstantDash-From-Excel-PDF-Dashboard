@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.0.21","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.0.22","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -390,7 +390,7 @@ main{max-width:1360px;margin:0 auto;padding:24px}
 .v26-watch-why{font-size:11px;line-height:1.45;color:var(--text);margin-top:3px}
 
 /* v26.0 — "Why?" single-movement evidence panel */
-.v26-why-overlay{position:fixed;inset:0;z-index:99996;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.5);padding:16px}
+.v26-why-overlay{position:fixed;inset:0;z-index:999997;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.5);padding:16px}
 .v26-why-overlay.on{display:flex}
 .v26-why-card{width:min(560px,100%);max-height:88vh;overflow-y:auto;background:var(--panel,var(--card));border:1px solid var(--border);border-radius:18px;padding:20px;box-shadow:0 20px 50px rgba(0,0,0,.3)}
 .v26-why-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:14px}
@@ -1542,7 +1542,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v26.0.21">
+<meta name="instantdash-build" content="v26.0.22">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2408,7 +2408,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v26.0.21';
+      s.textContent='v26.0.22';
       b.appendChild(s);
     }
   }
@@ -2468,10 +2468,10 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v26.0.21</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v26.0.22</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.0.21</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.0.22</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
       <button class="id-health-btn no-print" id="aiModeToggleBtn" type="button" aria-label="Real AI settings">🤖 Real AI: Off</button>
@@ -3351,7 +3351,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
     </div>
 
   </section>
-<section id="idV150KPI" class="id-v150-panel section"><div class="section-head"><h2>🧩 Smart KPI Library</h2><span class="hint">Automatic recognition of standard + domain-specific management KPIs</span></div><div class="id-v150-card"><div id="idV150Status" class="id-v150-match"><b>0 recognised KPIs</b> from 0 current columns. Only sufficiently confident matches are shown; generic column names are not force-mapped.</div><div class="id-v150-actions"><button id="idV150Refresh" type="button">↻ Re-scan current file</button><button id="idV150ShowAll" type="button">View KPI library</button></div></div><div id="idV150Results" class="kpi-grid" style="margin-top:10px"></div></section><section id="idV160Intel" class="section id-v160-intel"><div class="section-head id-v160-head"><h2>🧠 Automatic Domain &amp; KPI Intelligence</h2><span class="hint">Current file only · no manual KPI setup required</span></div><div id="idV160Status" class="id-v160-status"><b>Detected domain:</b> hr &nbsp;·&nbsp; <b>1</b> recognised KPIs &nbsp;·&nbsp; 1 high-confidence &nbsp;·&nbsp; 0 review-level matches</div><div id="idV160Cards" class="id-v160-grid"><div class="id-v160-card"><h3>Training Hours</h3><div class="big">Training Hours per Staff</div><p>HR · Hours · Higher is better</p><span class="id-v160-pill id-v160-conf-high">94% confidence</span></div></div><div class="id-v160-actions"><button type="button" class="primary" id="idV160ShowTop">Show Priority KPIs</button><button type="button" id="idV160ShowAll">Show All Recognised KPIs</button></div><div id="idV160List"></div><div id="idV162Guard" class="id-v162-guard"><b>Current-file protection:</b> KPI recognition and domain analysis are recalculated from the currently loaded dataset only.</div></section><section id="idV170Extensible" class="section id-v170-wrap"><div class="id-v170-card"><div class="id-v170-head"><h2>🧩 Extensible KPI Intelligence</h2><span class="id-v170-note">Known KPIs + newly discovered measures · current file only</span></div><div id="idV170Summary" class="id-v170-note" style="margin-top:7px"><b>1</b> known KPI matches · <b>0</b> recognised new KPI patterns · <b>11</b> data-driven measures not previously defined.</div><div id="idV170Grid" class="id-v170-grid"><div class="id-v170-item"><h4>Training Programs</h4><p>Source column: <b>Training Programs</b><br>Category: Newly discovered · Unit: Number · Context</p><span class="id-v170-tag ">Medium</span></div><div class="id-v170-item"><h4>Staff Nominated</h4><p>Source column: <b>Staff Nominated</b><br>Category: Newly discovered · Unit: Number · Context</p><span class="id-v170-tag ">Medium</span></div><div class="id-v170-item"><h4>Staff Attended</h4><p>Source column: <b>Staff Attended</b><br>Category: Newly discovered · Unit: Number · Context</p><span class="id-v170-tag ">Medium</span></div><div class="id-v170-item"><h4>Attendance Rate %</h4><p>Source column: <b>Attendance Rate %</b><br>Category: Newly discovered · Unit: % · Higher is better</p><span class="id-v170-tag ">Medium</span></div><div class="id-v170-item"><h4>Staff Assessed</h4><p>Source column: <b>Staff Assessed</b><br>Category: Newly discovered · Unit: Number · Context</p><span class="id-v170-tag ">Medium</span></div><div class="id-v170-item"><h4>Staff Passed</h4><p>Source column: <b>Staff Passed</b><br>Category: Newly discovered · Unit: Number · Context</p><span class="id-v170-tag ">Medium</span></div><div class="id-v170-item"><h4>Pass Rate %</h4><p>Source column: <b>Pass Rate %</b><br>Category: Newly discovered · Unit: % · Higher is better</p><span class="id-v170-tag ">Medium</span></div><div class="id-v170-item"><h4>Branches Covered</h4><p>Source column: <b>Branches Covered</b><br>Category: Newly discovered · Unit: Number · Context</p><span class="id-v170-tag ">Medium</span></div><div class="id-v170-item"><h4>Branches Improved</h4><p>Source column: <b>Branches Improved</b><br>Category: Newly discovered · Unit: Number · Context</p><span class="id-v170-tag ">Medium</span></div><div class="id-v170-item"><h4>Branch Improvement Rate %</h4><p>Source column: <b>Branch Improvement Rate %</b><br>Category: Newly discovered · Unit: % · Higher is better</p><span class="id-v170-tag ">Medium</span></div><div class="id-v170-item"><h4>Average Feedback Score</h4><p>Source column: <b>Average Feedback Score</b><br>Category: Newly discovered · Unit: Time · Lower is better</p><span class="id-v170-tag ">Medium</span></div></div><div class="id-v170-actions"><button type="button" id="idV170Refresh">↻ Re-scan current file</button><button type="button" id="idV170All">Show all discovered measures</button></div><div id="idV170AllBox"></div></div></section>
+<section id="idV150KPI" class="id-v150-panel section"><div class="section-head"><h2>🧩 Smart KPI Library</h2><span class="hint">Automatic recognition of standard + domain-specific management KPIs</span></div><div class="id-v150-card"><div id="idV150Status" class="id-v150-match"><b>0 recognised KPIs</b> from 0 current columns. Only sufficiently confident matches are shown; generic column names are not force-mapped.</div><div class="id-v150-actions"><button id="idV150Refresh" type="button">↻ Re-scan current file</button><button id="idV150ShowAll" type="button">View KPI library</button></div></div><div id="idV150Results" class="kpi-grid" style="margin-top:10px"></div></section><section id="idV160Intel" class="section id-v160-intel"><div class="section-head id-v160-head"><h2>🧠 Automatic Domain &amp; KPI Intelligence</h2><span class="hint">Current file only · no manual KPI setup required</span></div><div id="idV160Status" class="id-v160-status"><b>Loading…</b></div><div id="idV160Cards" class="id-v160-grid" style="display:none"></div><div class="id-v160-actions"><button type="button" class="primary" id="idV160ShowTop">Show Priority KPIs</button><button type="button" id="idV160ShowAll">Show All Recognised KPIs</button></div><div id="idV160List"></div><div id="idV162Guard" class="id-v162-guard"><b>Current-file protection:</b> KPI recognition and domain analysis are recalculated from the currently loaded dataset only.</div></section><section id="idV170Extensible" class="section id-v170-wrap"><div class="id-v170-card"><div class="id-v170-head"><h2>🧩 Extensible KPI Intelligence</h2><span class="id-v170-note">Known KPIs + newly discovered measures · current file only</span></div><div id="idV170Summary" class="id-v170-note" style="margin-top:7px"><b>1</b> known KPI matches · <b>0</b> recognised new KPI patterns · <b>11</b> data-driven measures not previously defined.</div><div id="idV170Grid" class="id-v170-grid" style="display:none"></div><div class="id-v170-actions"><button type="button" id="idV170Refresh">↻ Re-scan current file</button><button type="button" id="idV170All">Show all discovered measures</button></div><div id="idV170AllBox"></div></div></section>
 <script id="instantdash-v26-kpi-library-wire">
 (function(){
   /* v26.0.15 — these six buttons (Smart KPI Library, Automatic Domain &
@@ -3399,7 +3399,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
     if(status160) status160.innerHTML = '<b>'+usable.length+'</b> recognised KPIs &nbsp;·&nbsp; '+highConf.length+' high-confidence &nbsp;·&nbsp; '+(usable.length-highConf.length)+' review-level matches';
     if(summary170) summary170.innerHTML = '<b>'+usable.length+'</b> known KPI matches · <b>0</b> recognised new KPI patterns · <b>'+(u.measures.length-usable.length)+'</b> data-driven measures excluded as unreliable.';
     var cards160 = document.getElementById('idV160Cards');
-    if(cards160) cards160.innerHTML = (highConf.length?highConf:usable).slice(0,3).map(measureCardHtml).join('') || '<p style="font-size:11px;color:var(--muted)">No confidently-recognised KPIs in this file yet.</p>';
+    if(cards160){ cards160.style.display = 'none'; cards160.innerHTML = ''; }
     /* v26.0.20 — re-render whichever detail list is currently open with
        fresh data every poll cycle, so it can never keep showing a
        previous file's results after a new upload. */
@@ -3815,7 +3815,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v26.0.21',
+  VERSION: 'v26.0.22',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -9340,6 +9340,18 @@ function wireRest(){
   async function nativeShareHtml(){
     if(!hasData()){ note('Load a file first — there is nothing to share yet.'); return; }
     note('Preparing your dashboard file…');
+    /* v26.0.22 — belt-and-suspenders on top of the AbortError fix below:
+       a timeout watchdog that structurally guarantees this can never
+       stay stuck on "Preparing…" for more than 10 seconds, even if
+       navigator.share() itself hangs without ever resolving or
+       rejecting (possible on some iOS versions), rather than relying
+       solely on catching a specific error type. */
+    var watchdogFired = false;
+    var watchdog = setTimeout(function(){
+      watchdogFired = true;
+      note('This is taking longer than expected. Try Save or Copy share text instead.');
+    }, 10000);
+    function clearWatchdog(){ clearTimeout(watchdog); }
     try{
       var html=buildShareHtml(), filename=shareFileName();
       var sizeMb = (html.length / (1024*1024));
@@ -9381,6 +9393,8 @@ function wireRest(){
          rather than leaving the panel stuck, no matter what goes wrong. */
       console.error('InstantDash Share: unexpected failure —', fatalErr);
       note('Something went wrong preparing the file. Try Copy share text instead, or close this panel and try again.');
+    }finally{
+      clearWatchdog();
     }
   }
   function saveHtml(){
