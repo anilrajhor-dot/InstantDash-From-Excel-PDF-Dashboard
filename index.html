@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.0.27","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.0.28","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -1542,7 +1542,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v26.0.27">
+<meta name="instantdash-build" content="v26.0.28">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2417,7 +2417,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v26.0.27';
+      s.textContent='v26.0.28';
       b.appendChild(s);
     }
   }
@@ -2477,10 +2477,10 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v26.0.27</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v26.0.28</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.0.27</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.0.28</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
       <button class="id-health-btn no-print" id="aiModeToggleBtn" type="button" aria-label="Real AI settings">🤖 Real AI: Off</button>
@@ -3824,7 +3824,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v26.0.27',
+  VERSION: 'v26.0.28',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -13524,8 +13524,17 @@ function answer(q){
   }
   if(/dataset|data|records|rows|fields/.test(ql))return '<b>Current dataset:</b> '+rs.length.toLocaleString('en-IN')+' rows and '+keys.length+' fields. Analysis uses the currently loaded dataset only.';
   if(col){var cm=movement(col);return '<b>Analysis of '+esc(col.k)+'</b><br>First available value: '+fmt(cm.a,col.k)+'. Latest available value: '+fmt(cm.b,col.k)+'. Change: '+(isFinite(cm.p)?(cm.p>=0?'+':'')+cm.p.toFixed(1)+'%.':'not meaningful — the starting value is zero or unreliable.')+' Ask about target, reason, improvement, cost, trend, average, highest or lowest.';}
-  if(mv.length)return '<b>Analysis of the current dataset</b><br>The largest measurable movement is <b>'+esc(mv[0].x.k)+'</b>: '+fmt(mv[0].a,mv[0].x.k)+' → '+fmt(mv[0].b,mv[0].x.k)+' ('+(mv[0].p>=0?'+':'')+mv[0].p.toFixed(1)+'%). The data shows the movement but does not by itself prove the cause.';
-  return '<b>I could not find enough relevant data in the current upload to answer that question reliably.</b>';
+  /* v26.0.28 — this offline engine matches against a fixed set of
+     question patterns plus column-name detection, not true natural
+     language. When a custom question matches neither, this previously
+     silently substituted a generic "largest movement" answer — an
+     answer, but not one responsive to what was actually asked, which is
+     why it felt like custom questions weren't being answered at all.
+     Now says so honestly, and offers the general summary as a genuinely
+     useful default rather than pretending to have understood the
+     specific question. */
+  if(mv.length)return '<b>I couldn\u2019t match that question to a specific pattern this offline analysis understands.</b> Here is a general summary of the dataset instead:<br><br>The largest measurable movement is <b>'+esc(mv[0].x.k)+'</b>: '+fmt(mv[0].a,mv[0].x.k)+' → '+fmt(mv[0].b,mv[0].x.k)+' ('+(mv[0].p>=0?'+':'')+mv[0].p.toFixed(1)+'%). The data shows the movement but does not by itself prove the cause.<br><br>Try mentioning a specific column name, or one of the suggested questions above — those are matched precisely.';
+  return '<b>I could not find enough relevant data in the current upload to answer that question reliably.</b> Try mentioning a specific column name from your file, or one of the suggested questions above.';
 }
 
 function show(q){
