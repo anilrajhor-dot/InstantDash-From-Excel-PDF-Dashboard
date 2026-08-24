@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.0.26","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.0.27","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -1542,7 +1542,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v26.0.26">
+<meta name="instantdash-build" content="v26.0.27">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2329,11 +2329,17 @@ body{
 /* v13.66 — clear, always-visible return control for Ask Executive AI */
 .ai48-panel{position:fixed!important;box-sizing:border-box!important}
 .ai48-close{
-  position:absolute!important;
-  top:12px!important;
-  right:12px!important;
+  /* v26.0.27 — the actual fix is structural (see .ai48-scroll-body
+     below): the header is now a genuine non-scrolling flex sibling to
+     the scrollable content, so this button is naturally always
+     reachable without needing position tricks at all. Kept as
+     position:relative here since it's simply part of the fixed-size
+     header now, not fighting scroll or transform contexts. */
+  position:relative!important;
+  top:0!important;
+  right:0!important;
   z-index:5!important;
-  margin:0!important;
+  margin:0 0 0 auto!important;
   width:auto!important;
   min-width:36px!important;
   height:36px!important;
@@ -2346,6 +2352,9 @@ body{
   background:var(--card-2)!important;
   color:var(--text)!important;
 }
+.ai48-panel{display:flex!important;flex-direction:column!important}
+.ai48-head{flex:0 0 auto!important;display:flex!important;align-items:flex-start!important;padding-right:0!important}
+.ai48-scroll-body{flex:1 1 auto!important;overflow-y:auto!important;min-height:0!important;-webkit-overflow-scrolling:touch!important}
 .ai48-head{padding-right:58px!important}
 .ai48-answer,.ai48-answer *,.ai48-improve{
   max-width:100%!important;
@@ -2408,7 +2417,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v26.0.26';
+      s.textContent='v26.0.27';
       b.appendChild(s);
     }
   }
@@ -2468,10 +2477,10 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v26.0.26</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v26.0.27</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.0.26</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.0.27</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
       <button class="id-health-btn no-print" id="aiModeToggleBtn" type="button" aria-label="Real AI settings">🤖 Real AI: Off</button>
@@ -2556,8 +2565,8 @@ body{
         var dqCls = completeness>=95?'v25-good':completeness>=80?'v25-warn':'v25-bad';
         var stCls = status==='Favourable' ? 'v25-good' : status==='Attention required' ? 'v25-bad' : status==='Limited evidence' ? 'v25-neutral' : 'v25-warn';
         var html = '';
-        html += card('🟢','Performance', perf, perf>0 ? perf+' favourable movement'+(perf===1?'':'s')+' found' : 'No favourable movement identified yet', perfCls);
-        html += card('🔴','Attention', att, att>0 ? att+' item'+(att===1?'':'s')+' need'+(att===1?'s':'')+' review' : 'Nothing flagged for attention', attCls);
+        html += card('🟢','Performance', perf, perf>0 ? perf+' favourable KPI comparison'+(perf===1?'':'s')+' across the dataset' : 'No favourable movement identified yet', perfCls);
+        html += card('🔴','Attention', att, att>0 ? att+' KPI comparison'+(att===1?'':'s')+' need'+(att===1?'s':'')+' review' : 'Nothing flagged for attention', attCls);
         html += card('🩺','Data Quality', completeness.toFixed(completeness===100?0:1)+'%', missing.toLocaleString('en-IN')+' missing cell'+(missing===1?'':'s'), dqCls);
         html += card('📊','Overall Status', status, 'Based on current comparable evidence', stCls);
         body.innerHTML = html;
@@ -3815,7 +3824,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v26.0.26',
+  VERSION: 'v26.0.27',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -13697,6 +13706,7 @@ function mountAskMe(){
   p.setAttribute('role','dialog');
   p.setAttribute('aria-label','Ask Executive AI');
   p.innerHTML='<div class="ai48-head"><div><div class="ai48-title">💬 Ask Executive AI</div><div class="ai48-hint">Ask anything about the current dashboard — including how to improve any parameter</div></div><span class="badge">LIVE DATA</span></div>'+
+    '<div class="ai48-scroll-body">'+
     '<div class="ai48-questions">'+
     '<button type="button" class="ai48-q">What are the 3 most important issues?</button>'+ 
     '<button type="button" class="ai48-q">What is going well?</button>'+ 
@@ -13731,7 +13741,7 @@ function mountAskMe(){
     '<button type="button" class="ai48-q">Is the conclusion reliable?</button>'+ 
     '<button type="button" class="ai48-q">What information is missing?</button>'+ 
     '</div>'+ 
-    '<div class="ai48-row"><input id="ai48Input" class="ai48-input" autocomplete="off" placeholder="Type your own question about this dataset…" aria-label="Ask Executive AI a question"><button type="button" id="ai48Ask" class="ai48-ask">Ask</button></div><div id="ai48Answer" class="ai48-answer" aria-live="polite"></div><button type="button" id="ai48Copy" class="btn sm no-print" style="display:none;margin-top:8px">📋 Copy answer</button>';
+    '<div class="ai48-row"><input id="ai48Input" class="ai48-input" autocomplete="off" placeholder="Type your own question about this dataset…" aria-label="Ask Executive AI a question"><button type="button" id="ai48Ask" class="ai48-ask">Ask</button></div><div id="ai48Answer" class="ai48-answer" aria-live="polite"></div><button type="button" id="ai48Copy" class="btn sm no-print" style="display:none;margin-top:8px">📋 Copy answer</button></div>';
   document.body.appendChild(p);
   var close=document.createElement('button');
   close.type='button'; close.className='ai48-close'; close.textContent='×';
