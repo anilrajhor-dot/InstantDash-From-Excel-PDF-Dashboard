@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.0.30","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.0.31","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -1542,7 +1542,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v26.0.30">
+<meta name="instantdash-build" content="v26.0.31">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2417,7 +2417,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v26.0.30';
+      s.textContent='v26.0.31';
       b.appendChild(s);
     }
   }
@@ -2477,10 +2477,10 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v26.0.30</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v26.0.31</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.0.30</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.0.31</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
       <button class="id-health-btn no-print" id="aiModeToggleBtn" type="button" aria-label="Real AI settings">🤖 Real AI: Off</button>
@@ -3824,7 +3824,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v26.0.30',
+  VERSION: 'v26.0.31',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -5532,7 +5532,7 @@ function buildProfilePanel(){
     let summary = '';
     if (c.type === 'number') summary = `min ${fmtNum(c.min)} · max ${fmtNum(c.max)} · sum ${fmtNum(c.sum)} · mean ${fmtNum(c.mean)} · median ${fmtNum(c.median)}`;
     else if (c.type === 'date') summary = `${fmtDate(c.dateMin)} → ${fmtDate(c.dateMax)}`;
-    else summary = c.top.slice(0,3).map(t => `${esc(String(t.value))} (${t.count})`).join(' · ');
+    else summary = (c.top||[]).slice(0,3).map(t => `${esc(String(t.value))} (${t.count})`).join(' · ');
 
     const roleLabel = {measure:'Measure', dimension:'Dimension', highdim:'Dimension (high cardinality)', time:'Time axis', identifier:'Identifier', other:'Not usable'}[c.role];
     const roleCls = {measure:'measure', dimension:'dimension', highdim:'dimension', time:'time', identifier:'identifier', other:'identifier'}[c.role];
@@ -6541,7 +6541,9 @@ function buildKPIs(){
   if (topDim){
     const s = new Set();
     for (let r = 0; r < rows.length; r++){ const v = rows[r][topDim.name]; if (v !== null && v !== undefined && v !== '') s.add(v); }
-    dimText = ` · ${s.size.toLocaleString()} ${topDim.name.toLowerCase()}${s.size===1?'':'s'}`;
+    var dimNameLower = topDim.name.toLowerCase();
+    var alreadyPlural = /s$/.test(dimNameLower);
+    dimText = ` · ${s.size.toLocaleString()} ${dimNameLower}${(s.size===1||alreadyPlural)?'':'s'}`;
   }
 
   const t = timeCols()[0];
