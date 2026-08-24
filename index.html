@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.0.22","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.0.23","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -1542,7 +1542,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v26.0.22">
+<meta name="instantdash-build" content="v26.0.23">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2408,7 +2408,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v26.0.22';
+      s.textContent='v26.0.23';
       b.appendChild(s);
     }
   }
@@ -2468,10 +2468,10 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v26.0.22</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v26.0.23</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.0.22</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.0.23</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
       <button class="id-health-btn no-print" id="aiModeToggleBtn" type="button" aria-label="Real AI settings">🤖 Real AI: Off</button>
@@ -3815,7 +3815,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v26.0.22',
+  VERSION: 'v26.0.23',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -13776,6 +13776,40 @@ window.addEventListener('load',function(){setTimeout(mountAskMe,250);});
     var c=document.getElementById('idV143Copy'), e=document.getElementById('idV143Export');
     if(c && !c.dataset.copyExport177){ c.dataset.copyExport177='1'; c.addEventListener('click',function(ev){ev.preventDefault();ev.stopPropagation();copyText(cleanText());}); }
     if(e && !e.dataset.copyExport177){ e.dataset.copyExport177='1'; e.addEventListener('click',function(ev){ev.preventDefault();ev.stopPropagation();exportBrief();}); }
+    /* v26.0.23 — these two buttons (Copy Executive Brief, Ask AI about
+       this, inside idV1400) had zero click handlers anywhere in the
+       file, confirmed via exhaustive search. Wired here using the exact
+       same proven copyText()/toastMsg() pattern as idV143Copy above,
+       rather than introducing new logic. */
+    var brief1400 = document.getElementById('idV1400');
+    if(brief1400 && !brief1400.dataset.wired1400){
+      brief1400.dataset.wired1400 = '1';
+      brief1400.addEventListener('click', function(ev){
+        var btn = ev.target.closest ? ev.target.closest('[data-v1400-action]') : null;
+        if(!btn) return;
+        ev.preventDefault();
+        var action = btn.getAttribute('data-v1400-action');
+        if(action === 'copy'){
+          var mainCard = brief1400.querySelector('.id-v1400-card.main');
+          var text = mainCard ? (mainCard.innerText || mainCard.textContent || '').replace(/\n{3,}/g,'\n\n').trim() : '';
+          copyText(text);
+        } else if(action === 'ask'){
+          var titleEl = brief1400.querySelector('.id-v1400-title');
+          var question = titleEl ? 'Tell me more about: ' + (titleEl.innerText || titleEl.textContent || '').trim() : 'What should management do?';
+          if(typeof window.__instantDashAskOpen === 'function'){
+            window.__instantDashAskOpen();
+            setTimeout(function(){
+              var input = document.getElementById('ai48Input');
+              var askBtn = document.getElementById('ai48Ask');
+              if(input){ input.value = question; }
+              if(askBtn){ askBtn.click(); }
+            }, 300);
+          } else {
+            toastMsg('Ask AI is not available right now — try the 💬 Ask AI button directly.');
+          }
+        }
+      });
+    }
   }
   wire();
   document.addEventListener('DOMContentLoaded',wire);
