@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.0.16","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<html lang="en" class="theme-dark" data-theme="dark"><head><script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.0.17","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -1429,6 +1429,9 @@ html,body{overflow-anchor:none!important;}
 .smart-svg-wrap svg{display:block;width:100%;height:360px}
 .smart-svg-wrap .sc-hit{cursor:pointer}
 .smart-detail{margin-top:10px;padding:12px 14px;border:1px solid var(--border);border-radius:12px;background:var(--card-2);font-size:12px;color:var(--text);min-height:20px}
+.smart-detail,.smart-detail b,.smart-detail strong{color:#24201b!important}
+.smart-detail .kpi-trend,.smart-detail .chart-tap-cmp,.smart-detail .chart-tap-why{color:inherit}
+.smart-detail .chart-tap-why{color:#8a5a00!important}
 .smart-detail strong{font-weight:800}
 .smart-detail-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:8px}
 .smart-detail-item{padding:8px 9px;border:1px solid var(--border);border-radius:9px;background:var(--card)}
@@ -1487,7 +1490,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v26.0.16">
+<meta name="instantdash-build" content="v26.0.17">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2353,7 +2356,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v26.0.16';
+      s.textContent='v26.0.17';
       b.appendChild(s);
     }
   }
@@ -2413,10 +2416,10 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v26.0.16</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v26.0.17</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.0.16</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.0.17</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
       <button class="id-health-btn no-print" id="aiModeToggleBtn" type="button" aria-label="Real AI settings">🤖 Real AI: Off</button>
@@ -3120,9 +3123,28 @@ body{
             });
           });
           var action = (typeof miActionForKpi==='function') ? miActionForKpi(kpiName) : 'Review this measure against target, benchmark and related KPIs.';
+          /* v26.0.17 — when there's genuinely no recorded movement for
+             this measure yet, show its real computed statistics instead
+             of only saying "no evidence" — this happened for measures
+             that hadn't been individually flagged by Management Insights
+             but are still fully analysable, and "no evidence" alone felt
+             like the app had nothing to say when it actually did. */
+          var statsLine = null;
+          try{
+            if(!whatChanged && typeof window.__instantDashAggregate==='function'){
+              var rows=(window.APP&&(window.APP.filtered||window.APP.rows))||[];
+              var agg=window.__instantDashAggregate(kpiName, rows);
+              if(agg && agg.count){
+                var vals=[]; for(var vi=0; vi<rows.length; vi++){ var vv=rows[vi][kpiName]; if(typeof vv==='number'&&isFinite(vv)) vals.push(vv); }
+                var mn=vals.length?Math.min.apply(null,vals):null, mx=vals.length?Math.max.apply(null,vals):null;
+                var label = agg.mode==='avg'?'Average':agg.mode==='balance'?'Latest':'Total';
+                statsLine = label+' '+(typeof fmtByField==='function'?fmtByField(agg.value,kpiName):agg.value)+' across '+agg.count+' record'+(agg.count===1?'':'s')+(mn!=null&&mx!=null?', ranging '+(typeof fmtByField==='function'?fmtByField(mn,kpiName):mn)+' to '+(typeof fmtByField==='function'?fmtByField(mx,kpiName):mx):'')+'.';
+              }
+            }
+          }catch(_){ }
           var html='';
-          html+='<div class="v26-why-field"><b>What changed</b><p>'+(whatChanged?esc6(whatChanged.replace(/^([^:]+):\s*/,'')):'No comparable-period movement has been established for this measure from the available data.')+'</p></div>';
-          html+='<div class="v26-why-field"><b>Evidence</b><p>'+(whatChanged?'Based on the comparable period identified in the currently loaded dataset.':'Insufficient comparable evidence is currently available.')+'</p></div>';
+          html+='<div class="v26-why-field"><b>What changed</b><p>'+(whatChanged?esc6(whatChanged.replace(/^([^:]+):\s*/,'')):(statsLine?esc6(statsLine):'No comparable-period movement has been established for this measure from the available data.'))+'</p></div>';
+          html+='<div class="v26-why-field"><b>Evidence</b><p>'+(whatChanged?'Based on the comparable period identified in the currently loaded dataset.':(statsLine?'Calculated directly from the currently loaded dataset. No prior-period comparison has been established yet.':'Insufficient comparable evidence is currently available.'))+'</p></div>';
           html+='<div class="v26-why-field"><b>Related KPIs</b><p>'+(relatedKpis.length?esc6(relatedKpis.join(', ')):'No other measure was identified as moving alongside this one in the current data.')+'</p></div>';
           html+='<div class="v26-why-field"><b>Possible driver</b><p>'+(relatedDriver?esc6(relatedDriver.replace(/^([^:]+):\s*/,'')):'No specific driver could be identified from the available data.')+'</p></div>';
           html+='<div class="v26-why-field v26-why-caution"><b>⚠️ Is this proven?</b><p>Relationship observed; causation requires management validation. This is context and correlation only, not proof of cause.</p></div>';
@@ -3719,7 +3741,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v26.0.16',
+  VERSION: 'v26.0.17',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -6226,7 +6248,7 @@ function drawChart(spec){
           var __ckLabel = (labs[idx]!==undefined) ? (typeof instantDashCleanLabel==='function'?instantDashCleanLabel(String(labs[idx])):String(labs[idx])) : '';
           var __ckVal = (vals[idx]!==undefined) ? vals[idx] : 0;
           var __ckMeasure = spec.y || spec.value || spec.x;
-          if(note && typeof chartTapDetailHtml==='function') note.innerHTML=chartTapDetailHtml(__ckMeasure, __ckLabel, fmtByField(__ckVal,__ckMeasure));
+          if(note && typeof chartTapDetailHtml==='function') note.innerHTML=chartTapDetailHtml(__ckMeasure, __ckLabel, fmtByField(__ckVal,__ckMeasure), vals, idx);
           window.__instantDashActiveDetailBase = note ? note.textContent : '';
           instantDashSpeakChartPoint(spec,labs,vals,idx);
         }
@@ -6272,8 +6294,9 @@ function deep(a, b){
 /* v26.0.9 — returns just the comparative badge + "Why?" link for a
    measure, as a small HTML fragment. Shared by chartTapDetailHtml()
    below and directly by chart engines that build their own base text. */
-function chartTapExtraHtml(measureName){
+function chartTapExtraHtml(measureName, seriesValues, idx){
   var extra = '';
+  var foundInMi = false;
   try{
     var mi = window.__miItems;
     if(mi && measureName){
@@ -6288,6 +6311,7 @@ function chartTapExtraHtml(measureName){
           if(name.toLowerCase() !== String(measureName).toLowerCase()) continue;
           var pctMatch = item.match(/\(([+-]?[\d.]+)%\)/);
           if(pctMatch){
+            foundInMi = true;
             extra += ' <span class="chart-tap-cmp '+(pools[p].cls==='good'?'good':'bad')+'">'+(Number(pctMatch[1])>=0?'▲':'▼')+' '+Math.abs(Number(pctMatch[1])).toFixed(1)+'% vs prior period</span>';
           }
           p = pools.length; break;
@@ -6295,16 +6319,31 @@ function chartTapExtraHtml(measureName){
       }
     }
   }catch(_){ }
+  /* v26.0.17 — fallback: Management Insights only tracks a limited set
+     of "top" measures, so most individual chart taps had no MI match at
+     all and showed no comparative figure. When a series of values and
+     the tapped index are available, compute a direct vs-previous-point
+     comparison instead — genuinely comparable, just a different
+     (simpler, always-available) source than the MI-flagged movement. */
+  if(!foundInMi && Array.isArray(seriesValues) && typeof idx==='number' && idx>0){
+    try{
+      var prevV = seriesValues[idx-1], curV = seriesValues[idx];
+      if(typeof prevV==='number' && isFinite(prevV) && prevV!==0 && typeof curV==='number' && isFinite(curV)){
+        var pct = (curV-prevV)/Math.abs(prevV)*100;
+        extra += ' <span class="chart-tap-cmp '+(pct>=0?'good':'bad')+'">'+(pct>=0?'▲':'▼')+' '+Math.abs(pct).toFixed(1)+'% vs previous point</span>';
+      }
+    }catch(_){ }
+  }
   if(typeof window.__openWhyPanel==='function'){
     var esc9b = (typeof esc==='function') ? esc : function(s){return String(s==null?'':s);};
     extra += ' <button type="button" class="chart-tap-why" data-why-kpi="'+esc9b(measureName)+'">Why? →</button>';
   }
   return extra;
 }
-function chartTapDetailHtml(measureName, labelText, valueText){
+function chartTapDetailHtml(measureName, labelText, valueText, seriesValues, idx){
   var esc9 = (typeof esc==='function') ? esc : function(s){return String(s==null?'':s);};
   var base = esc9(niceName(measureName)) + ' · ' + esc9(labelText) + ' · ' + esc9(valueText);
-  return base + chartTapExtraHtml(measureName);
+  return base + chartTapExtraHtml(measureName, seriesValues, idx);
 }
 function kpiTrendBadge(measureName){
   try{
@@ -11523,7 +11562,7 @@ function detail(idx, d){
       return niceName(s.name)+': '+(typeof v==='number'&&isFinite(v)?fmt(v,s.name):'—');
     });
     box.innerHTML='<b>'+esc(String(labels[idx]))+'</b><br>'+lines.map(esc).join(' · ')
-      + (typeof chartTapExtraHtml==='function' && series[0] ? chartTapExtraHtml(series[0].name) : '');
+      + (typeof chartTapExtraHtml==='function' && series[0] ? chartTapExtraHtml(series[0].name, series[0].values, idx) : '');
   }catch(e){ console.warn('InstantDash Smart Chart: detail failed —', e); }
 }
 function draw(){
@@ -11797,7 +11836,7 @@ function makeConfig(s){
          var el=active[0], idx=el.index;
          var label=(labels[idx]!==undefined?labels[idx]:'');
          var value=(vals[idx]!==undefined?vals[idx]:0);
-         s.detailEl.innerHTML=chartTapDetailHtml(s.measure, (typeof instantDashCleanLabel==='function'?instantDashCleanLabel(label):label), fmtByField(value,s.measure));
+         s.detailEl.innerHTML=chartTapDetailHtml(s.measure, (typeof instantDashCleanLabel==='function'?instantDashCleanLabel(label):label), fmtByField(value,s.measure), vals, idx);
        }catch(_){ }
      },
    }
@@ -11891,7 +11930,7 @@ function redrawAICard(s,card){
    var __rawLabel=s.data.labels[idx];
    var label=(__rawLabel instanceof Date)?fmtDate(__rawLabel):(__rawLabel!==undefined?(typeof instantDashCleanLabel==='function'?instantDashCleanLabel(String(__rawLabel)):String(__rawLabel)):'Selected');
    var value=Number(s.data.values[idx]||0);
-   if(s.detailEl)s.detailEl.innerHTML=chartTapDetailHtml(s.measure, label, fmtByField(value,s.measure));
+   if(s.detailEl)s.detailEl.innerHTML=chartTapDetailHtml(s.measure, label, fmtByField(value,s.measure), s.data.values, idx);
    window.__instantDashActiveDetailEl = s.detailEl || null;
    window.__instantDashActiveDetailBase = s.detailEl ? s.detailEl.textContent : '';
    try{
@@ -12691,7 +12730,7 @@ function renderFallback(){
  wrap.innerHTML='<div class="id-chart-visual">'+svg.join('')+'</div>'+note;
  wrap.querySelectorAll('[data-fallback]').forEach(function(el){el.addEventListener('click',function(){
    var q=el.getAttribute('data-fallback').split(':'),si=+q[0],i=+q[1],s=series[si],g=gs[i],d=$('smartChartDetail');
-   if(d)d.innerHTML='<b>'+esc(s.name)+'</b><div class="id-touch-value"><span>'+esc(typeof instantDashCleanLabel==='function'?instantDashCleanLabel(g.label):g.label)+'</span><strong>'+esc(fmt(s.values[i]))+'</strong></div>'+(typeof chartTapExtraHtml==='function'?chartTapExtraHtml(s.name):'');
+   if(d)d.innerHTML='<b>'+esc(s.name)+'</b><div class="id-touch-value"><span>'+esc(typeof instantDashCleanLabel==='function'?instantDashCleanLabel(g.label):g.label)+'</span><strong>'+esc(fmt(s.values[i]))+'</strong></div>'+(typeof chartTapExtraHtml==='function'?chartTapExtraHtml(s.name, s.values, i):'');
    /* v19.14 — this chart engine (Interactive Charts / parameter fallback
       renderer) never called any speech function at all; wired directly here,
       inline, mirroring the approach already proven to work elsewhere.
