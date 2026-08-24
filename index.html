@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.0.20","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.0.21","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -132,6 +132,26 @@
     console.warn('InstantDash: could not install window.APP alias —', e);
   }
 })();
+</script>
+<script id="instantdash-v26-global-nicename">
+/* v26.0.21 — niceName() was never actually a global function anywhere in
+   this file; it only ever existed inside specific IIFEs. Every genuinely
+   top-level function that assumed it was global — including my own
+   chart-tap functions and the pre-existing instantDashChartSpeechText
+   function that builds all speech text (directly explaining the
+   separately-reported "Speak function has disappeared") — threw a
+   ReferenceError on every single call. Confirmed via 23-29 real,
+   climbing errors on the actual device. This is the one authoritative
+   global definition, installed as early as possible, fixing every
+   affected call site at its true source. Local IIFE-scoped versions
+   elsewhere are unaffected and still take precedence within their own
+   scope, per normal JS scope-chain rules — this only fills the gap for
+   code that had no local definition at all. */
+if(typeof window.niceName !== 'function'){
+  window.niceName = function(s){
+    return String(s||'').replace(/[_\-]+/g,' ').replace(/\s+/g,' ').trim().replace(/\b\w/g,function(c){return c.toUpperCase();});
+  };
+}
 </script></head>
 <body class="dark" style="">
 
@@ -1522,7 +1542,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v26.0.20">
+<meta name="instantdash-build" content="v26.0.21">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2388,7 +2408,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v26.0.20';
+      s.textContent='v26.0.21';
       b.appendChild(s);
     }
   }
@@ -2448,10 +2468,10 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v26.0.20</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v26.0.21</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.0.20</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.0.21</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" data-v171="1" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
       <button class="id-health-btn no-print" id="aiModeToggleBtn" type="button" aria-label="Real AI settings">🤖 Real AI: Off</button>
@@ -3795,7 +3815,7 @@ Charts on screen: Total Staff Nominated by Region; Share of Staff Nominated by Q
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v26.0.20',
+  VERSION: 'v26.0.21',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -6420,7 +6440,16 @@ function chartTapExtraHtml(measureName, seriesValues, idx){
 }
 function chartTapDetailHtml(measureName, labelText, valueText, seriesValues, idx){
   var esc9 = (typeof esc==='function') ? esc : function(s){return String(s==null?'':s);};
-  var base = esc9(niceName(measureName)) + ' · ' + esc9(labelText) + ' · ' + esc9(valueText);
+  /* v26.0.21 — niceName() was never actually a global function anywhere
+     in this file; it only exists inside specific IIFEs elsewhere,
+     confirmed via exhaustive search (one definition, IIFE-scoped, no
+     window export). Since this function fires on every chart tap across
+     all three chart engines, this was a real, rapidly-recurring
+     ReferenceError confirmed on the real device (23+ errors and
+     climbing). Self-contained now, matching the same logic as the
+     working versions elsewhere, with no external scope dependency. */
+  var niceName9 = (typeof niceName==='function') ? niceName : function(s){return String(s||'').replace(/[_\-]+/g,' ').replace(/\s+/g,' ').trim().replace(/\b\w/g,function(c){return c.toUpperCase()});};
+  var base = esc9(niceName9(measureName)) + ' · ' + esc9(labelText) + ' · ' + esc9(valueText);
   return base + chartTapExtraHtml(measureName, seriesValues, idx);
 }
 function kpiTrendBadge(measureName){
