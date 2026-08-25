@@ -259,11 +259,19 @@ body.id-v270-user-file-loaded #app{visibility:visible}
 <script id="instantdash-v270-true-file-gate-js">
 (function(){
   'use strict';
-  function clearGate(){ document.body.classList.remove('id-v270-user-file-loaded'); }
-  function openGate(){ document.body.classList.add('id-v270-user-file-loaded'); }
+  function clearGate(){
+    if(document.body) document.body.classList.remove('id-v270-user-file-loaded');
+  }
+  function openGate(){
+    if(document.body) document.body.classList.add('id-v270-user-file-loaded');
+  }
   window.__instantDashOpenFileGate=openGate;
   window.__instantDashCloseFileGate=clearGate;
-  clearGate();
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded', clearGate, {once:true});
+  }else{
+    clearGate();
+  }
 })();
 </script>
 
