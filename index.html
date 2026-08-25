@@ -113,7 +113,7 @@
 </script>
 
 <style id="instantdash-v270-true-empty-start">
-/* v27.0 — true empty-start guard.
+/* v27.1 — true empty-start guard.
    The HTML previously contained a rendered snapshot from the last analysed
    file. Keep the landing/upload experience, but hide every data-dependent
    dashboard section until APP contains a newly loaded dataset. */
@@ -252,7 +252,7 @@ if(typeof window.niceName !== 'function'){
   };
 }
 </script><style id="instantdash-v270-true-file-gate">
-/* v27.0 — HARD DATA GATE: no uploaded file, no dashboard. */
+/* v27.1 — HARD DATA GATE: no uploaded file, no dashboard. */
 body:not(.id-v270-user-file-loaded) #app{display:none!important;visibility:hidden!important;pointer-events:none!important}
 body.id-v270-user-file-loaded #app{visibility:visible}
 </style>
@@ -277,7 +277,7 @@ body.id-v270-user-file-loaded #app{visibility:visible}
 
 
 <style id="instantdash-v270-absolute-empty-gate">
-/* v27.0 FINAL: the dashboard is physically hidden until a new file is loaded. */
+/* v27.1 FINAL: the dashboard is physically hidden until a new file is loaded. */
 #app[data-v270-file-ready="0"]{display:none!important;visibility:hidden!important;pointer-events:none!important}
 #app[data-v270-file-ready="1"]{visibility:visible!important}
 #toast{display:none!important}
@@ -313,7 +313,7 @@ body.id-v270-user-file-loaded #app{visibility:visible}
 
 
 <style id="instantdash-v270-startup-barrier">
-  /* v27.0 HARD STARTUP BARRIER:
+  /* v27.1 HARD STARTUP BARRIER:
      #app is inaccessible until the user selects a file in #fileInput. */
   html.id-v270-upload-authorised #app {
     display:block!important;
@@ -401,9 +401,18 @@ body.id-v270-user-file-loaded #app{visibility:visible}
 })();
 </script>
 
+
+<!-- InstantDash v27.1 — iPhone Home Screen / PWA support -->
+<meta name="theme-color" content="#ffffff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="InstantDash">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="data:application/manifest+json;charset=utf-8,%7B%22name%22%3A%22InstantDash%22%2C%22short_name%22%3A%22InstantDash%22%2C%22start_url%22%3A%22.%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23ffffff%22%2C%22theme_color%22%3A%22%23ffffff%22%7D">
+
 </head>
 <body class="" style="">
-<div id="idV270AuthoritativeVersion" style="display:none">v27.0</div>
+<div id="idV270AuthoritativeVersion" style="display:none">v27.1</div>
 
 
 <!-- ============================================================
@@ -1793,7 +1802,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v27.0">
+<meta name="instantdash-build" content="v27.1">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2668,7 +2677,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v27.0';
+      s.textContent='v27.1';
       b.appendChild(s);
     }
   }
@@ -2742,10 +2751,10 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v27.0</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v27.1</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.0</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.1</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="no-print" id="topClearDataBtn" type="button" aria-label="Clear all loaded data" title="Clear all loaded data">🗑 Clear Data</button>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -4081,7 +4090,7 @@ Number</td><td title="Transaction Description">Transaction Description</td><td s
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v27.0',
+  VERSION: 'v27.1',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -5049,7 +5058,7 @@ function idRenderDeptTabs(){
 async function handleFile(file){
   try{ if(typeof window.__instantDashV270UnlockStartup==='function') window.__instantDashV270UnlockStartup(); }catch(_){}
   
-  /* v27.0 definitive rule: only an explicit file selection can unlock the dashboard. */
+  /* v27.1 definitive rule: only an explicit file selection can unlock the dashboard. */
   window.__INSTANTDASH_USER_FILE_LOADED__ = true;
   /* v13.72 — a new dataset starts a fresh Ask Executive AI session.
      Clear the previous manually typed question and its answer immediately. */
@@ -8907,7 +8916,7 @@ function updateLivePreview(){
 }
 
 function buildEverything(){
-  /* v27.0 DEFINITIVE GATE: no user-selected file = no dashboard render. */
+  /* v27.1 DEFINITIVE GATE: no user-selected file = no dashboard render. */
   if(!window.__INSTANTDASH_USER_FILE_LOADED__ ||
      !APP || !Array.isArray(APP.rows) || APP.rows.length===0 || !String(APP.fileName||'').trim()){
     try{ if(typeof window.__instantDashV270Hide==='function') window.__instantDashV270Hide(); else { $('app').hidden=true; $('emptyState').hidden=false; } }catch(_){ }
@@ -9641,7 +9650,7 @@ function wireRest(){
        session, re-introduced here specifically for every share
        recipient. */
     html=html.replace(/\s*data-v\d{2,3}="1"/g,'');
-    /* v27.0 — the real, confirmed cause of a received file showing
+    /* v27.1 — the real, confirmed cause of a received file showing
        the Share panel itself frozen open mid-"Preparing your dashboard
        file…". outerHTML captures the sender's own live DOM at this
        exact instant — and since the user necessarily has this very
@@ -14215,7 +14224,7 @@ window.addEventListener('load',function(){setTimeout(mountAskMe,250);});
 })();
 </script>
 <button id="idStopSpeechBtn" type="button" style="position: fixed; left: 12px; bottom: calc(env(safe-area-inset-bottom,0px) + 12px); z-index: 99998; padding: 9px 14px; border-radius: 999px; border: medium; background: rgb(226, 88, 43); color: rgb(255, 255, 255); font-style: normal; font-variant-caps: normal; font-weight: 700; font-width: normal; font-size: 12px; line-height: normal; font-family: Poppins, sans-serif; font-size-adjust: none; font-kerning: auto; font-variant-alternates: normal; font-variant-ligatures: normal; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-position: normal; font-variant-emoji: normal; font-feature-settings: normal; font-optical-sizing: auto; font-variation-settings: normal; box-shadow: rgba(0, 0, 0, 0.28) 0px 4px 16px; display: none; cursor: pointer;">⏹ Stop speech</button><section id="askExecutive48" class="ai48-panel" role="dialog" aria-label="Ask Executive AI"><button type="button" class="ai48-close" aria-label="Close Ask Executive AI">×</button><div class="ai48-head"><div><div class="ai48-title">💬 Ask Executive AI</div><div class="ai48-hint">Ask anything about the current dashboard — including how to improve any parameter</div></div><span class="badge">LIVE DATA</span></div><div class="ai48-scroll-body"><div class="ai48-questions"><button type="button" class="ai48-q">What are the 3 most important issues?</button><button type="button" class="ai48-q">What is going well?</button><button type="button" class="ai48-q">What changed?</button><button type="button" class="ai48-q">Give me an executive summary</button><button type="button" class="ai48-q">Which region is best overall?</button><button type="button" class="ai48-q">Which region is worst overall?</button><button type="button" class="ai48-q">Which KPI needs attention?</button><button type="button" class="ai48-q">What is worse?</button><button type="button" class="ai48-q">How can we improve?</button><button type="button" class="ai48-q">Why was the target not achieved?</button><button type="button" class="ai48-q">What are the reasons for the variation?</button><button type="button" class="ai48-q">How can we control expenses?</button><button type="button" class="ai48-q">How can we increase transactions?</button><button type="button" class="ai48-q">How can we reduce drop-outs?</button><button type="button" class="ai48-q">Which district is best?</button><button type="button" class="ai48-q">Which district needs attention?</button><button type="button" class="ai48-q">What are the biggest performance gaps?</button><button type="button" class="ai48-q">What should I tell my board or committee?</button><button type="button" class="ai48-q">What is the single biggest risk right now?</button><button type="button" class="ai48-q">If I could only fix one thing, what should it be?</button><button type="button" class="ai48-q">How reliable is this data for decisions?</button><button type="button" class="ai48-q">What should I watch next period?</button><button type="button" class="ai48-q">Why did performance fall?</button><button type="button" class="ai48-q">Which region needs attention?</button><button type="button" class="ai48-q">What should management do?</button><button type="button" class="ai48-q">Why did this KPI change?</button><button type="button" class="ai48-q">What is the biggest management concern?</button><button type="button" class="ai48-q">Which KPI should I focus on first?</button><button type="button" class="ai48-q">What should management do tomorrow?</button><button type="button" class="ai48-q">What evidence supports this conclusion?</button><button type="button" class="ai48-q">Is the conclusion reliable?</button><button type="button" class="ai48-q">What information is missing?</button></div><div class="ai48-row"><input id="ai48Input" class="ai48-input" autocomplete="off" placeholder="Type your own question about this dataset…" aria-label="Ask Executive AI a question"><button type="button" id="ai48Ask" class="ai48-ask">Ask</button></div><div id="ai48Answer" class="ai48-answer" aria-live="polite"></div><button type="button" id="ai48Copy" class="btn sm no-print" style="display: none; margin-top: 8px;">📋 Copy answer</button></div></section><button type="button" id="ai48Launch" class="ai48-launch" aria-label="Open Ask Executive AI">💬 Ask AI</button>
-<!-- InstantDash v27.0 — Account Statement Intelligence extension
+<!-- InstantDash v27.1 — Account Statement Intelligence extension
      Additive only: existing dashboard logic remains untouched.
      Activates only when an account/loan/OD statement is detected.
 -->
@@ -14354,7 +14363,7 @@ window.addEventListener('load',function(){setTimeout(mountAskMe,250);});
 
 
 
-<!-- v27.0 — Account Statement fresh-file isolation -->
+<!-- v27.1 — Account Statement fresh-file isolation -->
 <style id="instantdash-v270-account-fresh-file-css">
   #idV270AccountIntel[data-loading="1"]{display:none!important}
 </style>
@@ -14450,7 +14459,7 @@ window.addEventListener('load',function(){setTimeout(mountAskMe,250);});
 })();
 </script>
 
-<!-- InstantDash v27.0 — Ask Me reliability repair. Additive only. -->
+<!-- InstantDash v27.1 — Ask Me reliability repair. Additive only. -->
 <style id="instantdash-v271-ask-repair-css">
   #ai48Launch,#ai48Ask,.ai48-q{touch-action:manipulation!important;-webkit-tap-highlight-color:transparent!important;pointer-events:auto!important;position:relative!important;z-index:100000!important}
   #askExecutive48{z-index:100001!important}
@@ -14513,7 +14522,7 @@ window.addEventListener('load',function(){setTimeout(mountAskMe,250);});
 </script>
 
 <style id="instantdash-v270-askme-final-fix">
-/* v27.0 Ask Me final usability fix */
+/* v27.1 Ask Me final usability fix */
 #askExecutive48 .ai48-close{
   pointer-events:auto!important;
   touch-action:manipulation!important;
@@ -15102,6 +15111,31 @@ body:not(.id-v270-user-file-loaded) #app{
     start();
   }
   window.addEventListener('load',bindUpload);
+})();
+</script>
+
+
+<div id="id-v271-build-label" style="text-align:center;padding:14px 12px 24px;font:600 13px/1.4 system-ui,-apple-system,sans-serif;color:#777">
+  InstantDash v27.1 · iPhone Home Screen ready
+</div>
+
+
+<script id="instantdash-v271-homescreen-help">
+(function(){
+  function addHelp(){
+    try{
+      var standalone = window.navigator.standalone === true ||
+        window.matchMedia('(display-mode: standalone)').matches;
+      if(standalone) return;
+      var host=document.getElementById('id-v271-build-label');
+      if(!host) return;
+      host.innerHTML =
+        'InstantDash v27.1 · Home Screen ready<br>' +
+        '<span style="font-weight:500">On iPhone: open in Safari → Share → Add to Home Screen.</span>';
+    }catch(_){}
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',addHelp,{once:true});
+  else addHelp();
 })();
 </script>
 
