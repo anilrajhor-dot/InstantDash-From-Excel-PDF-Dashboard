@@ -2759,7 +2759,7 @@ body{
 
   <!-- ============ EMPTY STATE ============ -->
   <section id="emptyState">
-    <div class="landing-hero" id="dropZone"><div class="alert">The object can not be cloned.</div>
+    <div class="landing-hero" id="dropZone">
       <div class="hero-glow hero-glow-a"></div><div class="hero-glow hero-glow-b"></div>
       <div class="hero-copy">
         <div class="hero-eyebrow"><span class="pulse-dot"></span> PRIVATE · FAST · INSIGHT-LED</div>
@@ -15016,6 +15016,92 @@ body:not(.id-v270-user-file-loaded) #app{
   }else{
     lock();
   }
+})();
+</script>
+
+
+<script id="instantdash-v270-independent-upload-bridge">
+(function(){
+  'use strict';
+
+  function bindUpload(){
+    var btn=document.getElementById('browseBtn');
+    var input=document.getElementById('fileInput');
+    if(!btn || !input) return;
+
+    if(!btn.__v270IndependentUpload){
+      btn.__v270IndependentUpload=true;
+      btn.addEventListener('click',function(e){
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        try{
+          input.removeAttribute('disabled');
+          input.click();
+        }catch(err){
+          /* Fallback for browsers that reject programmatic picker opening. */
+          try{
+            var label=document.createElement('label');
+            label.htmlFor='fileInput';
+            label.style.cssText='position:fixed;left:-9999px;top:-9999px';
+            document.body.appendChild(label);
+            label.click();
+            label.remove();
+          }catch(_){}
+        }
+      },true);
+    }
+
+    if(!input.__v270IndependentUpload){
+      input.__v270IndependentUpload=true;
+      input.addEventListener('change',function(e){
+        var file=e.target && e.target.files && e.target.files[0];
+        if(!file) return;
+
+        /* Unlock the startup barrier first. */
+        try{
+          if(typeof window.__instantDashV270UnlockStartup==='function'){
+            window.__instantDashV270UnlockStartup();
+          }
+          window.__INSTANTDASH_USER_FILE_LOADED__=true;
+        }catch(_){}
+
+        /* Use the application's existing parser/analysis pipeline. */
+        try{
+          if(typeof window.handleFile==='function'){
+            window.handleFile(file);
+          }else{
+            /* handleFile is a top-level function in classic scripts, so it
+               normally resolves above. If not, retry after initialisation. */
+            setTimeout(function(){
+              if(typeof window.handleFile==='function') window.handleFile(file);
+              else if(typeof handleFile==='function') handleFile(file);
+            },100);
+          }
+        }catch(err){
+          try{
+            if(typeof handleFile==='function') handleFile(file);
+          }catch(_){}
+        }
+
+        /* Allow selecting the same file again. */
+        setTimeout(function(){ try{input.value='';}catch(_){} },50);
+      },true);
+    }
+  }
+
+  function start(){
+    bindUpload();
+    setTimeout(bindUpload,100);
+    setTimeout(bindUpload,500);
+    setTimeout(bindUpload,1000);
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',start,{once:true});
+  }else{
+    start();
+  }
+  window.addEventListener('load',bindUpload);
 })();
 </script>
 
