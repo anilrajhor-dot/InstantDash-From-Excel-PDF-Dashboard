@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.1.1","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.1.2","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -399,6 +399,29 @@ main{max-width:1360px;margin:0 auto;padding:24px}
 .v26-rel-field>p{margin:0;font-size:12px;line-height:1.5;color:var(--text)}
 .v26-rel-item{font-size:12px;line-height:1.6;color:var(--text);font-weight:600}
 .v26-rel-none{font-size:11.5px;line-height:1.5;color:var(--muted);font-style:italic}
+.v26-brief-header{margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.v26-brief-file{font-size:15px;font-weight:900}
+.v26-brief-meta{font-size:11px;color:var(--muted);margin-top:3px}
+.v26-brief-finding{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.v26-brief-finding:last-child{border-bottom:none}
+.v26-brief-finding-num{flex:0 0 auto;width:22px;height:22px;border-radius:50%;background:var(--accent);color:#151515;font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center}
+.v26-brief-finding-title{font-size:13px;font-weight:800;margin-bottom:6px}
+.v26-brief-row{font-size:11.5px;line-height:1.55;margin-bottom:4px;color:var(--text)}
+.v26-brief-row>b{color:var(--muted);font-weight:700}
+.v26-brief-footer{margin-top:14px;padding-top:10px;border-top:1px solid var(--border);font-size:10px;color:var(--muted)}
+.v26-compare-selectors{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.v26-compare-check{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;padding:6px 10px;border-radius:999px;background:var(--card-2);border:1px solid var(--border);cursor:pointer}
+.v26-compare-btn{background:var(--accent);color:#151515;border:none;border-radius:10px;padding:9px 16px;font-size:12px;font-weight:800;cursor:pointer;margin-bottom:12px}
+.v26-compare-table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:12px}
+.v26-compare-table th{text-align:left;font-size:9.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding:6px 8px;border-bottom:1px solid var(--border)}
+.v26-compare-table td{padding:8px;border-bottom:1px solid var(--border)}
+.v26-compare-relationships{font-size:11.5px;line-height:1.6}
+.v26-compare-relationships>b{display:block;margin-bottom:6px;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.v26-compare-pair{background:var(--card-2);border-radius:10px;padding:9px 12px;margin-bottom:6px}
+.v26-compare-note{margin-top:10px;font-size:10px;color:var(--muted)}
+@media print{
+  .v26-brief-header,.v26-brief-finding,.v26-brief-footer{break-inside:avoid}
+}
 
 /* v26.0 — "Why?" single-movement evidence panel */
 .v26-why-overlay{position:fixed;inset:0;z-index:999997;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.5);padding:16px}
@@ -1560,7 +1583,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v26.1.1">
+<meta name="instantdash-build" content="v26.1.2">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2435,7 +2458,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v26.1.1';
+      s.textContent='v26.1.2';
       b.appendChild(s);
     }
   }
@@ -2495,10 +2518,10 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v26.1.1</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v26.1.2</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.1.1</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.1.2</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="topClearDataBtn" type="button" aria-label="Clear all loaded data" style="color:var(--warn)">🗑 Clear Data</button>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -3274,6 +3297,213 @@ body{
       })();
       </script>
 
+      <section id="v26MgmtBrief" class="exec-card no-print" hidden>
+        <div class="mac-head">
+          <div><div class="exec-label">📄 One-Page Management Brief</div><div class="mac-title">Consolidated findings, ready to copy or print</div></div>
+          <div class="mac-buttons"><button type="button" class="primary" id="v26BriefCopy">📋 Copy Brief</button><button type="button" id="v26BriefPrint">🖨️ Print</button></div>
+        </div>
+        <div id="v26MgmtBriefBody"></div>
+      </section>
+      <script id="instantdash-v26-mgmtbrief-wire">
+      (function(){
+        function esc6c(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+        function stripHtml6c(s){return String(s||'').replace(/<[^>]*>/g,'').trim();}
+        function titleFrom6c(plain){ var m=plain.match(/^([^:]+):/); return m?m[1].trim():plain.split(' ')[0]; }
+
+        function render(){
+          var section = document.getElementById('v26MgmtBrief');
+          var body = document.getElementById('v26MgmtBriefBody');
+          if(!section||!body) return;
+          var app = window.APP || {};
+          var hasData = !!(app.rows && app.rows.length);
+          section.hidden = !hasData;
+          if(!hasData) return;
+          var mi = window.__miItems || {};
+          var rows = app.filtered || app.rows || [];
+          var status = window.__miStatus || 'Mixed';
+          var perf = (mi.performance||[]).map(function(x){ return {plain: stripHtml6c(x), isAttention:false}; });
+          var att = (mi.attention||[]).map(function(x){ return {plain: stripHtml6c(x), isAttention:true}; });
+          /* v26.1.2 — a one-page brief needs to stay one page: limit to
+             the top 4 findings (attention first, since that's what
+             needs a decision first) rather than listing every movement
+             the way Relationship Intelligence does. */
+          var movements = att.concat(perf).slice(0,4);
+
+          var header =
+            '<div class="v26-brief-header">'+
+              '<div class="v26-brief-file">'+esc6c(app.fileName||'Current dataset')+'</div>'+
+              '<div class="v26-brief-meta">'+rows.length.toLocaleString()+' records · Overall position: <b>'+esc6c(status)+'</b> · '+new Date().toLocaleDateString()+'</div>'+
+            '</div>';
+
+          if(!movements.length){
+            body.innerHTML = header + '<div class="mac-empty">No material movement has been established from the available evidence yet. Add a comparable period, target or linked KPI.</div>';
+            return;
+          }
+
+          var findings = movements.map(function(mv, i){
+            var title = titleFrom6c(mv.plain);
+            var whatChanged = mv.plain.replace(/^([^:]+):\s*/,'');
+            var whyMatters = (typeof whyItMattersFor==='function') ? whyItMattersFor(title) : '';
+            var calc = (typeof calculationFor==='function') ? calculationFor(title, rows) : '';
+            var action = (typeof miActionForKpi==='function') ? miActionForKpi(title) : 'Review against target, benchmark and related KPIs.';
+            return '<div class="v26-brief-finding">'+
+              '<div class="v26-brief-finding-num">'+(i+1)+'</div>'+
+              '<div class="v26-brief-finding-body">'+
+                '<div class="v26-brief-finding-title">'+(mv.isAttention?'🔴':'🟢')+' '+esc6c(title)+'</div>'+
+                '<div class="v26-brief-row"><b>What changed:</b> '+esc6c(whatChanged)+'</div>'+
+                '<div class="v26-brief-row"><b>Why it matters:</b> '+esc6c(whyMatters)+'</div>'+
+                '<div class="v26-brief-row"><b>Supporting evidence:</b> Comparable period identified in the currently loaded dataset. Relationship observed; causation requires management validation.</div>'+
+                '<div class="v26-brief-row"><b>Calculation:</b> '+esc6c(calc)+'</div>'+
+                '<div class="v26-brief-row"><b>Recommended action:</b> '+esc6c(action)+'</div>'+
+              '</div>'+
+            '</div>';
+          }).join('');
+
+          body.innerHTML = header + '<div class="v26-brief-findings">'+findings+'</div><div class="v26-brief-footer">Analysis uses only the currently loaded dataset. It does not establish causation or replace management judgement.</div>';
+        }
+
+        function wireButtons(){
+          var copyBtn = document.getElementById('v26BriefCopy');
+          var printBtn = document.getElementById('v26BriefPrint');
+          if(copyBtn && !copyBtn.dataset.wired261){
+            copyBtn.dataset.wired261 = '1';
+            copyBtn.addEventListener('click', function(){
+              var body = document.getElementById('v26MgmtBriefBody');
+              var text = body ? (body.innerText || body.textContent || '').trim() : '';
+              if(navigator.clipboard && navigator.clipboard.writeText){
+                navigator.clipboard.writeText(text).then(function(){
+                  if(typeof toast==='function') toast('Management Brief copied.');
+                }).catch(function(){ window.prompt('Copy this text:', text); });
+              } else {
+                window.prompt('Copy this text:', text);
+              }
+            });
+          }
+          if(printBtn && !printBtn.dataset.wired261){
+            printBtn.dataset.wired261 = '1';
+            printBtn.addEventListener('click', function(){
+              document.querySelectorAll('details.panel, details.v261-detailed-report').forEach(function(d){ d.open = false; });
+              var section = document.getElementById('v26MgmtBrief');
+              if(section) section.open = true;
+              setTimeout(function(){ window.print(); }, 100);
+            });
+          }
+        }
+
+        setInterval(function(){ render(); wireButtons(); }, 700);
+        if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', function(){ render(); wireButtons(); });
+        else { render(); wireButtons(); }
+      })();
+      </script>
+
+      <section id="v26KpiCompare" class="exec-card no-print" hidden>
+        <div class="mac-head">
+          <div><div class="exec-label">📊 KPI Comparison</div><div class="mac-title">Select 2–4 measures to compare side by side</div></div>
+        </div>
+        <div id="v26KpiCompareSelectors" class="v26-compare-selectors"></div>
+        <button type="button" id="v26CompareBtn" class="v26-compare-btn">Compare Selected KPIs</button>
+        <div id="v26KpiCompareResult"></div>
+      </section>
+      <script id="instantdash-v26-kpicompare-wire">
+      (function(){
+        function esc6d(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+        /* v26.1.2 — same proven Pearson correlation math as Relationship
+           Intelligence, duplicated here as a small, self-contained
+           function rather than a cross-script dependency — this is the
+           same safe pattern used throughout this session after several
+           real bugs were caused by functions assumed to be globally
+           accessible when they were not. */
+        function pearson(xs, ys){
+          var n = xs.length;
+          if(n < 4) return null;
+          var sumX=0,sumY=0,sumXY=0,sumX2=0,sumY2=0;
+          for(var i=0;i<n;i++){ sumX+=xs[i]; sumY+=ys[i]; sumXY+=xs[i]*ys[i]; sumX2+=xs[i]*xs[i]; sumY2+=ys[i]*ys[i]; }
+          var num = n*sumXY - sumX*sumY;
+          var den = Math.sqrt((n*sumX2-sumX*sumX)*(n*sumY2-sumY*sumY));
+          if(!den || !isFinite(den)) return null;
+          var r = num/den;
+          return isFinite(r) ? r : null;
+        }
+
+        var lastMeasureCount = -1;
+        function renderSelectors(){
+          var container = document.getElementById('v26KpiCompareSelectors');
+          if(!container) return;
+          var app = window.APP || {};
+          var hasData = !!(app.rows && app.rows.length);
+          var section = document.getElementById('v26KpiCompare');
+          if(section) section.hidden = !hasData;
+          if(!hasData) return;
+          var measures = (typeof rankMeasures==='function') ? rankMeasures() : [];
+          if(measures.length === lastMeasureCount) return;
+          lastMeasureCount = measures.length;
+          container.innerHTML = measures.map(function(m, i){
+            return '<label class="v26-compare-check"><input type="checkbox" value="'+esc6d(m.name)+'" '+(i<2?'checked':'')+'> '+esc6d(m.name)+'</label>';
+          }).join('');
+        }
+
+        function doCompare(){
+          var app = window.APP || {};
+          var rows = app.filtered || app.rows || [];
+          var resultEl = document.getElementById('v26KpiCompareResult');
+          if(!resultEl) return;
+          var checked = Array.from(document.querySelectorAll('#v26KpiCompareSelectors input:checked')).map(function(el){ return el.value; });
+          if(checked.length < 2){
+            resultEl.innerHTML = '<div class="mac-empty">Select at least 2 KPIs to compare.</div>';
+            return;
+          }
+          if(checked.length > 4){
+            resultEl.innerHTML = '<div class="mac-empty">Please select at most 4 KPIs at a time, for a readable comparison.</div>';
+            return;
+          }
+          var summaryRows = checked.map(function(name){
+            var agg = (typeof window.__instantDashAggregate==='function') ? window.__instantDashAggregate(name, rows) : null;
+            var valueText = (agg && agg.count) ? (typeof fmtByField==='function' ? fmtByField(agg.value, name) : agg.value) : '\u2014';
+            var modeLabel = agg ? (agg.mode==='avg'?'Average':agg.mode==='balance'?'Latest value':'Total') : '';
+            return '<tr><td><b>'+esc6d(name)+'</b></td><td>'+esc6d(String(valueText))+'</td><td>'+esc6d(modeLabel)+'</td></tr>';
+          }).join('');
+
+          var pairHtml = [];
+          for(var i=0;i<checked.length;i++){
+            for(var j=i+1;j<checked.length;j++){
+              var xs=[], ys=[];
+              for(var k=0;k<rows.length;k++){
+                var xv = Number(rows[k][checked[i]]), yv = Number(rows[k][checked[j]]);
+                if(isFinite(xv) && isFinite(yv)){ xs.push(xv); ys.push(yv); }
+              }
+              var r = pearson(xs, ys);
+              var label;
+              if(r===null || xs.length<4){
+                label = 'Not enough comparable data points to compute a reliable relationship.';
+              } else if(Math.abs(r)>=0.7){
+                label = (r>=0?'▲ Strong positive':'▼ Strong negative')+' co-movement (r='+r.toFixed(2)+', n='+xs.length+')'+(xs.length<20?' — small sample, treat as indicative only.':'.');
+              } else {
+                label = 'No strong relationship detected (r='+r.toFixed(2)+', n='+xs.length+') — this does not rule out a relationship, only that it was not statistically clear here.';
+              }
+              pairHtml.push('<div class="v26-compare-pair"><b>'+esc6d(checked[i])+'</b> vs <b>'+esc6d(checked[j])+'</b><br>'+label+'</div>');
+            }
+          }
+
+          resultEl.innerHTML =
+            '<table class="v26-compare-table"><thead><tr><th>KPI</th><th>Current Value</th><th>Basis</th></tr></thead><tbody>'+summaryRows+'</tbody></table>'+
+            '<div class="v26-compare-relationships"><b>Relationship check (data-supported only):</b>'+pairHtml.join('')+'</div>'+
+            '<div class="v26-compare-note">Relationship observed; causation requires management validation.</div>';
+        }
+
+        function wire(){
+          var btn = document.getElementById('v26CompareBtn');
+          if(btn && !btn.dataset.wired261c){
+            btn.dataset.wired261c = '1';
+            btn.addEventListener('click', doCompare);
+          }
+        }
+
+        setInterval(function(){ renderSelectors(); wire(); }, 700);
+        if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', function(){ renderSelectors(); wire(); });
+        else { renderSelectors(); wire(); }
+      })();
+      </script>
+
       <div id="v26WhyPanel" class="v26-why-overlay" aria-hidden="true">
         <div class="v26-why-card" role="dialog" aria-modal="true" aria-labelledby="v26WhyTitle">
           <div class="v26-why-head">
@@ -3802,7 +4032,7 @@ body{
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v26.1.1',
+  VERSION: 'v26.1.2',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -7376,6 +7606,41 @@ function miActionForKpi(name){
   if(/orders?|transactions?|applications?|units?|volume|quantity/i.test(n)) return 'Compare activity with conversion, capacity, quality and value indicators to identify the operational driver.';
   if(/patient|beneficiar|customer|client|member/i.test(n)) return 'Review the movement alongside activity, capacity, service quality and the relevant outcome KPI.';
   return 'Validate the movement with the responsible business owner against the closest supporting KPI, target or operating driver.';
+}
+/* v26.1.2 — business-impact explanation for the Management Brief,
+   matching the same keyword-matching pattern already proven in
+   miActionForKpi(), so the two stay consistent with each other. */
+function whyItMattersFor(name){
+  const n=String(name||'').toLowerCase();
+  if(/npa|non.?performing|overdue|default|delinquen/i.test(n)) return 'Rising non-performing or overdue exposure directly threatens asset quality, provisioning requirements and capital adequacy.';
+  if(/revenue|sales|income/i.test(n)) return 'Revenue is the primary driver of overall business performance; a sustained movement here affects every downstream financial metric.';
+  if(/profit|margin|pbt|pat|ebitda/i.test(n)) return 'Profitability directly determines the funds available for reinvestment, debt servicing and shareholder returns.';
+  if(/cost|expense|spend|salary|wage/i.test(n)) return 'Cost movements directly compress or expand operating margin; sustained increases erode profitability even if revenue holds steady.';
+  if(/debtor|receivable/i.test(n)) return 'Rising debtor days ties up working capital and increases the risk of bad debts; it directly affects cash conversion.';
+  if(/inventory|stock/i.test(n)) return 'Inventory movements affect working capital tied up in unsold goods and carry holding-cost and obsolescence risk.';
+  if(/creditor|payable/i.test(n)) return 'Creditor days affect how much working capital is being financed by suppliers versus the business\u2019s own funds.';
+  if(/cash|liquidity/i.test(n)) return 'Cash position directly determines the ability to meet short-term obligations and fund operations without external borrowing.';
+  if(/downtime/i.test(n)) return 'Downtime directly reduces available capacity and can cascade into missed output, service or delivery commitments.';
+  if(/cancellation|cart\s*abandonment|complaint|defect|rejected|rejection|error|failure/i.test(n)) return 'Quality and failure-rate movements directly affect customer experience, rework cost and repeat business.';
+  if(/repeat\s*customers?|returning\s*customers?|retention/i.test(n)) return 'Retention movements affect the cost of future revenue — retaining existing customers is materially cheaper than acquiring new ones.';
+  if(/orders?|transactions?|volume|quantity|units?/i.test(n)) return 'Activity-volume movements are usually the first visible signal of a demand or capacity shift before it shows up in financial results.';
+  if(/attendance|training|staff|employee/i.test(n)) return 'Workforce engagement and capability movements affect service delivery, quality and future productivity.';
+  return 'This movement is material enough to warrant management attention alongside the closest supporting KPI or operating driver.';
+}
+/* v26.1.2 — honestly describes how a KPI's headline figure was actually
+   calculated, reading the real result from the same central engine used
+   everywhere else in the app, rather than guessing or hardcoding a
+   generic description that might not match what was actually computed. */
+function calculationFor(name, rows){
+  try{
+    if(typeof window.__instantDashAggregate!=='function') return 'Calculation method unavailable.';
+    var r = (rows||window.APP&&(window.APP.filtered||window.APP.rows))||[];
+    var agg = window.__instantDashAggregate(name, r);
+    if(!agg || !agg.count) return 'This is a derived relationship between multiple measures, not a single column in the dataset — a single-figure calculation does not directly apply.';
+    if(agg.mode==='avg') return 'Calculated as the average of ' + esc(name) + ' across ' + agg.count.toLocaleString() + ' record' + (agg.count===1?'':'s') + ' (treated as a rate or percentage measure, not summed).';
+    if(agg.mode==='balance') return 'Shown as the latest available value of ' + esc(name) + ' (treated as a balance or point-in-time measure, not summed or averaged).';
+    return 'Calculated as the total (sum) of ' + esc(name) + ' across ' + agg.count.toLocaleString() + ' record' + (agg.count===1?'':'s') + '.';
+  }catch(_){ return 'Calculation method unavailable.'; }
 }
 function miStatus(items){
   const a=(items.attention||[]).length, p=(items.performance||[]).length;
