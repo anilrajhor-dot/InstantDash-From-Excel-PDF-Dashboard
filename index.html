@@ -311,6 +311,96 @@ body.id-v270-user-file-loaded #app{visibility:visible}
 })();
 </script>
 
+
+<style id="instantdash-v270-startup-barrier">
+  /* v27.0 HARD STARTUP BARRIER:
+     #app is inaccessible until the user selects a file in #fileInput. */
+  html.id-v270-upload-authorised #app {
+    display:block!important;
+    visibility:visible!important;
+    opacity:1!important;
+    pointer-events:auto!important;
+  }
+  html:not(.id-v270-upload-authorised) #app {
+    display:none!important;
+    visibility:hidden!important;
+    opacity:0!important;
+    pointer-events:none!important;
+  }
+  html:not(.id-v270-upload-authorised) #emptyState {
+    display:block!important;
+    visibility:visible!important;
+    opacity:1!important;
+  }
+  html:not(.id-v270-upload-authorised) #toast {
+    display:none!important;
+  }
+</style>
+<script id="instantdash-v270-startup-barrier-js">
+(function(){
+  'use strict';
+
+  var authorised = false;
+
+  function root(){ return document.documentElement; }
+
+  function lock(){
+    authorised = false;
+    var r=root();
+    if(r) r.classList.remove('id-v270-upload-authorised');
+    try{
+      window.__INSTANTDASH_USER_FILE_LOADED__ = false;
+      window.__INSTANTDASH_SHARED_STATE__ = null;
+    }catch(_){}
+  }
+
+  function unlock(){
+    authorised = true;
+    var r=root();
+    if(r) r.classList.add('id-v270-upload-authorised');
+    try{ window.__INSTANTDASH_USER_FILE_LOADED__ = true; }catch(_){}
+  }
+
+  /* Capture the actual user file selection before any application handler. */
+  function wire(){
+    var input=document.getElementById('fileInput');
+    if(!input || input.__v270BarrierWired) return;
+    input.__v270BarrierWired=true;
+    input.addEventListener('change',function(e){
+      var f=e.target && e.target.files && e.target.files[0];
+      if(f) unlock();
+    },true);
+  }
+
+  function enforce(){
+    wire();
+    if(!authorised){
+      var r=root();
+      if(r) r.classList.remove('id-v270-upload-authorised');
+    }
+  }
+
+  /* Start locked immediately and enforce after every DOM mutation. */
+  lock();
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',function(){
+      enforce();
+      var mo=new MutationObserver(enforce);
+      mo.observe(document.documentElement,{subtree:true,attributes:true,attributeFilter:['style','hidden','class','data-v270-file-ready']});
+    },{once:true});
+  }else{
+    enforce();
+    var mo=new MutationObserver(enforce);
+    mo.observe(document.documentElement,{subtree:true,attributes:true,attributeFilter:['style','hidden','class','data-v270-file-ready']});
+  }
+
+  /* Expose a reset hook for Clear Data. */
+  window.__instantDashV270LockStartup = lock;
+  window.__instantDashV270UnlockStartup = unlock;
+})();
+</script>
+
 </head>
 <body class="" style="">
 <div id="idV270AuthoritativeVersion" style="display:none">v27.0</div>
@@ -4772,6 +4862,8 @@ function clearSmartChartVisualForNewDataset(){
 }
 
 function resetDataForNewFile(){
+  try{ if(typeof window.__instantDashV270LockStartup==='function') window.__instantDashV270LockStartup(); }catch(_){}
+  
   window.__INSTANTDASH_USER_FILE_LOADED__ = false;
   try{ if(typeof window.__instantDashV270Hide==='function') window.__instantDashV270Hide(); }catch(_){ }
   // v13.38 — clear every data-dependent state surface before a new file starts.
@@ -4955,6 +5047,8 @@ function idRenderDeptTabs(){
 }
 
 async function handleFile(file){
+  try{ if(typeof window.__instantDashV270UnlockStartup==='function') window.__instantDashV270UnlockStartup(); }catch(_){}
+  
   /* v27.0 definitive rule: only an explicit file selection can unlock the dashboard. */
   window.__INSTANTDASH_USER_FILE_LOADED__ = true;
   /* v13.72 — a new dataset starts a fresh Ask Executive AI session.
