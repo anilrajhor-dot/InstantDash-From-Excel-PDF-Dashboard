@@ -275,6 +275,42 @@ body.id-v270-user-file-loaded #app{visibility:visible}
 })();
 </script>
 
+
+<style id="instantdash-v270-absolute-empty-gate">
+/* v27.0 FINAL: the dashboard is physically hidden until a new file is loaded. */
+#app[data-v270-file-ready="0"]{display:none!important;visibility:hidden!important;pointer-events:none!important}
+#app[data-v270-file-ready="1"]{visibility:visible!important}
+#toast{display:none!important}
+#toast.v270-toast-live{display:block!important}
+</style>
+<script id="instantdash-v270-absolute-empty-gate-js">
+(function(){
+  'use strict';
+  function appEl(){return document.getElementById('app');}
+  function hide(){
+    var a=appEl();
+    if(!a)return;
+    a.setAttribute('data-v270-file-ready','0');
+    a.hidden=true;
+    a.style.setProperty('display','none','important');
+    a.setAttribute('aria-hidden','true');
+    var t=document.getElementById('toast'); if(t)t.classList.remove('v270-toast-live');
+  }
+  function show(){
+    var a=appEl();
+    if(!a)return;
+    a.setAttribute('data-v270-file-ready','1');
+    a.hidden=false;
+    a.style.removeProperty('display');
+    a.removeAttribute('aria-hidden');
+  }
+  window.__instantDashV270Hide=hide;
+  window.__instantDashV270Show=show;
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',hide,{once:true});
+  else hide();
+})();
+</script>
+
 </head>
 <body class="" style="">
 <div id="idV270AuthoritativeVersion" style="display:none">v27.0</div>
@@ -2668,7 +2704,7 @@ body{
   </section>
 
   <!-- ============ APP ============ -->
-  <section id="app" hidden data-v11306-auto-scrolled="1">
+  <section id="app" hidden data-v11306-auto-scrolled="1" data-v270-file-ready="0" style="display:none!important">
 
 
     <section id="v25Snapshot" class="card no-print" style="padding:16px 18px;margin:0 0 16px">
@@ -3938,7 +3974,7 @@ Number</td><td title="Transaction Description">Transaction Description</td><td s
   </div>
 </div>
 
-<div id="toast" class="on">Opening share panel…</div>
+<div id="toast" class="on" aria-hidden="true"></div>
 
 <script>
 /* =====================================================================
@@ -4736,6 +4772,7 @@ function clearSmartChartVisualForNewDataset(){
 }
 
 function resetDataForNewFile(){
+  try{ if(typeof window.__instantDashV270Hide==='function') window.__instantDashV270Hide(); }catch(_){ }
   // v13.38 — clear every data-dependent state surface before a new file starts.
   clearSmartChartVisualForNewDataset();
   try{ (APP.charts||[]).forEach(c=>{try{if(c&&c.instance)c.instance.destroy();}catch(_){}}); }catch(_){}
@@ -8775,10 +8812,11 @@ function updateLivePreview(){
 function buildEverything(){
   /* v27.0 hard gate: never render a dashboard without a real uploaded dataset. */
   if(!APP || !Array.isArray(APP.rows) || APP.rows.length===0 || !String(APP.fileName||'').trim()){
-    try{ $('app').hidden=true; $('emptyState').hidden=false; }catch(_){ }
+    try{ if(typeof window.__instantDashV270Hide==='function') window.__instantDashV270Hide(); else { $('app').hidden=true; $('emptyState').hidden=false; } }catch(_){ }
     try{ if(typeof window.__instantDashCloseFileGate==='function') window.__instantDashCloseFileGate(); }catch(_){ }
     return;
   }
+  try{ if(typeof window.__instantDashV270Show==='function') window.__instantDashV270Show(); }catch(_){ }
   invalidateAnalysisCaches();
   $('emptyState').hidden = true;
   $('app').hidden = false;
