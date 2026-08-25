@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.1.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.1.1","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -388,6 +388,17 @@ main{max-width:1360px;margin:0 auto;padding:24px}
 .v26-watch-type{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
 .v26-watch-what{font-size:12.5px;font-weight:800;margin-top:2px}
 .v26-watch-why{font-size:11px;line-height:1.45;color:var(--text);margin-top:3px}
+.v26-rel-card{border-radius:14px;padding:14px 16px;margin-bottom:10px;border:1px solid var(--border);background:var(--card-2)}
+.v26-rel-card:last-child{margin-bottom:0}
+.v26-rel-card.attention{border-left:3px solid var(--warn)}
+.v26-rel-card.good{border-left:3px solid var(--ok)}
+.v26-rel-title{font-size:13px;font-weight:800;margin-bottom:8px}
+.v26-rel-field{margin-bottom:9px}
+.v26-rel-field:last-child{margin-bottom:0}
+.v26-rel-field>b{display:block;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:3px}
+.v26-rel-field>p{margin:0;font-size:12px;line-height:1.5;color:var(--text)}
+.v26-rel-item{font-size:12px;line-height:1.6;color:var(--text);font-weight:600}
+.v26-rel-none{font-size:11.5px;line-height:1.5;color:var(--muted);font-style:italic}
 
 /* v26.0 — "Why?" single-movement evidence panel */
 .v26-why-overlay{position:fixed;inset:0;z-index:999997;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.5);padding:16px}
@@ -1549,7 +1560,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v26.1.0">
+<meta name="instantdash-build" content="v26.1.1">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2424,7 +2435,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v26.1.0';
+      s.textContent='v26.1.1';
       b.appendChild(s);
     }
   }
@@ -2484,11 +2495,12 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v26.1.0</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v26.1.1</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.1.0</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.1.1</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
+      <button class="id-health-btn no-print" id="topClearDataBtn" type="button" aria-label="Clear all loaded data" style="color:var(--warn)">🗑 Clear Data</button>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
       <button class="id-health-btn no-print" id="aiModeToggleBtn" type="button" aria-label="Real AI settings">🤖 Real AI: Off</button>
   <div class="spacer"></div>
@@ -3149,6 +3161,119 @@ body{
       })();
       </script>
 
+      <section id="v26RelIntel" class="exec-card no-print" hidden>
+        <div class="mac-head">
+          <div><div class="exec-label">🔗 Relationship Intelligence</div><div class="mac-title">Every material movement, explained and quantified</div></div>
+          <div class="mac-hint">Only relationships with genuine statistical support are shown. Small samples are explicitly flagged — a correlation is never presented as proof of cause.</div>
+        </div>
+        <div id="v26RelIntelBody"></div>
+      </section>
+      <script id="instantdash-v26-relintel-wire">
+      (function(){
+        function esc6b(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+        function stripHtml6b(s){return String(s||'').replace(/<[^>]*>/g,'').trim();}
+        function titleFrom6b(plain){ var m=plain.match(/^([^:]+):/); return m?m[1].trim():plain.split(' ')[0]; }
+
+        /* v26.1.1 — genuine Pearson correlation coefficient between two
+           numeric series, paired by row index. Returns null rather than
+           a misleading number when the denominator is zero (no variance
+           in one of the series) or the sample is too small to compute
+           at all. This is real arithmetic on the actual loaded rows,
+           not a narrative guess about what "seems related". */
+        function pearson(xs, ys){
+          var n = xs.length;
+          if(n < 4) return null;
+          var sumX=0,sumY=0,sumXY=0,sumX2=0,sumY2=0;
+          for(var i=0;i<n;i++){ sumX+=xs[i]; sumY+=ys[i]; sumXY+=xs[i]*ys[i]; sumX2+=xs[i]*xs[i]; sumY2+=ys[i]*ys[i]; }
+          var num = n*sumXY - sumX*sumY;
+          var den = Math.sqrt((n*sumX2-sumX*sumX)*(n*sumY2-sumY*sumY));
+          if(!den || !isFinite(den)) return null;
+          var r = num/den;
+          return isFinite(r) ? r : null;
+        }
+
+        function relatedMeasures(focusName, rows, allMeasures){
+          var focusVals = rows.map(function(r){ return Number(r[focusName]); });
+          var pairs = [];
+          allMeasures.forEach(function(m){
+            if(m.name === focusName) return;
+            var otherVals = rows.map(function(r){ return Number(r[m.name]); });
+            var validIdx = [];
+            for(var i=0;i<rows.length;i++){ if(isFinite(focusVals[i]) && isFinite(otherVals[i])) validIdx.push(i); }
+            if(validIdx.length < 4) return;
+            var xs = validIdx.map(function(i){ return focusVals[i]; });
+            var ys = validIdx.map(function(i){ return otherVals[i]; });
+            var r = pearson(xs, ys);
+            /* v26.1.1 — deliberately strict threshold (|r| >= 0.7): this
+               is meant to surface only genuinely strong co-movement, not
+               every weak, coincidental wobble in a small dataset. */
+            if(r !== null && Math.abs(r) >= 0.7){
+              pairs.push({ name: m.name, r: r, n: validIdx.length });
+            }
+          });
+          pairs.sort(function(a,b){ return Math.abs(b.r) - Math.abs(a.r); });
+          return pairs.slice(0,2);
+        }
+
+        function suggestQuestion(kpiName, isAttention){
+          return isAttention
+            ? 'What specific operational change caused ' + kpiName + ' to move this period, and is it a one-off or a developing trend?'
+            : 'Is the improvement in ' + kpiName + ' driven by a repeatable process change, or a one-time factor that may not recur?';
+        }
+
+        function render(){
+          var section = document.getElementById('v26RelIntel');
+          var body = document.getElementById('v26RelIntelBody');
+          if(!section||!body) return;
+          var app = window.APP || {};
+          var hasData = !!(app.rows && app.rows.length);
+          section.hidden = !hasData;
+          if(!hasData) return;
+          var mi = window.__miItems || {};
+          var rows = app.filtered || app.rows || [];
+          var allMeasures = (typeof rankMeasures==='function') ? rankMeasures() : [];
+          var perf = (mi.performance||[]).map(function(x){ return {plain: stripHtml6b(x), isAttention:false}; });
+          var att = (mi.attention||[]).map(function(x){ return {plain: stripHtml6b(x), isAttention:true}; });
+          var movements = att.concat(perf);
+          if(!movements.length){
+            body.innerHTML = '<div class="mac-empty">No material movement has been established from the available evidence yet. Add a comparable period, target or linked KPI.</div>';
+            return;
+          }
+          var cards = movements.map(function(mv){
+            var title = titleFrom6b(mv.plain);
+            var whatChanged = mv.plain.replace(/^([^:]+):\s*/,'');
+            var related = relatedMeasures(title, rows, allMeasures);
+            var relatedHtml;
+            if(related.length){
+              relatedHtml = related.map(function(p){
+                var strength = Math.abs(p.r) >= 0.9 ? 'very strong' : 'strong';
+                return '<div class="v26-rel-item">'+(p.r>=0?'▲':'▼')+' <b>'+esc6b(p.name)+'</b> — '+strength+' co-movement (r='+p.r.toFixed(2)+', n='+p.n+')</div>';
+              }).join('');
+            } else {
+              relatedHtml = '<div class="v26-rel-none">No other measure showed strong enough co-movement to report — this does not mean no relationship exists, only that none was statistically clear in the current data.</div>';
+            }
+            var sampleCaveat = rows.length < 20
+              ? 'Based on only '+rows.length.toLocaleString()+' records — treat any correlation shown as indicative only, not statistically conclusive.'
+              : 'Based on '+rows.length.toLocaleString()+' records.';
+            var action = (typeof miActionForKpi==='function') ? miActionForKpi(title) : 'Review this measure against target, benchmark and related KPIs.';
+            var question = suggestQuestion(title, mv.isAttention);
+            return '<div class="v26-rel-card '+(mv.isAttention?'attention':'good')+'">'+
+              '<div class="v26-rel-title">'+(mv.isAttention?'🔴':'🟢')+' '+esc6b(title)+'</div>'+
+              '<div class="v26-rel-field"><b>What changed</b><p>'+esc6b(whatChanged)+'</p></div>'+
+              '<div class="v26-rel-field"><b>Data-supported relationships</b>'+relatedHtml+'</div>'+
+              '<div class="v26-rel-field"><b>Assumptions &amp; limitations</b><p>'+esc6b(sampleCaveat)+' Relationship observed; causation requires management validation.</p></div>'+
+              '<div class="v26-rel-field"><b>Management question</b><p>'+esc6b(question)+'</p></div>'+
+              '<div class="v26-rel-field"><b>Suggested action</b><p>'+esc6b(action)+'</p></div>'+
+            '</div>';
+          });
+          body.innerHTML = cards.join('');
+        }
+        setInterval(render, 700);
+        if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', render);
+        else render();
+      })();
+      </script>
+
       <div id="v26WhyPanel" class="v26-why-overlay" aria-hidden="true">
         <div class="v26-why-card" role="dialog" aria-modal="true" aria-labelledby="v26WhyTitle">
           <div class="v26-why-head">
@@ -3677,7 +3802,7 @@ body{
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v26.1.0',
+  VERSION: 'v26.1.1',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -8595,6 +8720,11 @@ function wireRest(){
     try{ window.scrollTo({top:0,behavior:'smooth'}); }catch(_){ window.scrollTo(0,0); }
     toast('All data cleared');
   };
+  /* v26.1.1 — the new, prominent header button simply triggers the exact
+     same, already-tested clear logic above rather than duplicating it,
+     so there is only ever one place this behavior is defined. */
+  var topClearBtn=$('topClearDataBtn');
+  if(topClearBtn) topClearBtn.onclick = () => { if(clearAllBtn) clearAllBtn.click(); };
   $('tableSearch').oninput = (e) => { APP.search = e.target.value.trim(); APP.page = 0; renderTable(); };
   $('prevPage').onclick = () => { if (APP.page > 0){ APP.page--; renderTable(); } };
   $('nextPage').onclick = () => { APP.page++; renderTable(); };
