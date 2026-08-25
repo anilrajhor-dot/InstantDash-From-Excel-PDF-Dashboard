@@ -13965,7 +13965,7 @@ window.addEventListener('load',function(){setTimeout(mountAskMe,250);});
 @media(max-width:900px){.id-v270-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:520px){.id-v270-grid{grid-template-columns:1fr 1fr}.id-v270-value{font-size:15px}}
 </style>
-<section id="idV270AccountIntel" class="section" style="display: block;">
+<section id="idV270AccountIntel" class="section" style="display:none">
   <div class="card" style="padding:16px">
     <div class="id-v270-head">
       <div>
@@ -13974,8 +13974,8 @@ window.addEventListener('load',function(){setTimeout(mountAskMe,250);});
       </div>
       <span id="idV270Badge" class="id-v270-badge">Detected</span>
     </div>
-    <div id="idV270Cards" class="id-v270-grid"><div class="id-v270-card"><div class="id-v270-label">Opening / first balance</div><div class="id-v270-value">—</div><div class="id-v270-note">Snapshot; never summed</div></div><div class="id-v270-card"><div class="id-v270-label">Closing / latest balance</div><div class="id-v270-value">—</div><div class="id-v270-note">Latest valid balance</div></div><div class="id-v270-card"><div class="id-v270-label">Total debits</div><div class="id-v270-value">58,17,206.50</div><div class="id-v270-note">Transaction movement</div></div><div class="id-v270-card"><div class="id-v270-label">Total credits</div><div class="id-v270-value">23,60,000.00</div><div class="id-v270-note">Transaction movement</div></div><div class="id-v270-card"><div class="id-v270-label">Interest charged</div><div class="id-v270-value">0.00</div><div class="id-v270-note">Description-based identification</div></div><div class="id-v270-card"><div class="id-v270-label">Charges / GST</div><div class="id-v270-value">0.00</div><div class="id-v270-note">Description-based identification</div></div><div class="id-v270-card"><div class="id-v270-label">Net movement</div><div class="id-v270-value">-34,57,206.50</div><div class="id-v270-note">Credits minus debits</div></div><div class="id-v270-card"><div class="id-v270-label">Transactions</div><div class="id-v270-value">52</div><div class="id-v270-note">Rows currently analysed</div></div></div>
-    <div id="idV270Note" class="id-v270-note" style="margin-top:12px">Detected fields: description · Column 7 · Column 8 · balance. Values are advisory until the statement structure is confirmed.</div>
+    <div id="idV270Cards" class="id-v270-grid"></div>
+    <div id="idV270Note" class="id-v270-note" style="margin-top:12px"></div>
   </div>
 </section>
 <script id="instantdash-v27-account-intelligence">
@@ -14067,6 +14067,9 @@ window.addEventListener('load',function(){setTimeout(mountAskMe,250);});
     }
     box.style.display="block";
   }
+  document.addEventListener('instantdash:dataset-ready', function(){
+    try{ analyse(); }catch(e){ console.warn('InstantDash v27 account refresh:',e); }
+  });
   function install(){
     // Insert immediately before the main closing body so it is additive.
     try{
@@ -14082,6 +14085,103 @@ window.addEventListener('load',function(){setTimeout(mountAskMe,250);});
 })();
 </script>
 
+
+
+<!-- v27.0 — Account Statement fresh-file isolation -->
+<style id="instantdash-v270-account-fresh-file-css">
+  #idV270AccountIntel[data-loading="1"]{display:none!important}
+</style>
+<script id="instantdash-v270-account-fresh-file-js">
+(function(){
+  'use strict';
+
+  var lastIdentity = '';
+  var timer = null;
+
+  function app(){
+    return window.__INSTANTDASH_APP__ || window.APP || {};
+  }
+  function rows(){
+    var a=app();
+    return Array.isArray(a.rows) ? a.rows : [];
+  }
+  function columns(){
+    var a=app();
+    return Array.isArray(a.columns) ? a.columns : [];
+  }
+  function identity(){
+    var a=app();
+    var token=a.__loadToken||0;
+    var file=String(a.fileName||'');
+    var sheet=String(a.activeSheet||'');
+    var n=Array.isArray(a.rows)?a.rows.length:0;
+    var first='';
+    try{
+      first=n?JSON.stringify(a.rows[Math.min(12,n-1)]||{}):'';
+    }catch(e){}
+    return [token,file,sheet,n,first.slice(0,400)].join('|');
+  }
+  function clearPanel(){
+    var box=document.getElementById('idV270AccountIntel');
+    var cards=document.getElementById('idV270Cards');
+    var note=document.getElementById('idV270Note');
+    if(box) box.style.display='none';
+    if(box) box.setAttribute('data-loading','1');
+    if(cards) cards.innerHTML='';
+    if(note) note.textContent='';
+  }
+  function isStatement(){
+    var c=columns().map(function(x){return String(x.name||'');}).join(' ');
+    var sample=rows().slice(0,100).map(function(r){
+      try{return Object.values(r||{}).join(' ');}catch(e){return '';}
+    }).join(' ');
+    return /(balance|debit|credit|transaction|interest|statement|account|od\b|loan|charges|gst|cleared balance|drawing power)/i.test(c+' '+sample);
+  }
+  function runAccountAnalysis(){
+    /* Call the existing v27 account analyser, if present. */
+    try{
+      var scripts=document.querySelectorAll('script#instantdash-v27-account-intelligence');
+      if(!scripts.length) return;
+      /* The existing analyser is private, so dispatch a harmless custom
+         event that the enhancement can listen for. */
+      document.dispatchEvent(new CustomEvent('instantdash:dataset-ready'));
+    }catch(e){}
+  }
+  function poll(){
+    var id=identity();
+    if(id!==lastIdentity){
+      lastIdentity=id;
+      clearPanel();
+
+      /* Give the main upload/rebuild pipeline a short window to finish
+         replacing rows/columns, then let the account analyser refresh. */
+      setTimeout(function(){
+        var box=document.getElementById('idV270AccountIntel');
+        if(!box) return;
+        if(!rows().length || !isStatement()){
+          box.style.display='none';
+          box.removeAttribute('data-loading');
+          return;
+        }
+        box.removeAttribute('data-loading');
+        runAccountAnalysis();
+      },350);
+    }
+  }
+
+  function start(){
+    poll();
+    if(timer) clearInterval(timer);
+    timer=setInterval(poll,500);
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',start);
+  }else{
+    start();
+  }
+})();
+</script>
 
 <!-- InstantDash v27.0 — Ask Me reliability repair. Additive only. -->
 <style id="instantdash-v271-ask-repair-css">
@@ -14465,6 +14565,26 @@ function render(q){
 }
 var old=window.__instantDashAskMeAnswer;
 window.__instantDashAskMeAnswer=function(q){try{if(render(q))return;}catch(e){} if(typeof old==='function')return old(q)};
+})();
+</script>
+
+
+<script id="instantdash-v270-account-analysis-refresh">
+(function(){
+  function refresh(){
+    try{
+      var host=document.getElementById('idV270AccountIntel');
+      if(!host) return;
+      var a=window.__INSTANTDASH_APP__||window.APP||{};
+      var rs=Array.isArray(a.rows)?a.rows:[];
+      if(!rs.length){host.style.display='none';return;}
+      /* Trigger the existing installer by temporarily cloning its script
+         function body is not safe; instead use the existing DOM values if
+         already rendered. The main watcher handles hiding/revealing. */
+      host.removeAttribute('data-loading');
+    }catch(e){}
+  }
+  document.addEventListener('instantdash:dataset-ready',refresh);
 })();
 </script>
 
