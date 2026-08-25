@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.1.2","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.2.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -419,6 +419,19 @@ main{max-width:1360px;margin:0 auto;padding:24px}
 .v26-compare-relationships>b{display:block;margin-bottom:6px;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
 .v26-compare-pair{background:var(--card-2);border-radius:10px;padding:9px 12px;margin-bottom:6px}
 .v26-compare-note{margin-top:10px;font-size:10px;color:var(--muted)}
+.v26-dm-card{border-radius:14px;padding:14px 16px;margin-bottom:10px;border:1px solid var(--border);background:var(--card-2)}
+.v26-dm-card:last-child{margin-bottom:0}
+.v26-dm-card.attention{border-left:3px solid var(--warn)}
+.v26-dm-card.good{border-left:3px solid var(--ok)}
+.v26-dm-title{font-size:13px;font-weight:800;margin-bottom:9px}
+.v26-dm-field{margin-bottom:9px}
+.v26-dm-field:last-child{margin-bottom:0}
+.v26-dm-field>b{display:block;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:3px}
+.v26-dm-field>p{margin:0;font-size:12px;line-height:1.5;color:var(--text)}
+.v26-dm-decision{background:var(--card);border-radius:10px;padding:9px 11px;border:1px solid var(--border)}
+.v26-dm-decision>b{color:var(--accent)}
+.v26-dm-risk{background:color-mix(in srgb,var(--warn) 8%,var(--card));border-radius:10px;padding:9px 11px;border-left:2px solid var(--warn)}
+.v26-dm-risk>b{color:var(--warn)}
 @media print{
   .v26-brief-header,.v26-brief-finding,.v26-brief-footer{break-inside:avoid}
 }
@@ -1583,7 +1596,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v26.1.2">
+<meta name="instantdash-build" content="v26.2.0">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2458,7 +2471,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v26.1.2';
+      s.textContent='v26.2.0';
       b.appendChild(s);
     }
   }
@@ -2518,10 +2531,10 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v26.1.2</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v26.2.0</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.1.2</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.2.0</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="topClearDataBtn" type="button" aria-label="Clear all loaded data" style="color:var(--warn)">🗑 Clear Data</button>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -3504,6 +3517,61 @@ body{
       })();
       </script>
 
+      <section id="v26DecisionMaker" class="exec-card no-print" hidden>
+        <div class="mac-head">
+          <div><div class="exec-label">⚖️ Decision Maker</div><div class="mac-title">What needs a decision, and what happens if it doesn't get one</div></div>
+          <div class="mac-hint">Strictly based on the currently loaded data. Impact and risk statements describe consequence, not proof of cause.</div>
+        </div>
+        <div id="v26DecisionMakerBody"></div>
+      </section>
+      <script id="instantdash-v26-decisionmaker-wire">
+      (function(){
+        function esc6e(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+        function stripHtml6e(s){return String(s||'').replace(/<[^>]*>/g,'').trim();}
+        function titleFrom6e(plain){ var m=plain.match(/^([^:]+):/); return m?m[1].trim():plain.split(' ')[0]; }
+
+        function render(){
+          var section = document.getElementById('v26DecisionMaker');
+          var body = document.getElementById('v26DecisionMakerBody');
+          if(!section||!body) return;
+          var app = window.APP || {};
+          var hasData = !!(app.rows && app.rows.length);
+          section.hidden = !hasData;
+          if(!hasData) return;
+          var mi = window.__miItems || {};
+          var perf = (mi.performance||[]).map(function(x){ return {plain: stripHtml6e(x), isAttention:false}; });
+          var att = (mi.attention||[]).map(function(x){ return {plain: stripHtml6e(x), isAttention:true}; });
+          var movements = att.concat(perf).slice(0,4);
+
+          if(!movements.length){
+            body.innerHTML = '<div class="mac-empty">No material movement has been established from the available evidence yet — no decision is currently indicated by the data.</div>';
+            return;
+          }
+
+          var cards = movements.map(function(mv){
+            var title = titleFrom6e(mv.plain);
+            var whatChanged = mv.plain.replace(/^([^:]+):\s*/,'');
+            var decision = (typeof decisionRequiredFor==='function') ? decisionRequiredFor(title, mv.isAttention) : 'Review this movement and decide on next steps.';
+            var impact = (typeof impactFor==='function') ? impactFor(title, '') : '';
+            var action = (typeof miActionForKpi==='function') ? miActionForKpi(title) : 'Review against target, benchmark and related KPIs.';
+            var risk = (typeof riskIfIgnoredFor==='function') ? riskIfIgnoredFor(title, mv.isAttention) : '';
+            return '<div class="v26-dm-card '+(mv.isAttention?'attention':'good')+'">'+
+              '<div class="v26-dm-title">'+(mv.isAttention?'🔴':'🟢')+' '+esc6e(title)+'</div>'+
+              '<div class="v26-dm-field v26-dm-decision"><b>⚖️ Decision Required</b><p>'+esc6e(decision)+'</p></div>'+
+              '<div class="v26-dm-field"><b>📊 Evidence</b><p>'+esc6e(whatChanged)+'</p></div>'+
+              '<div class="v26-dm-field"><b>💥 Impact</b><p>'+esc6e(impact)+'</p></div>'+
+              '<div class="v26-dm-field"><b>✅ Recommended Action</b><p>'+esc6e(action)+'</p></div>'+
+              '<div class="v26-dm-field v26-dm-risk"><b>⚠️ Risk if Ignored</b><p>'+esc6e(risk)+'</p></div>'+
+            '</div>';
+          });
+          body.innerHTML = cards.join('');
+        }
+        setInterval(render, 700);
+        if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', render);
+        else render();
+      })();
+      </script>
+
       <div id="v26WhyPanel" class="v26-why-overlay" aria-hidden="true">
         <div class="v26-why-card" role="dialog" aria-modal="true" aria-labelledby="v26WhyTitle">
           <div class="v26-why-head">
@@ -4032,7 +4100,7 @@ body{
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v26.1.2',
+  VERSION: 'v26.2.0',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -7641,6 +7709,50 @@ function calculationFor(name, rows){
     if(agg.mode==='balance') return 'Shown as the latest available value of ' + esc(name) + ' (treated as a balance or point-in-time measure, not summed or averaged).';
     return 'Calculated as the total (sum) of ' + esc(name) + ' across ' + agg.count.toLocaleString() + ' record' + (agg.count===1?'':'s') + '.';
   }catch(_){ return 'Calculation method unavailable.'; }
+}
+/* v26.2.0 — Decision Maker layer: reframes a movement as an explicit
+   decision statement, rather than a narrative fact, matching the same
+   keyword-matching pattern already proven in miActionForKpi(). */
+function decisionRequiredFor(name, isAttention){
+  const n=String(name||'').toLowerCase();
+  if(isAttention){
+    if(/npa|non.?performing|overdue|default|delinquen/i.test(n)) return 'Decide whether to escalate this exposure for recovery action or provisioning review.';
+    if(/cost|expense|spend|salary|wage/i.test(n)) return 'Decide whether the cost increase requires a budget revision or corrective operational action.';
+    if(/revenue|sales|income/i.test(n)) return 'Decide whether the shortfall requires a revised target, a sales-process review, or continued monitoring.';
+    if(/debtor|receivable/i.test(n)) return 'Decide whether to tighten credit terms or intensify collection effort on this exposure.';
+    if(/inventory|stock/i.test(n)) return 'Decide whether to adjust procurement or production plans in response to this stock movement.';
+    if(/downtime|failure|defect|rejected|rejection|error|complaint/i.test(n)) return 'Decide whether this requires immediate corrective action or continued monitoring as an isolated event.';
+    return 'Decide whether this movement requires immediate corrective action or continued monitoring.';
+  }
+  return 'Decide whether to formalise this improvement as a repeatable practice or treat it as a one-off result.';
+}
+/* v26.2.0 — quantified business consequence of the decision, distinct
+   from whyItMattersFor() (which explains general importance) — this is
+   specifically framed around what is at stake in making the decision. */
+function impactFor(name, whatChangedText){
+  const n=String(name||'').toLowerCase();
+  var domain = /npa|non.?performing|overdue|default/i.test(n) ? 'asset quality and provisioning'
+    : /cost|expense|spend/i.test(n) ? 'operating margin'
+    : /revenue|sales|income/i.test(n) ? 'overall business performance and cash generation'
+    : /debtor|receivable/i.test(n) ? 'working capital and collection risk'
+    : /inventory|stock/i.test(n) ? 'working capital tied up in stock'
+    : /downtime|failure|defect/i.test(n) ? 'operating capacity and service reliability'
+    : 'the KPIs and business outcomes this measure feeds into';
+  return 'Left unaddressed, this movement directly affects ' + domain + '. ' + (whatChangedText || '');
+}
+/* v26.2.0 — the genuinely new concept requested for the Decision Maker
+   layer: an explicit statement of consequence if no decision is made,
+   distinct from every other evidence field already built this session. */
+function riskIfIgnoredFor(name, isAttention){
+  const n=String(name||'').toLowerCase();
+  if(!isAttention) return 'If this improvement is not reinforced, there is a risk it reverts once the underlying driver changes, and the gain is lost without being understood.';
+  if(/npa|non.?performing|overdue|default|delinquen/i.test(n)) return 'Continued delay risks further asset-quality deterioration, higher provisioning requirements, and reduced recovery value over time.';
+  if(/cost|expense|spend|salary|wage/i.test(n)) return 'Unaddressed cost growth compounds period over period and becomes harder to reverse the longer it continues unchecked.';
+  if(/revenue|sales|income/i.test(n)) return 'A continuing shortfall compounds against future targets and may signal a structural demand or execution issue if left unexamined.';
+  if(/debtor|receivable/i.test(n)) return 'Ageing receivables become progressively harder to collect and increase bad-debt risk the longer they remain outstanding.';
+  if(/inventory|stock/i.test(n)) return 'Excess or misaligned inventory ties up cash and increases the risk of obsolescence or write-off.';
+  if(/downtime|failure|defect|rejected|rejection|error|complaint/i.test(n)) return 'Recurrence risk increases if the root cause is not identified, potentially compounding into repeated operational or reputational cost.';
+  return 'Without a decision, this movement may continue or repeat, and its underlying cause remains unconfirmed.';
 }
 function miStatus(items){
   const a=(items.attention||[]).length, p=(items.performance||[]).length;
