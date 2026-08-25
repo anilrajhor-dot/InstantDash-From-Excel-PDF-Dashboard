@@ -14417,4 +14417,55 @@ window.addEventListener('load',function(){setTimeout(mountAskMe,250);});
 })();
 </script>
 
+<script id="instantdash-v270-account-askme-detection-fix">
+(function(){
+'use strict';
+function getRows(){var a=window.__INSTANTDASH_APP__||window.APP||{};return Array.isArray(a.filtered)&&a.filtered.length?a.filtered:(Array.isArray(a.rows)?a.rows:[])}
+function keys(rs){return rs.length?Object.keys(rs[0]):[]}
+function txt(v){return String(v==null?'':v).toLowerCase()}
+function n(v){if(v==null||String(v).trim()==='')return NaN;var x=Number(String(v).replace(/[₹,$€£¥\s]/g,'').replace(/,/g,''));return isFinite(x)?x:NaN}
+function money(v){return isFinite(v)?Number(v).toLocaleString('en-IN',{maximumFractionDigits:2}):'—'}
+function detect(){
+ var rs=getRows(), ks=keys(rs), all=rs.slice(0,80).map(function(r){return Object.keys(r).map(function(k){return String(r[k]==null?'':r[k])}).join(' ')}).join(' ');
+ var balance=ks.find(function(k){return /balance|outstanding/i.test(k)}) || ks.find(function(k){return rs.some(function(r){return /^balance$/i.test(String(r[k]||'').trim())})});
+ var desc=ks.find(function(k){return /description|narration|particular|transaction/i.test(k)}) || ks.find(function(k){return rs.some(function(r){return /interest|gst|charge|from a\/c|to a\/c/i.test(String(r[k]||''))})});
+ var date=ks.find(function(k){return /date|time|period/i.test(k)}) || ks.find(function(k){return rs.some(function(r){return r[k]&&r[k].__instantdashDate})});
+ var numeric=ks.filter(function(k){return rs.filter(function(r){return isFinite(n(r[k]))}).length>=Math.max(2,Math.ceil(rs.length*.25))});
+ var branch=numeric.find(function(k){var vals=rs.map(function(r){return n(r[k])}).filter(isFinite);return vals.length>3&&new Set(vals.map(String)).size<=2});
+ var trans=numeric.filter(function(k){return k!==branch});
+ var debit=trans.find(function(k){return /debit|withdraw|dr/i.test(k)}), credit=trans.find(function(k){return /credit|deposit|cr/i.test(k)});
+ if(!debit||!credit){
+   var score=trans.map(function(k){var d=0,c=0;rs.forEach(function(r){var v=n(r[k]),q=txt(desc?r[desc]:'');if(!isFinite(v))return;if(/to a\/c|interest|gst|charge|fee|^tr$/.test(q))d++;if(/from a\/c|deposit|credit/.test(q))c++});return {k:k,d:d,c:c}});
+   if(!debit) debit=(score.slice().sort(function(a,b){return b.d-a.d})[0]||{}).k;
+   if(!credit) credit=(score.slice().sort(function(a,b){return b.c-a.c})[0]||{}).k;
+ }
+ var isStmt=!!(balance||desc) && /statement|account|loan|od|balance|interest|gst|transaction|narration|description/i.test(all+' '+ks.join(' '));
+ return {rs:rs,ks:ks,balance:balance,desc:desc,date:date,debit:debit,credit:credit,isStmt:isStmt};
+}
+function render(q){
+ var d=detect(); if(!d.isStmt)return false;
+ var ql=txt(q), box=document.getElementById('ai48Answer'); if(!box)return false;
+ var rs=d.rs,b=d.balance,desc=d.desc,debit=d.debit,credit=d.credit;
+ var vals=b?rs.map(function(r){return n(String(r[b]||'').replace(/DR|CR/ig,'') )}).filter(isFinite):[];
+ var sum=function(k){return k?rs.reduce(function(a,r){var x=n(r[k]);return a+(isFinite(x)?x:0)},0):0};
+ var deb=sum(debit), cr=sum(credit);
+ var byDesc=function(re){var total=0,count=0;rs.forEach(function(r){if(re.test(txt(desc?r[desc]:''))){var x=n(debit?r[debit]:null);if(!isFinite(x))x=n(credit?r[credit]:null);if(isFinite(x)){total+=x;count++}}});return {total:total,count:count}};
+ var interest=byDesc(/\binterest\b/), charges=byDesc(/\b(gst|charge|charges|fee|fees|commission|lgr)\b/);
+ var h;
+ if(/closing|latest|current.*balance|outstanding/.test(ql)) h='<b>Closing / latest balance</b><br>'+(vals.length?'<b>'+money(vals[vals.length-1])+'</b>':'Balance could not be reliably identified.')+'<br><br><span class="ai48-evidence">Balance is treated as a point-in-time figure and is not summed. Statement direction (DR/CR) is retained separately in the source value.</span>';
+ else if(/opening|first.*balance/.test(ql)) h='<b>Opening / first available balance</b><br>'+(vals.length?'<b>'+money(vals[0])+'</b>':'Balance could not be reliably identified.')+'<br><br><span class="ai48-evidence">This is the first available balance row in the loaded statement.</span>';
+ else if(/interest/.test(ql)) h='<b>Interest charged</b><br><b>'+money(interest.total)+'</b> identified across '+interest.count+' interest entry/entries.<br><br><span class="ai48-evidence">Identified from transaction descriptions. This is not a contractual interest-rate verification.</span>';
+ else if(/gst|charge|charges|fees?|commission/.test(ql)) h='<b>Charges / GST</b><br><b>'+money(charges.total)+'</b> identified across '+charges.count+' matching entry/entries.';
+ else if(/total.*debit|debit.*total|withdrawal/.test(ql)) h='<b>Total debit-side transactions</b><br><b>'+money(deb)+'</b> based on the inferred debit column <b>'+String(debit||'not identified')+'</b>.';
+ else if(/total.*credit|credit.*total|deposit/.test(ql)) h='<b>Total credit-side transactions</b><br><b>'+money(cr)+'</b> based on the inferred credit column <b>'+String(credit||'not identified')+'</b>.';
+ else if(/net.*movement|movement.*account/.test(ql)) h='<b>Net transaction movement</b><br>Credits minus debits: <b>'+money(cr-deb)+'</b>.<br><br><span class="ai48-evidence">This is transaction movement, not a calculated closing balance.</span>';
+ else if(/biggest|management.*concern|top 3|main.*concern/.test(ql)) h='<b>Top management concerns</b><br><br><b>1. Outstanding / balance movement</b><br>Review the opening-to-closing balance movement and DR/CR direction.<br><br><b>2. Interest and charges</b><br>Interest identified: <b>'+money(interest.total)+'</b>; charges/GST identified: <b>'+money(charges.total)+'</b>.<br><br><b>3. Debit versus credit movement</b><br>Debit-side movement: <b>'+money(deb)+'</b>; credit-side movement: <b>'+money(cr)+'</b>.<br><br><span class="ai48-evidence">These are statement-level review priorities. The statement alone does not prove the underlying cause.</span>';
+ else return false;
+ box.innerHTML=h; box.classList.add('show'); return true;
+}
+var old=window.__instantDashAskMeAnswer;
+window.__instantDashAskMeAnswer=function(q){try{if(render(q))return;}catch(e){} if(typeof old==='function')return old(q)};
+})();
+</script>
+
 </body></html>
