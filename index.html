@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.1","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.2","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -1542,7 +1542,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v26.1">
+<meta name="instantdash-build" content="v26.2">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2417,7 +2417,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v26.1';
+      s.textContent='v26.2';
       b.appendChild(s);
     }
   }
@@ -2469,6 +2469,20 @@ body{
 <div id="pageScroll">
 <div class="author-line">Developed by Anil Sharma &nbsp;•&nbsp; Former General Manager, Central Bank of India</div>
 
+
+<style id="v26-2-clear-data-css">
+  #topClearDataBtn{
+    display:inline-flex;align-items:center;gap:5px;margin-left:6px;
+    border:1px solid rgba(217,83,43,.55);background:rgba(217,83,43,.10);
+    color:var(--warn,#d9532b);font-weight:800;
+  }
+  #topClearDataBtn:hover{background:rgba(217,83,43,.18);}
+  #topClearDataBtn:active{transform:scale(.98);}
+  @media(max-width:600px){
+    #topClearDataBtn{padding:8px 9px;font-size:12px;}
+  }
+</style>
+
 <header class="topbar">
   <div class="brand">
     <div class="mark" aria-hidden="true">
@@ -2477,11 +2491,12 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v26.1</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v26.2</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.1</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.2</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
+      <button class="no-print" id="topClearDataBtn" type="button" aria-label="Clear all loaded data" title="Clear all loaded data">🗑 Clear Data</button>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
       <button class="id-health-btn no-print" id="aiModeToggleBtn" type="button" aria-label="Real AI settings">🤖 Real AI: Off</button>
   <div class="spacer"></div>
@@ -3823,7 +3838,7 @@ body{
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v26.1',
+  VERSION: 'v26.2',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -8739,6 +8754,11 @@ function wireRest(){
     try{ window.scrollTo({top:0,behavior:'smooth'}); }catch(_){ window.scrollTo(0,0); }
     toast('All data cleared');
   };
+  var topClearBtn=$('topClearDataBtn');
+  if(topClearBtn) topClearBtn.onclick = () => {
+    var clearBtn=$('clearAllDataBtn');
+    if(clearBtn) clearBtn.click();
+  };
   $('tableSearch').oninput = (e) => { APP.search = e.target.value.trim(); APP.page = 0; renderTable(); };
   $('prevPage').onclick = () => { if (APP.page > 0){ APP.page--; renderTable(); } };
   $('nextPage').onclick = () => { APP.page++; renderTable(); };
@@ -9360,7 +9380,7 @@ function wireRest(){
        session, re-introduced here specifically for every share
        recipient. */
     html=html.replace(/\s*data-v\d{2,3}="1"/g,'');
-    /* v26.1 — the real, confirmed cause of a received file showing
+    /* v26.2 — the real, confirmed cause of a received file showing
        the Share panel itself frozen open mid-"Preparing your dashboard
        file…". outerHTML captures the sender's own live DOM at this
        exact instant — and since the user necessarily has this very
