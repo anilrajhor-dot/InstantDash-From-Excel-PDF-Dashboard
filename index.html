@@ -111,6 +111,97 @@
   }
 })();
 </script>
+
+<style id="instantdash-v270-true-empty-start">
+/* v27.0 — true empty-start guard.
+   The HTML previously contained a rendered snapshot from the last analysed
+   file. Keep the landing/upload experience, but hide every data-dependent
+   dashboard section until APP contains a newly loaded dataset. */
+body.id-v270-empty-start #app > section:not(#emptyState){
+  display:none!important;
+}
+body.id-v270-empty-start #idV270AccountIntel{
+  display:none!important;
+}
+body.id-v270-empty-start #previewStatus{font-size:0}
+body.id-v270-empty-start #previewStatus::after{
+  content:"Ready to analyse";
+  font-size:inherit;
+}
+body.id-v270-empty-start #previewScore{
+  font-size:0;
+}
+body.id-v270-empty-start #previewScore::after{
+  content:"—";
+  font-size:inherit;
+}
+body.id-v270-empty-start #previewQuality{
+  font-size:0;
+}
+body.id-v270-empty-start #previewQuality::after{
+  content:"—";
+  font-size:inherit;
+}
+body.id-v270-empty-start #previewQualitySub::after{
+  content:"Upload a file to begin";
+}
+body.id-v270-empty-start #previewMovement{
+  font-size:0;
+}
+body.id-v270-empty-start #previewMovement::after{
+  content:"—";
+  font-size:inherit;
+}
+body.id-v270-empty-start #previewMovementSub{
+  font-size:0;
+}
+body.id-v270-empty-start #previewMovementSub::after{
+  content:"No data loaded";
+  font-size:inherit;
+}
+body.id-v270-empty-start #previewInsight{
+  font-size:0;
+}
+body.id-v270-empty-start #previewInsight::after{
+  content:"Upload an Excel, CSV or PDF file to generate live management insights.";
+  font-size:inherit;
+}
+body.id-v270-empty-start #previewChart{
+  opacity:.18;
+}
+</style>
+<script id="instantdash-v270-true-empty-start-js">
+(function(){
+  'use strict';
+  function app(){
+    return window.__INSTANTDASH_APP__ || window.APP || null;
+  }
+  function hasData(){
+    var a=app();
+    return !!(a && Array.isArray(a.rows) && a.rows.length && String(a.fileName||'').trim());
+  }
+  function setEmpty(){
+    document.body.classList.add('id-v270-empty-start');
+    var b=document.getElementById('previewChip');
+    if(b)b.textContent='READY';
+  }
+  function setLive(){
+    document.body.classList.remove('id-v270-empty-start');
+    var b=document.getElementById('previewChip');
+    if(b)b.textContent='LIVE DATA';
+  }
+  function sync(){
+    if(hasData()) setLive(); else setEmpty();
+  }
+  function start(){
+    sync();
+    setInterval(sync,300);
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start);
+  else start();
+})();
+</script>
+
 <script id="instantdash-v26-window-app-alias">
 /* v26.0.18 — THE root-cause fix for this entire session's "same data in
    every file" reports. window.APP was never actually set anywhere in
