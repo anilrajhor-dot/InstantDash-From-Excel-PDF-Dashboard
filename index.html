@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.2.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.3.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -432,6 +432,22 @@ main{max-width:1360px;margin:0 auto;padding:24px}
 .v26-dm-decision>b{color:var(--accent)}
 .v26-dm-risk{background:color-mix(in srgb,var(--warn) 8%,var(--card));border-radius:10px;padding:9px 11px;border-left:2px solid var(--warn)}
 .v26-dm-risk>b{color:var(--warn)}
+.v26-task-card{border-radius:14px;padding:14px 16px;margin-bottom:12px;border:1px solid var(--border);background:var(--card-2)}
+.v26-task-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:6px}
+.v26-task-issue{font-size:12.5px;line-height:1.5;font-weight:700}
+.v26-task-issue>b{color:var(--muted);font-weight:800;font-size:9.5px;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:2px}
+.v26-task-action{font-size:12px;line-height:1.5;margin-bottom:10px;color:var(--text)}
+.v26-task-action>b{color:var(--muted);font-weight:800;font-size:9.5px;text-transform:uppercase;letter-spacing:.05em}
+.v26-task-evidence-btn{flex:0 0 auto;background:none;border:1px solid var(--accent);color:var(--accent);border-radius:999px;padding:5px 11px;font-size:10.5px;font-weight:800;cursor:pointer;white-space:nowrap;touch-action:manipulation}
+.v26-task-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px}
+.v26-task-grid label{display:flex;flex-direction:column;gap:3px;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+.v26-task-grid input,.v26-task-grid select{font-size:12.5px;font-weight:600;text-transform:none;letter-spacing:normal;padding:7px 8px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);min-height:36px}
+.v26-task-followup{display:flex;flex-direction:column;gap:3px;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:10px}
+.v26-task-followup textarea{font-size:12px;font-weight:400;text-transform:none;letter-spacing:normal;padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);min-height:52px;resize:vertical;font-family:inherit}
+.v26-task-remove{background:none;border:1px solid var(--warn);color:var(--warn);border-radius:8px;padding:5px 10px;font-size:10.5px;font-weight:700;cursor:pointer;touch-action:manipulation}
+@media(max-width:600px){
+  .v26-task-grid{grid-template-columns:1fr 1fr}
+}
 @media print{
   .v26-brief-header,.v26-brief-finding,.v26-brief-footer{break-inside:avoid}
 }
@@ -1596,7 +1612,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v26.2.0">
+<meta name="instantdash-build" content="v26.3.0">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2471,7 +2487,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v26.2.0';
+      s.textContent='v26.3.0';
       b.appendChild(s);
     }
   }
@@ -2531,10 +2547,10 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v26.2.0</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v26.3.0</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.2.0</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.3.0</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="topClearDataBtn" type="button" aria-label="Clear all loaded data" style="color:var(--warn)">🗑 Clear Data</button>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -3572,6 +3588,165 @@ body{
       })();
       </script>
 
+      <section id="v26ActionTracker" class="exec-card no-print" hidden>
+        <div class="mac-head">
+          <div><div class="exec-label">✅ Action Tracker</div><div class="mac-title">Turn findings into tasks with an owner, date and status</div></div>
+          <button type="button" id="v26GenerateTasks" class="v26-compare-btn">+ Generate Tasks from Findings</button>
+        </div>
+        <div id="v26ActionTrackerBody"></div>
+      </section>
+      <script id="instantdash-v26-actiontracker-wire">
+      (function(){
+        function esc6f(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+        function stripHtml6f(s){return String(s||'').replace(/<[^>]*>/g,'').trim();}
+        function titleFrom6f(plain){ var m=plain.match(/^([^:]+):/); return m?m[1].trim():plain.split(' ')[0]; }
+
+        /* v26.3.0 — in-memory task state for the session, per the
+           explicit "retain actions during the session" requirement.
+           Exposed on window so Clear Data (a separate, already-tested
+           script) can reset it without this section needing to know
+           anything about that flow, and so it survives normal
+           navigation/scrolling within the app. */
+        window.__instantDashTasks = window.__instantDashTasks || [];
+        var nextTaskId = 1;
+
+        function addTask(issue, action, kpiName){
+          window.__instantDashTasks.push({
+            id: nextTaskId++,
+            issue: issue,
+            action: action,
+            kpiName: kpiName,
+            owner: '',
+            dueDate: '',
+            priority: 'Medium',
+            status: 'Open',
+            followUp: ''
+          });
+        }
+
+        function generateFromFindings(){
+          var mi = window.__miItems || {};
+          var perf = (mi.performance||[]).map(function(x){ return {plain: stripHtml6f(x), isAttention:false}; });
+          var att = (mi.attention||[]).map(function(x){ return {plain: stripHtml6f(x), isAttention:true}; });
+          var movements = att.concat(perf).slice(0,5);
+          var existingIssues = window.__instantDashTasks.map(function(t){ return t.issue; });
+          movements.forEach(function(mv){
+            var title = titleFrom6f(mv.plain);
+            var issue = mv.plain.replace(/^([^:]+):\s*/,'');
+            /* v26.3.0 — avoid creating duplicate tasks if the button is
+               clicked more than once for the same finding. */
+            if(existingIssues.indexOf(issue) >= 0) return;
+            var action = (typeof miActionForKpi==='function') ? miActionForKpi(title) : 'Review against target, benchmark and related KPIs.';
+            addTask(issue, action, title);
+          });
+          renderTasks();
+        }
+
+        var priorities = ['High','Medium','Low'];
+        var statuses = ['Open','In Progress','Done'];
+
+        function renderTasks(){
+          var body = document.getElementById('v26ActionTrackerBody');
+          var section = document.getElementById('v26ActionTracker');
+          if(!body||!section) return;
+          var app = window.APP || {};
+          var hasData = !!(app.rows && app.rows.length);
+          section.hidden = !hasData;
+          if(!hasData) return;
+          var tasks = window.__instantDashTasks || [];
+          if(!tasks.length){
+            body.innerHTML = '<div class="mac-empty">No tasks yet. Click "Generate Tasks from Findings" to create tasks from the current material movements, or tasks can be added manually below.</div>'+
+              '<button type="button" id="v26AddManualTask" class="v26-compare-btn" style="margin-top:10px">+ Add Manual Task</button>';
+            wireManualAdd();
+            return;
+          }
+          body.innerHTML = tasks.map(function(t){
+            return '<div class="v26-task-card">'+
+              '<div class="v26-task-top">'+
+                '<div class="v26-task-issue"><b>Issue:</b> '+esc6f(t.issue)+'</div>'+
+                (t.kpiName ? '<button type="button" class="v26-task-evidence-btn" data-why-kpi="'+esc6f(t.kpiName)+'">View Evidence →</button>' : '')+
+              '</div>'+
+              '<div class="v26-task-action"><b>Action:</b> '+esc6f(t.action)+'</div>'+
+              '<div class="v26-task-grid">'+
+                '<label>Owner<input type="text" data-task-id="'+t.id+'" data-field="owner" value="'+esc6f(t.owner)+'" placeholder="Assign owner"></label>'+
+                '<label>Due Date<input type="date" data-task-id="'+t.id+'" data-field="dueDate" value="'+esc6f(t.dueDate)+'"></label>'+
+                '<label>Priority<select data-task-id="'+t.id+'" data-field="priority">'+priorities.map(function(p){ return '<option value="'+p+'"'+(t.priority===p?' selected':'')+'>'+p+'</option>'; }).join('')+'</select></label>'+
+                '<label>Status<select data-task-id="'+t.id+'" data-field="status">'+statuses.map(function(s){ return '<option value="'+s+'"'+(t.status===s?' selected':'')+'>'+s+'</option>'; }).join('')+'</select></label>'+
+              '</div>'+
+              '<label class="v26-task-followup">Follow-up notes<textarea data-task-id="'+t.id+'" data-field="followUp" placeholder="Notes on progress...">'+esc6f(t.followUp)+'</textarea></label>'+
+              '<button type="button" class="v26-task-remove" data-task-id="'+t.id+'">Remove task</button>'+
+            '</div>';
+          }).join('') + '<button type="button" id="v26AddManualTask" class="v26-compare-btn" style="margin-top:6px">+ Add Manual Task</button>';
+          wireFields();
+          wireManualAdd();
+        }
+
+        function wireFields(){
+          var body = document.getElementById('v26ActionTrackerBody');
+          if(!body) return;
+          body.querySelectorAll('[data-task-id][data-field]').forEach(function(el){
+            if(el.dataset.wired263) return;
+            el.dataset.wired263 = '1';
+            el.addEventListener('change', function(){
+              var id = Number(el.dataset.taskId);
+              var field = el.dataset.field;
+              var task = (window.__instantDashTasks||[]).find(function(t){ return t.id===id; });
+              if(task) task[field] = el.value;
+            });
+          });
+          body.querySelectorAll('.v26-task-remove').forEach(function(btn){
+            if(btn.dataset.wired263) return;
+            btn.dataset.wired263 = '1';
+            btn.addEventListener('click', function(){
+              var id = Number(btn.dataset.taskId);
+              window.__instantDashTasks = (window.__instantDashTasks||[]).filter(function(t){ return t.id!==id; });
+              renderTasks();
+            });
+          });
+          /* v26.3.0 — links each task to its supporting KPI evidence via
+             the existing, already-tested Why panel, per the explicit
+             requirement to link every task to its evidence. */
+          body.querySelectorAll('.v26-task-evidence-btn').forEach(function(btn){
+            if(btn.dataset.wired263) return;
+            btn.dataset.wired263 = '1';
+            btn.addEventListener('click', function(){
+              var kpiName = btn.dataset.whyKpi;
+              if(kpiName && typeof window.__openWhyPanel==='function') window.__openWhyPanel(kpiName);
+            });
+          });
+        }
+
+        function wireManualAdd(){
+          var btn = document.getElementById('v26AddManualTask');
+          if(!btn || btn.dataset.wired263) return;
+          btn.dataset.wired263 = '1';
+          btn.addEventListener('click', function(){
+            var issue = window.prompt('Describe the issue:');
+            if(!issue) return;
+            var action = window.prompt('Describe the action:') || '';
+            addTask(issue.trim(), action.trim(), null);
+            renderTasks();
+          });
+        }
+
+        function wireGenerateButton(){
+          var btn = document.getElementById('v26GenerateTasks');
+          if(!btn || btn.dataset.wired263) return;
+          btn.dataset.wired263 = '1';
+          btn.addEventListener('click', generateFromFindings);
+        }
+
+        setInterval(function(){
+          var app = window.APP || {};
+          var section = document.getElementById('v26ActionTracker');
+          if(section) section.hidden = !(app.rows && app.rows.length);
+          wireGenerateButton();
+        }, 700);
+        if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', function(){ renderTasks(); wireGenerateButton(); });
+        else { renderTasks(); wireGenerateButton(); }
+      })();
+      </script>
+
       <div id="v26WhyPanel" class="v26-why-overlay" aria-hidden="true">
         <div class="v26-why-card" role="dialog" aria-modal="true" aria-labelledby="v26WhyTitle">
           <div class="v26-why-head">
@@ -4100,7 +4275,7 @@ body{
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v26.2.0',
+  VERSION: 'v26.3.0',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
