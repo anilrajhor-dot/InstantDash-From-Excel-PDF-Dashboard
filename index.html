@@ -2608,7 +2608,7 @@ body{
 <main>
 
   <!-- ============ EMPTY STATE ============ -->
-  <section id="emptyState" hidden="">
+  <section id="emptyState">
     <div class="landing-hero" id="dropZone"><div class="alert">The object can not be cloned.</div>
       <div class="hero-glow hero-glow-a"></div><div class="hero-glow hero-glow-b"></div>
       <div class="hero-copy">
@@ -2644,7 +2644,7 @@ body{
   </section>
 
   <!-- ============ APP ============ -->
-  <section id="app" data-v11306-auto-scrolled="1">
+  <section id="app" hidden data-v11306-auto-scrolled="1">
 
 
     <section id="v25Snapshot" class="card no-print" style="padding:16px 18px;margin:0 0 16px">
@@ -14713,4 +14713,17 @@ window.__instantDashAskMeAnswer=function(q){try{if(render(q))return;}catch(e){} 
 })();
 </script>
 
+
+<script id="instantdash-v270-dom-empty-start">
+(function(){
+  try{
+    var app=document.getElementById('app');
+    var empty=document.getElementById('emptyState');
+    if(app && empty){
+      app.hidden=true;
+      empty.hidden=false;
+    }
+  }catch(e){}
+})();
+</script>
 </body></html>
