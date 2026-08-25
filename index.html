@@ -14726,4 +14726,57 @@ window.__instantDashAskMeAnswer=function(q){try{if(render(q))return;}catch(e){} 
   }catch(e){}
 })();
 </script>
+
+<style id="instantdash-v270-hard-empty-gate">
+/* HARD EMPTY-START GATE: no dataset means the dashboard cannot be displayed. */
+html.id-v270-no-dataset #app{display:none!important;visibility:hidden!important;}
+html.id-v270-no-dataset #emptyState{display:block!important;visibility:visible!important;}
+</style>
+<script id="instantdash-v270-hard-empty-gate-js">
+(function(){
+  'use strict';
+  function live(){return window.__INSTANTDASH_APP__||window.APP||null;}
+  function hasData(){var a=live();return !!(a&&Array.isArray(a.rows)&&a.rows.length>0&&String(a.fileName||'').trim());}
+  function scrub(){
+    try{
+      var a=live();
+      if(!hasData()){
+        document.documentElement.classList.add('id-v270-no-dataset');
+        var app=document.getElementById('app'), empty=document.getElementById('emptyState');
+        if(app){app.hidden=true;app.setAttribute('aria-hidden','true');}
+        if(empty){empty.hidden=false;empty.removeAttribute('aria-hidden');}
+        /* Remove the visible legacy snapshot content so it cannot flash or be
+           exposed by another module before the next upload. */
+        ['v25SnapshotBody','v25StatusStripBody','kpiRow','alerts','smartResultStrip',
+         'insightBox','chartsGrid','qualityList','dataTable','execAttentionList',
+         'execMeasuresList','execCoverageList','v25Snapshot','v25StatusStrip',
+         'aiAdvanced47','idV1400','idV143Report','idV270AccountIntel'].forEach(function(id){
+          var n=document.getElementById(id);
+          if(!n)return;
+          if(id==='v25SnapshotBody'||id==='v25StatusStripBody'||id==='kpiRow'||id==='alerts'||
+             id==='smartResultStrip'||id==='insightBox'||id==='chartsGrid'||id==='qualityList'||
+             id==='dataTable'||id==='execAttentionList'||id==='execMeasuresList'||id==='execCoverageList'){
+            if(id==='insightBox') n.textContent=''; else n.innerHTML='';
+          }
+          if(id==='v25Snapshot'||id==='v25StatusStrip'||id==='aiAdvanced47'||id==='idV1400'||id==='idV143Report'||id==='idV270AccountIntel'){
+            n.hidden=true;n.style.display='none';
+          }
+        });
+        var fm=document.getElementById('fileName'); if(fm)fm.textContent='';
+        var meta=document.getElementById('fileMeta'); if(meta)meta.textContent='';
+        var sr=document.getElementById('smartResultTitle'); if(sr)sr.textContent='';
+        var sm=document.getElementById('smartResultMeta'); if(sm)sm.textContent='';
+      }else{
+        document.documentElement.classList.remove('id-v270-no-dataset');
+        var app2=document.getElementById('app'), empty2=document.getElementById('emptyState');
+        if(app2){app2.hidden=false;app2.removeAttribute('aria-hidden');}
+        if(empty2)empty2.hidden=true;
+      }
+    }catch(e){}
+  }
+  function start(){scrub();setInterval(scrub,250);}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
+})();
+</script>
+
 </body></html>
