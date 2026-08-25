@@ -14307,4 +14307,114 @@ window.addEventListener('load',function(){setTimeout(mountAskMe,250);});
 })();
 </script>
 
+
+<script id="instantdash-v270-account-askme-enhancement">
+(function(){
+  'use strict';
+
+  function app(){return window.__INSTANTDASH_APP__||window.APP||{};}
+  function rows(){
+    var a=app();
+    if(Array.isArray(a.filtered)&&a.filtered.length)return a.filtered;
+    if(Array.isArray(a.rows))return a.rows;
+    return [];
+  }
+  function num(v){
+    if(v===null||v===undefined||String(v).trim()==='')return NaN;
+    var n=Number(String(v).replace(/[₹,$€£¥\s]/g,'').replace(/,/g,''));
+    return isFinite(n)?n:NaN;
+  }
+  function money(v){
+    return isFinite(v)?Number(v).toLocaleString('en-IN',{maximumFractionDigits:2}):'—';
+  }
+  function keys(){
+    var r=rows();
+    return r.length?Object.keys(r[0]):[];
+  }
+  function find(re){
+    return keys().find(function(k){return re.test(String(k));});
+  }
+  function statementLike(){
+    return /(balance|debit|credit|interest|transaction|narration|description|loan|account|statement|charge|gst)/i.test(keys().join(' '));
+  }
+  function text(q){
+    return String(q||'').toLowerCase();
+  }
+
+  function answer(q){
+    var rs=rows(), ql=text(q);
+    if(!rs.length || !statementLike()) return false;
+
+    var bal=find(/^balance$|closing\s*balance|outstanding|available\s*balance/i);
+    var debit=find(/^debit$|withdrawal|debit\s*amount|dr\b/i);
+    var credit=find(/^credit$|deposit|credit\s*amount|cr\b/i);
+    var desc=find(/transaction\s*description|description|narration|particular/i);
+
+    function total(k){
+      if(!k)return 0;
+      return rs.reduce(function(s,r){var n=num(r[k]);return s+(isFinite(n)?n:0);},0);
+    }
+    function balanceValues(){
+      if(!bal)return [];
+      return rs.map(function(r){return num(r[bal]);}).filter(isFinite);
+    }
+    function descTotal(re){
+      var total=0,count=0;
+      rs.forEach(function(r){
+        var s=String(desc?r[desc]:'').toLowerCase();
+        if(re.test(s)){
+          var n=num(debit?r[debit]:null);
+          if(!isFinite(n))n=num(credit?r[credit]:null);
+          if(isFinite(n)){total+=n;count++;}
+        }
+      });
+      return {total:total,count:count};
+    }
+
+    var b=balanceValues(), deb=total(debit), cr=total(credit);
+    var interest=descTotal(/\binterest\b/);
+    var charges=descTotal(/\b(gst|charge|charges|fee|fees|commission)\b/);
+    var box=document.getElementById('ai48Answer');
+    if(!box)return false;
+
+    var h='';
+    if(/opening.*(balance|outstanding)|first.*(balance|outstanding)/.test(ql)){
+      h='<b>Opening balance</b><br>'+(b.length?'First available balance: <b>'+money(b[0])+'</b>.':'A reliable balance field was not identified.');
+    }else if(/closing.*(balance|outstanding)|latest.*(balance|outstanding)|current.*(balance|outstanding)/.test(ql)){
+      h='<b>Closing / latest balance</b><br>'+(b.length?'Latest available balance: <b>'+money(b[b.length-1])+'</b>.':'A reliable balance field was not identified.')+'<br><br><span class="ai48-evidence">Balance is treated as a point-in-time value, not summed.</span>';
+    }else if(/interest/.test(ql)){
+      h='<b>Interest charged</b><br>Identified interest entries: <b>'+interest.count+'</b><br>Total identified interest: <b>'+money(interest.total)+'</b>.<br><br><span class="ai48-evidence">This is description-based identification from the uploaded statement; it is not a contractual interest verification.</span>';
+    }else if(/gst|charge|charges|fees?|commission/.test(ql)){
+      h='<b>Charges / GST</b><br>Identified entries: <b>'+charges.count+'</b><br>Total identified charges/GST: <b>'+money(charges.total)+'</b>.<br><br><span class="ai48-evidence">Only entries identifiable from the transaction description are included.</span>';
+    }else if(/total.*debit|debit.*total|withdrawal/.test(ql)){
+      h='<b>Total debits</b><br><b>'+money(deb)+'</b> based on the identified debit column.';
+    }else if(/total.*credit|credit.*total|deposit/.test(ql)){
+      h='<b>Total credits</b><br><b>'+money(cr)+'</b> based on the identified credit column.';
+    }else if(/net.*movement|movement.*account/.test(ql)){
+      h='<b>Net account movement</b><br>Credits minus debits: <b>'+money(cr-deb)+'</b>.<br><br><span class="ai48-evidence">This is transaction movement; it is not a replacement for the statement balance.</span>';
+    }else if(/large|unusual|significant.*transaction/.test(ql)){
+      var dk=debit||credit;
+      var vals=rs.map(function(r,i){var n=num(dk?r[dk]:null);return {n:n,i:i};}).filter(function(x){return isFinite(x.n);}).sort(function(a,b){return Math.abs(b.n)-Math.abs(a.n);}).slice(0,5);
+      h='<b>Largest identified transaction amounts</b><br>'+vals.map(function(x){return (x.i+1)+'. <b>'+money(x.n)+'</b>';}).join('<br>')+'<br><br><span class="ai48-evidence">“Unusual” cannot be established from amount alone; these are simply the largest identified amounts.</span>';
+    }else if(/month.*interest|interest.*month/.test(ql)){
+      h='<b>Month-wise interest</b><br>The current Ask Me enhancement can identify interest entries, but a reliable month-wise grouping requires a recognised transaction-date field. If the date column is available, use the detailed statement analysis for the monthly schedule.';
+    }else{
+      return false;
+    }
+
+    box.innerHTML=h;
+    box.classList.add('show');
+    return true;
+  }
+
+  var original=window.__instantDashAskMeAnswer;
+  window.__instantDashAskMeAnswer=function(q){
+    try{
+      if(answer(q))return;
+    }catch(e){}
+    if(typeof original==='function')return original(q);
+  };
+})();
+</script>
+
 </body></html>
