@@ -2,7 +2,7 @@
 <html lang="en" class="theme-light" data-theme="light"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__=null;</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__=null;window.__INSTANTDASH_USER_FILE_LOADED__=false;</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -4772,6 +4772,7 @@ function clearSmartChartVisualForNewDataset(){
 }
 
 function resetDataForNewFile(){
+  window.__INSTANTDASH_USER_FILE_LOADED__ = false;
   try{ if(typeof window.__instantDashV270Hide==='function') window.__instantDashV270Hide(); }catch(_){ }
   // v13.38 — clear every data-dependent state surface before a new file starts.
   clearSmartChartVisualForNewDataset();
@@ -4954,6 +4955,8 @@ function idRenderDeptTabs(){
 }
 
 async function handleFile(file){
+  /* v27.0 definitive rule: only an explicit file selection can unlock the dashboard. */
+  window.__INSTANTDASH_USER_FILE_LOADED__ = true;
   /* v13.72 — a new dataset starts a fresh Ask Executive AI session.
      Clear the previous manually typed question and its answer immediately. */
   try{ if(typeof window.__instantDashResetAskAIForNewFile==='function') window.__instantDashResetAskAIForNewFile(); }catch(_){}
@@ -8810,8 +8813,9 @@ function updateLivePreview(){
 }
 
 function buildEverything(){
-  /* v27.0 hard gate: never render a dashboard without a real uploaded dataset. */
-  if(!APP || !Array.isArray(APP.rows) || APP.rows.length===0 || !String(APP.fileName||'').trim()){
+  /* v27.0 DEFINITIVE GATE: no user-selected file = no dashboard render. */
+  if(!window.__INSTANTDASH_USER_FILE_LOADED__ ||
+     !APP || !Array.isArray(APP.rows) || APP.rows.length===0 || !String(APP.fileName||'').trim()){
     try{ if(typeof window.__instantDashV270Hide==='function') window.__instantDashV270Hide(); else { $('app').hidden=true; $('emptyState').hidden=false; } }catch(_){ }
     try{ if(typeof window.__instantDashCloseFileGate==='function') window.__instantDashCloseFileGate(); }catch(_){ }
     return;
@@ -8966,7 +8970,7 @@ function wireRest(){
 
   /* v1.11.14 — restore a dashboard exported with Share/Save. */
   const shared=window.__INSTANTDASH_SHARED_STATE__;
-  if(shared && Array.isArray(shared.rows) && shared.rows.length){
+  if(window.__INSTANTDASH_USER_FILE_LOADED__ && shared && Array.isArray(shared.rows) && shared.rows.length){
     try{
       const revive=(v)=>{
         if(Array.isArray(v)) return v.map(revive);
@@ -9561,7 +9565,7 @@ function wireRest(){
     var htmlBeforeStateSwap = html;
     html=html.replace(
       /<script id="instantdash-shared-state">[\s\S]*?<\/script>/,
-      '<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__='+stateJson+';<\/script>'
+      '<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__='+stateJson+';window.__INSTANTDASH_USER_FILE_LOADED__=true;<\/script>'
     );
     /* v26.0.29 — verify the swap actually happened. If the placeholder
        tag wasn't found for any reason, the .replace() above silently
@@ -14846,6 +14850,78 @@ html.id-v270-no-dataset #emptyState{display:block!important;visibility:visible!i
   }
   function start(){scrub();setInterval(scrub,250);}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
+})();
+</script>
+
+
+<style id="instantdash-v270-definitive-empty-css">
+html:not(.id-v270-user-file-loaded) #app,
+body:not(.id-v270-user-file-loaded) #app{
+  display:none!important;
+  visibility:hidden!important;
+  opacity:0!important;
+  pointer-events:none!important;
+}
+</style>
+<script id="instantdash-v270-definitive-empty-js">
+(function(){
+  'use strict';
+  function lock(){
+    try{
+      if(window.__INSTANTDASH_USER_FILE_LOADED__===true) return;
+      var a=window.__INSTANTDASH_APP__||window.APP;
+      if(a){
+        a.fileName='';
+        a.workbook=null;
+        a.sheetNames=[];
+        a.activeSheet='';
+        a.aoa=[];
+        a.columns=[];
+        a.rows=[];
+        a.filtered=[];
+        a.filters={};
+        a.charts=[];
+        a.rawColumnNames=[];
+        a.colSrc={};
+        a.srcIndex=[];
+      }
+      window.__INSTANTDASH_SHARED_STATE__=null;
+      if(document.documentElement) document.documentElement.classList.remove('id-v270-user-file-loaded');
+      if(document.body) document.body.classList.remove('id-v270-user-file-loaded');
+      var app=document.getElementById('app');
+      var empty=document.getElementById('emptyState');
+      if(app){
+        app.hidden=true;
+        app.setAttribute('aria-hidden','true');
+        app.style.setProperty('display','none','important');
+      }
+      if(empty){
+        empty.hidden=false;
+        empty.removeAttribute('aria-hidden');
+      }
+      ['v25SnapshotBody','v25StatusStripBody','kpiRow','alerts','smartResultStrip',
+       'insightBox','chartsGrid','qualityList','dataTable','execAttentionList',
+       'execMeasuresList','execCoverageList','v25Snapshot','v25StatusStrip',
+       'aiAdvanced47','idV1400','idV143Report','idV270AccountIntel'].forEach(function(id){
+        var n=document.getElementById(id);
+        if(!n)return;
+        if(n.id==='v25Snapshot'||n.id==='v25StatusStrip'||n.id==='aiAdvanced47'||
+           n.id==='idV1400'||n.id==='idV143Report'||n.id==='idV270AccountIntel'){
+          n.hidden=true;
+          n.style.setProperty('display','none','important');
+        }else{
+          n.innerHTML='';
+        }
+      });
+      var fn=document.getElementById('fileName'); if(fn)fn.textContent='';
+      var fm=document.getElementById('fileMeta'); if(fm)fm.textContent='';
+    }catch(e){}
+  }
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',lock,{once:true});
+  }else{
+    lock();
+  }
 })();
 </script>
 
