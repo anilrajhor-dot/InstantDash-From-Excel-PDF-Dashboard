@@ -18,10 +18,18 @@
     }catch(_){ }
   }
   window.addEventListener('error', function(e){
+    var msg = (e && e.message) || '';
+    var src = (e && e.filename) ? (e.filename.split('/').pop() + ':' + e.lineno + ':' + e.colno) : 'browser/cross-origin';
+    /* Safari/iOS can surface a harmless generic cross-origin resource event
+       as "Script error." with no source/stack. Do not show that as an app
+       error. Real local JS errors still pass through normally. */
+    if((msg === 'Script error.' || msg === 'Script error') && src === 'browser/cross-origin'){
+      return;
+    }
     record({
       type: 'error',
-      message: (e && e.message) || (e && e.type==='error' ? 'External script error (details hidden by browser)' : String(e)),
-      source: (e && e.filename) ? (e.filename.split('/').pop() + ':' + e.lineno + ':' + e.colno) : 'browser/cross-origin',
+      message: msg || (e && e.type==='error' ? 'External script error (details hidden by browser)' : String(e)),
+      source: src,
       stack: (e && e.error && e.error.stack) ? String(e.error.stack).slice(0, 400) : '',
       time: new Date().toLocaleTimeString()
     });
@@ -163,14 +171,14 @@ if(typeof window.niceName !== 'function'){
      PDF.js   : extracts text from text-based PDF tables in the browser
      Chart.js : draws every chart on this page
      ============================================================ -->
-<script crossorigin="anonymous" src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js">
   setTimeout(startInlineDiagnosisWatch,250);
   setTimeout(startInlineDiagnosisWatch,1000);
   setTimeout(startInlineDiagnosisWatch,2000);
 
 </script>
-<script crossorigin="anonymous" src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-<script crossorigin="anonymous" src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
