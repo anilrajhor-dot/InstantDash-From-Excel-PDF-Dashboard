@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.4.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.4.1","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -1628,7 +1628,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v26.4.0">
+<meta name="instantdash-build" content="v26.4.1">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2503,7 +2503,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v26.4.0';
+      s.textContent='v26.4.1';
       b.appendChild(s);
     }
   }
@@ -2563,10 +2563,10 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v26.4.0</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v26.4.1</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.4.0</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.4.1</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="topClearDataBtn" type="button" aria-label="Clear all loaded data" style="color:var(--warn)">🗑 Clear Data</button>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -4440,7 +4440,7 @@ body{
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v26.4.0',
+  VERSION: 'v26.4.1',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -8745,7 +8745,16 @@ function buildManagementInsights(){
      adverse business performance and must not become Priority 1. */
   const missing=APP.columns.filter(c=>c.missingPct>=CONFIG.MISSING_WARN_PCT);
   window.__miDataQuality = missing.map(c=>({name:c.name, missingPct:Number(c.missingPct||0), missing:Number(c.missing||0)}));
-  if(APP.dupeRows)items.attention.push(`<b>${APP.dupeRows.toLocaleString()}</b> duplicate rows were detected; validate the source before relying on aggregate movements.`);
+  /* v26.4.1 — duplicate-row count is a data-integrity signal, not a
+     management-priority KPI movement, and belongs with the rest of data
+     quality (already correctly separated for missing/blank columns
+     immediately above). It's already shown independently and correctly
+     in Health Check, so nothing is lost by not also injecting it here —
+     doing so was letting a data-quality note outrank genuine business
+     findings for the "Priority Concern" slot, and was producing a
+     nonsensical generic KPI-movement action recommendation for what is
+     actually a source-data caveat. */
+  if(APP.dupeRows) window.__miDataQuality.push({name:'Duplicate rows', dupeCount:APP.dupeRows, isDuplicateFlag:true});
 
   // Final safeguard: no KPI movement should appear without a management remark.
   ['performance','attention'].forEach(bucket=>{
@@ -10509,8 +10518,11 @@ function wireRest(){
   function id22DataQualityText(){
     try{
       var dq = window.__miDataQuality;
-      if(!dq || !dq.length) return 'No missing-data issues were flagged by the app\u2019s own data quality check.';
-      return dq.map(function(c){ return c.name+': '+c.missingPct.toFixed(1)+'% missing ('+c.missing+' cells)'; }).join('\n');
+      if(!dq || !dq.length) return 'No missing-data or duplicate-row issues were flagged by the app\u2019s own data quality check.';
+      return dq.map(function(c){
+        if(c.isDuplicateFlag) return c.name+': '+c.dupeCount.toLocaleString()+' fully duplicate rows detected.';
+        return c.name+': '+c.missingPct.toFixed(1)+'% missing ('+c.missing+' cells)';
+      }).join('\n');
     }catch(_){ return ''; }
   }
   function id22Out(){ return document.getElementById('v22AIAssistantOut'); }
