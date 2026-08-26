@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.3.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.4.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -445,6 +445,22 @@ main{max-width:1360px;margin:0 auto;padding:24px}
 .v26-task-followup{display:flex;flex-direction:column;gap:3px;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:10px}
 .v26-task-followup textarea{font-size:12px;font-weight:400;text-transform:none;letter-spacing:normal;padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);min-height:52px;resize:vertical;font-family:inherit}
 .v26-task-remove{background:none;border:1px solid var(--warn);color:var(--warn);border-radius:8px;padding:5px 10px;font-size:10.5px;font-weight:700;cursor:pointer;touch-action:manipulation}
+.v26-cv-section{margin-bottom:18px}
+.v26-cv-section:last-child{margin-bottom:0}
+.v26-cv-section-title{font-size:12.5px;font-weight:800;margin-bottom:9px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.v26-cv-metric{display:inline-block;vertical-align:top;width:calc(50% - 6px);margin:0 12px 12px 0;box-sizing:border-box}
+.v26-cv-metric:nth-child(2n){margin-right:0}
+.v26-cv-label{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:2px}
+.v26-cv-value{font-size:17px;font-weight:900}
+.v26-cv-unit{font-size:11px;font-weight:700;color:var(--muted)}
+.v26-cv-note{font-size:10px;line-height:1.4;color:var(--muted);margin-top:2px}
+.v26-cv-metric.unavailable .v26-cv-value{font-size:13px;font-weight:700;color:var(--muted);font-style:italic}
+.v26-cv-risks{margin:0;padding-left:18px;font-size:12px;line-height:1.6}
+.v26-cv-period-note{font-size:10.5px;color:var(--muted);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.v26-cv-period-note>b{color:var(--text)}
+@media(max-width:600px){
+  .v26-cv-metric{width:100%;margin-right:0}
+}
 @media(max-width:600px){
   .v26-task-grid{grid-template-columns:1fr 1fr}
 }
@@ -1612,7 +1628,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v26.3.0">
+<meta name="instantdash-build" content="v26.4.0">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2487,7 +2503,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v26.3.0';
+      s.textContent='v26.4.0';
       b.appendChild(s);
     }
   }
@@ -2547,10 +2563,10 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v26.3.0</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v26.4.0</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.3.0</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.4.0</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="topClearDataBtn" type="button" aria-label="Clear all loaded data" style="color:var(--warn)">🗑 Clear Data</button>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -3747,6 +3763,155 @@ body{
       })();
       </script>
 
+      <section id="v26CreditView" class="exec-card no-print" hidden>
+        <div class="mac-head">
+          <div><div class="exec-label">🏦 Credit View</div><div class="mac-title">Sales, profitability, working capital and bank finance</div></div>
+          <div class="mac-hint">Each section only appears where the uploaded data contains the fields it needs. Nothing here is estimated or assumed.</div>
+        </div>
+        <div id="v26CreditViewBody"></div>
+      </section>
+      <script id="instantdash-v26-creditview-wire">
+      (function(){
+        function esc6g(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+        function fmtInr(n){
+          if(n==null||!isFinite(n)) return '\u2014';
+          var abs=Math.abs(n);
+          if(abs>=10000000) return (n/10000000).toFixed(2)+' Cr';
+          if(abs>=100000) return (n/100000).toFixed(2)+' L';
+          return n.toLocaleString('en-IN',{maximumFractionDigits:2});
+        }
+        /* v26.4.0 — find the most recent row without assuming row order.
+           A proper date/time column is sorted directly. Failing that,
+           extract any year pattern (2026, FY 2025-26, etc.) from the
+           first text dimension column and use the highest year found —
+           this correctly handles the common case of a "Fiscal Year"
+           label column without a parsed date type, rather than silently
+           guessing based on whichever row happens to be first or last. */
+        function findLatestRowIndex(rows, cols){
+          var timeCol = cols.find(function(c){ return c.role==='time' || c.type==='date'; });
+          if(timeCol){
+            var best=-1, bestT=-Infinity;
+            rows.forEach(function(r,i){ var t=new Date(r[timeCol.name]).getTime(); if(isFinite(t)&&t>bestT){bestT=t;best=i;} });
+            if(best>=0) return {index:best, periodLabel:null, basis:'date field "'+timeCol.name+'"'};
+          }
+          var dimCol = cols.find(function(c){ return c.role==='dimension' || c.type==='text'; });
+          if(dimCol){
+            var best2=-1, bestY=-Infinity;
+            rows.forEach(function(r,i){
+              var v = String(r[dimCol.name]||'');
+              var m = v.match(/\d{4}/g);
+              if(m){ var y=Math.max.apply(null,m.map(Number)); if(y>bestY){bestY=y;best2=i;} }
+            });
+            if(best2>=0) return {index:best2, periodLabel:String(rows[best2][dimCol.name]), basis:'"'+dimCol.name+'" column'};
+          }
+          return {index:rows.length-1, periodLabel:null, basis:'last loaded row (no date or year label found to confirm order)'};
+        }
+        function currentVal(col){
+          if(!col) return null;
+          try{
+            var app = window.APP || {};
+            var rows = app.filtered || app.rows || [];
+            var latest = findLatestRowIndex(rows, app.columns||[]);
+            var v = rows[latest.index] ? rows[latest.index][col.name] : null;
+            return (typeof v==='number' && isFinite(v)) ? v : null;
+          }catch(_){ return null; }
+        }
+
+        function section(title, icon, bodyHtml){
+          return '<div class="v26-cv-section"><div class="v26-cv-section-title">'+icon+' '+esc6g(title)+'</div>'+bodyHtml+'</div>';
+        }
+        function metric(label, value, unit, note){
+          if(value==null) return '<div class="v26-cv-metric unavailable"><div class="v26-cv-label">'+esc6g(label)+'</div><div class="v26-cv-value">Not available</div><div class="v26-cv-note">'+esc6g(note||'Required field not found in the current dataset.')+'</div></div>';
+          return '<div class="v26-cv-metric"><div class="v26-cv-label">'+esc6g(label)+'</div><div class="v26-cv-value">'+esc6g(String(value))+(unit?' <span class="v26-cv-unit">'+esc6g(unit)+'</span>':'')+'</div>'+(note?'<div class="v26-cv-note">'+esc6g(note)+'</div>':'')+'</div>';
+        }
+
+        function render(){
+          var section2 = document.getElementById('v26CreditView');
+          var body = document.getElementById('v26CreditViewBody');
+          if(!section2||!body) return;
+          var app = window.APP || {};
+          var hasData = !!(app.rows && app.rows.length);
+          section2.hidden = !hasData;
+          if(!hasData) return;
+
+          // Field detection — every downstream metric depends on these.
+          var revenueCol = findCreditField([/revenue/i,/\bsales\b/i,/turnover/i], [/growth/i,/cost of/i]);
+          var patCol = findCreditField([/profit after tax/i,/\bpat\b/i,/net profit/i], [/margin/i,/growth/i]);
+          var pbtCol = findCreditField([/profit before tax/i,/\bpbt\b/i], [/margin/i,/growth/i]);
+          var debtorsCol = findCreditField([/trade receivable/i,/\bdebtor/i], [/days/i]);
+          var inventoryCol = findCreditField([/^inventor/i,/\bstock\b/i], [/change/i,/days/i,/purchase/i,/stock-in-trade/i]);
+          var creditorsCol = findCreditField([/trade payable/i,/\bcreditor/i], [/days/i]);
+          var cogsCol = findCreditField([/cost of materials/i,/cost of goods/i,/\bcogs\b/i]);
+          var currentBorrowCol = findCreditField([/current borrowing/i]);
+          var nonCurrentBorrowCol = findCreditField([/non.?current borrowing/i,/long.?term borrowing/i]);
+          var shareCapCol = findCreditField([/share capital/i]);
+          var reservesCol = findCreditField([/reserves/i]);
+
+          var revenue = currentVal(revenueCol);
+          var pat = currentVal(patCol);
+          var pbt = currentVal(pbtCol);
+          var debtors = currentVal(debtorsCol);
+          var inventory = currentVal(inventoryCol);
+          var creditors = currentVal(creditorsCol);
+          var cogs = currentVal(cogsCol);
+          var currentBorrow = currentVal(currentBorrowCol);
+          var nonCurrentBorrow = currentVal(nonCurrentBorrowCol);
+          var shareCap = currentVal(shareCapCol);
+          var reserves = currentVal(reservesCol);
+
+          var patMargin = (pat!=null && revenue) ? (pat/revenue*100) : null;
+          var pbtMargin = (pbt!=null && revenue) ? (pbt/revenue*100) : null;
+          var debtorDays = (debtors!=null && revenue) ? (debtors/revenue*365) : null;
+          var cogsBasis = cogs!=null ? cogs : null; // only use an explicit COGS field — no silent proxy substitution
+          var inventoryDays = (inventory!=null && cogsBasis) ? (inventory/cogsBasis*365) : null;
+          var creditorDays = (creditors!=null && cogsBasis) ? (creditors/cogsBasis*365) : null;
+          var wcCycle = (debtorDays!=null && inventoryDays!=null && creditorDays!=null) ? (debtorDays+inventoryDays-creditorDays) : null;
+          var totalDebt = (currentBorrow!=null || nonCurrentBorrow!=null) ? ((currentBorrow||0)+(nonCurrentBorrow||0)) : null;
+          var totalEquity = (shareCap!=null || reserves!=null) ? ((shareCap||0)+(reserves||0)) : null;
+          var debtEquity = (totalDebt!=null && totalEquity) ? (totalDebt/totalEquity) : null;
+
+          var latestInfo = findLatestRowIndex(app.filtered||app.rows||[], app.columns||[]);
+          var html = '<div class="v26-cv-period-note">'+(latestInfo.periodLabel ? 'Figures shown are for <b>'+esc6g(latestInfo.periodLabel)+'</b>' : 'Figures shown are for the most recent row in the current data')+' (determined from '+esc6g(latestInfo.basis)+').</div>';
+
+          html += section('Sales', '💰',
+            metric('Revenue', revenue!=null?fmtInr(revenue):null, revenueCol?revenueCol.name:'', revenue!=null?('Source column: '+revenueCol.name):'No revenue/sales column identified in the current dataset.')
+          );
+
+          html += section('Profitability', '📈',
+            metric('PAT Margin', patMargin!=null?patMargin.toFixed(1):null, '%', patMargin!=null?'Profit after tax as a % of revenue.':'Requires both a PAT and a Revenue field.') +
+            metric('PBT Margin', pbtMargin!=null?pbtMargin.toFixed(1):null, '%', pbtMargin!=null?'Profit before tax as a % of revenue.':'Requires both a PBT and a Revenue field.')
+          );
+
+          html += section('Working Capital Cycle', '🔄',
+            metric('Debtor Days', debtorDays!=null?debtorDays.toFixed(0):null, 'days', debtorDays!=null?'(Trade receivables \u00f7 Revenue) \u00d7 365.':'Requires both a Trade Receivables/Debtors field and a Revenue field.') +
+            metric('Inventory Days', inventoryDays!=null?inventoryDays.toFixed(0):null, 'days', inventoryDays!=null?'(Inventory \u00f7 Cost of Materials) \u00d7 365.':'Requires an explicit Cost of Materials/COGS field \u2014 not estimated from Total Expenses, since that would overstate the figure.') +
+            metric('Creditor Days', creditorDays!=null?creditorDays.toFixed(0):null, 'days', creditorDays!=null?'(Trade payables \u00f7 Cost of Materials) \u00d7 365.':'Requires an explicit Cost of Materials/COGS field \u2014 not estimated.') +
+            metric('Working Capital Cycle', wcCycle!=null?wcCycle.toFixed(0):null, 'days', wcCycle!=null?'Debtor Days + Inventory Days \u2212 Creditor Days.':'Requires Debtor Days, Inventory Days and Creditor Days all to be available.')
+          );
+
+          html += section('Bank Finance', '🏦',
+            metric('Total Borrowings', totalDebt!=null?fmtInr(totalDebt):null, '', totalDebt!=null?'Current + non-current borrowings.':'No borrowings field identified.') +
+            metric('Debt-Equity Ratio', debtEquity!=null?debtEquity.toFixed(2):null, 'x', debtEquity!=null?'Total borrowings \u00f7 (Share capital + Reserves).':'Requires borrowings, share capital and reserves fields.')
+          );
+
+          var risks = [];
+          if(debtEquity!=null && debtEquity>1.5) risks.push('Debt-equity ratio of '+debtEquity.toFixed(2)+'x is elevated \u2014 review debt servicing capacity.');
+          if(wcCycle!=null && wcCycle>90) risks.push('Working capital cycle of '+wcCycle.toFixed(0)+' days is long \u2014 review collection and inventory turnover.');
+          if(patMargin!=null && patMargin<5) risks.push('PAT margin of '+patMargin.toFixed(1)+'% is thin \u2014 limited buffer against cost or revenue shocks.');
+          if(debtorDays!=null && debtorDays>60) risks.push('Debtor days of '+debtorDays.toFixed(0)+' is elevated \u2014 review collection efficiency and credit terms.');
+          html += section('Key Risks', '\u26a0\ufe0f',
+            risks.length ? '<ul class="v26-cv-risks">'+risks.map(function(r){ return '<li>'+esc6g(r)+'</li>'; }).join('')+'</ul>'
+              : '<div class="v26-cv-note" style="padding:8px 0">No threshold-based risk flag triggered from the metrics currently available. This is not a full risk assessment \u2014 only what these specific ratios indicate.</div>'
+          );
+
+          body.innerHTML = html;
+        }
+        setInterval(render, 700);
+        if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', render);
+        else render();
+      })();
+      </script>
+
       <div id="v26WhyPanel" class="v26-why-overlay" aria-hidden="true">
         <div class="v26-why-card" role="dialog" aria-modal="true" aria-labelledby="v26WhyTitle">
           <div class="v26-why-head">
@@ -4275,7 +4440,7 @@ body{
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v26.3.0',
+  VERSION: 'v26.4.0',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -5959,7 +6124,7 @@ function buildQualityPanel(){
 
   // 5. Constant columns
   APP.columns.filter(c => c.unique === 1 && c.missing < rows.length).forEach(c => {
-    issues.push({sev:1, ico:'📎', html:`<b>${esc(c.name)}</b> has the same value in every row (${esc(String(c.top[0] ? c.top[0].value : ''))}) — it can't be charted.`});
+    issues.push({sev:1, ico:'📎', html:`<b>${esc(c.name)}</b> has the same value in every row (${esc(String((c.top&&c.top[0]) ? c.top[0].value : ''))}) — it can't be charted.`});
   });
 
   issues.sort((a,b) => b.sev - a.sev);
@@ -7885,7 +8050,24 @@ function calculationFor(name, rows){
     return 'Calculated as the total (sum) of ' + esc(name) + ' across ' + agg.count.toLocaleString() + ' record' + (agg.count===1?'':'s') + '.';
   }catch(_){ return 'Calculation method unavailable.'; }
 }
-/* v26.2.0 — Decision Maker layer: reframes a movement as an explicit
+/* v26.4.0 — Credit View field detection. Searches the actual uploaded
+   column names for a best match against a set of keyword patterns,
+   returning null when nothing matches — this is the mechanism that
+   makes "wherever data permits" real rather than aspirational: every
+   ratio below checks this first and is skipped/labelled unavailable
+   when its required fields genuinely aren't present, rather than being
+   computed from a wrong guess at what a column means. */
+function findCreditField(patterns, excludePatterns){
+  var cols = (window.APP && window.APP.columns) || [];
+  for(var i=0;i<cols.length;i++){
+    var name = cols[i].name;
+    if(cols[i].role!=='measure' && cols[i].type!=='number') continue;
+    if(excludePatterns && excludePatterns.some(function(ex){ return ex.test(name); })) continue;
+    if(patterns.some(function(p){ return p.test(name); })) return cols[i];
+  }
+  return null;
+}
+/* v26.4.0 — Decision Maker layer: reframes a movement as an explicit
    decision statement, rather than a narrative fact, matching the same
    keyword-matching pattern already proven in miActionForKpi(). */
 function decisionRequiredFor(name, isAttention){
