@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.1.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.1.1","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -1668,7 +1668,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v27.1.0">
+<meta name="instantdash-build" content="v27.1.1">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2542,7 +2542,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v27.1.0';
+      s.textContent='v27.1.1';
       b.appendChild(s);
     }
   }
@@ -2602,10 +2602,10 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v27.1.0</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v27.1.1</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.1.0</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.1.1</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="topClearDataBtn" type="button" aria-label="Clear all loaded data" style="color:var(--warn)">🗑 Clear Data</button>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -4584,7 +4584,7 @@ body{
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v27.1.0',
+  VERSION: 'v27.1.1',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -12629,6 +12629,34 @@ function drawPie(wrap, d, isDonut){
     var svg=['<svg viewBox="0 0 '+W+' '+H+'" width="100%" height="100%" style="touch-action:manipulation;display:block;font-family:Poppins,sans-serif">'];
     vals.forEach(function(v,i){
       var frac=v/total, a0=angle, a1=angle+frac*2*Math.PI;
+      /* v27.1.1 — a single slice at exactly 100% (no group-by selected,
+         so everything collapses into one "Overall" category) produces
+         identical start/end arc coordinates, which SVG renders as a
+         zero-area, invisible path. Split it into two half-arcs instead
+         — the standard fix for this well-known SVG full-circle
+         limitation — so a single-category composition is still visible
+         as a solid circle rather than blank. */
+      if(frac>=0.9999){
+        var aMid=a0+Math.PI;
+        var xm=cx+r*Math.cos(aMid), ym=cy+r*Math.sin(aMid);
+        var x0b=cx+r*Math.cos(a0), y0b=cy+r*Math.sin(a0);
+        var color=pal[i%pal.length];
+        if(isDonut){
+          var ixm=cx+innerR*Math.cos(aMid), iym=cy+innerR*Math.sin(aMid);
+          var ix0b=cx+innerR*Math.cos(a0), iy0b=cy+innerR*Math.sin(a0);
+          var pathHalf1='M'+x0b+','+y0b+' A'+r+','+r+' 0 1 1 '+xm+','+ym+' L'+ixm+','+iym+' A'+innerR+','+innerR+' 0 1 0 '+ix0b+','+iy0b+' Z';
+          var pathHalf2='M'+xm+','+ym+' A'+r+','+r+' 0 1 1 '+x0b+','+y0b+' L'+ix0b+','+iy0b+' A'+innerR+','+innerR+' 0 1 0 '+ixm+','+iym+' Z';
+          svg.push('<path data-fallback="0:'+i+'" d="'+pathHalf1+'" fill="'+color+'" stroke="var(--card)" stroke-width="2"><title>'+esc(String(labels[i]))+': '+esc(fmt(v))+' (100.0%)</title></path>');
+          svg.push('<path data-fallback="0:'+i+'" d="'+pathHalf2+'" fill="'+color+'" stroke="var(--card)" stroke-width="2"></path>');
+        } else {
+          var pathHalf1='M'+cx+','+cy+' L'+x0b+','+y0b+' A'+r+','+r+' 0 1 1 '+xm+','+ym+' Z';
+          var pathHalf2='M'+cx+','+cy+' L'+xm+','+ym+' A'+r+','+r+' 0 1 1 '+x0b+','+y0b+' Z';
+          svg.push('<path data-fallback="0:'+i+'" d="'+pathHalf1+'" fill="'+color+'" stroke="var(--card)" stroke-width="2"><title>'+esc(String(labels[i]))+': '+esc(fmt(v))+' (100.0%)</title></path>');
+          svg.push('<path data-fallback="0:'+i+'" d="'+pathHalf2+'" fill="'+color+'" stroke="var(--card)" stroke-width="2"></path>');
+        }
+        angle=a1;
+        return;
+      }
       var x0=cx+r*Math.cos(a0), y0=cy+r*Math.sin(a0);
       var x1=cx+r*Math.cos(a1), y1=cy+r*Math.sin(a1);
       var large=(a1-a0)>Math.PI?1:0, color=pal[i%pal.length], path;
