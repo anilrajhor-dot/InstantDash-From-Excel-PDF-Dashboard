@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.0.1","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.1.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -465,6 +465,16 @@ main{max-width:1360px;margin:0 auto;padding:24px}
 .v26-task-followup{display:flex;flex-direction:column;gap:3px;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:10px}
 .v26-task-followup textarea{font-size:12px;font-weight:400;text-transform:none;letter-spacing:normal;padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);min-height:52px;resize:vertical;font-family:inherit}
 .v26-task-remove{background:none;border:1px solid var(--warn);color:var(--warn);border-radius:8px;padding:5px 10px;font-size:10.5px;font-weight:700;cursor:pointer;touch-action:manipulation}
+.v26-map-intro{font-size:12px;line-height:1.5;color:var(--muted);margin-bottom:14px}
+.v26-map-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.v26-map-row:last-child{border-bottom:none}
+.v26-map-row>span{font-size:12.5px;font-weight:700;flex:0 0 auto;max-width:48%}
+.v26-map-row>select{flex:1 1 auto;min-width:0;font-size:12.5px;padding:8px 9px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);min-height:38px}
+.v26-map-actions{display:flex;gap:10px;margin-top:16px;padding-top:14px;border-top:1px solid var(--border)}
+@media(max-width:480px){
+  .v26-map-row{flex-direction:column;align-items:stretch;gap:6px}
+  .v26-map-row>span{max-width:100%}
+}
 .v26-cv-section{margin-bottom:18px}
 .v26-cv-section:last-child{margin-bottom:0}
 .v26-cv-section-title{font-size:12.5px;font-weight:800;margin-bottom:9px;padding-bottom:6px;border-bottom:1px solid var(--border)}
@@ -1658,7 +1668,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v27.0.1">
+<meta name="instantdash-build" content="v27.1.0">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2532,7 +2542,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v27.0.1';
+      s.textContent='v27.1.0';
       b.appendChild(s);
     }
   }
@@ -2592,10 +2602,10 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v27.0.1</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v27.1.0</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.0.1</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.1.0</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="topClearDataBtn" type="button" aria-label="Clear all loaded data" style="color:var(--warn)">🗑 Clear Data</button>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -3795,7 +3805,8 @@ body{
       <section id="v26CreditView" class="exec-card no-print" hidden>
         <div class="mac-head">
           <div><div class="exec-label">🏦 Credit View</div><div class="mac-title">Sales, profitability, working capital and bank finance</div></div>
-          <div class="mac-hint">Each section only appears where the uploaded data contains the fields it needs. Nothing here is estimated or assumed.</div>
+          <button type="button" id="v26MapColumnsBtn" class="v26-compare-btn">🔧 Map My Columns</button>
+          <div class="mac-hint">Each section only appears where the uploaded data contains the fields it needs. Nothing here is estimated or assumed. If a field shows "Not available" but you have that data under a different column name, use Map My Columns to point it manually.</div>
         </div>
         <div id="v26CreditViewBody"></div>
       </section>
@@ -3864,17 +3875,17 @@ body{
           if(!hasData) return;
 
           // Field detection — every downstream metric depends on these.
-          var revenueCol = findCreditField([/revenue/i,/\bsales\b/i,/turnover/i], [/growth/i,/cost of/i]);
-          var patCol = findCreditField([/profit after tax/i,/\bpat\b/i,/net profit/i], [/margin/i,/growth/i]);
-          var pbtCol = findCreditField([/profit before tax/i,/\bpbt\b/i], [/margin/i,/growth/i]);
-          var debtorsCol = findCreditField([/trade receivable/i,/\bdebtor/i], [/days/i]);
-          var inventoryCol = findCreditField([/^inventor/i,/\bstock\b/i], [/change/i,/days/i,/purchase/i,/stock-in-trade/i]);
-          var creditorsCol = findCreditField([/trade payable/i,/\bcreditor/i], [/days/i]);
-          var cogsCol = findCreditField([/cost of materials/i,/cost of goods/i,/\bcogs\b/i]);
-          var currentBorrowCol = findCreditField([/current borrowing/i]);
-          var nonCurrentBorrowCol = findCreditField([/non.?current borrowing/i,/long.?term borrowing/i]);
-          var shareCapCol = findCreditField([/share capital/i]);
-          var reservesCol = findCreditField([/reserves/i]);
+          var revenueCol = findCreditField([/revenue/i,/\bsales\b/i,/turnover/i], [/growth/i,/cost of/i], 'revenue');
+          var patCol = findCreditField([/profit after tax/i,/\bpat\b/i,/net profit/i], [/margin/i,/growth/i], 'pat');
+          var pbtCol = findCreditField([/profit before tax/i,/\bpbt\b/i], [/margin/i,/growth/i], 'pbt');
+          var debtorsCol = findCreditField([/trade receivable/i,/\bdebtor/i], [/days/i], 'debtors');
+          var inventoryCol = findCreditField([/^inventor/i,/\bstock\b/i], [/change/i,/days/i,/purchase/i,/stock-in-trade/i], 'inventory');
+          var creditorsCol = findCreditField([/trade payable/i,/\bcreditor/i], [/days/i], 'creditors');
+          var cogsCol = findCreditField([/cost of materials/i,/cost of goods/i,/\bcogs\b/i], null, 'cogs');
+          var currentBorrowCol = findCreditField([/current borrowing/i], null, 'currentBorrow');
+          var nonCurrentBorrowCol = findCreditField([/non.?current borrowing/i,/long.?term borrowing/i], null, 'nonCurrentBorrow');
+          var shareCapCol = findCreditField([/share capital/i], null, 'shareCap');
+          var reservesCol = findCreditField([/reserves/i], null, 'reserves');
 
           var revenue = currentVal(revenueCol);
           var pat = currentVal(patCol);
@@ -3948,6 +3959,100 @@ body{
         setInterval(render, 700);
         if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', render);
         else render();
+      })();
+      </script>
+
+      <div id="v26MapPanel" class="v26-why-overlay" aria-hidden="true">
+        <div class="v26-why-card" role="dialog" aria-modal="true" aria-labelledby="v26MapTitle">
+          <div class="v26-why-head">
+            <div><div class="v26-why-kicker">Column Mapping</div><h3 id="v26MapTitle">Map My Columns</h3></div>
+            <button type="button" class="v26-why-close" id="v26MapClose" aria-label="Close">✕</button>
+          </div>
+          <div class="v26-map-intro">If Credit View shows "Not available" for a field you actually have — just under a different column name — point it here. This overrides automatic detection for this session.</div>
+          <div id="v26MapFields"></div>
+          <div class="v26-map-actions">
+            <button type="button" id="v26MapSave" class="v26-compare-btn">Save Mapping</button>
+            <button type="button" id="v26MapReset" class="v26-task-remove">Reset to Auto-Detect</button>
+          </div>
+        </div>
+      </div>
+      <script id="instantdash-v27-colmap-wire">
+      (function(){
+        function esc7a(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+        window.__instantDashColumnMap = window.__instantDashColumnMap || {};
+
+        function measureColumns(){
+          var cols = (window.APP && window.APP.columns) || [];
+          return cols.filter(function(c){ return c.role==='measure' || c.type==='number'; });
+        }
+
+        function renderFields(){
+          var body = document.getElementById('v26MapFields');
+          if(!body || typeof CREDIT_FIELD_DEFS==='undefined') return;
+          var measures = measureColumns();
+          var map = window.__instantDashColumnMap;
+          body.innerHTML = CREDIT_FIELD_DEFS.map(function(def){
+            var current = map[def.key] || '';
+            var options = '<option value="">Not mapped — use auto-detect</option>' +
+              measures.map(function(c){ return '<option value="'+esc7a(c.name)+'"'+(current===c.name?' selected':'')+'>'+esc7a(c.name)+'</option>'; }).join('');
+            return '<label class="v26-map-row"><span>'+esc7a(def.label)+'</span><select data-map-key="'+def.key+'">'+options+'</select></label>';
+          }).join('');
+        }
+
+        function openPanel(){
+          renderFields();
+          var panel = document.getElementById('v26MapPanel');
+          if(panel){ panel.classList.add('on'); panel.setAttribute('aria-hidden','false'); }
+        }
+        function closePanel(){
+          var panel = document.getElementById('v26MapPanel');
+          if(panel){ panel.classList.remove('on'); panel.setAttribute('aria-hidden','true'); }
+        }
+
+        function wire(){
+          var openBtn = document.getElementById('v26MapColumnsBtn');
+          if(openBtn && !openBtn.dataset.wired271){ openBtn.dataset.wired271='1'; openBtn.addEventListener('click', openPanel); }
+
+          var closeBtn = document.getElementById('v26MapClose');
+          if(closeBtn && !closeBtn.dataset.wired271){ closeBtn.dataset.wired271='1'; closeBtn.addEventListener('click', closePanel); }
+
+          var overlay = document.getElementById('v26MapPanel');
+          if(overlay && !overlay.dataset.wired271){
+            overlay.dataset.wired271='1';
+            overlay.addEventListener('click', function(e){ if(e.target===overlay) closePanel(); });
+          }
+
+          var saveBtn = document.getElementById('v26MapSave');
+          if(saveBtn && !saveBtn.dataset.wired271){
+            saveBtn.dataset.wired271='1';
+            saveBtn.addEventListener('click', function(){
+              var body = document.getElementById('v26MapFields');
+              if(!body) return;
+              var newMap = {};
+              body.querySelectorAll('select[data-map-key]').forEach(function(sel){
+                if(sel.value) newMap[sel.dataset.mapKey] = sel.value;
+              });
+              window.__instantDashColumnMap = newMap;
+              closePanel();
+              if(typeof toast==='function') toast('Column mapping saved.');
+            });
+          }
+
+          var resetBtn = document.getElementById('v26MapReset');
+          if(resetBtn && !resetBtn.dataset.wired271){
+            resetBtn.dataset.wired271='1';
+            resetBtn.addEventListener('click', function(){
+              window.__instantDashColumnMap = {};
+              renderFields();
+              if(typeof toast==='function') toast('Reset to automatic detection.');
+            });
+          }
+        }
+
+        setInterval(wire, 700);
+        if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire);
+        else wire();
       })();
       </script>
 
@@ -4479,7 +4584,7 @@ body{
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v27.0.1',
+  VERSION: 'v27.1.0',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -8096,8 +8201,31 @@ function calculationFor(name, rows){
    ratio below checks this first and is skipped/labelled unavailable
    when its required fields genuinely aren't present, rather than being
    computed from a wrong guess at what a column means. */
-function findCreditField(patterns, excludePatterns){
+/* v27.1.0 — the 11 Credit View fields eligible for manual mapping,
+   shared between findCreditField()'s override lookup and the mapping
+   panel UI, so both always agree on the same key/label pairs. */
+var CREDIT_FIELD_DEFS = [
+  {key:'revenue', label:'Revenue / Sales'},
+  {key:'pat', label:'Profit After Tax (PAT)'},
+  {key:'pbt', label:'Profit Before Tax (PBT)'},
+  {key:'debtors', label:'Trade Receivables / Debtors'},
+  {key:'inventory', label:'Inventory'},
+  {key:'creditors', label:'Trade Payables / Creditors'},
+  {key:'cogs', label:'Cost of Materials / COGS'},
+  {key:'currentBorrow', label:'Current Borrowings'},
+  {key:'nonCurrentBorrow', label:'Non-current Borrowings'},
+  {key:'shareCap', label:'Share Capital'},
+  {key:'reserves', label:'Reserves and Surplus'}
+];
+function findCreditField(patterns, excludePatterns, fieldKey){
   var cols = (window.APP && window.APP.columns) || [];
+  /* Manual override takes priority: if the user has explicitly mapped
+     this field, use exactly that column, bypassing pattern-matching. */
+  if(fieldKey && window.__instantDashColumnMap && window.__instantDashColumnMap[fieldKey]){
+    var mappedName = window.__instantDashColumnMap[fieldKey];
+    var mappedCol = cols.find(function(c){ return c.name === mappedName; });
+    if(mappedCol) return mappedCol;
+  }
   for(var i=0;i<cols.length;i++){
     var name = cols[i].name;
     if(cols[i].role!=='measure' && cols[i].type!=='number') continue;
