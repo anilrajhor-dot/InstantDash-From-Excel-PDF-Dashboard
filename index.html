@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v26.4.2","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.0.1","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -42,7 +42,7 @@
     b = document.createElement('button');
     b.id = 'idErrCatcherBadge';
     b.type = 'button';
-    b.style.cssText = 'position:fixed;top:10px;right:10px;z-index:9999999;display:none;background:#E2582B;color:#fff;border:none;border-radius:999px;padding:8px 14px;font:800 12px Poppins,-apple-system,sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.35);cursor:pointer';
+    b.style.cssText = 'position:fixed;top:10px;right:10px;z-index:9999999;display:none;background:#8B2F3D;color:#fff;border:none;border-radius:999px;padding:8px 14px;font:800 12px Poppins,-apple-system,sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.35);cursor:pointer';
     document.body ? document.body.appendChild(b) : document.addEventListener('DOMContentLoaded', function(){ document.body.appendChild(b); });
     b.addEventListener('click', showPanel);
     return b;
@@ -60,10 +60,10 @@
     p = document.createElement('div');
     p.id = 'idErrCatcherPanel';
     p.style.cssText = 'position:fixed;inset:0;z-index:9999998;display:none;background:rgba(0,0,0,.7);padding:16px;align-items:center;justify-content:center';
-    p.innerHTML = '<div style="width:100%;max-width:520px;max-height:80vh;overflow-y:auto;background:#1c1c20;color:#f4ede2;border-radius:16px;padding:18px;font-family:-apple-system,sans-serif">'
+    p.innerHTML = '<div style="width:100%;max-width:520px;max-height:80vh;overflow-y:auto;background:#1c1c20;color:#eef0f4;border-radius:16px;padding:18px;font-family:-apple-system,sans-serif">'
       + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><b style="font-size:16px">JavaScript Errors</b><button id="idErrCatcherClose" type="button" style="background:#333;color:#fff;border:none;border-radius:50%;width:30px;height:30px;font-size:14px">✕</button></div>'
       + '<div id="idErrCatcherList" style="font-size:12px;line-height:1.5"></div>'
-      + '<button id="idErrCatcherCopy" type="button" style="margin-top:14px;width:100%;padding:10px;background:#f5b301;color:#151515;border:none;border-radius:10px;font-weight:800;font-size:13px">📋 Copy all errors</button>'
+      + '<button id="idErrCatcherCopy" type="button" style="margin-top:14px;width:100%;padding:10px;background:#c9a227;color:#151515;border:none;border-radius:10px;font-weight:800;font-size:13px">📋 Copy all errors</button>'
       + '</div>';
     document.body ? document.body.appendChild(p) : document.addEventListener('DOMContentLoaded', function(){ document.body.appendChild(p); });
     p.addEventListener('click', function(e){ if(e.target===p) hidePanel(); });
@@ -75,7 +75,7 @@
     var list = document.getElementById('idErrCatcherList');
     if(list){
       list.innerHTML = window.__instantDashErrors.map(function(e, i){
-        return '<div style="margin-bottom:10px;padding:8px;background:#26262c;border-radius:8px;border-left:3px solid #E2582B">'
+        return '<div style="margin-bottom:10px;padding:8px;background:#26262c;border-radius:8px;border-left:3px solid #8B2F3D">'
           + '<div style="color:#9C968C;font-size:10px">#' + (i+1) + ' · ' + escE(e.type) + ' · ' + escE(e.time) + '</div>'
           + '<div style="font-weight:700;margin-top:3px">' + escE(e.message) + '</div>'
           + (e.source ? '<div style="color:#9C968C;font-size:10.5px;margin-top:2px">' + escE(e.source) + '</div>' : '')
@@ -179,31 +179,32 @@ if(typeof window.niceName !== 'function'){
    DESIGN TOKENS  →  edit these to re-skin the whole app
    ============================================================ */
 :root{
-  --bg:      #F4EDE2;   /* cream page background */
+  --bg:      #EEF0F4;   /* cool slate-white page background — deliberately not warm cream */
   --card:    #FFFFFF;   /* white cards */
-  --card-2:  #FBF7F0;   /* subtle inset panels */
-  --text:    #0E0E10;   /* charcoal text */
-  --muted:   #6E6A63;   /* secondary text */
-  --accent:  #F5B301;   /* amber-gold: primary chart colour + active buttons */
-  --accent-2:#E2582B;   /* rust: secondary chart colour */
-  --border:  #E7DCCB;
-  --grid:    rgba(14,14,16,.08);
-  --shadow:  0 1px 2px rgba(14,14,16,.04), 0 8px 24px rgba(14,14,16,.06);
-  --shadow-h:0 2px 6px rgba(14,14,16,.06), 0 16px 40px rgba(14,14,16,.10);
+  --card-2:  #F4F6FA;   /* subtle cool-tinted inset panels */
+  --text:    #0A0F1C;   /* deep ink-navy — echoes dark mode's background */
+  --muted:   #5B6472;   /* cool slate secondary text */
+  --accent:  #B8892E;   /* burnished brass/antique gold — primary chart colour + active buttons */
+  --accent-2:#8B2F3D;   /* oxblood — secondary chart colour */
+  --border:  #DDE1E8;
+  --grid:    rgba(10,15,28,.08);
+  --shadow:  0 1px 2px rgba(10,15,28,.05), 0 8px 24px rgba(10,15,28,.07);
+  --shadow-h:0 2px 6px rgba(10,15,28,.07), 0 16px 40px rgba(10,15,28,.11);
   --radius:  12px;
-  --ok:      #2E8B57;
-  --warn:    #E2582B;
+  --ok:      #16785A;
+  --warn:    #A13D3D;
 }
 body.dark{
-  --bg:      #131315;
-  --card:    #1C1C20;
-  --card-2:  #232328;
-  --text:    #F4EDE2;
-  --muted:   #9C968C;
-  --border:  #2E2E35;
-  --grid:    rgba(244,237,226,.10);
+  --bg:      #0A0F1C;   /* deep ink-navy — ledger stationery, not near-black */
+  --card:    #131B2E;   /* lifted navy card surface */
+  --card-2:  #1A2438;   /* subtle inset panel */
+  --text:    #F3EEE1;   /* warm parchment text */
+  --muted:   #9199A8;   /* cool muted slate */
+  --border:  #253150;
+  --grid:    rgba(243,238,225,.10);
   --shadow:  0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
   --shadow-h:0 2px 6px rgba(0,0,0,.5), 0 16px 40px rgba(0,0,0,.45);
+  --accent:  #D4AF37;   /* brighter brass for dark-mode visibility */
 }
 
 /* v1.11.14 — reliable manual Light/Night theme switching */
@@ -229,14 +230,22 @@ button,select,input,textarea{font:inherit;color:inherit}
   position:sticky; top:0; z-index:40;
   display:flex; align-items:center; gap:16px; flex-wrap:wrap;
   padding:14px 24px;
-  background:color-mix(in srgb, var(--bg) 88%, transparent);
-  backdrop-filter:blur(10px);
-  border-bottom:1px solid var(--border);
+  background:linear-gradient(155deg,#0A0F1C,#131B2E 60%,#0D1424);
+  border-bottom:2px solid transparent;
+  border-image:linear-gradient(90deg,transparent,#C9A227 15%,#E8C766 50%,#C9A227 85%,transparent) 1;
+  box-shadow:0 4px 20px rgba(10,15,28,.25);
 }
+.topbar,.topbar .brand h1,.topbar .brand .sub,.topbar .privacy{color:#F3EEE1}
+.topbar .brand .sub{border-left-color:rgba(243,238,225,.25)}
+.topbar .privacy{background:rgba(243,238,225,.08);border-color:rgba(243,238,225,.18);color:#D8D2C4}
+.topbar .icon-btn,.topbar .btn{background:rgba(243,238,225,.08);border-color:rgba(243,238,225,.20);color:#F3EEE1}
+.topbar .icon-btn:hover,.topbar .btn:hover{background:rgba(243,238,225,.14)}
 .brand{display:flex;align-items:center;gap:10px}
 .brand .mark{
-  width:30px;height:30px;border-radius:9px;background:var(--accent);
-  display:grid;place-items:center;color:#0E0E10;flex:0 0 auto;
+  width:32px;height:32px;border-radius:9px;
+  background:linear-gradient(155deg,#E8C766,#C9A227 55%,#9A7A1E);
+  display:grid;place-items:center;color:#0A0F1C;flex:0 0 auto;
+  box-shadow:0 2px 8px rgba(201,162,39,.35), inset 0 1px 0 rgba(255,255,255,.3);
 }
 .brand h1{font-size:18px}
 .brand .sub{color:var(--muted);font-size:12px;padding-left:8px;border-left:1px solid var(--border)}
@@ -261,7 +270,7 @@ button,select,input,textarea{font:inherit;color:inherit}
 .btn:hover{transform:translateY(-1px);box-shadow:var(--shadow);border-color:var(--accent)}
 .btn:active{transform:translateY(0)}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:#0E0E10;font-weight:600}
-.btn.primary:hover{box-shadow:0 6px 18px rgba(245,179,1,.35)}
+.btn.primary:hover{box-shadow:0 6px 18px rgba(201,162,39,.35)}
 .btn.ghost{background:transparent}
 .btn.sm{padding:5px 10px;font-size:12px;border-radius:8px}
 .btn:focus-visible,select:focus-visible,input:focus-visible,summary:focus-visible,.icon-btn:focus-visible{
@@ -290,6 +299,17 @@ main{max-width:1360px;margin:0 auto;padding:24px}
   background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
   box-shadow:var(--shadow); transition:box-shadow .2s ease, transform .2s ease;
 }
+/* v27.0.1 — Executive Takeaway: the single most important sentence in
+   the dashboard gets a deliberate "pull quote" treatment, distinct from
+   every other card, echoing the ink-navy masthead identity via its
+   left accent rather than repeating the same white-card language used
+   everywhere else. */
+#v26Takeaway{
+  border-left:4px solid var(--accent)!important;
+  background:linear-gradient(120deg,var(--card),color-mix(in srgb,var(--accent) 6%,var(--card)))!important;
+}
+#v26Takeaway h2{font-family:Poppins,-apple-system,sans-serif;letter-spacing:.02em}
+#v26TakeawayBody{font-size:14.5px;line-height:1.6}
 .section{margin-top:22px}
 .section-head{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
 .section-head h2{font-size:16px}
@@ -319,7 +339,7 @@ main{max-width:1360px;margin:0 auto;padding:24px}
 /* v1.11.14 — clickable movement summary */
 #execStatusBadge.movement-link{cursor:pointer;user-select:none;transition:transform .15s ease,box-shadow .15s ease}
 #execStatusBadge.movement-link:hover{transform:translateY(-1px);box-shadow:0 3px 10px rgba(0,0,0,.10)}
-#execStatusBadge.movement-link:focus{outline:3px solid rgba(245,179,1,.35);outline-offset:2px}
+#execStatusBadge.movement-link:focus{outline:3px solid rgba(201,162,39,.35);outline-offset:2px}
 
 /* v1.11.14 — executive movement fact strip */
 .mi-movement-facts{display:grid;grid-template-columns:1fr auto 1fr auto;gap:8px;align-items:stretch;margin:14px 0 12px;padding:10px;border:1px solid var(--line,#e6dccb);border-radius:16px;background:rgba(255,255,255,.72)}
@@ -499,7 +519,7 @@ body.dark .landing-hero{box-shadow:0 18px 70px rgba(0,0,0,.42)}
 .hero-glow{position:absolute;border-radius:50%;filter:blur(3px);pointer-events:none;opacity:.38}
 .hero-glow-a{width:300px;height:300px;right:-90px;top:-110px;background:radial-gradient(circle,color-mix(in srgb,var(--accent) 32%,transparent),transparent 68%)}
 .hero-glow-b{width:240px;height:240px;left:-130px;bottom:-120px;background:radial-gradient(circle,color-mix(in srgb,var(--accent-2) 18%,transparent),transparent 68%)}
-.landing-hero.over{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 12%,transparent),0 25px 70px rgba(245,179,1,.12);transform:translateY(-1px)}
+.landing-hero.over{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 12%,transparent),0 25px 70px rgba(201,162,39,.12);transform:translateY(-1px)}
 .hero-copy{position:relative;z-index:2}
 .hero-eyebrow{display:inline-flex;align-items:center;gap:8px;padding:7px 11px;border:1px solid var(--border);background:var(--card-2);border-radius:999px;color:var(--muted);font-size:10.5px;font-weight:700;letter-spacing:.11em}
 .pulse-dot{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 5px color-mix(in srgb,var(--ok) 13%,transparent)}
@@ -507,7 +527,7 @@ body.dark .landing-hero{box-shadow:0 18px 70px rgba(0,0,0,.42)}
 .hero-copy h2 span{background:linear-gradient(100deg,var(--accent),var(--accent-2));-webkit-background-clip:text;background-clip:text;color:transparent}
 .hero-lead{font-size:16px;line-height:1.7;color:var(--muted);max-width:650px;margin:0}
 .hero-actions{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:25px}
-.hero-btn{padding:12px 18px;border-radius:12px;font-size:14px;box-shadow:0 10px 24px rgba(245,179,1,.18)}
+.hero-btn{padding:12px 18px;border-radius:12px;font-size:14px;box-shadow:0 10px 24px rgba(201,162,39,.18)}
 .btn-icon{font-size:18px;line-height:0;transform:translateY(-1px)}
 .drop-prompt{color:var(--muted);font-size:12.5px}.drop-prompt span{margin-right:7px;color:var(--border)}
 .trust-row{display:flex;gap:18px;flex-wrap:wrap;margin-top:20px;color:var(--muted);font-size:11.5px}
@@ -547,13 +567,16 @@ body.dark .landing-hero{box-shadow:0 18px 70px rgba(0,0,0,.42)}
 /* ---------- KPI cards ---------- */
 .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px}
 .kpi{
-  background:linear-gradient(160deg,var(--card),color-mix(in srgb,var(--accent) 4%,var(--card)));border:1px solid var(--border);border-top:3px solid var(--accent);
-  border-radius:calc(var(--radius) + 2px);padding:18px 20px;box-shadow:var(--shadow);
+  background:linear-gradient(160deg,var(--card),color-mix(in srgb,var(--accent) 5%,var(--card)));border:1px solid var(--border);
+  border-radius:calc(var(--radius) + 2px);padding:19px 20px 18px;
+  box-shadow:var(--shadow), inset 0 1px 0 color-mix(in srgb,var(--accent) 12%,transparent);
   transition:transform .2s ease, box-shadow .2s ease;
+  position:relative; overflow:hidden;
 }
-.kpi:hover{transform:translateY(-3px);box-shadow:var(--shadow-h)}
-.kpi .val{font-family:Poppins,sans-serif;font-size:29px;font-weight:800;letter-spacing:-.02em;line-height:1.15;word-break:break-word}
-.kpi .lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-top:7px;font-weight:700}
+.kpi:before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,color-mix(in srgb,var(--accent) 60%,transparent),var(--accent),color-mix(in srgb,var(--accent) 60%,transparent))}
+.kpi:hover{transform:translateY(-3px);box-shadow:var(--shadow-h), 0 0 0 1px color-mix(in srgb,var(--accent) 25%,transparent)}
+.kpi .val{font-family:Georgia,"Times New Roman",serif;font-size:30px;font-weight:700;letter-spacing:-.01em;line-height:1.15;word-break:break-word;color:var(--text)}
+.kpi .lbl{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.09em;margin-top:8px;font-weight:800;font-family:Poppins,-apple-system,sans-serif}
 .kpi .sub{font-size:12px;color:var(--muted);margin-top:9px;padding-top:9px;border-top:1px dashed var(--border)}
 .kpi-trend{display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:800;padding:2px 8px;border-radius:999px;margin-left:8px;vertical-align:middle;letter-spacing:0;border:none;cursor:pointer;font-family:inherit}
 .kpi-trend:hover{filter:brightness(1.1)}
@@ -583,7 +606,8 @@ body.dark .landing-hero{box-shadow:0 18px 70px rgba(0,0,0,.42)}
 @keyframes v23Pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
 @keyframes v23GlowPulse{0%,100%{box-shadow:0 8px 24px color-mix(in srgb,var(--accent) 40%,transparent)}50%{box-shadow:0 8px 34px color-mix(in srgb,var(--accent) 70%,transparent)}}
 @media (prefers-reduced-motion:reduce){.v23-brief-icon{animation:none}.v23-brief-btn.speaking{animation:none}}
-.kpi.alt{border-top-color:var(--accent-2);background:linear-gradient(160deg,var(--card),color-mix(in srgb,var(--accent-2) 4%,var(--card)))}
+.kpi.alt{background:linear-gradient(160deg,var(--card),color-mix(in srgb,var(--accent-2) 5%,var(--card)))}
+.kpi.alt:before{background:linear-gradient(90deg,color-mix(in srgb,var(--accent-2) 60%,transparent),var(--accent-2),color-mix(in srgb,var(--accent-2) 60%,transparent))}
 
 /* =====================================================================
    v22.0 — PREMIUM UI POLISH
@@ -591,8 +615,8 @@ body.dark .landing-hero{box-shadow:0 18px 70px rgba(0,0,0,.42)}
    card entrance animation, scrollbars. Nothing here touches structure,
    IDs, or JS — purely additive CSS so none of today's fixes are at risk.
    ===================================================================== */
-.topbar{background:linear-gradient(180deg,color-mix(in srgb,var(--bg) 92%,transparent),color-mix(in srgb,var(--bg) 84%,transparent))!important;box-shadow:0 1px 0 rgba(0,0,0,.03),0 6px 18px rgba(0,0,0,.04)}
-.brand .mark{box-shadow:0 3px 10px color-mix(in srgb,var(--accent) 45%,transparent)}
+.topbar{background:linear-gradient(155deg,#0A0F1C,#131B2E 60%,#0D1424)!important;box-shadow:0 4px 20px rgba(10,15,28,.25)}
+.brand .mark{box-shadow:0 2px 8px rgba(201,162,39,.35), inset 0 1px 0 rgba(255,255,255,.3)}
 .btn{border-radius:999px!important;font-weight:600!important;letter-spacing:.01em}
 .btn.primary{box-shadow:0 4px 14px color-mix(in srgb,var(--accent) 30%,transparent)}
 .btn.primary:hover{transform:translateY(-2px)}
@@ -613,14 +637,17 @@ body.dark .landing-hero{box-shadow:0 18px 70px rgba(0,0,0,.42)}
 
 /* v25.0 — Performance/Attention/Data Quality/Overall Status strip */
 .v25-status-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:0 0 16px}
-.v25-status-card{border-radius:14px;padding:14px 16px;border:1px solid var(--border);background:var(--card)}
+.v25-status-card{border-radius:14px;padding:15px 16px 14px;border:1px solid var(--border);background:var(--card);box-shadow:var(--shadow);position:relative;overflow:hidden}
+.v25-status-card:before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.5}
 .v25-status-icon{font-size:15px;line-height:1}
 .v25-status-label{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-top:6px}
-.v25-status-value{font-size:22px;font-weight:900;margin-top:3px;letter-spacing:-.01em}
+.v25-status-value{font-family:Georgia,"Times New Roman",serif;font-size:23px;font-weight:700;margin-top:4px;letter-spacing:-.01em}
 .v25-status-sub{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.35}
 .v25-status-card.v25-good{background:color-mix(in srgb,var(--ok) 10%,var(--card));border-color:color-mix(in srgb,var(--ok) 35%,var(--border))}
+.v25-status-card.v25-good:before{background:linear-gradient(90deg,transparent,var(--ok),transparent);opacity:.6}
 .v25-status-card.v25-good .v25-status-value{color:var(--ok)}
 .v25-status-card.v25-warn{background:color-mix(in srgb,var(--accent) 10%,var(--card));border-color:color-mix(in srgb,var(--accent) 35%,var(--border))}
+.v25-status-card.v25-warn:before{opacity:.9}
 .v25-status-card.v25-warn .v25-status-value{color:color-mix(in srgb,var(--accent) 75%,#7a5600)}
 .v25-status-card.v25-bad{background:color-mix(in srgb,var(--warn) 10%,var(--card));border-color:color-mix(in srgb,var(--warn) 35%,var(--border))}
 .v25-status-card.v25-bad .v25-status-value{color:var(--warn)}
@@ -1307,7 +1334,7 @@ html,body{overflow-anchor:none!important;}
 #movementActionBar .movement-action.selected{
   transform:translateY(-2px)!important;
   filter:brightness(1.12)!important;
-  box-shadow:0 0 0 3px rgba(245,179,1,.38),0 12px 28px rgba(0,0,0,.28)!important;
+  box-shadow:0 0 0 3px rgba(201,162,39,.38),0 12px 28px rgba(0,0,0,.28)!important;
 }
 #movementActionBar .movement-action.selected .ma-count{font-size:21px!important}
 #movementActionBar .movement-action.selected .ma-text{font-weight:900!important}
@@ -1326,7 +1353,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 <style id="instantdash-v160-selected-movement">
 /* v1.11.14 — keep the selected movement category visually obvious. */
-#movementActionBar .movement-action.selected{outline:3px solid var(--accent,#f5b301)!important;outline-offset:2px!important;}
+#movementActionBar .movement-action.selected{outline:3px solid var(--accent,#c9a227)!important;outline-offset:2px!important;}
 </style>
 <script>
 (function(){
@@ -1375,7 +1402,7 @@ html,body{overflow-anchor:none!important;}
 
 <style id="instantdash-v162-movement-fix">
 /* v1.11.14 — definitive movement-category action wiring for iPhone/iPad Safari. */
-#movementActionBar .movement-action.selected{outline:4px solid var(--accent,#f5b301)!important;outline-offset:2px!important;box-shadow:0 0 0 5px rgba(245,179,1,.20),0 14px 30px rgba(0,0,0,.28)!important;}
+#movementActionBar .movement-action.selected{outline:4px solid var(--accent,#c9a227)!important;outline-offset:2px!important;box-shadow:0 0 0 5px rgba(201,162,39,.20),0 14px 30px rgba(0,0,0,.28)!important;}
 #movementActionBar .movement-action:active{transform:scale(.985)!important;}
 #movementActionBar .movement-action.disabled{opacity:.55!important;}
 </style>
@@ -1440,7 +1467,7 @@ html,body{overflow-anchor:none!important;}
   border:2px solid var(--accent);
   border-radius:16px;
   background:linear-gradient(110deg,color-mix(in srgb,var(--accent) 13%,var(--card)),var(--card));
-  box-shadow:0 8px 26px rgba(245,179,1,.16);
+  box-shadow:0 8px 26px rgba(201,162,39,.16);
 }
 .id-health-launch-copy{min-width:0}
 .id-health-launch-title{
@@ -1458,11 +1485,11 @@ html,body{overflow-anchor:none!important;}
   appearance:none;border:1px solid var(--accent);background:var(--accent);color:#111;
   border-radius:12px;padding:11px 16px;min-height:44px;
   font:900 12px/1 Poppins,-apple-system,sans-serif;cursor:pointer;
-  box-shadow:0 7px 18px rgba(245,179,1,.25);
+  box-shadow:0 7px 18px rgba(201,162,39,.25);
   white-space:nowrap;touch-action:manipulation;
   transition:transform .15s ease,box-shadow .15s ease,filter .15s ease;
 }
-.id-health-launch-btn:hover{transform:translateY(-1px);filter:brightness(1.03);box-shadow:0 10px 24px rgba(245,179,1,.30)}
+.id-health-launch-btn:hover{transform:translateY(-1px);filter:brightness(1.03);box-shadow:0 10px 24px rgba(201,162,39,.30)}
 .id-health-launch-btn:active{transform:scale(.98)}
 .id-health-launch-btn:focus-visible{outline:3px solid color-mix(in srgb,var(--accent) 38%,transparent);outline-offset:3px}
 @media(max-width:560px){
@@ -1473,17 +1500,17 @@ html,body{overflow-anchor:none!important;}
 
 <style id="instantdash-v171-health-check-css">
 /* v1.10.65 — prominent read-only Health Check */
-.id-health-btn{margin-left:8px;border:1px solid var(--border,#3a3a42);background:linear-gradient(135deg,#fff7dc,#ffd24a);color:#151515;border-radius:12px;padding:9px 13px;font:900 12px/1.1 Poppins,sans-serif;cursor:pointer;box-shadow:0 5px 16px rgba(245,179,1,.18);white-space:nowrap;transition:.16s ease}
-.id-health-btn:hover{transform:translateY(-1px);filter:brightness(1.03);box-shadow:0 8px 22px rgba(245,179,1,.25)}
+.id-health-btn{margin-left:8px;border:1px solid var(--border,#3a3a42);background:linear-gradient(135deg,#fff7dc,#ffd24a);color:#151515;border-radius:12px;padding:9px 13px;font:900 12px/1.1 Poppins,sans-serif;cursor:pointer;box-shadow:0 5px 16px rgba(201,162,39,.18);white-space:nowrap;transition:.16s ease}
+.id-health-btn:hover{transform:translateY(-1px);filter:brightness(1.03);box-shadow:0 8px 22px rgba(201,162,39,.25)}
 .id-health-btn:active{transform:scale(.97)}
 .id-health-overlay{position:fixed;inset:0;background:rgba(0,0,0,.52);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);display:none;align-items:center;justify-content:center;padding:18px;z-index:99999}
 .id-health-overlay.open{display:flex}
-.id-health-card{width:min(720px,100%);max-height:min(88vh,820px);overflow:auto;background:var(--card,#fff);color:var(--text,#111);border:1px solid var(--border,#ddd);border-top:5px solid var(--accent,#f5b301);border-radius:22px;box-shadow:0 25px 70px rgba(0,0,0,.35);padding:22px}
+.id-health-card{width:min(720px,100%);max-height:min(88vh,820px);overflow:auto;background:var(--card,#fff);color:var(--text,#111);border:1px solid var(--border,#ddd);border-top:5px solid var(--accent,#c9a227);border-radius:22px;box-shadow:0 25px 70px rgba(0,0,0,.35);padding:22px}
 .id-health-head{display:flex;align-items:flex-start;gap:14px}.id-health-head h3{margin:0;font:900 25px/1.1 Poppins,sans-serif}.id-health-head p{margin:6px 0 0;color:var(--muted);font-size:12.5px;line-height:1.5}.id-health-close{margin-left:auto;border:1px solid var(--border);background:var(--card-2);color:var(--text);border-radius:12px;width:42px;height:42px;font-size:24px;cursor:pointer}
 .id-health-score{margin:18px 0 14px;border-radius:18px;padding:16px 18px;display:flex;align-items:center;gap:15px;border:1px solid var(--border);background:var(--card-2)}
 .id-health-score .big{font:900 34px/1 Poppins,sans-serif}.id-health-score .label{font-weight:900;font-size:16px}.id-health-score .sub{margin-top:3px;color:var(--muted);font-size:11.5px}
-.id-health-score.good{border-color:#55c98a;background:rgba(43,190,110,.10)}.id-health-score.warn{border-color:#f5b301;background:rgba(245,179,1,.10)}.id-health-score.bad{border-color:#ef5535;background:rgba(239,85,53,.10)}
-.id-health-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.id-health-group-title{grid-column:1/-1;padding:6px 2px 2px;font:900 12px/1.2 Poppins,-apple-system,sans-serif;letter-spacing:.03em;color:var(--text)}.id-health-item{border:1px solid var(--border);border-radius:14px;padding:13px;background:var(--card-2)}.id-health-item .row{display:flex;align-items:center;gap:8px;font-weight:850;font-size:12.5px}.id-health-item .detail{margin-top:5px;color:var(--muted);font-size:11.5px;line-height:1.45}.id-health-item.ok{border-left:4px solid #2fbd72}.id-health-item.warn{border-left:4px solid #f5b301}.id-health-item.bad{border-left:4px solid #ef5535}
+.id-health-score.good{border-color:#55c98a;background:rgba(43,190,110,.10)}.id-health-score.warn{border-color:#c9a227;background:rgba(201,162,39,.10)}.id-health-score.bad{border-color:#ef5535;background:rgba(239,85,53,.10)}
+.id-health-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.id-health-group-title{grid-column:1/-1;padding:6px 2px 2px;font:900 12px/1.2 Poppins,-apple-system,sans-serif;letter-spacing:.03em;color:var(--text)}.id-health-item{border:1px solid var(--border);border-radius:14px;padding:13px;background:var(--card-2)}.id-health-item .row{display:flex;align-items:center;gap:8px;font-weight:850;font-size:12.5px}.id-health-item .detail{margin-top:5px;color:var(--muted);font-size:11.5px;line-height:1.45}.id-health-item.ok{border-left:4px solid #2fbd72}.id-health-item.warn{border-left:4px solid #c9a227}.id-health-item.bad{border-left:4px solid #ef5535}
 .id-health-foot{margin-top:14px;padding:12px 14px;border-radius:12px;background:var(--card-2);color:var(--muted);font-size:11px;line-height:1.5}.id-health-actions{display:flex;gap:9px;margin-top:14px}.id-health-actions button{flex:1;border:1px solid var(--border);background:var(--card-2);color:var(--text);border-radius:11px;padding:10px;font-weight:800;cursor:pointer}.id-health-actions .primary{background:var(--accent);color:#111;border-color:var(--accent)}
 @media(max-width:520px){#share{margin-left:0}.id-health-btn{margin:7px 0 0;padding:9px 11px;font-size:11px}.topbar{flex-wrap:wrap}.id-health-overlay{padding:10px}.id-health-card{padding:16px;border-radius:18px}.id-health-grid{grid-template-columns:1fr}.id-health-head h3{font-size:22px}.id-health-score .big{font-size:29px}}
 <style id="instantdash-v145-chart-polish">
@@ -1505,7 +1532,7 @@ html,body{overflow-anchor:none!important;}
 <style id="instantdash-v11319-visuals">
 /* v1.13.19 — distinctive management-dashboard chart language */
 .smart-svg-wrap{background:linear-gradient(145deg,#fffdf8,#fff);border:1px solid #eadfce!important;border-radius:20px!important;padding:8px!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 10px 28px rgba(73,53,25,.07)!important;overflow:hidden!important}
-.id-chart-visual{height:360px;border-radius:15px;background:radial-gradient(circle at 78% 18%,rgba(245,179,1,.12),transparent 32%),linear-gradient(180deg,#fffdf8,#fff);overflow:hidden}
+.id-chart-visual{height:360px;border-radius:15px;background:radial-gradient(circle at 78% 18%,rgba(201,162,39,.12),transparent 32%),linear-gradient(180deg,#fffdf8,#fff);overflow:hidden}
 .id-chart-visual svg{width:100%;height:100%;display:block}
 .id-chart-note{margin:9px 3px 0;padding:8px 10px;border-radius:10px;background:#fbf7ef;color:#746e65;font-size:11px;font-weight:700;line-height:1.35;border:1px solid #eee3d3}
 .id-chart-note.warn{background:#fff6df;color:#8a6100;border-color:#f1d58a}
@@ -1609,7 +1636,7 @@ html,body{overflow-anchor:none!important;}
 .ai-chart-touch-detail::before{content:"🔊";position:absolute;left:10px;top:9px;font-size:12px;opacity:.75}
 .ai-chart-card{transition:transform .16s ease,box-shadow .16s ease}
 .ai-chart-card:hover{transform:translateY(-2px);box-shadow:0 14px 32px rgba(68,50,20,.09)!important}
-#v21CombinedOut .ai-chart-card{border:1px solid var(--accent)!important;background:linear-gradient(160deg,rgba(245,179,1,.07),rgba(255,255,255,.96))!important;box-shadow:0 10px 28px rgba(245,179,1,.14)!important}
+#v21CombinedOut .ai-chart-card{border:1px solid var(--accent)!important;background:linear-gradient(160deg,rgba(201,162,39,.07),rgba(255,255,255,.96))!important;box-shadow:0 10px 28px rgba(201,162,39,.14)!important}
 #v21CombinedOut .ai-chart-card h4{color:var(--accent-2,var(--accent))}
 .ai-chart-foot{margin-top:7px;font-size:10px;color:var(--muted);line-height:1.35}
 .ai-chart-so-what{margin-top:8px;padding:8px 10px;border-radius:8px;background:var(--card-2);border-left:3px solid var(--accent);font-size:11.5px;font-weight:700;color:var(--text);line-height:1.4}
@@ -1631,14 +1658,14 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v26.4.2">
+<meta name="instantdash-build" content="v27.0.1">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
 .id-post-upload-health{
   display:flex;align-items:center;justify-content:space-between;gap:14px;
   margin:0 0 14px;padding:15px 16px;border:2px solid var(--accent);
-  border-radius:16px;background:linear-gradient(135deg,rgba(245,179,1,.13),var(--card));
+  border-radius:16px;background:linear-gradient(135deg,rgba(201,162,39,.13),var(--card));
   box-shadow:var(--shadow);scroll-margin-top:14px
 }
 .id-post-upload-health .copy{min-width:0}
@@ -1669,7 +1696,7 @@ html,body{overflow-anchor:none!important;}
 <style id="instantdash-v11320-polish">
 .id-live-source{margin-top:8px;display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border:1px solid #eadfce;border-radius:999px;background:#fffaf0;color:#71695f;font-size:10px;font-weight:700;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .id-live-source b{color:#a45a1b;font-size:9px;letter-spacing:.08em}
-.id-chart-visual{background:radial-gradient(circle at 82% 10%,rgba(245,179,1,.18),transparent 34%),linear-gradient(180deg,#fffdf8 0%,#ffffff 72%)!important}
+.id-chart-visual{background:radial-gradient(circle at 82% 10%,rgba(201,162,39,.18),transparent 34%),linear-gradient(180deg,#fffdf8 0%,#ffffff 72%)!important}
 .id-chart-visual svg text{font-family:Poppins,-apple-system,BlinkMacSystemFont,sans-serif}
 .id-chart-note{font-size:10.5px!important}
 @media(max-width:600px){.id-live-source{max-width:100%;font-size:9px}.id-chart-visual{height:325px}}
@@ -1686,8 +1713,8 @@ html,body{overflow-anchor:none!important;}
 #aiExecutiveCards .exec-body{font-size:12px!important;line-height:1.55!important;color:#4a4238!important}
 #aiExecutiveCards .exec-label{color:#8a8175!important}
 #aiExecutiveCards .exec-positive{border-left:5px solid #2e9d69!important}
-#aiExecutiveCards .exec-warning{border-left:5px solid #e2582b!important}
-#aiExecutiveCards .exec-info{border-left:5px solid #f5b301!important}
+#aiExecutiveCards .exec-warning{border-left:5px solid #8b2f3d!important}
+#aiExecutiveCards .exec-info{border-left:5px solid #c9a227!important}
 #aiExecutiveStatus{padding:9px 12px;border-radius:999px;background:linear-gradient(90deg,#fff8df,#fff);border:1px solid #eadfce}
 </style>
 
@@ -1702,14 +1729,14 @@ select{max-width:100%;text-overflow:ellipsis;overflow:hidden}
    Mobile-first, executive dashboard styling.
    ========================================================= */
 :root{
-  --id-gold:#f5b301;
-  --id-gold-deep:#d99300;
-  --id-ink:#151515;
-  --id-muted:#716b62;
-  --id-cream:#fffaf0;
-  --id-cream-2:#f7f1e6;
-  --id-line:#eadfce;
-  --id-navy:#17202d;
+  --id-gold:#B8892E;
+  --id-gold-deep:#8A6620;
+  --id-ink:#0A0F1C;
+  --id-muted:#5B6472;
+  --id-cream:#F4F6FA;
+  --id-cream-2:#EEF0F4;
+  --id-line:#DDE1E8;
+  --id-navy:#0A0F1C;
 }
 
 /* Dashboard section rhythm */
@@ -1735,7 +1762,7 @@ select{max-width:100%;text-overflow:ellipsis;overflow:hidden}
   border-left:0!important;
   border-radius:22px!important;
   background:
-    radial-gradient(circle at 95% 10%,rgba(245,179,1,.22),transparent 28%),
+    radial-gradient(circle at 95% 10%,rgba(201,162,39,.22),transparent 28%),
     linear-gradient(135deg,#fffdf8 0%,#fff8e9 100%)!important;
   box-shadow:0 14px 35px rgba(62,47,25,.08)!important;
 }
@@ -1743,7 +1770,7 @@ select{max-width:100%;text-overflow:ellipsis;overflow:hidden}
   content:"";
   position:absolute;
   left:0;top:0;bottom:0;width:5px;
-  background:linear-gradient(180deg,#f5b301,#d99300);
+  background:linear-gradient(180deg,#c9a227,#a3811e);
 }
 .smart-result-strip strong{
   display:block!important;
@@ -1778,7 +1805,7 @@ select{max-width:100%;text-overflow:ellipsis;overflow:hidden}
   padding:20px!important;
   border-bottom:1px solid var(--id-line)!important;
   background:
-    radial-gradient(circle at 0% 0%,rgba(245,179,1,.15),transparent 34%),
+    radial-gradient(circle at 0% 0%,rgba(201,162,39,.15),transparent 34%),
     linear-gradient(135deg,#fffaf0 0%,#fff 65%)!important;
 }
 .smart-chart-top > div:first-child{
@@ -1791,7 +1818,7 @@ select{max-width:100%;text-overflow:ellipsis;overflow:hidden}
   margin-bottom:8px!important;
   padding:5px 9px!important;
   border-radius:999px!important;
-  background:rgba(245,179,1,.13)!important;
+  background:rgba(201,162,39,.13)!important;
   color:#8c6200!important;
   font-size:9px!important;
   letter-spacing:.11em!important;
@@ -1926,7 +1953,7 @@ select{max-width:100%;text-overflow:ellipsis;overflow:hidden}
 }
 .smart-controls select:focus{
   border-color:#e3ad1e!important;
-  box-shadow:0 0 0 3px rgba(245,179,1,.13)!important;
+  box-shadow:0 0 0 3px rgba(201,162,39,.13)!important;
 }
 
 /* Chart area */
@@ -1963,7 +1990,7 @@ select{max-width:100%;text-overflow:ellipsis;overflow:hidden}
   border:1px solid var(--id-line)!important;
   border-radius:20px!important;
   background:
-    radial-gradient(circle at 50% 0%,rgba(245,179,1,.08),transparent 40%),
+    radial-gradient(circle at 50% 0%,rgba(201,162,39,.08),transparent 40%),
     #fff!important;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 10px 25px rgba(50,40,25,.045)!important;
 }
@@ -1982,7 +2009,7 @@ select{max-width:100%;text-overflow:ellipsis;overflow:hidden}
   margin-top:12px!important;
   padding:13px 14px!important;
   border:1px solid var(--id-line)!important;
-  border-left:4px solid #f5b301!important;
+  border-left:4px solid #c9a227!important;
   border-radius:15px!important;
   background:#fffaf0!important;
   box-shadow:0 7px 18px rgba(50,40,25,.045)!important;
@@ -2065,17 +2092,17 @@ select{max-width:100%;text-overflow:ellipsis;overflow:hidden}
    Visual layer only: preserves existing data/AI engine.
    ============================================================ */
 :root{
-  --ex-bg:#f4f1eb;
+  --ex-bg:#EEF0F4;
   --ex-surface:#ffffff;
-  --ex-surface2:#faf8f4;
-  --ex-ink:#17202d;
-  --ex-muted:#73716d;
-  --ex-line:#e5dfd5;
-  --ex-gold:#e7a900;
-  --ex-gold2:#f6c64b;
-  --ex-green:#1f9d67;
-  --ex-red:#d84d4d;
-  --ex-shadow:0 18px 50px rgba(30,27,21,.09);
+  --ex-surface2:#F4F6FA;
+  --ex-ink:#0A0F1C;
+  --ex-muted:#5B6472;
+  --ex-line:#DDE1E8;
+  --ex-gold:#B8892E;
+  --ex-gold2:#D4AF37;
+  --ex-green:#16785A;
+  --ex-red:#A13D3D;
+  --ex-shadow:0 18px 50px rgba(10,15,28,.10);
 }
 body{
   background:
@@ -2090,26 +2117,25 @@ body{
   position:relative!important;
   margin-bottom:16px!important;
   padding:18px 20px!important;
-  border:1px solid var(--ex-line)!important;
+  border:none!important;
   border-radius:24px!important;
-  background:rgba(255,255,255,.91)!important;
-  box-shadow:var(--ex-shadow)!important;
-  backdrop-filter:blur(16px)!important;
+  background:linear-gradient(155deg,#0A0F1C,#131B2E 60%,#0D1424)!important;
+  box-shadow:0 8px 28px rgba(10,15,28,.30)!important;
 }
 .topbar:after{
   content:"EXECUTIVE INTELLIGENCE";
   position:absolute;
   right:18px;top:12px;
   font-size:8px;font-weight:950;letter-spacing:.16em;
-  color:#a07814;
-  opacity:.8;
+  color:#E8C766;
+  opacity:.85;
 }
 .brand{
   font-weight:950!important;
   letter-spacing:-.045em!important;
 }
 .brand small{
-  color:var(--ex-muted)!important;
+  color:#B8B2A2!important;
 }
 .v26-brand-text{display:flex;flex-direction:column;min-width:0;gap:1px}
 .v26-cockpit-subtitle{font-size:11px;font-weight:800;color:var(--accent);letter-spacing:.01em;line-height:1.2}
@@ -2218,7 +2244,7 @@ body{
   font-size:13px!important;
 }
 .smart-ai-badge{
-  background:#f5b301!important;
+  background:#c9a227!important;
   color:#171717!important;
 }
 .smart-ai-recs{
@@ -2506,7 +2532,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v26.4.2';
+      s.textContent='v27.0.1';
       b.appendChild(s);
     }
   }
@@ -2528,7 +2554,7 @@ body{
     btn.id='idStopSpeechBtn';
     btn.type='button';
     btn.textContent='⏹ Stop speech';
-    btn.style.cssText='position:fixed;left:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);z-index:99998;padding:9px 14px;border-radius:999px;border:none;background:#E2582B;color:#fff;font:700 12px Poppins,sans-serif;box-shadow:0 4px 16px rgba(0,0,0,.28);display:none;cursor:pointer';
+    btn.style.cssText='position:fixed;left:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);z-index:99998;padding:9px 14px;border-radius:999px;border:none;background:#8B2F3D;color:#fff;font:700 12px Poppins,sans-serif;box-shadow:0 4px 16px rgba(0,0,0,.28);display:none;cursor:pointer';
     btn.addEventListener('click',function(){
       try{ window.speechSynthesis.cancel(); }catch(_){ }
       btn.style.display='none';
@@ -2566,10 +2592,10 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v26.4.2</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v27.0.1</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v26.4.2</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.0.1</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="topClearDataBtn" type="button" aria-label="Clear all loaded data" style="color:var(--warn)">🗑 Clear Data</button>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -4058,7 +4084,7 @@ body{
         <h2>Interactive Charts</h2>
         <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v17.0</span><span class="hint" id="smartChartHint">LIVE DATA — 16 rows · 13 parameters available in every dropdown</span><div id="smartDataVerification" class="smart-data-verification"><b>Verified live data</b><span>13 chart parameters · 2 usable non-numeric fields</span></div>
       </div>
-      <section class="ai-dashboard-charts" id="aiDashboardCharts" aria-label="AI generated charts"><div class="ai-dashboard-head"><div><h3 style="margin:0;font-size:16px">AI-generated key charts</h3><p id="aiDashboardSub" style="margin:4px 0 12px;color:var(--muted);font-size:11px">AI automatically created 4 key charts from the loaded data. These charts are independent of the manual parameter selector below.</p></div></div><div class="ai-chart-grid" id="aiChartGrid"><article class="ai-chart-card"><div class="ai-chart-card-head"><div><h4>Average Feedback Score</h4><p class="ai-chart-sub">AI selected Line chart grouped by Quarter.</p></div><div class="ai-chart-actions"><label style="font-size:9px;color:var(--muted);font-weight:800">Chart <select class="ai-chart-type" aria-label="Change chart type for Average Feedback Score"><option value="bar">Bar</option><option value="hbar">Horizontal Bar</option><option value="line" selected="">Line</option><option value="area">Area</option><option value="stacked">Stacked Bar</option><option value="pie">Pie</option><option value="donut">Donut</option></select></label><button type="button" class="ai-chart-expand">⛶ Expand</button></div></div><div class="ai-chart-wrap"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 288" width="100%" height="100%" preserveAspectRatio="none" style="display:block;touch-action:manipulation;font-family:Poppins,Arial,sans-serif"><rect x="0" y="0" width="320" height="288" rx="12" fill="#fffdf8"></rect><line x1="46" y1="236" x2="302" y2="236" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="240" text-anchor="end" font-size="9" fill="#777066">0</text><line x1="46" y1="181.5" x2="302" y2="181.5" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="185.5" text-anchor="end" font-size="9" fill="#777066">4.08</text><line x1="46" y1="127" x2="302" y2="127" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="131" text-anchor="end" font-size="9" fill="#777066">8.15</text><line x1="46" y1="72.5" x2="302" y2="72.5" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="76.5" text-anchor="end" font-size="9" fill="#777066">12.23</text><line x1="46" y1="18" x2="302" y2="18" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="22" text-anchor="end" font-size="9" fill="#777066">16.3</text><polyline points="46,18 131.33333333333331,26.02453987730061 216.66666666666666,22.01226993865032 302,32.71165644171779" fill="none" stroke="#F5B301" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></polyline><circle cx="46" cy="18" r="4" fill="#F5B301" stroke="#fff" stroke-width="2"><title>Q1 · 16.3</title></circle><circle cx="131.33333333333331" cy="26.02453987730061" r="4" fill="#F5B301" stroke="#fff" stroke-width="2"><title>Q2 · 15.7</title></circle><circle cx="216.66666666666666" cy="22.01226993865032" r="4" fill="#F5B301" stroke="#fff" stroke-width="2"><title>Q3 · 16</title></circle><circle cx="302" cy="32.71165644171779" r="4" fill="#F5B301" stroke="#fff" stroke-width="2"><title>Q4 · 15.2</title></circle><text x="46" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q1</text><text x="131.33333333333331" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q2</text><text x="216.66666666666666" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q3</text><text x="302" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q4</text></svg></div><div class="ai-chart-touch-detail">Tap a bar or point to see the exact figure.</div><div class="ai-chart-foot">Each bar/point is calculated from 16 loaded rows.</div></article><article class="ai-chart-card"><div class="ai-chart-card-head"><div><h4>Attendance Rate %</h4><p class="ai-chart-sub">AI selected Line chart grouped by Quarter.</p></div><div class="ai-chart-actions"><label style="font-size:9px;color:var(--muted);font-weight:800">Chart <select class="ai-chart-type" aria-label="Change chart type for Attendance Rate %"><option value="bar">Bar</option><option value="hbar">Horizontal Bar</option><option value="line" selected="">Line</option><option value="area">Area</option><option value="stacked">Stacked Bar</option><option value="pie">Pie</option><option value="donut">Donut</option></select></label><button type="button" class="ai-chart-expand">⛶ Expand</button></div></div><div class="ai-chart-wrap"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 288" width="100%" height="100%" preserveAspectRatio="none" style="display:block;touch-action:manipulation;font-family:Poppins,Arial,sans-serif"><rect x="0" y="0" width="320" height="288" rx="12" fill="#fffdf8"></rect><line x1="46" y1="236" x2="302" y2="236" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="240" text-anchor="end" font-size="9" fill="#777066">0</text><line x1="46" y1="181.5" x2="302" y2="181.5" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="185.5" text-anchor="end" font-size="9" fill="#777066">95.42</text><line x1="46" y1="127" x2="302" y2="127" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="131" text-anchor="end" font-size="9" fill="#777066">190.85</text><line x1="46" y1="72.5" x2="302" y2="72.5" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="76.5" text-anchor="end" font-size="9" fill="#777066">286.27</text><line x1="46" y1="18" x2="302" y2="18" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="22" text-anchor="end" font-size="9" fill="#777066">381.7</text><polyline points="46,21.369662038249942 131.33333333333331,18.742467906733054 216.66666666666666,19.941839140686426 302,18" fill="none" stroke="#F5B301" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></polyline><circle cx="46" cy="21.369662038249942" r="4" fill="#F5B301" stroke="#fff" stroke-width="2"><title>Q1 · 375.8</title></circle><circle cx="131.33333333333331" cy="18.742467906733054" r="4" fill="#F5B301" stroke="#fff" stroke-width="2"><title>Q2 · 380.4</title></circle><circle cx="216.66666666666666" cy="19.941839140686426" r="4" fill="#F5B301" stroke="#fff" stroke-width="2"><title>Q3 · 378.3</title></circle><circle cx="302" cy="18" r="4" fill="#F5B301" stroke="#fff" stroke-width="2"><title>Q4 · 381.7</title></circle><text x="46" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q1</text><text x="131.33333333333331" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q2</text><text x="216.66666666666666" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q3</text><text x="302" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q4</text></svg></div><div class="ai-chart-touch-detail">Tap a bar or point to see the exact figure.</div><div class="ai-chart-foot">Each bar/point is calculated from 16 loaded rows.</div></article><article class="ai-chart-card"><div class="ai-chart-card-head"><div><h4>Pass Rate %</h4><p class="ai-chart-sub">AI selected Line chart grouped by Quarter.</p></div><div class="ai-chart-actions"><label style="font-size:9px;color:var(--muted);font-weight:800">Chart <select class="ai-chart-type" aria-label="Change chart type for Pass Rate %"><option value="bar">Bar</option><option value="hbar">Horizontal Bar</option><option value="line" selected="">Line</option><option value="area">Area</option><option value="stacked">Stacked Bar</option><option value="pie">Pie</option><option value="donut">Donut</option></select></label><button type="button" class="ai-chart-expand">⛶ Expand</button></div></div><div class="ai-chart-wrap"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 288" width="100%" height="100%" preserveAspectRatio="none" style="display:block;touch-action:manipulation;font-family:Poppins,Arial,sans-serif"><rect x="0" y="0" width="320" height="288" rx="12" fill="#fffdf8"></rect><line x1="46" y1="236" x2="302" y2="236" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="240" text-anchor="end" font-size="9" fill="#777066">0</text><line x1="46" y1="181.5" x2="302" y2="181.5" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="185.5" text-anchor="end" font-size="9" fill="#777066">90.85</text><line x1="46" y1="127" x2="302" y2="127" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="131" text-anchor="end" font-size="9" fill="#777066">181.7</text><line x1="46" y1="72.5" x2="302" y2="72.5" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="76.5" text-anchor="end" font-size="9" fill="#777066">272.55</text><line x1="46" y1="18" x2="302" y2="18" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="22" text-anchor="end" font-size="9" fill="#777066">363.4</text><polyline points="46,28.01816180517335 131.33333333333331,20.819482663731463 216.66666666666666,20.93946064942216 302,18" fill="none" stroke="#F5B301" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></polyline><circle cx="46" cy="28.01816180517335" r="4" fill="#F5B301" stroke="#fff" stroke-width="2"><title>Q1 · 346.7</title></circle><circle cx="131.33333333333331" cy="20.819482663731463" r="4" fill="#F5B301" stroke="#fff" stroke-width="2"><title>Q2 · 358.7</title></circle><circle cx="216.66666666666666" cy="20.93946064942216" r="4" fill="#F5B301" stroke="#fff" stroke-width="2"><title>Q3 · 358.5</title></circle><circle cx="302" cy="18" r="4" fill="#F5B301" stroke="#fff" stroke-width="2"><title>Q4 · 363.4</title></circle><text x="46" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q1</text><text x="131.33333333333331" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q2</text><text x="216.66666666666666" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q3</text><text x="302" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q4</text></svg></div><div class="ai-chart-touch-detail">Tap a bar or point to see the exact figure.</div><div class="ai-chart-foot">Each bar/point is calculated from 16 loaded rows.</div></article><article class="ai-chart-card"><div class="ai-chart-card-head"><div><h4>Branch Improvement Rate %</h4><p class="ai-chart-sub">AI selected Line chart grouped by Quarter.</p></div><div class="ai-chart-actions"><label style="font-size:9px;color:var(--muted);font-weight:800">Chart <select class="ai-chart-type" aria-label="Change chart type for Branch Improvement Rate %"><option value="bar">Bar</option><option value="hbar">Horizontal Bar</option><option value="line" selected="">Line</option><option value="area">Area</option><option value="stacked">Stacked Bar</option><option value="pie">Pie</option><option value="donut">Donut</option></select></label><button type="button" class="ai-chart-expand">⛶ Expand</button></div></div><div class="ai-chart-wrap"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 288" width="100%" height="100%" preserveAspectRatio="none" style="display:block;touch-action:manipulation;font-family:Poppins,Arial,sans-serif"><rect x="0" y="0" width="320" height="288" rx="12" fill="#fffdf8"></rect><line x1="46" y1="236" x2="302" y2="236" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="240" text-anchor="end" font-size="9" fill="#777066">0</text><line x1="46" y1="181.5" x2="302" y2="181.5" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="185.5" text-anchor="end" font-size="9" fill="#777066">75.75</text><line x1="46" y1="127" x2="302" y2="127" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="131" text-anchor="end" font-size="9" fill="#777066">151.5</text><line x1="46" y1="72.5" x2="302" y2="72.5" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="76.5" text-anchor="end" font-size="9" fill="#777066">227.25</text><line x1="46" y1="18" x2="302" y2="18" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="22" text-anchor="end" font-size="9" fill="#777066">303</text><polyline points="46,18.431683168316795 131.33333333333331,18 216.66666666666666,24.403300330032977 302,36.49042904290428" fill="none" stroke="#F5B301" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></polyline><circle cx="46" cy="18.431683168316795" r="4" fill="#F5B301" stroke="#fff" stroke-width="2"><title>Q1 · 302.4</title></circle><circle cx="131.33333333333331" cy="18" r="4" fill="#F5B301" stroke="#fff" stroke-width="2"><title>Q2 · 303</title></circle><circle cx="216.66666666666666" cy="24.403300330032977" r="4" fill="#F5B301" stroke="#fff" stroke-width="2"><title>Q3 · 294.1</title></circle><circle cx="302" cy="36.49042904290428" r="4" fill="#F5B301" stroke="#fff" stroke-width="2"><title>Q4 · 277.3</title></circle><text x="46" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q1</text><text x="131.33333333333331" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q2</text><text x="216.66666666666666" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q3</text><text x="302" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q4</text></svg></div><div class="ai-chart-touch-detail">Tap a bar or point to see the exact figure.</div><div class="ai-chart-foot">Each bar/point is calculated from 16 loaded rows.</div></article></div></section>
+      <section class="ai-dashboard-charts" id="aiDashboardCharts" aria-label="AI generated charts"><div class="ai-dashboard-head"><div><h3 style="margin:0;font-size:16px">AI-generated key charts</h3><p id="aiDashboardSub" style="margin:4px 0 12px;color:var(--muted);font-size:11px">AI automatically created 4 key charts from the loaded data. These charts are independent of the manual parameter selector below.</p></div></div><div class="ai-chart-grid" id="aiChartGrid"><article class="ai-chart-card"><div class="ai-chart-card-head"><div><h4>Average Feedback Score</h4><p class="ai-chart-sub">AI selected Line chart grouped by Quarter.</p></div><div class="ai-chart-actions"><label style="font-size:9px;color:var(--muted);font-weight:800">Chart <select class="ai-chart-type" aria-label="Change chart type for Average Feedback Score"><option value="bar">Bar</option><option value="hbar">Horizontal Bar</option><option value="line" selected="">Line</option><option value="area">Area</option><option value="stacked">Stacked Bar</option><option value="pie">Pie</option><option value="donut">Donut</option></select></label><button type="button" class="ai-chart-expand">⛶ Expand</button></div></div><div class="ai-chart-wrap"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 288" width="100%" height="100%" preserveAspectRatio="none" style="display:block;touch-action:manipulation;font-family:Poppins,Arial,sans-serif"><rect x="0" y="0" width="320" height="288" rx="12" fill="#fffdf8"></rect><line x1="46" y1="236" x2="302" y2="236" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="240" text-anchor="end" font-size="9" fill="#777066">0</text><line x1="46" y1="181.5" x2="302" y2="181.5" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="185.5" text-anchor="end" font-size="9" fill="#777066">4.08</text><line x1="46" y1="127" x2="302" y2="127" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="131" text-anchor="end" font-size="9" fill="#777066">8.15</text><line x1="46" y1="72.5" x2="302" y2="72.5" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="76.5" text-anchor="end" font-size="9" fill="#777066">12.23</text><line x1="46" y1="18" x2="302" y2="18" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="22" text-anchor="end" font-size="9" fill="#777066">16.3</text><polyline points="46,18 131.33333333333331,26.02453987730061 216.66666666666666,22.01226993865032 302,32.71165644171779" fill="none" stroke="#C9A227" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></polyline><circle cx="46" cy="18" r="4" fill="#C9A227" stroke="#fff" stroke-width="2"><title>Q1 · 16.3</title></circle><circle cx="131.33333333333331" cy="26.02453987730061" r="4" fill="#C9A227" stroke="#fff" stroke-width="2"><title>Q2 · 15.7</title></circle><circle cx="216.66666666666666" cy="22.01226993865032" r="4" fill="#C9A227" stroke="#fff" stroke-width="2"><title>Q3 · 16</title></circle><circle cx="302" cy="32.71165644171779" r="4" fill="#C9A227" stroke="#fff" stroke-width="2"><title>Q4 · 15.2</title></circle><text x="46" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q1</text><text x="131.33333333333331" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q2</text><text x="216.66666666666666" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q3</text><text x="302" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q4</text></svg></div><div class="ai-chart-touch-detail">Tap a bar or point to see the exact figure.</div><div class="ai-chart-foot">Each bar/point is calculated from 16 loaded rows.</div></article><article class="ai-chart-card"><div class="ai-chart-card-head"><div><h4>Attendance Rate %</h4><p class="ai-chart-sub">AI selected Line chart grouped by Quarter.</p></div><div class="ai-chart-actions"><label style="font-size:9px;color:var(--muted);font-weight:800">Chart <select class="ai-chart-type" aria-label="Change chart type for Attendance Rate %"><option value="bar">Bar</option><option value="hbar">Horizontal Bar</option><option value="line" selected="">Line</option><option value="area">Area</option><option value="stacked">Stacked Bar</option><option value="pie">Pie</option><option value="donut">Donut</option></select></label><button type="button" class="ai-chart-expand">⛶ Expand</button></div></div><div class="ai-chart-wrap"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 288" width="100%" height="100%" preserveAspectRatio="none" style="display:block;touch-action:manipulation;font-family:Poppins,Arial,sans-serif"><rect x="0" y="0" width="320" height="288" rx="12" fill="#fffdf8"></rect><line x1="46" y1="236" x2="302" y2="236" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="240" text-anchor="end" font-size="9" fill="#777066">0</text><line x1="46" y1="181.5" x2="302" y2="181.5" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="185.5" text-anchor="end" font-size="9" fill="#777066">95.42</text><line x1="46" y1="127" x2="302" y2="127" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="131" text-anchor="end" font-size="9" fill="#777066">190.85</text><line x1="46" y1="72.5" x2="302" y2="72.5" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="76.5" text-anchor="end" font-size="9" fill="#777066">286.27</text><line x1="46" y1="18" x2="302" y2="18" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="22" text-anchor="end" font-size="9" fill="#777066">381.7</text><polyline points="46,21.369662038249942 131.33333333333331,18.742467906733054 216.66666666666666,19.941839140686426 302,18" fill="none" stroke="#C9A227" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></polyline><circle cx="46" cy="21.369662038249942" r="4" fill="#C9A227" stroke="#fff" stroke-width="2"><title>Q1 · 375.8</title></circle><circle cx="131.33333333333331" cy="18.742467906733054" r="4" fill="#C9A227" stroke="#fff" stroke-width="2"><title>Q2 · 380.4</title></circle><circle cx="216.66666666666666" cy="19.941839140686426" r="4" fill="#C9A227" stroke="#fff" stroke-width="2"><title>Q3 · 378.3</title></circle><circle cx="302" cy="18" r="4" fill="#C9A227" stroke="#fff" stroke-width="2"><title>Q4 · 381.7</title></circle><text x="46" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q1</text><text x="131.33333333333331" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q2</text><text x="216.66666666666666" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q3</text><text x="302" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q4</text></svg></div><div class="ai-chart-touch-detail">Tap a bar or point to see the exact figure.</div><div class="ai-chart-foot">Each bar/point is calculated from 16 loaded rows.</div></article><article class="ai-chart-card"><div class="ai-chart-card-head"><div><h4>Pass Rate %</h4><p class="ai-chart-sub">AI selected Line chart grouped by Quarter.</p></div><div class="ai-chart-actions"><label style="font-size:9px;color:var(--muted);font-weight:800">Chart <select class="ai-chart-type" aria-label="Change chart type for Pass Rate %"><option value="bar">Bar</option><option value="hbar">Horizontal Bar</option><option value="line" selected="">Line</option><option value="area">Area</option><option value="stacked">Stacked Bar</option><option value="pie">Pie</option><option value="donut">Donut</option></select></label><button type="button" class="ai-chart-expand">⛶ Expand</button></div></div><div class="ai-chart-wrap"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 288" width="100%" height="100%" preserveAspectRatio="none" style="display:block;touch-action:manipulation;font-family:Poppins,Arial,sans-serif"><rect x="0" y="0" width="320" height="288" rx="12" fill="#fffdf8"></rect><line x1="46" y1="236" x2="302" y2="236" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="240" text-anchor="end" font-size="9" fill="#777066">0</text><line x1="46" y1="181.5" x2="302" y2="181.5" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="185.5" text-anchor="end" font-size="9" fill="#777066">90.85</text><line x1="46" y1="127" x2="302" y2="127" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="131" text-anchor="end" font-size="9" fill="#777066">181.7</text><line x1="46" y1="72.5" x2="302" y2="72.5" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="76.5" text-anchor="end" font-size="9" fill="#777066">272.55</text><line x1="46" y1="18" x2="302" y2="18" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="22" text-anchor="end" font-size="9" fill="#777066">363.4</text><polyline points="46,28.01816180517335 131.33333333333331,20.819482663731463 216.66666666666666,20.93946064942216 302,18" fill="none" stroke="#C9A227" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></polyline><circle cx="46" cy="28.01816180517335" r="4" fill="#C9A227" stroke="#fff" stroke-width="2"><title>Q1 · 346.7</title></circle><circle cx="131.33333333333331" cy="20.819482663731463" r="4" fill="#C9A227" stroke="#fff" stroke-width="2"><title>Q2 · 358.7</title></circle><circle cx="216.66666666666666" cy="20.93946064942216" r="4" fill="#C9A227" stroke="#fff" stroke-width="2"><title>Q3 · 358.5</title></circle><circle cx="302" cy="18" r="4" fill="#C9A227" stroke="#fff" stroke-width="2"><title>Q4 · 363.4</title></circle><text x="46" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q1</text><text x="131.33333333333331" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q2</text><text x="216.66666666666666" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q3</text><text x="302" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q4</text></svg></div><div class="ai-chart-touch-detail">Tap a bar or point to see the exact figure.</div><div class="ai-chart-foot">Each bar/point is calculated from 16 loaded rows.</div></article><article class="ai-chart-card"><div class="ai-chart-card-head"><div><h4>Branch Improvement Rate %</h4><p class="ai-chart-sub">AI selected Line chart grouped by Quarter.</p></div><div class="ai-chart-actions"><label style="font-size:9px;color:var(--muted);font-weight:800">Chart <select class="ai-chart-type" aria-label="Change chart type for Branch Improvement Rate %"><option value="bar">Bar</option><option value="hbar">Horizontal Bar</option><option value="line" selected="">Line</option><option value="area">Area</option><option value="stacked">Stacked Bar</option><option value="pie">Pie</option><option value="donut">Donut</option></select></label><button type="button" class="ai-chart-expand">⛶ Expand</button></div></div><div class="ai-chart-wrap"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 288" width="100%" height="100%" preserveAspectRatio="none" style="display:block;touch-action:manipulation;font-family:Poppins,Arial,sans-serif"><rect x="0" y="0" width="320" height="288" rx="12" fill="#fffdf8"></rect><line x1="46" y1="236" x2="302" y2="236" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="240" text-anchor="end" font-size="9" fill="#777066">0</text><line x1="46" y1="181.5" x2="302" y2="181.5" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="185.5" text-anchor="end" font-size="9" fill="#777066">75.75</text><line x1="46" y1="127" x2="302" y2="127" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="131" text-anchor="end" font-size="9" fill="#777066">151.5</text><line x1="46" y1="72.5" x2="302" y2="72.5" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="76.5" text-anchor="end" font-size="9" fill="#777066">227.25</text><line x1="46" y1="18" x2="302" y2="18" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="22" text-anchor="end" font-size="9" fill="#777066">303</text><polyline points="46,18.431683168316795 131.33333333333331,18 216.66666666666666,24.403300330032977 302,36.49042904290428" fill="none" stroke="#C9A227" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></polyline><circle cx="46" cy="18.431683168316795" r="4" fill="#C9A227" stroke="#fff" stroke-width="2"><title>Q1 · 302.4</title></circle><circle cx="131.33333333333331" cy="18" r="4" fill="#C9A227" stroke="#fff" stroke-width="2"><title>Q2 · 303</title></circle><circle cx="216.66666666666666" cy="24.403300330032977" r="4" fill="#C9A227" stroke="#fff" stroke-width="2"><title>Q3 · 294.1</title></circle><circle cx="302" cy="36.49042904290428" r="4" fill="#C9A227" stroke="#fff" stroke-width="2"><title>Q4 · 277.3</title></circle><text x="46" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q1</text><text x="131.33333333333331" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q2</text><text x="216.66666666666666" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q3</text><text x="302" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q4</text></svg></div><div class="ai-chart-touch-detail">Tap a bar or point to see the exact figure.</div><div class="ai-chart-foot">Each bar/point is calculated from 16 loaded rows.</div></article></div></section>
 
       <div class="smart-chart-shell" id="smartChartsRoot">
         <!-- v1.11.14 — chart intelligence: max 4 data types, latest-period composition, touch-safe details -->
@@ -4092,7 +4118,7 @@ body{
             <div><h3 id="smartChartTitle">Select a data type</h3><div id="smartChartSubtitle" class="smart-subtitle">Upload or select a data set with numeric measures.</div></div>
             <div style="display:flex;gap:8px;margin-left:auto"><button class="btn sm no-print smart-expand-btn" id="smartExpandBtn" type="button">⛶ Expand</button><button class="btn sm no-print" id="smartResetBtn" type="button">Reset</button></div>
           </div>
-          <div id="smartChartCanvas" class="smart-svg-wrap" aria-live="polite"><div class="id-chart-visual"><svg viewBox="0 0 760 390" width="100%" height="100%" style="touch-action:manipulation;display:block;font-family:Poppins,sans-serif"><defs><linearGradient id="idChartFade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff8df"></stop><stop offset="1" stop-color="#fff" stop-opacity="0"></stop></linearGradient><filter id="idChartShadow" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="4" stdDeviation="5" flood-opacity=".12"></feDropShadow></filter></defs><rect x="68" y="28" width="664" height="298" rx="16" fill="url(#idChartFade)"></rect><line x1="68" y1="326" x2="732" y2="326" stroke="#eadfce" stroke-width="1" stroke-dasharray="4 6"></line><text x="56" y="330" text-anchor="end" font-size="11" font-weight="600" fill="#827b72">0</text><line x1="68" y1="251.5" x2="732" y2="251.5" stroke="#eadfce" stroke-width="1" stroke-dasharray="4 6"></line><text x="56" y="255.5" text-anchor="end" font-size="11" font-weight="600" fill="#827b72">32</text><line x1="68" y1="177" x2="732" y2="177" stroke="#eadfce" stroke-width="1" stroke-dasharray="4 6"></line><text x="56" y="181" text-anchor="end" font-size="11" font-weight="600" fill="#827b72">64</text><line x1="68" y1="102.5" x2="732" y2="102.5" stroke="#eadfce" stroke-width="1" stroke-dasharray="4 6"></line><text x="56" y="106.5" text-anchor="end" font-size="11" font-weight="600" fill="#827b72">95</text><line x1="68" y1="28" x2="732" y2="28" stroke="#eadfce" stroke-width="1" stroke-dasharray="4 6"></line><text x="56" y="32" text-anchor="end" font-size="11" font-weight="600" fill="#827b72">127</text><rect x="174.24" y="28" width="446.52000000000004" height="298" rx="8" fill="#F5B301" filter="url(#idChartShadow)" data-fallback="0:0"><title>Training Programs · Overall · 127</title></rect><text x="398" y="40" text-anchor="middle" font-size="10" font-weight="900" fill="#333">127</text><text x="400" y="365" text-anchor="middle" font-size="10" font-weight="700" fill="#777">Overall</text></svg></div><div class="id-chart-note">Tap a bar, point or segment for the exact figure · 16 loaded rows</div></div>
+          <div id="smartChartCanvas" class="smart-svg-wrap" aria-live="polite"><div class="id-chart-visual"><svg viewBox="0 0 760 390" width="100%" height="100%" style="touch-action:manipulation;display:block;font-family:Poppins,sans-serif"><defs><linearGradient id="idChartFade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff8df"></stop><stop offset="1" stop-color="#fff" stop-opacity="0"></stop></linearGradient><filter id="idChartShadow" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="4" stdDeviation="5" flood-opacity=".12"></feDropShadow></filter></defs><rect x="68" y="28" width="664" height="298" rx="16" fill="url(#idChartFade)"></rect><line x1="68" y1="326" x2="732" y2="326" stroke="#eadfce" stroke-width="1" stroke-dasharray="4 6"></line><text x="56" y="330" text-anchor="end" font-size="11" font-weight="600" fill="#827b72">0</text><line x1="68" y1="251.5" x2="732" y2="251.5" stroke="#eadfce" stroke-width="1" stroke-dasharray="4 6"></line><text x="56" y="255.5" text-anchor="end" font-size="11" font-weight="600" fill="#827b72">32</text><line x1="68" y1="177" x2="732" y2="177" stroke="#eadfce" stroke-width="1" stroke-dasharray="4 6"></line><text x="56" y="181" text-anchor="end" font-size="11" font-weight="600" fill="#827b72">64</text><line x1="68" y1="102.5" x2="732" y2="102.5" stroke="#eadfce" stroke-width="1" stroke-dasharray="4 6"></line><text x="56" y="106.5" text-anchor="end" font-size="11" font-weight="600" fill="#827b72">95</text><line x1="68" y1="28" x2="732" y2="28" stroke="#eadfce" stroke-width="1" stroke-dasharray="4 6"></line><text x="56" y="32" text-anchor="end" font-size="11" font-weight="600" fill="#827b72">127</text><rect x="174.24" y="28" width="446.52000000000004" height="298" rx="8" fill="#C9A227" filter="url(#idChartShadow)" data-fallback="0:0"><title>Training Programs · Overall · 127</title></rect><text x="398" y="40" text-anchor="middle" font-size="10" font-weight="900" fill="#333">127</text><text x="400" y="365" text-anchor="middle" font-size="10" font-weight="700" fill="#777">Overall</text></svg></div><div class="id-chart-note">Tap a bar, point or segment for the exact figure · 16 loaded rows</div></div>
           <div id="smartChartDetail" class="smart-detail"></div>
         </div>
       </div>
@@ -4453,7 +4479,7 @@ body{
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v26.4.2',
+  VERSION: 'v27.0.1',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -4475,7 +4501,7 @@ const CONFIG = {
   DATE_DAY_FIRST: true,       // ambiguous 03/04/2024 reads as 3 April (set false for US files)
 
   // 8-colour palette for multi-series charts. First two are the brand colours.
-  PALETTE: ['#F5B301','#E2582B','#2E86AB','#3FB07A','#8E5BC9','#D9455F','#0E9AA7','#B0793E']
+  PALETTE: ['#C9A227','#8B2F3D','#2E86AB','#3FB07A','#8E5BC9','#D9455F','#0E9AA7','#B0793E']
 };
 
 /* ---------------------------------------------------------------------
@@ -4686,7 +4712,7 @@ window.__instantDashUnderstand = (function(){
       if(!b){
         b = document.createElement('div');
         b.id = 'v24CalcIntegrityBanner';
-        b.style.cssText = 'position:fixed;left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);z-index:99997;padding:10px 14px;border-radius:10px;background:#E2582B;color:#fff;font:700 12px Poppins,sans-serif;box-shadow:0 4px 16px rgba(0,0,0,.3)';
+        b.style.cssText = 'position:fixed;left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);z-index:99997;padding:10px 14px;border-radius:10px;background:#8B2F3D;color:#fff;font:700 12px Poppins,sans-serif;box-shadow:0 4px 16px rgba(0,0,0,.3)';
         document.body.appendChild(b);
       }
       b.textContent = '⚠️ Calculation consistency check: ' + msg;
@@ -4842,7 +4868,7 @@ window.__instantDashUnderstand = (function(){
       }
     })();
     const allPass = results.every(r => r.pass);
-    console.log('%cInstantDash calculation regression suite: ' + (allPass?'ALL PASS':'FAILURES FOUND'), 'font-weight:bold;color:'+(allPass?'#2E8B57':'#E2582B'));
+    console.log('%cInstantDash calculation regression suite: ' + (allPass?'ALL PASS':'FAILURES FOUND'), 'font-weight:bold;color:'+(allPass?'#2E8B57':'#8B2F3D'));
     console.table(results);
     return {allPass, results};
   }
@@ -10856,7 +10882,7 @@ function wireRest(){
      Zero-count categories remain selectable and the dashboard highlight always
      follows the category currently displayed in Movement Details. -->
 <style id="instantdash-v163-movement-selection">
-#movementActionBar .movement-action.selected{outline:4px solid var(--accent,#f5b301)!important;outline-offset:3px!important;box-shadow:0 0 0 6px rgba(245,179,1,.18),0 14px 30px rgba(0,0,0,.22)!important;}
+#movementActionBar .movement-action.selected{outline:4px solid var(--accent,#c9a227)!important;outline-offset:3px!important;box-shadow:0 0 0 6px rgba(201,162,39,.18),0 14px 30px rgba(0,0,0,.22)!important;}
 </style>
 <script>
 (function(){
@@ -10950,7 +10976,7 @@ function wireRest(){
 </style>
 
 <style id="instantdash-v174-local-diagnosis">
-#localDiagnosisBtn{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;width:100%!important;margin:16px 0 12px!important;padding:16px 18px!important;border:3px solid #f5b301!important;border-radius:18px!important;background:linear-gradient(135deg,#ffd84d 0%,#ffad00 52%,#ff7a00 100%)!important;color:#111!important;font-size:18px!important;font-weight:1000!important;box-shadow:0 8px 26px rgba(245,179,1,.32),0 0 0 5px rgba(245,179,1,.10)!important;cursor:pointer!important;touch-action:manipulation!important;-webkit-tap-highlight-color:transparent!important;}
+#localDiagnosisBtn{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;width:100%!important;margin:16px 0 12px!important;padding:16px 18px!important;border:3px solid #c9a227!important;border-radius:18px!important;background:linear-gradient(135deg,#ffd84d 0%,#ffad00 52%,#ff7a00 100%)!important;color:#111!important;font-size:18px!important;font-weight:1000!important;box-shadow:0 8px 26px rgba(201,162,39,.32),0 0 0 5px rgba(201,162,39,.10)!important;cursor:pointer!important;touch-action:manipulation!important;-webkit-tap-highlight-color:transparent!important;}
 #localDiagnosisBtn span{font-size:25px;line-height:1;margin-left:6px;}
 #localDiagnosisBtn small{display:block!important;margin-top:7px!important;font-size:11px!important;font-weight:700!important;line-height:1.35!important;letter-spacing:0!important;opacity:.82!important;}
 #localDiagnosisBtn:active{transform:scale(.985);}
@@ -11765,7 +11791,7 @@ var esc=function(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){r
    refresh), caught via the in-app error catcher. Same logic as the
    working version elsewhere, made genuinely local to this scope. */
 var niceName=function(s){return String(s||'').replace(/[_\-]+/g,' ').replace(/\s+/g,' ').trim().replace(/\b\w/g,function(c){return c.toUpperCase()})};
-var palette=['#F5B301','#E2582B','#2E86AB','#3FB07A','#8E5BC9','#D9455F','#0E9AA7','#B0793E'];
+var palette=['#C9A227','#8B2F3D','#2E86AB','#3FB07A','#8E5BC9','#D9455F','#0E9AA7','#B0793E'];
 function num(v){
  if(typeof v==='number'&&isFinite(v))return v;
  if(v instanceof Date)return NaN;
@@ -12398,7 +12424,7 @@ function drawCartesian(wrap, d, type){
     var maxV=Math.max.apply(null,allVals), minV=Math.min.apply(null,allVals);
     if(maxV===minV) maxV=minV+1;
     var range=maxV-minV;
-    var pal=['#F5B301','#E2582B','#2E86AB','#3FB07A','#8E5BC9','#D9455F'];
+    var pal=['#C9A227','#8B2F3D','#2E86AB','#3FB07A','#8E5BC9','#D9455F'];
     var svg=['<svg viewBox="0 0 '+W+' '+H+'" width="100%" height="100%" style="touch-action:manipulation;display:block;font-family:Poppins,sans-serif"><defs><linearGradient id="idChartFade2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff8df"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient><filter id="idChartShadow2" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="4" stdDeviation="5" flood-opacity=".12"/></filter></defs><rect x="'+padL+'" y="'+padT+'" width="'+plotW+'" height="'+plotH+'" rx="16" fill="url(#idChartFade2)"/>'];
     for(var g=0; g<=4; g++){
       var gy=padT+plotH-(g/4)*plotH, gv=minV+(g/4)*range;
@@ -12469,7 +12495,7 @@ function drawPie(wrap, d, isDonut){
     var vals=s.values.map(function(v){ return Math.max(0, Number(v)||0); });
     var total=vals.reduce(function(a,b){return a+b;},0);
     if(!total){ wrap.innerHTML='<div style="padding:30px;color:var(--muted)">No data to chart.</div>'; return; }
-    var pal=['#F5B301','#E2582B','#2E86AB','#3FB07A','#8E5BC9','#D9455F','#0E9AA7','#B0793E'];
+    var pal=['#C9A227','#8B2F3D','#2E86AB','#3FB07A','#8E5BC9','#D9455F','#0E9AA7','#B0793E'];
     var W=760, H=390, cx=W/2, cy=H/2-10, r=Math.min(W,H)/2-60, innerR=isDonut? r*0.55 : 0;
     var angle=-Math.PI/2;
     var svg=['<svg viewBox="0 0 '+W+' '+H+'" width="100%" height="100%" style="touch-action:manipulation;display:block;font-family:Poppins,sans-serif">'];
@@ -12819,7 +12845,7 @@ function drawNativeAIChart(s,canvas){
  var w=Math.max(280,Math.floor(wrap.clientWidth||wrap.getBoundingClientRect().width||600));
  var h=Math.max(220,Math.floor(wrap.clientHeight||wrap.getBoundingClientRect().height||260));
  var type=s.type, pie=(type==='pie'||type==='donut'), line=(type==='line'||type==='area'), horiz=(type==='hbar');
- var colors=(typeof palette!=='undefined' && Array.isArray(palette) && palette.length)?palette:['#F5B301','#E2582B','#2E86AB','#3FB07A','#8E5BC9','#D9455F','#0E9AA7','#B0793E'];
+ var colors=(typeof palette!=='undefined' && Array.isArray(palette) && palette.length)?palette:['#C9A227','#8B2F3D','#2E86AB','#3FB07A','#8E5BC9','#D9455F','#0E9AA7','#B0793E'];
  var max=Math.max.apply(null,vals.map(function(v){return Math.abs(v)})); if(!isFinite(max)||max<=0)max=1;
  var escA=function(x){return String(x==null?'':x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');};
  var short=function(x,n){x=String(x==null?'':x);return x.length>n?x.slice(0,n-1)+'…':x;};
@@ -12958,7 +12984,7 @@ function openExpand(s){var ov=$('aiChartOverlay'),cv=$('aiOverlayCanvas');if(!ov
    or redrawAICard, so it can't destabilise the four cards that already work. */
 function drawCombinedChart(specs, host, type){
   type = (type==='bar' || type==='area') ? type : 'line';
-  var palette=['#F5B301','#E2582B','#2E86AB','#3FB07A','#8E5BC9','#D9455F','#0E9AA7','#B0793E'];
+  var palette=['#C9A227','#8B2F3D','#2E86AB','#3FB07A','#8E5BC9','#D9455F','#0E9AA7','#B0793E'];
   var usable = (specs||[]).filter(function(s){ return s && s.data && Array.isArray(s.data.labels) && s.data.labels.length>1; });
   if(usable.length<2){
     host.innerHTML='<div class="ai-empty" style="margin:8px 0 12px">Combine needs at least 2 charts with more than one group each — not enough comparable data here yet.</div>';
@@ -13624,7 +13650,7 @@ function renderFallback(){
  }
  max=max||1;
  var total=series[0]?series[0].values.reduce(function(a,b){return a+b},0):0;
- var colors=['#F5B301','#E2582B','#2E86AB','#3FB07A','#8E5BC9','#D95F8A'];
+ var colors=['#C9A227','#8B2F3D','#2E86AB','#3FB07A','#8E5BC9','#D95F8A'];
  var w=760,h=390,left=68,right=28,bottom=64,top=28,plotW=w-left-right,plotH=h-top-bottom;
  function compact(v){
    var raw=Number(v)||0,n=Math.abs(raw),sign=raw<0?'-':'';
@@ -13752,7 +13778,7 @@ window.__instantDashParameterFallback={
 #smartChartCanvas{min-height:360px;overflow:hidden;position:relative;}
 #smartChartCanvas select{touch-action:manipulation;}
 
-.id-chart-empty{height:100%;min-height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:28px;border-radius:15px;background:radial-gradient(circle at 50% 35%,rgba(245,179,1,.14),transparent 42%),#fffdf8;color:#24201b}.id-chart-empty-icon{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;background:#fff1c2;color:#b66b00;font-size:28px;margin-bottom:10px}.id-chart-empty b{font-size:16px}.id-chart-empty span{max-width:360px;margin-top:7px;color:#777066;font-size:11px;line-height:1.45}
+.id-chart-empty{height:100%;min-height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:28px;border-radius:15px;background:radial-gradient(circle at 50% 35%,rgba(201,162,39,.14),transparent 42%),#fffdf8;color:#24201b}.id-chart-empty-icon{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;background:#fff1c2;color:#b66b00;font-size:28px;margin-bottom:10px}.id-chart-empty b{font-size:16px}.id-chart-empty span{max-width:360px;margin-top:7px;color:#777066;font-size:11px;line-height:1.45}
 </style>
 <script id="instantdash-v11320-final-guard">
 (function(){
