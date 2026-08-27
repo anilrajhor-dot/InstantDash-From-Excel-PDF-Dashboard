@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.1.3","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.2.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -472,6 +472,12 @@ main{max-width:1360px;margin:0 auto;padding:24px}
 .v26-map-controls{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:6px}
 .v26-map-controls>select{width:100%;font-size:12.5px;padding:8px 9px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);min-height:38px;box-sizing:border-box}
 .v26-map-manual{width:100%;font-size:12.5px;padding:8px 9px;border-radius:8px;border:1px solid var(--accent);background:var(--card);color:var(--text);min-height:36px;box-sizing:border-box}
+.v26-map-custom-divider{margin-top:18px;padding-top:16px;border-top:1px solid var(--border)}
+.v26-map-custom-title{font-size:13px;font-weight:800;margin-bottom:4px}
+.v26-map-custom-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;margin-bottom:8px;border-radius:10px;background:var(--card-2);border:1px solid var(--border)}
+.v26-map-custom-info{display:flex;flex-direction:column;gap:2px;min-width:0}
+.v26-map-custom-info>b{font-size:12.5px}
+.v26-map-custom-info>span{font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .v26-map-actions{display:flex;gap:10px;margin-top:16px;padding-top:14px;border-top:1px solid var(--border)}
 @media(max-width:480px){
   .v26-map-row{flex-direction:column;align-items:stretch;gap:6px}
@@ -1670,7 +1676,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v27.1.3">
+<meta name="instantdash-build" content="v27.2.0">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2544,7 +2550,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v27.1.3';
+      s.textContent='v27.2.0';
       b.appendChild(s);
     }
   }
@@ -2604,10 +2610,10 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v27.1.3</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v27.2.0</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.1.3</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.2.0</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="topClearDataBtn" type="button" aria-label="Clear all loaded data" style="color:var(--warn)">🗑 Clear Data</button>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -3982,11 +3988,19 @@ body{
             <button type="button" id="v26MapSave" class="v26-compare-btn">Save Mapping</button>
             <button type="button" id="v26MapReset" class="v26-task-remove">Reset to Auto-Detect</button>
           </div>
+          <div class="v26-map-custom-divider">
+            <div class="v26-map-custom-title">Your own fields</div>
+            <div class="v26-map-intro">Add any field specific to your data — not tied to Credit View's built-in ratios, just tracked and shown with its current value.</div>
+          </div>
+          <div id="v26MapCustomFields"></div>
+          <button type="button" id="v26MapAddCustom" class="v26-compare-btn">+ Add Custom Field</button>
         </div>
       </div>
       <script id="instantdash-v27-colmap-wire">
       (function(){
         function esc7a(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+        window.__instantDashCustomFields = window.__instantDashCustomFields || [];
 
         window.__instantDashColumnMap = window.__instantDashColumnMap || {};
 
@@ -4024,8 +4038,64 @@ body{
           });
         }
 
+        /* v27.2.0 — a custom field's "live value" reads the current
+           row's value directly, using the same latest-row logic as
+           Credit View, so it stays consistent with how every other
+           figure in the app is derived — not a separate calculation. */
+        function customFieldValue(columnName){
+          try{
+            var app = window.APP || {};
+            var rows = app.filtered || app.rows || [];
+            if(!rows.length) return null;
+            var latest = (typeof findLatestRowIndex==='function') ? findLatestRowIndex(rows, app.columns||[]) : {index: rows.length-1};
+            var v = rows[latest.index] ? rows[latest.index][columnName] : null;
+            return (typeof v==='number' && isFinite(v)) ? v : v;
+          }catch(_){ return null; }
+        }
+
+        function renderCustomFields(){
+          var body = document.getElementById('v26MapCustomFields');
+          if(!body) return;
+          var fields = window.__instantDashCustomFields || [];
+          if(!fields.length){
+            body.innerHTML = '<div class="v26-map-intro" style="font-style:italic">No custom fields added yet.</div>';
+            return;
+          }
+          body.innerHTML = fields.map(function(f, i){
+            var val = customFieldValue(f.column);
+            var displayVal = (typeof val==='number') ? val.toLocaleString('en-IN') : (val==null ? '\u2014' : String(val));
+            return '<div class="v26-map-custom-row">'+
+              '<div class="v26-map-custom-info"><b>'+esc7a(f.label)+'</b><span>'+esc7a(f.column)+' \u2192 '+esc7a(displayVal)+'</span></div>'+
+              '<button type="button" class="v26-task-remove" data-remove-custom="'+i+'">Remove</button>'+
+            '</div>';
+          }).join('');
+          body.querySelectorAll('[data-remove-custom]').forEach(function(btn){
+            btn.addEventListener('click', function(){
+              var idx = Number(btn.dataset.removeCustom);
+              window.__instantDashCustomFields.splice(idx, 1);
+              renderCustomFields();
+            });
+          });
+        }
+
+        function addCustomField(){
+          var label = window.prompt('Name this field (e.g. "Sanctioned Limit", "NPA Amount"):');
+          if(!label || !label.trim()) return;
+          var measures = measureColumns();
+          if(!measures.length){ window.alert('No numeric columns found in the current data.'); return; }
+          var columnList = measures.map(function(c, i){ return (i+1)+'. '+c.name; }).join('\n');
+          var choice = window.prompt('Which column should "'+label.trim()+'" track?\n\n'+columnList+'\n\nType the number:');
+          var idx = Number(choice) - 1;
+          if(!choice || !(idx>=0 && idx<measures.length)){ return; }
+          window.__instantDashCustomFields = window.__instantDashCustomFields || [];
+          window.__instantDashCustomFields.push({ label: label.trim(), column: measures[idx].name });
+          renderCustomFields();
+          if(typeof toast==='function') toast('Custom field added.');
+        }
+
         function openPanel(){
           renderFields();
+          renderCustomFields();
           var panel = document.getElementById('v26MapPanel');
           if(panel){ panel.classList.add('on'); panel.setAttribute('aria-hidden','false'); }
         }
@@ -4078,6 +4148,12 @@ body{
               renderFields();
               if(typeof toast==='function') toast('Reset to automatic detection.');
             });
+          }
+
+          var addCustomBtn = document.getElementById('v26MapAddCustom');
+          if(addCustomBtn && !addCustomBtn.dataset.wired271){
+            addCustomBtn.dataset.wired271='1';
+            addCustomBtn.addEventListener('click', addCustomField);
           }
         }
 
@@ -4615,7 +4691,7 @@ body{
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v27.1.3',
+  VERSION: 'v27.2.0',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
