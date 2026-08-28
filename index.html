@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.3.1","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.3.2","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -1679,7 +1679,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v27.3.1">
+<meta name="instantdash-build" content="v27.3.2">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2553,7 +2553,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v27.3.1';
+      s.textContent='v27.3.2';
       b.appendChild(s);
     }
   }
@@ -2613,10 +2613,10 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v27.3.1</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v27.3.2</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.3.1</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.3.2</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="topClearDataBtn" type="button" aria-label="Clear all loaded data" style="color:var(--warn)">🗑 Clear Data</button>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -2673,7 +2673,7 @@ body{
         <div><div class="v26-why-kicker">Paste My Data</div><h3 id="v27PasteTitle">Paste any KPI table directly</h3></div>
         <button type="button" class="v26-why-close" id="v27PasteClose" aria-label="Close">✕</button>
       </div>
-      <div class="v26-map-intro">Copy a table from Excel, Google Sheets, or anywhere else and paste it below. First row should be your column headers. Works with tab or comma-separated data.</div>
+      <div class="v26-map-intro">Copy a table from Excel, Google Sheets, or anywhere else. <b>Tap inside the box below first</b>, then paste. First row should be your column headers. Works with tab or comma-separated data.</div>
       <textarea id="v27PasteArea" class="v27-paste-textarea" placeholder="Fiscal Year&#9;Revenue&#9;PAT&#10;FY 2025-26&#9;5600&#9;680&#10;FY 2024-25&#9;4850&#9;580" spellcheck="false"></textarea>
       <div id="v27PasteError" class="v27-paste-error" hidden></div>
       <div class="v26-map-actions">
@@ -4731,7 +4731,7 @@ body{
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v27.3.1',
+  VERSION: 'v27.3.2',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -5315,7 +5315,13 @@ function wireIngest(){
       pasteModal.classList.add('on');
       pasteModal.setAttribute('aria-hidden','false');
       const errEl = $('v27PasteError'); if(errEl) errEl.hidden = true;
-      setTimeout(() => { const area = $('v27PasteArea'); if(area) area.focus(); }, 100);
+      /* v27.3.2 — deliberately NOT auto-focusing the textarea here.
+         Programmatic .focus() inside a setTimeout breaks the direct
+         user-gesture chain iOS Safari requires for reliable keyboard/
+         paste activation — a delayed, JS-triggered focus can leave the
+         textarea in a state where paste doesn't work correctly. A
+         genuine tap by the person is a clean gesture that works
+         reliably everywhere, so the hint text asks for that instead. */
     };
     const closePasteModal = () => {
       pasteModal.classList.remove('on');
