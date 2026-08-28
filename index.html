@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.2.1","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.3.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -472,6 +472,8 @@ main{max-width:1360px;margin:0 auto;padding:24px}
 .v26-map-controls{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:6px}
 .v26-map-controls>select{width:100%;font-size:12.5px;padding:8px 9px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);min-height:38px;box-sizing:border-box}
 .v26-map-manual{width:100%;font-size:12.5px;padding:8px 9px;border-radius:8px;border:1px solid var(--accent);background:var(--card);color:var(--text);min-height:36px;box-sizing:border-box}
+.v27-paste-textarea{width:100%;min-height:220px;font-family:ui-monospace,'SF Mono',Consolas,monospace;font-size:12px;line-height:1.6;padding:12px;border-radius:10px;border:1px solid var(--border);background:var(--card-2);color:var(--text);box-sizing:border-box;resize:vertical;white-space:pre;overflow:auto}
+.v27-paste-error{margin-top:10px;padding:9px 12px;border-radius:8px;background:color-mix(in srgb,var(--warn) 12%,var(--card));border:1px solid var(--warn);color:var(--warn);font-size:12px;font-weight:600}
 .v26-map-custom-divider{margin-top:18px;padding-top:16px;border-top:1px solid var(--border)}
 .v26-map-custom-title{font-size:13px;font-weight:800;margin-bottom:4px}
 .v26-map-custom-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;margin-bottom:8px;border-radius:10px;background:var(--card-2);border:1px solid var(--border)}
@@ -1676,7 +1678,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v27.2.1">
+<meta name="instantdash-build" content="v27.3.0">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2550,7 +2552,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v27.2.1';
+      s.textContent='v27.3.0';
       b.appendChild(s);
     }
   }
@@ -2610,10 +2612,10 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v27.2.1</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v27.3.0</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.2.1</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.3.0</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="topClearDataBtn" type="button" aria-label="Clear all loaded data" style="color:var(--warn)">🗑 Clear Data</button>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -2636,6 +2638,9 @@ body{
         <div class="hero-actions">
           <button type="button" class="btn primary hero-btn" id="browseBtn" aria-controls="fileInput">
             <span class="btn-icon">↥</span> Choose Excel / CSV / PDF
+          </button>
+          <button type="button" class="btn hero-btn" id="pasteDataBtn">
+            <span class="btn-icon">📋</span> Paste My Data
           </button>
           <div class="drop-prompt"><span>or</span> drag &amp; drop your file here</div>
         </div>
@@ -2660,6 +2665,22 @@ body{
       </div>
     </div>
   </section>
+
+  <div id="v27PasteModal" class="v26-why-overlay" aria-hidden="true">
+    <div class="v26-why-card" role="dialog" aria-modal="true" aria-labelledby="v27PasteTitle">
+      <div class="v26-why-head">
+        <div><div class="v26-why-kicker">Paste My Data</div><h3 id="v27PasteTitle">Paste any KPI table directly</h3></div>
+        <button type="button" class="v26-why-close" id="v27PasteClose" aria-label="Close">✕</button>
+      </div>
+      <div class="v26-map-intro">Copy a table from Excel, Google Sheets, or anywhere else and paste it below. First row should be your column headers. Works with tab or comma-separated data.</div>
+      <textarea id="v27PasteArea" class="v27-paste-textarea" placeholder="Fiscal Year&#9;Revenue&#9;PAT&#10;FY 2025-26&#9;5600&#9;680&#10;FY 2024-25&#9;4850&#9;580" spellcheck="false"></textarea>
+      <div id="v27PasteError" class="v27-paste-error" hidden></div>
+      <div class="v26-map-actions">
+        <button type="button" id="v27PasteBuild" class="v26-compare-btn">Build Dashboard</button>
+        <button type="button" id="v27PasteCancel" class="v26-task-remove">Cancel</button>
+      </div>
+    </div>
+  </div>
 
   <!-- ============ APP ============ -->
   <section id="app" data-v11306-auto-scrolled="1">
@@ -4709,7 +4730,7 @@ body{
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v27.2.1',
+  VERSION: 'v27.3.0',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -5286,6 +5307,30 @@ function wireIngest(){
     input.value = '';
   });
 
+  /* v27.3.0 — Paste My Data */
+  const pasteBtn = $('pasteDataBtn'), pasteModal = $('v27PasteModal');
+  if(pasteBtn && pasteModal){
+    const openPasteModal = () => {
+      pasteModal.classList.add('on');
+      pasteModal.setAttribute('aria-hidden','false');
+      const errEl = $('v27PasteError'); if(errEl) errEl.hidden = true;
+      setTimeout(() => { const area = $('v27PasteArea'); if(area) area.focus(); }, 100);
+    };
+    const closePasteModal = () => {
+      pasteModal.classList.remove('on');
+      pasteModal.setAttribute('aria-hidden','true');
+    };
+    pasteBtn.addEventListener('click', openPasteModal);
+    const closeBtn = $('v27PasteClose'), cancelBtn = $('v27PasteCancel'), buildBtn = $('v27PasteBuild');
+    if(closeBtn) closeBtn.addEventListener('click', closePasteModal);
+    if(cancelBtn) cancelBtn.addEventListener('click', closePasteModal);
+    if(buildBtn) buildBtn.addEventListener('click', () => {
+      const area = $('v27PasteArea');
+      if(area) handlePastedData(area.value);
+    });
+    pasteModal.addEventListener('click', (e) => { if(e.target===pasteModal) closePasteModal(); });
+  }
+
   ['dragenter','dragover'].forEach(ev => dz.addEventListener(ev, e => { e.preventDefault(); dz.classList.add('over'); }));
   ['dragleave','drop'].forEach(ev => dz.addEventListener(ev, e => { e.preventDefault(); dz.classList.remove('over'); }));
   dz.addEventListener('drop', e => { const f = e.dataTransfer.files[0]; if (f) handleFile(f); });
@@ -5759,6 +5804,95 @@ async function handleFile(file){
     console.error(err);
     hideLoader();
     showFatal('Something went wrong reading that file: ' + (err && err.message ? err.message : 'unknown error'));
+  }
+}
+
+/* v27.3.0 — Paste My Data: parses pasted tab/comma-separated text into a
+   grid, converts obviously-numeric and obviously-date cells, then hands
+   off to the exact same commit sequence handleFile() uses once it has a
+   workbook object — guaranteeing pasted data gets identical treatment
+   to an uploaded file (same header detection, same column profiling,
+   same dashboard build), not a separate, potentially inconsistent path. */
+function parsePastedGrid(text){
+  var lines = text.replace(/\r\n/g,'\n').split('\n').filter(function(l){ return l.trim().length>0; });
+  if(!lines.length) return null;
+  var tabCount = (lines[0].match(/\t/g)||[]).length;
+  var commaCount = (lines[0].match(/,/g)||[]).length;
+  var delim = tabCount>=commaCount ? '\t' : ',';
+  var grid = lines.map(function(line){
+    return line.split(delim).map(function(cell){
+      cell = cell.trim().replace(/^"|"$/g,'');
+      if(cell==='') return null;
+      /* Numeric-looking: strip common formatting (commas, currency
+         symbols, parens-for-negative) before testing, but keep the
+         original if it doesn't cleanly parse as a number. */
+      var cleaned = cell.replace(/[₹$,]/g,'').replace(/^\((.*)\)$/,'-$1').trim();
+      if(/^-?\d+(\.\d+)?%?$/.test(cleaned)){
+        var num = parseFloat(cleaned.replace('%',''));
+        if(isFinite(num)) return num;
+      }
+      return cell;
+    });
+  });
+  return grid;
+}
+
+async function handlePastedData(text){
+  var grid = parsePastedGrid(text);
+  var errEl = document.getElementById('v27PasteError');
+  if(!grid || grid.length<2){
+    if(errEl){ errEl.textContent = 'Paste at least a header row and one data row.'; errEl.hidden = false; }
+    return;
+  }
+  var headerLen = grid[0].length;
+  if(headerLen<2){
+    if(errEl){ errEl.textContent = 'Could not detect more than one column — check that your data is tab or comma-separated.'; errEl.hidden = false; }
+    return;
+  }
+  if(errEl) errEl.hidden = true;
+
+  try{ if(typeof window.__instantDashResetAskAIForNewFile==='function') window.__instantDashResetAskAIForNewFile(); }catch(_){}
+  var loadToken = ++APP.__loadToken;
+  window.__instantDashCurrentLoadToken = loadToken;
+  try{ if(typeof idSaveCurrentAsDepartment==='function') idSaveCurrentAsDepartment(); }catch(_){}
+  resetDataForNewFile();
+  document.getElementById('v27PasteModal').classList.remove('on');
+  document.getElementById('v27PasteModal').setAttribute('aria-hidden','true');
+  $('app').hidden = true;
+  $('emptyState').hidden = true;
+  showLoader('ANALYSING pasted data…', 'Building your dashboard locally on this device.');
+  await nextFrame();
+  if(loadToken !== APP.__loadToken) return;
+
+  try{
+    var ws = XLSX.utils.aoa_to_sheet(grid);
+    var wb = { SheetNames:['Pasted Data'], Sheets:{ 'Pasted Data': ws } };
+
+    APP.workbook = wb;
+    APP.__pdfMeta = null;
+    APP.fileName = 'Pasted data';
+    APP.sheetNames = wb.SheetNames.slice();
+    APP.activeSheet = '';
+    APP.aoa = []; APP.columns = []; APP.rows = []; APP.filtered = [];
+    APP.filters = {}; APP.search = ''; APP.sort = {col:null,dir:1}; APP.page = 0;
+    APP.excludedSummaryRows = 0;
+    try{ APP.charts.forEach(function(c){ if(c&&c.instance) c.instance.destroy(); }); }catch(_){}
+    APP.charts = []; APP.chartSeq = 0;
+    invalidateAnalysisCaches();
+    ['aiExecutiveCards','aiDashboardCharts','managementInsightsGrid','execMeasuresList','execAttentionList','execCoverageList'].forEach(function(id){
+      var node=$(id); if(node) node.innerHTML='';
+    });
+
+    var pick = chooseBestWorkbookSheet(wb);
+    buildSheetSelector(pick);
+    await loadSheet(pick, true, loadToken);
+    window.__instantDashUserUploadComplete = true;
+    try{ if(typeof idRegisterNewDepartment==='function') idRegisterNewDepartment(); }catch(err){ console.error('InstantDash department registration failed', err); }
+    if(typeof toast==='function') toast('Dashboard built from pasted data.');
+  }catch(err){
+    console.error(err);
+    hideLoader();
+    showFatal('Something went wrong building the dashboard from pasted data: ' + (err && err.message ? err.message : 'unknown error'));
   }
 }
 
