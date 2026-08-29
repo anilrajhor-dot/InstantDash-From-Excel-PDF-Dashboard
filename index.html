@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.3.2","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.4.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -1679,7 +1679,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v27.3.2">
+<meta name="instantdash-build" content="v27.4.0">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2553,7 +2553,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v27.3.2';
+      s.textContent='v27.4.0';
       b.appendChild(s);
     }
   }
@@ -2613,10 +2613,10 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v27.3.2</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v27.4.0</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.3.2</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.4.0</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="topClearDataBtn" type="button" aria-label="Clear all loaded data" style="color:var(--warn)">🗑 Clear Data</button>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -2686,6 +2686,54 @@ body{
   <!-- ============ APP ============ -->
   <section id="app" data-v11306-auto-scrolled="1">
 
+
+    <section id="v27TransposeBanner" class="exec-card no-print" hidden style="border-left:4px solid var(--warn)">
+      <div class="mac-head">
+        <div><div class="exec-label">⚠️ Data Shape Notice</div><div class="mac-title">This looks like it has periods as columns, not rows</div></div>
+      </div>
+      <div class="v26-map-intro">Financial line items appear to be listed as rows, with time periods (like FY26, Q1FY27) as columns. That's the opposite of what this dashboard needs — right now, KPI cards are likely summing unrelated figures together into meaningless totals. Transposing will restructure the data so each period is a row and each metric becomes a real, individual KPI.</div>
+      <div class="v26-map-actions">
+        <button type="button" id="v27TransposeBtn" class="v26-compare-btn">🔄 Transpose This Data</button>
+        <button type="button" id="v27TransposeDismiss" class="v26-task-remove">Dismiss</button>
+      </div>
+    </section>
+    <script id="instantdash-v27-transpose-wire">
+    (function(){
+      var dismissedForFile = null;
+      function render(){
+        var banner = document.getElementById('v27TransposeBanner');
+        if(!banner) return;
+        var app = window.APP || {};
+        var hasData = !!(app.rows && app.rows.length);
+        if(!hasData || typeof detectPivotedShape!=='function'){ banner.hidden = true; return; }
+        if(dismissedForFile === app.fileName){ banner.hidden = true; return; }
+        var shape = null;
+        try{ shape = detectPivotedShape(); }catch(_){ shape = null; }
+        banner.hidden = !shape;
+      }
+      function wire(){
+        var btn = document.getElementById('v27TransposeBtn');
+        if(btn && !btn.dataset.wired274){
+          btn.dataset.wired274 = '1';
+          btn.addEventListener('click', function(){
+            if(typeof transposeCurrentData==='function') transposeCurrentData();
+          });
+        }
+        var dismissBtn = document.getElementById('v27TransposeDismiss');
+        if(dismissBtn && !dismissBtn.dataset.wired274){
+          dismissBtn.dataset.wired274 = '1';
+          dismissBtn.addEventListener('click', function(){
+            dismissedForFile = (window.APP||{}).fileName;
+            var banner = document.getElementById('v27TransposeBanner');
+            if(banner) banner.hidden = true;
+          });
+        }
+      }
+      setInterval(function(){ render(); wire(); }, 700);
+      if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', function(){ render(); wire(); });
+      else { render(); wire(); }
+    })();
+    </script>
 
     <section id="v25Snapshot" class="card no-print" style="padding:16px 18px;margin:0 0 16px" hidden>
       <div id="v25SnapshotBody"></div>
@@ -3061,6 +3109,7 @@ body{
     </script>
 
     <div id="alerts" class="section"></div>
+
 
     <div class="section" id="kpiSection">
       <button type="button" id="v23BriefMeBtn" class="v23-brief-btn no-print" hidden>
@@ -4731,7 +4780,7 @@ body{
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v27.3.2',
+  VERSION: 'v27.4.0',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -5857,27 +5906,37 @@ async function handlePastedData(text){
     return;
   }
   if(errEl) errEl.hidden = true;
+  document.getElementById('v27PasteModal').classList.remove('on');
+  document.getElementById('v27PasteModal').setAttribute('aria-hidden','true');
+  await commitDataGrid(grid, 'Pasted data', 'Dashboard built from pasted data.', 'ANALYSING pasted data…');
+}
 
+/* v27.4.0 — shared by Paste My Data and the Transpose tool: given any
+   data grid (array of arrays, header row first), rebuilds the entire
+   dashboard from scratch using the exact same commit sequence a real
+   file upload uses once it has a workbook object — same header
+   detection, same column profiling, same dashboard build. This is the
+   logic extracted out of handlePastedData() so a second feature can
+   reuse it instead of duplicating it. */
+async function commitDataGrid(grid, fileName, successMessage, loadingMessage){
   try{ if(typeof window.__instantDashResetAskAIForNewFile==='function') window.__instantDashResetAskAIForNewFile(); }catch(_){}
   var loadToken = ++APP.__loadToken;
   window.__instantDashCurrentLoadToken = loadToken;
   try{ if(typeof idSaveCurrentAsDepartment==='function') idSaveCurrentAsDepartment(); }catch(_){}
   resetDataForNewFile();
-  document.getElementById('v27PasteModal').classList.remove('on');
-  document.getElementById('v27PasteModal').setAttribute('aria-hidden','true');
   $('app').hidden = true;
   $('emptyState').hidden = true;
-  showLoader('ANALYSING pasted data…', 'Building your dashboard locally on this device.');
+  showLoader(loadingMessage || 'Rebuilding dashboard…', 'Building your dashboard locally on this device.');
   await nextFrame();
   if(loadToken !== APP.__loadToken) return;
 
   try{
     var ws = XLSX.utils.aoa_to_sheet(grid);
-    var wb = { SheetNames:['Pasted Data'], Sheets:{ 'Pasted Data': ws } };
+    var wb = { SheetNames:[fileName], Sheets:{ [fileName]: ws } };
 
     APP.workbook = wb;
     APP.__pdfMeta = null;
-    APP.fileName = 'Pasted data';
+    APP.fileName = fileName;
     APP.sheetNames = wb.SheetNames.slice();
     APP.activeSheet = '';
     APP.aoa = []; APP.columns = []; APP.rows = []; APP.filtered = [];
@@ -5895,11 +5954,11 @@ async function handlePastedData(text){
     await loadSheet(pick, true, loadToken);
     window.__instantDashUserUploadComplete = true;
     try{ if(typeof idRegisterNewDepartment==='function') idRegisterNewDepartment(); }catch(err){ console.error('InstantDash department registration failed', err); }
-    if(typeof toast==='function') toast('Dashboard built from pasted data.');
+    if(typeof toast==='function') toast(successMessage || 'Dashboard rebuilt.');
   }catch(err){
     console.error(err);
     hideLoader();
-    showFatal('Something went wrong building the dashboard from pasted data: ' + (err && err.message ? err.message : 'unknown error'));
+    showFatal('Something went wrong rebuilding the dashboard: ' + (err && err.message ? err.message : 'unknown error'));
   }
 }
 
@@ -5907,6 +5966,49 @@ function sheetHasData(ws){
   if (!ws || !ws['!ref']) return false;
   const r = XLSX.utils.decode_range(ws['!ref']);
   return (r.e.r - r.s.r) >= 1 && (r.e.c - r.s.c) >= 0;
+}
+
+/* v27.4.0 — detects the "pivoted/wide" shape that's caused repeated,
+   confirmed dashboard problems this session: financial line items as
+   rows, time periods as columns (the opposite of what this app needs).
+   Requires both telltale signs together — a high-uniqueness text
+   dimension column AND other column names matching period-label
+   patterns — so genuinely normal data with just one of these traits
+   isn't flagged by mistake. */
+function detectPivotedShape(){
+  var cols = (APP && APP.columns) || [];
+  if(cols.length < 3) return null;
+  var dimCol = cols.find(function(c){ return (c.type==='text' || c.role==='dimension') && c.unique >= (APP.rows.length * 0.8); });
+  if(!dimCol) return null;
+  var periodPattern = /^(Q[1-4]\s?)?FY\s?\d{2,4}(-\d{2,4})?$|^(19|20)\d{2}$|^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*[\s-]?(19|20)?\d{2,4}$/i;
+  var otherCols = cols.filter(function(c){ return c.name !== dimCol.name; });
+  if(!otherCols.length) return null;
+  var periodLikeCount = otherCols.filter(function(c){ return periodPattern.test(String(c.name).trim()); }).length;
+  if(periodLikeCount < Math.max(2, otherCols.length * 0.5)) return null;
+  return { dimCol: dimCol, periodCols: otherCols };
+}
+
+/* v27.4.0 — rebuilds the current data with periods as rows and metrics
+   as real columns, then commits it through the exact same pipeline
+   Paste My Data already uses, guaranteeing identical treatment to a
+   fresh, correctly-shaped file upload. */
+async function transposeCurrentData(){
+  var shape = detectPivotedShape();
+  if(!shape){
+    if(typeof toast==='function') toast('No pivoted structure detected in the current data.');
+    return;
+  }
+  var rows = APP.filtered || APP.rows || [];
+  var metricNames = rows.map(function(r){ return String(r[shape.dimCol.name]); });
+  var header = [shape.dimCol.name || 'Period'].concat(metricNames);
+  var newGrid = [header];
+  shape.periodCols.forEach(function(pc){
+    var row = [pc.name];
+    rows.forEach(function(r){ row.push(r[pc.name]); });
+    newGrid.push(row);
+  });
+  var newFileName = (APP.fileName || 'data').replace(/\.[^.]+$/,'') + ' (Transposed)';
+  await commitDataGrid(newGrid, newFileName, 'Data transposed — periods are now rows, metrics are now columns.', 'Transposing your data…');
 }
 
 function buildSheetSelector(active){
