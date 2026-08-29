@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.4.1","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.5.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -480,6 +480,16 @@ main{max-width:1360px;margin:0 auto;padding:24px}
 .v26-map-custom-info{display:flex;flex-direction:column;gap:2px;min-width:0}
 .v26-map-custom-info>b{font-size:12.5px}
 .v26-map-custom-info>span{font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.v27-preset-row{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.v27-preset-btn{flex:1 1 auto;padding:9px 12px;border-radius:10px;border:1px solid var(--border);background:var(--card-2);color:var(--text);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap}
+.v27-preset-btn:hover{border-color:var(--accent)}
+.v27-swatch-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:6px}
+.v27-swatch{display:flex;flex-direction:column;align-items:center;gap:5px}
+.v27-swatch input[type="color"]{width:100%;height:44px;border-radius:8px;border:1px solid var(--border);cursor:pointer;padding:2px;background:var(--card)}
+.v27-swatch span{font-size:9.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+@media(max-width:480px){
+  .v27-swatch-grid{grid-template-columns:repeat(2,1fr)}
+}
 .v26-map-actions{display:flex;gap:10px;margin-top:16px;padding-top:14px;border-top:1px solid var(--border)}
 @media(max-width:480px){
   .v26-map-row{flex-direction:column;align-items:stretch;gap:6px}
@@ -1678,7 +1688,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v27.4.1">
+<meta name="instantdash-build" content="v27.5.0">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2552,7 +2562,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v27.4.1';
+      s.textContent='v27.5.0';
       b.appendChild(s);
     }
   }
@@ -2612,10 +2622,10 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v27.4.1</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v27.5.0</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.4.1</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.5.0</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="topClearDataBtn" type="button" aria-label="Clear all loaded data" style="color:var(--warn)">🗑 Clear Data</button>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -3065,7 +3075,17 @@ body{
         nav.querySelectorAll('[data-jump]').forEach(function(btn){
           btn.addEventListener('click', function(){
             var target=document.getElementById(btn.getAttribute('data-jump'));
-            if(target) target.scrollIntoView({behavior:'smooth', block:'start'});
+            if(!target) return;
+            /* v27.5.0 — expand every collapsed <details> ancestor before
+               scrolling, so jumping to a section that's been collapsed
+               (like the detailed executive report) actually reveals its
+               content instead of landing on an empty summary label. */
+            var el = target;
+            while(el){
+              if(el.tagName === 'DETAILS' && !el.open) el.open = true;
+              el = el.parentElement;
+            }
+            setTimeout(function(){ target.scrollIntoView({behavior:'smooth', block:'start'}); }, 50);
           });
         });
         var health=nav.querySelector('[data-jump-health]');
@@ -4027,6 +4047,115 @@ body{
       })();
       </script>
 
+      <div id="v27ChartColorsPanel" class="v26-why-overlay" aria-hidden="true">
+        <div class="v26-why-card" role="dialog" aria-modal="true" aria-labelledby="v27ColorsTitle">
+          <div class="v26-why-head">
+            <div><div class="v26-why-kicker">Chart Colors</div><h3 id="v27ColorsTitle">Choose your chart palette</h3></div>
+            <button type="button" class="v26-why-close" id="v27ColorsClose" aria-label="Close">✕</button>
+          </div>
+          <div class="v26-map-intro">Pick a preset, or set each color individually. Applies to every bar, line and pie chart in the dashboard.</div>
+          <div class="v27-preset-row">
+            <button type="button" class="v27-preset-btn" data-preset="vault">🏛️ Ledger &amp; Vault</button>
+            <button type="button" class="v27-preset-btn" data-preset="ocean">🌊 Ocean</button>
+            <button type="button" class="v27-preset-btn" data-preset="sunset">🌅 Sunset</button>
+          </div>
+          <div id="v27ColorSwatches" class="v27-swatch-grid"></div>
+          <div class="v26-map-actions">
+            <button type="button" id="v27ColorsApply" class="v26-compare-btn">Apply Colors</button>
+            <button type="button" id="v27ColorsReset" class="v26-task-remove">Reset to Default</button>
+          </div>
+        </div>
+      </div>
+      <script id="instantdash-v27-chartcolors-wire">
+      (function(){
+        var DEFAULT_COLORS = ['#C9A227','#8B2F3D','#16785A','#2C4A6B','#6B4E8E','#B0793E','#4A7A8C','#8FA05C'];
+        var PRESETS = {
+          vault:  ['#C9A227','#8B2F3D','#16785A','#2C4A6B','#6B4E8E','#B0793E','#4A7A8C','#8FA05C'],
+          ocean:  ['#1B6FA8','#0E4F6E','#2E9C8F','#5FB8D9','#1A3A5C','#7BA6C2','#3C7A6E','#8DC3D6'],
+          sunset: ['#D9622B','#B23A48','#E0A020','#8C3B4F','#C9A227','#A34632','#D67E4A','#6B2E3A']
+        };
+        var COLOR_LABELS = ['Primary','Secondary','Third','Fourth','Fifth','Sixth','Seventh','Eighth'];
+
+        function currentColors(){
+          return (window.__instantDashChartColors || DEFAULT_COLORS).slice();
+        }
+
+        function renderSwatches(colors){
+          var grid = document.getElementById('v27ColorSwatches');
+          if(!grid) return;
+          grid.innerHTML = colors.map(function(c, i){
+            return '<label class="v27-swatch"><input type="color" data-color-idx="'+i+'" value="'+c+'"><span>'+COLOR_LABELS[i]+'</span></label>';
+          }).join('');
+        }
+
+        function openPanel(){
+          renderSwatches(currentColors());
+          var panel = document.getElementById('v27ChartColorsPanel');
+          if(panel){ panel.classList.add('on'); panel.setAttribute('aria-hidden','false'); }
+        }
+        function closePanel(){
+          var panel = document.getElementById('v27ChartColorsPanel');
+          if(panel){ panel.classList.remove('on'); panel.setAttribute('aria-hidden','true'); }
+        }
+
+        function applyAndRebuild(colors){
+          window.__instantDashChartColors = colors;
+          closePanel();
+          try{
+            if(window.APP && window.APP.rows && window.APP.rows.length && typeof buildEverything==='function'){
+              buildEverything();
+            }
+          }catch(err){ console.error('InstantDash chart color rebuild failed', err); }
+          if(typeof toast==='function') toast('Chart colors updated.');
+        }
+
+        function wire(){
+          var openBtn = document.getElementById('v27ChartColorsBtn');
+          if(openBtn && !openBtn.dataset.wired275){ openBtn.dataset.wired275='1'; openBtn.addEventListener('click', openPanel); }
+
+          var closeBtn = document.getElementById('v27ColorsClose');
+          if(closeBtn && !closeBtn.dataset.wired275){ closeBtn.dataset.wired275='1'; closeBtn.addEventListener('click', closePanel); }
+
+          var overlay = document.getElementById('v27ChartColorsPanel');
+          if(overlay && !overlay.dataset.wired275){
+            overlay.dataset.wired275='1';
+            overlay.addEventListener('click', function(e){ if(e.target===overlay) closePanel(); });
+          }
+
+          document.querySelectorAll('.v27-preset-btn').forEach(function(btn){
+            if(btn.dataset.wired275) return;
+            btn.dataset.wired275 = '1';
+            btn.addEventListener('click', function(){
+              var preset = PRESETS[btn.dataset.preset];
+              if(preset) renderSwatches(preset);
+            });
+          });
+
+          var applyBtn = document.getElementById('v27ColorsApply');
+          if(applyBtn && !applyBtn.dataset.wired275){
+            applyBtn.dataset.wired275 = '1';
+            applyBtn.addEventListener('click', function(){
+              var inputs = document.querySelectorAll('#v27ColorSwatches input[type="color"]');
+              var colors = Array.from(inputs).map(function(inp){ return inp.value; });
+              if(colors.length) applyAndRebuild(colors);
+            });
+          }
+
+          var resetBtn = document.getElementById('v27ColorsReset');
+          if(resetBtn && !resetBtn.dataset.wired275){
+            resetBtn.dataset.wired275 = '1';
+            resetBtn.addEventListener('click', function(){
+              applyAndRebuild(DEFAULT_COLORS.slice());
+            });
+          }
+        }
+
+        setInterval(wire, 700);
+        if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire);
+        else wire();
+      })();
+      </script>
+
       <div id="v26MapPanel" class="v26-why-overlay" aria-hidden="true">
         <div class="v26-why-card" role="dialog" aria-modal="true" aria-labelledby="v26MapTitle">
           <div class="v26-why-head">
@@ -4363,7 +4492,7 @@ body{
 <div class="section" id="smartChartsSection">
       <div class="section-head">
         <h2>Interactive Charts</h2>
-        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v17.0</span><span class="hint" id="smartChartHint">LIVE DATA — 16 rows · 13 parameters available in every dropdown</span><div id="smartDataVerification" class="smart-data-verification"><b>Verified live data</b><span>13 chart parameters · 2 usable non-numeric fields</span></div>
+        <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v17.0</span><span class="hint" id="smartChartHint">LIVE DATA — 16 rows · 13 parameters available in every dropdown</span><button type="button" id="v27ChartColorsBtn" class="v26-compare-btn no-print" style="margin-left:auto">🎨 Chart Colors</button><div id="smartDataVerification" class="smart-data-verification"><b>Verified live data</b><span>13 chart parameters · 2 usable non-numeric fields</span></div>
       </div>
       <section class="ai-dashboard-charts" id="aiDashboardCharts" aria-label="AI generated charts"><div class="ai-dashboard-head"><div><h3 style="margin:0;font-size:16px">AI-generated key charts</h3><p id="aiDashboardSub" style="margin:4px 0 12px;color:var(--muted);font-size:11px">AI automatically created 4 key charts from the loaded data. These charts are independent of the manual parameter selector below.</p></div></div><div class="ai-chart-grid" id="aiChartGrid"><article class="ai-chart-card"><div class="ai-chart-card-head"><div><h4>Average Feedback Score</h4><p class="ai-chart-sub">AI selected Line chart grouped by Quarter.</p></div><div class="ai-chart-actions"><label style="font-size:9px;color:var(--muted);font-weight:800">Chart <select class="ai-chart-type" aria-label="Change chart type for Average Feedback Score"><option value="bar">Bar</option><option value="hbar">Horizontal Bar</option><option value="line" selected="">Line</option><option value="area">Area</option><option value="stacked">Stacked Bar</option><option value="pie">Pie</option><option value="donut">Donut</option></select></label><button type="button" class="ai-chart-expand">⛶ Expand</button></div></div><div class="ai-chart-wrap"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 288" width="100%" height="100%" preserveAspectRatio="none" style="display:block;touch-action:manipulation;font-family:Poppins,Arial,sans-serif"><rect x="0" y="0" width="320" height="288" rx="12" fill="#fffdf8"></rect><line x1="46" y1="236" x2="302" y2="236" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="240" text-anchor="end" font-size="9" fill="#777066">0</text><line x1="46" y1="181.5" x2="302" y2="181.5" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="185.5" text-anchor="end" font-size="9" fill="#777066">4.08</text><line x1="46" y1="127" x2="302" y2="127" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="131" text-anchor="end" font-size="9" fill="#777066">8.15</text><line x1="46" y1="72.5" x2="302" y2="72.5" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="76.5" text-anchor="end" font-size="9" fill="#777066">12.23</text><line x1="46" y1="18" x2="302" y2="18" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="22" text-anchor="end" font-size="9" fill="#777066">16.3</text><polyline points="46,18 131.33333333333331,26.02453987730061 216.66666666666666,22.01226993865032 302,32.71165644171779" fill="none" stroke="#C9A227" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></polyline><circle cx="46" cy="18" r="4" fill="#C9A227" stroke="#fff" stroke-width="2"><title>Q1 · 16.3</title></circle><circle cx="131.33333333333331" cy="26.02453987730061" r="4" fill="#C9A227" stroke="#fff" stroke-width="2"><title>Q2 · 15.7</title></circle><circle cx="216.66666666666666" cy="22.01226993865032" r="4" fill="#C9A227" stroke="#fff" stroke-width="2"><title>Q3 · 16</title></circle><circle cx="302" cy="32.71165644171779" r="4" fill="#C9A227" stroke="#fff" stroke-width="2"><title>Q4 · 15.2</title></circle><text x="46" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q1</text><text x="131.33333333333331" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q2</text><text x="216.66666666666666" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q3</text><text x="302" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q4</text></svg></div><div class="ai-chart-touch-detail">Tap a bar or point to see the exact figure.</div><div class="ai-chart-foot">Each bar/point is calculated from 16 loaded rows.</div></article><article class="ai-chart-card"><div class="ai-chart-card-head"><div><h4>Attendance Rate %</h4><p class="ai-chart-sub">AI selected Line chart grouped by Quarter.</p></div><div class="ai-chart-actions"><label style="font-size:9px;color:var(--muted);font-weight:800">Chart <select class="ai-chart-type" aria-label="Change chart type for Attendance Rate %"><option value="bar">Bar</option><option value="hbar">Horizontal Bar</option><option value="line" selected="">Line</option><option value="area">Area</option><option value="stacked">Stacked Bar</option><option value="pie">Pie</option><option value="donut">Donut</option></select></label><button type="button" class="ai-chart-expand">⛶ Expand</button></div></div><div class="ai-chart-wrap"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 288" width="100%" height="100%" preserveAspectRatio="none" style="display:block;touch-action:manipulation;font-family:Poppins,Arial,sans-serif"><rect x="0" y="0" width="320" height="288" rx="12" fill="#fffdf8"></rect><line x1="46" y1="236" x2="302" y2="236" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="240" text-anchor="end" font-size="9" fill="#777066">0</text><line x1="46" y1="181.5" x2="302" y2="181.5" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="185.5" text-anchor="end" font-size="9" fill="#777066">95.42</text><line x1="46" y1="127" x2="302" y2="127" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="131" text-anchor="end" font-size="9" fill="#777066">190.85</text><line x1="46" y1="72.5" x2="302" y2="72.5" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="76.5" text-anchor="end" font-size="9" fill="#777066">286.27</text><line x1="46" y1="18" x2="302" y2="18" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="22" text-anchor="end" font-size="9" fill="#777066">381.7</text><polyline points="46,21.369662038249942 131.33333333333331,18.742467906733054 216.66666666666666,19.941839140686426 302,18" fill="none" stroke="#C9A227" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></polyline><circle cx="46" cy="21.369662038249942" r="4" fill="#C9A227" stroke="#fff" stroke-width="2"><title>Q1 · 375.8</title></circle><circle cx="131.33333333333331" cy="18.742467906733054" r="4" fill="#C9A227" stroke="#fff" stroke-width="2"><title>Q2 · 380.4</title></circle><circle cx="216.66666666666666" cy="19.941839140686426" r="4" fill="#C9A227" stroke="#fff" stroke-width="2"><title>Q3 · 378.3</title></circle><circle cx="302" cy="18" r="4" fill="#C9A227" stroke="#fff" stroke-width="2"><title>Q4 · 381.7</title></circle><text x="46" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q1</text><text x="131.33333333333331" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q2</text><text x="216.66666666666666" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q3</text><text x="302" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q4</text></svg></div><div class="ai-chart-touch-detail">Tap a bar or point to see the exact figure.</div><div class="ai-chart-foot">Each bar/point is calculated from 16 loaded rows.</div></article><article class="ai-chart-card"><div class="ai-chart-card-head"><div><h4>Pass Rate %</h4><p class="ai-chart-sub">AI selected Line chart grouped by Quarter.</p></div><div class="ai-chart-actions"><label style="font-size:9px;color:var(--muted);font-weight:800">Chart <select class="ai-chart-type" aria-label="Change chart type for Pass Rate %"><option value="bar">Bar</option><option value="hbar">Horizontal Bar</option><option value="line" selected="">Line</option><option value="area">Area</option><option value="stacked">Stacked Bar</option><option value="pie">Pie</option><option value="donut">Donut</option></select></label><button type="button" class="ai-chart-expand">⛶ Expand</button></div></div><div class="ai-chart-wrap"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 288" width="100%" height="100%" preserveAspectRatio="none" style="display:block;touch-action:manipulation;font-family:Poppins,Arial,sans-serif"><rect x="0" y="0" width="320" height="288" rx="12" fill="#fffdf8"></rect><line x1="46" y1="236" x2="302" y2="236" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="240" text-anchor="end" font-size="9" fill="#777066">0</text><line x1="46" y1="181.5" x2="302" y2="181.5" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="185.5" text-anchor="end" font-size="9" fill="#777066">90.85</text><line x1="46" y1="127" x2="302" y2="127" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="131" text-anchor="end" font-size="9" fill="#777066">181.7</text><line x1="46" y1="72.5" x2="302" y2="72.5" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="76.5" text-anchor="end" font-size="9" fill="#777066">272.55</text><line x1="46" y1="18" x2="302" y2="18" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="22" text-anchor="end" font-size="9" fill="#777066">363.4</text><polyline points="46,28.01816180517335 131.33333333333331,20.819482663731463 216.66666666666666,20.93946064942216 302,18" fill="none" stroke="#C9A227" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></polyline><circle cx="46" cy="28.01816180517335" r="4" fill="#C9A227" stroke="#fff" stroke-width="2"><title>Q1 · 346.7</title></circle><circle cx="131.33333333333331" cy="20.819482663731463" r="4" fill="#C9A227" stroke="#fff" stroke-width="2"><title>Q2 · 358.7</title></circle><circle cx="216.66666666666666" cy="20.93946064942216" r="4" fill="#C9A227" stroke="#fff" stroke-width="2"><title>Q3 · 358.5</title></circle><circle cx="302" cy="18" r="4" fill="#C9A227" stroke="#fff" stroke-width="2"><title>Q4 · 363.4</title></circle><text x="46" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q1</text><text x="131.33333333333331" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q2</text><text x="216.66666666666666" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q3</text><text x="302" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q4</text></svg></div><div class="ai-chart-touch-detail">Tap a bar or point to see the exact figure.</div><div class="ai-chart-foot">Each bar/point is calculated from 16 loaded rows.</div></article><article class="ai-chart-card"><div class="ai-chart-card-head"><div><h4>Branch Improvement Rate %</h4><p class="ai-chart-sub">AI selected Line chart grouped by Quarter.</p></div><div class="ai-chart-actions"><label style="font-size:9px;color:var(--muted);font-weight:800">Chart <select class="ai-chart-type" aria-label="Change chart type for Branch Improvement Rate %"><option value="bar">Bar</option><option value="hbar">Horizontal Bar</option><option value="line" selected="">Line</option><option value="area">Area</option><option value="stacked">Stacked Bar</option><option value="pie">Pie</option><option value="donut">Donut</option></select></label><button type="button" class="ai-chart-expand">⛶ Expand</button></div></div><div class="ai-chart-wrap"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 288" width="100%" height="100%" preserveAspectRatio="none" style="display:block;touch-action:manipulation;font-family:Poppins,Arial,sans-serif"><rect x="0" y="0" width="320" height="288" rx="12" fill="#fffdf8"></rect><line x1="46" y1="236" x2="302" y2="236" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="240" text-anchor="end" font-size="9" fill="#777066">0</text><line x1="46" y1="181.5" x2="302" y2="181.5" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="185.5" text-anchor="end" font-size="9" fill="#777066">75.75</text><line x1="46" y1="127" x2="302" y2="127" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="131" text-anchor="end" font-size="9" fill="#777066">151.5</text><line x1="46" y1="72.5" x2="302" y2="72.5" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="76.5" text-anchor="end" font-size="9" fill="#777066">227.25</text><line x1="46" y1="18" x2="302" y2="18" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="22" text-anchor="end" font-size="9" fill="#777066">303</text><polyline points="46,18.431683168316795 131.33333333333331,18 216.66666666666666,24.403300330032977 302,36.49042904290428" fill="none" stroke="#C9A227" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></polyline><circle cx="46" cy="18.431683168316795" r="4" fill="#C9A227" stroke="#fff" stroke-width="2"><title>Q1 · 302.4</title></circle><circle cx="131.33333333333331" cy="18" r="4" fill="#C9A227" stroke="#fff" stroke-width="2"><title>Q2 · 303</title></circle><circle cx="216.66666666666666" cy="24.403300330032977" r="4" fill="#C9A227" stroke="#fff" stroke-width="2"><title>Q3 · 294.1</title></circle><circle cx="302" cy="36.49042904290428" r="4" fill="#C9A227" stroke="#fff" stroke-width="2"><title>Q4 · 277.3</title></circle><text x="46" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q1</text><text x="131.33333333333331" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q2</text><text x="216.66666666666666" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q3</text><text x="302" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q4</text></svg></div><div class="ai-chart-touch-detail">Tap a bar or point to see the exact figure.</div><div class="ai-chart-foot">Each bar/point is calculated from 16 loaded rows.</div></article></div></section>
 
@@ -4760,7 +4889,7 @@ body{
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v27.4.1',
+  VERSION: 'v27.5.0',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -4782,7 +4911,7 @@ const CONFIG = {
   DATE_DAY_FIRST: true,       // ambiguous 03/04/2024 reads as 3 April (set false for US files)
 
   // 8-colour palette for multi-series charts. First two are the brand colours.
-  PALETTE: ['#C9A227','#8B2F3D','#16785A','#2C4A6B','#6B4E8E','#B0793E','#4A7A8C','#8FA05C']
+  PALETTE: (window.__instantDashChartColors || ['#C9A227','#8B2F3D','#16785A','#2C4A6B','#6B4E8E','#B0793E','#4A7A8C','#8FA05C'])
 };
 
 /* ---------------------------------------------------------------------
@@ -12187,7 +12316,7 @@ var esc=function(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){r
    refresh), caught via the in-app error catcher. Same logic as the
    working version elsewhere, made genuinely local to this scope. */
 var niceName=function(s){return String(s||'').replace(/[_\-]+/g,' ').replace(/\s+/g,' ').trim().replace(/\b\w/g,function(c){return c.toUpperCase()})};
-var palette=['#C9A227','#8B2F3D','#16785A','#2C4A6B','#6B4E8E','#B0793E','#4A7A8C','#8FA05C'];
+var palette=(window.__instantDashChartColors || ['#C9A227','#8B2F3D','#16785A','#2C4A6B','#6B4E8E','#B0793E','#4A7A8C','#8FA05C']);
 function num(v){
  if(typeof v==='number'&&isFinite(v))return v;
  if(v instanceof Date)return NaN;
@@ -12820,7 +12949,7 @@ function drawCartesian(wrap, d, type){
     var maxV=Math.max.apply(null,allVals), minV=Math.min.apply(null,allVals);
     if(maxV===minV) maxV=minV+1;
     var range=maxV-minV;
-    var pal=['#C9A227','#8B2F3D','#16785A','#2C4A6B','#6B4E8E','#B0793E'];
+    var pal=(window.__instantDashChartColors || ['#C9A227','#8B2F3D','#16785A','#2C4A6B','#6B4E8E','#B0793E']);
     var svg=['<svg viewBox="0 0 '+W+' '+H+'" width="100%" height="100%" style="touch-action:manipulation;display:block;font-family:Poppins,sans-serif"><defs><linearGradient id="idChartFade2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff8df"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient><filter id="idChartShadow2" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="4" stdDeviation="5" flood-opacity=".12"/></filter></defs><rect x="'+padL+'" y="'+padT+'" width="'+plotW+'" height="'+plotH+'" rx="16" fill="url(#idChartFade2)"/>'];
     for(var g=0; g<=4; g++){
       var gy=padT+plotH-(g/4)*plotH, gv=minV+(g/4)*range;
@@ -12891,7 +13020,7 @@ function drawPie(wrap, d, isDonut){
     var vals=s.values.map(function(v){ return Math.max(0, Number(v)||0); });
     var total=vals.reduce(function(a,b){return a+b;},0);
     if(!total){ wrap.innerHTML='<div style="padding:30px;color:var(--muted)">No data to chart.</div>'; return; }
-    var pal=['#C9A227','#8B2F3D','#16785A','#2C4A6B','#6B4E8E','#B0793E','#4A7A8C','#8FA05C'];
+    var pal=(window.__instantDashChartColors || ['#C9A227','#8B2F3D','#16785A','#2C4A6B','#6B4E8E','#B0793E','#4A7A8C','#8FA05C']);
     var W=760, H=390, cx=W/2, cy=H/2-10, r=Math.min(W,H)/2-60, innerR=isDonut? r*0.55 : 0;
     var angle=-Math.PI/2;
     var svg=['<svg viewBox="0 0 '+W+' '+H+'" width="100%" height="100%" style="touch-action:manipulation;display:block;font-family:Poppins,sans-serif">'];
@@ -13269,7 +13398,7 @@ function drawNativeAIChart(s,canvas){
  var w=Math.max(280,Math.floor(wrap.clientWidth||wrap.getBoundingClientRect().width||600));
  var h=Math.max(220,Math.floor(wrap.clientHeight||wrap.getBoundingClientRect().height||260));
  var type=s.type, pie=(type==='pie'||type==='donut'), line=(type==='line'||type==='area'), horiz=(type==='hbar');
- var colors=(typeof palette!=='undefined' && Array.isArray(palette) && palette.length)?palette:['#C9A227','#8B2F3D','#16785A','#2C4A6B','#6B4E8E','#B0793E','#4A7A8C','#8FA05C'];
+ var colors=(typeof palette!=='undefined' && Array.isArray(palette) && palette.length)?palette:(window.__instantDashChartColors || ['#C9A227','#8B2F3D','#16785A','#2C4A6B','#6B4E8E','#B0793E','#4A7A8C','#8FA05C']);
  var max=Math.max.apply(null,vals.map(function(v){return Math.abs(v)})); if(!isFinite(max)||max<=0)max=1;
  var escA=function(x){return String(x==null?'':x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');};
  var short=function(x,n){x=String(x==null?'':x);return x.length>n?x.slice(0,n-1)+'…':x;};
@@ -13408,7 +13537,7 @@ function openExpand(s){var ov=$('aiChartOverlay'),cv=$('aiOverlayCanvas');if(!ov
    or redrawAICard, so it can't destabilise the four cards that already work. */
 function drawCombinedChart(specs, host, type){
   type = (type==='bar' || type==='area') ? type : 'line';
-  var palette=['#C9A227','#8B2F3D','#16785A','#2C4A6B','#6B4E8E','#B0793E','#4A7A8C','#8FA05C'];
+  var palette=(window.__instantDashChartColors || ['#C9A227','#8B2F3D','#16785A','#2C4A6B','#6B4E8E','#B0793E','#4A7A8C','#8FA05C']);
   var usable = (specs||[]).filter(function(s){ return s && s.data && Array.isArray(s.data.labels) && s.data.labels.length>1; });
   if(usable.length<2){
     host.innerHTML='<div class="ai-empty" style="margin:8px 0 12px">Combine needs at least 2 charts with more than one group each — not enough comparable data here yet.</div>';
@@ -14074,7 +14203,7 @@ function renderFallback(){
  }
  max=max||1;
  var total=series[0]?series[0].values.reduce(function(a,b){return a+b},0):0;
- var colors=['#C9A227','#8B2F3D','#16785A','#2C4A6B','#6B4E8E','#4A7A8C'];
+ var colors=(window.__instantDashChartColors || ['#C9A227','#8B2F3D','#16785A','#2C4A6B','#6B4E8E','#4A7A8C']);
  var w=760,h=390,left=68,right=28,bottom=64,top=28,plotW=w-left-right,plotH=h-top-bottom;
  function compact(v){
    var raw=Number(v)||0,n=Math.abs(raw),sign=raw<0?'-':'';
