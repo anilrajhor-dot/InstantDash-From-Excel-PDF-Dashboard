@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.4.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.4.1","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -473,8 +473,7 @@ main{max-width:1360px;margin:0 auto;padding:24px}
 .v26-map-controls{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:6px}
 .v26-map-controls>select{width:100%;font-size:12.5px;padding:8px 9px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);min-height:38px;box-sizing:border-box}
 .v26-map-manual{width:100%;font-size:12.5px;padding:8px 9px;border-radius:8px;border:1px solid var(--accent);background:var(--card);color:var(--text);min-height:36px;box-sizing:border-box}
-.v27-paste-textarea{width:100%;min-height:220px;font-family:ui-monospace,'SF Mono',Consolas,monospace;font-size:12px;line-height:1.6;padding:12px;border-radius:10px;border:1px solid var(--border);background:var(--card-2);color:var(--text);box-sizing:border-box;resize:vertical;white-space:pre;overflow:auto}
-.v27-paste-error{margin-top:10px;padding:9px 12px;border-radius:8px;background:color-mix(in srgb,var(--warn) 12%,var(--card));border:1px solid var(--warn);color:var(--warn);font-size:12px;font-weight:600}
+
 .v26-map-custom-divider{margin-top:18px;padding-top:16px;border-top:1px solid var(--border)}
 .v26-map-custom-title{font-size:13px;font-weight:800;margin-bottom:4px}
 .v26-map-custom-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;margin-bottom:8px;border-radius:10px;background:var(--card-2);border:1px solid var(--border)}
@@ -1679,7 +1678,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v27.4.0">
+<meta name="instantdash-build" content="v27.4.1">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2553,7 +2552,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v27.4.0';
+      s.textContent='v27.4.1';
       b.appendChild(s);
     }
   }
@@ -2613,10 +2612,10 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v27.4.0</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v27.4.1</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.4.0</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.4.1</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="topClearDataBtn" type="button" aria-label="Clear all loaded data" style="color:var(--warn)">🗑 Clear Data</button>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -2639,9 +2638,6 @@ body{
         <div class="hero-actions">
           <button type="button" class="btn primary hero-btn" id="browseBtn" aria-controls="fileInput">
             <span class="btn-icon">↥</span> Choose Excel / CSV / PDF
-          </button>
-          <button type="button" class="btn hero-btn" id="pasteDataBtn">
-            <span class="btn-icon">📋</span> Paste My Data
           </button>
           <div class="drop-prompt"><span>or</span> drag &amp; drop your file here</div>
         </div>
@@ -2666,22 +2662,6 @@ body{
       </div>
     </div>
   </section>
-
-  <div id="v27PasteModal" class="v26-why-overlay" aria-hidden="true">
-    <div class="v26-why-card" role="dialog" aria-modal="true" aria-labelledby="v27PasteTitle">
-      <div class="v26-why-head">
-        <div><div class="v26-why-kicker">Paste My Data</div><h3 id="v27PasteTitle">Paste any KPI table directly</h3></div>
-        <button type="button" class="v26-why-close" id="v27PasteClose" aria-label="Close">✕</button>
-      </div>
-      <div class="v26-map-intro">Copy a table from Excel, Google Sheets, or anywhere else. <b>Tap inside the box below first</b>, then paste. First row should be your column headers. Works with tab or comma-separated data.</div>
-      <textarea id="v27PasteArea" class="v27-paste-textarea" placeholder="Fiscal Year&#9;Revenue&#9;PAT&#10;FY 2025-26&#9;5600&#9;680&#10;FY 2024-25&#9;4850&#9;580" spellcheck="false"></textarea>
-      <div id="v27PasteError" class="v27-paste-error" hidden></div>
-      <div class="v26-map-actions">
-        <button type="button" id="v27PasteBuild" class="v26-compare-btn">Build Dashboard</button>
-        <button type="button" id="v27PasteCancel" class="v26-task-remove">Cancel</button>
-      </div>
-    </div>
-  </div>
 
   <!-- ============ APP ============ -->
   <section id="app" data-v11306-auto-scrolled="1">
@@ -4780,7 +4760,7 @@ body{
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v27.4.0',
+  VERSION: 'v27.4.1',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -4802,7 +4782,7 @@ const CONFIG = {
   DATE_DAY_FIRST: true,       // ambiguous 03/04/2024 reads as 3 April (set false for US files)
 
   // 8-colour palette for multi-series charts. First two are the brand colours.
-  PALETTE: ['#C9A227','#8B2F3D','#2E86AB','#3FB07A','#8E5BC9','#D9455F','#0E9AA7','#B0793E']
+  PALETTE: ['#C9A227','#8B2F3D','#16785A','#2C4A6B','#6B4E8E','#B0793E','#4A7A8C','#8FA05C']
 };
 
 /* ---------------------------------------------------------------------
@@ -5357,36 +5337,6 @@ function wireIngest(){
     input.value = '';
   });
 
-  /* v27.3.0 — Paste My Data */
-  const pasteBtn = $('pasteDataBtn'), pasteModal = $('v27PasteModal');
-  if(pasteBtn && pasteModal){
-    const openPasteModal = () => {
-      pasteModal.classList.add('on');
-      pasteModal.setAttribute('aria-hidden','false');
-      const errEl = $('v27PasteError'); if(errEl) errEl.hidden = true;
-      /* v27.3.2 — deliberately NOT auto-focusing the textarea here.
-         Programmatic .focus() inside a setTimeout breaks the direct
-         user-gesture chain iOS Safari requires for reliable keyboard/
-         paste activation — a delayed, JS-triggered focus can leave the
-         textarea in a state where paste doesn't work correctly. A
-         genuine tap by the person is a clean gesture that works
-         reliably everywhere, so the hint text asks for that instead. */
-    };
-    const closePasteModal = () => {
-      pasteModal.classList.remove('on');
-      pasteModal.setAttribute('aria-hidden','true');
-    };
-    pasteBtn.addEventListener('click', openPasteModal);
-    const closeBtn = $('v27PasteClose'), cancelBtn = $('v27PasteCancel'), buildBtn = $('v27PasteBuild');
-    if(closeBtn) closeBtn.addEventListener('click', closePasteModal);
-    if(cancelBtn) cancelBtn.addEventListener('click', closePasteModal);
-    if(buildBtn) buildBtn.addEventListener('click', () => {
-      const area = $('v27PasteArea');
-      if(area) handlePastedData(area.value);
-    });
-    pasteModal.addEventListener('click', (e) => { if(e.target===pasteModal) closePasteModal(); });
-  }
-
   ['dragenter','dragover'].forEach(ev => dz.addEventListener(ev, e => { e.preventDefault(); dz.classList.add('over'); }));
   ['dragleave','drop'].forEach(ev => dz.addEventListener(ev, e => { e.preventDefault(); dz.classList.remove('over'); }));
   dz.addEventListener('drop', e => { const f = e.dataTransfer.files[0]; if (f) handleFile(f); });
@@ -5863,61 +5813,11 @@ async function handleFile(file){
   }
 }
 
-/* v27.3.0 — Paste My Data: parses pasted tab/comma-separated text into a
-   grid, converts obviously-numeric and obviously-date cells, then hands
-   off to the exact same commit sequence handleFile() uses once it has a
-   workbook object — guaranteeing pasted data gets identical treatment
-   to an uploaded file (same header detection, same column profiling,
-   same dashboard build), not a separate, potentially inconsistent path. */
-function parsePastedGrid(text){
-  var lines = text.replace(/\r\n/g,'\n').split('\n').filter(function(l){ return l.trim().length>0; });
-  if(!lines.length) return null;
-  var tabCount = (lines[0].match(/\t/g)||[]).length;
-  var commaCount = (lines[0].match(/,/g)||[]).length;
-  var delim = tabCount>=commaCount ? '\t' : ',';
-  var grid = lines.map(function(line){
-    return line.split(delim).map(function(cell){
-      cell = cell.trim().replace(/^"|"$/g,'');
-      if(cell==='') return null;
-      /* Numeric-looking: strip common formatting (commas, currency
-         symbols, parens-for-negative) before testing, but keep the
-         original if it doesn't cleanly parse as a number. */
-      var cleaned = cell.replace(/[₹$,]/g,'').replace(/^\((.*)\)$/,'-$1').trim();
-      if(/^-?\d+(\.\d+)?%?$/.test(cleaned)){
-        var num = parseFloat(cleaned.replace('%',''));
-        if(isFinite(num)) return num;
-      }
-      return cell;
-    });
-  });
-  return grid;
-}
-
-async function handlePastedData(text){
-  var grid = parsePastedGrid(text);
-  var errEl = document.getElementById('v27PasteError');
-  if(!grid || grid.length<2){
-    if(errEl){ errEl.textContent = 'Paste at least a header row and one data row.'; errEl.hidden = false; }
-    return;
-  }
-  var headerLen = grid[0].length;
-  if(headerLen<2){
-    if(errEl){ errEl.textContent = 'Could not detect more than one column — check that your data is tab or comma-separated.'; errEl.hidden = false; }
-    return;
-  }
-  if(errEl) errEl.hidden = true;
-  document.getElementById('v27PasteModal').classList.remove('on');
-  document.getElementById('v27PasteModal').setAttribute('aria-hidden','true');
-  await commitDataGrid(grid, 'Pasted data', 'Dashboard built from pasted data.', 'ANALYSING pasted data…');
-}
-
-/* v27.4.0 — shared by Paste My Data and the Transpose tool: given any
-   data grid (array of arrays, header row first), rebuilds the entire
-   dashboard from scratch using the exact same commit sequence a real
-   file upload uses once it has a workbook object — same header
-   detection, same column profiling, same dashboard build. This is the
-   logic extracted out of handlePastedData() so a second feature can
-   reuse it instead of duplicating it. */
+/* v27.4.0 — shared by the Transpose tool: given any data grid (array of
+   arrays, header row first), rebuilds the entire dashboard from scratch
+   using the exact same commit sequence a real file upload uses once it
+   has a workbook object — same header detection, same column
+   profiling, same dashboard build. */
 async function commitDataGrid(grid, fileName, successMessage, loadingMessage){
   try{ if(typeof window.__instantDashResetAskAIForNewFile==='function') window.__instantDashResetAskAIForNewFile(); }catch(_){}
   var loadToken = ++APP.__loadToken;
@@ -12287,7 +12187,7 @@ var esc=function(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){r
    refresh), caught via the in-app error catcher. Same logic as the
    working version elsewhere, made genuinely local to this scope. */
 var niceName=function(s){return String(s||'').replace(/[_\-]+/g,' ').replace(/\s+/g,' ').trim().replace(/\b\w/g,function(c){return c.toUpperCase()})};
-var palette=['#C9A227','#8B2F3D','#2E86AB','#3FB07A','#8E5BC9','#D9455F','#0E9AA7','#B0793E'];
+var palette=['#C9A227','#8B2F3D','#16785A','#2C4A6B','#6B4E8E','#B0793E','#4A7A8C','#8FA05C'];
 function num(v){
  if(typeof v==='number'&&isFinite(v))return v;
  if(v instanceof Date)return NaN;
@@ -12920,7 +12820,7 @@ function drawCartesian(wrap, d, type){
     var maxV=Math.max.apply(null,allVals), minV=Math.min.apply(null,allVals);
     if(maxV===minV) maxV=minV+1;
     var range=maxV-minV;
-    var pal=['#C9A227','#8B2F3D','#2E86AB','#3FB07A','#8E5BC9','#D9455F'];
+    var pal=['#C9A227','#8B2F3D','#16785A','#2C4A6B','#6B4E8E','#B0793E'];
     var svg=['<svg viewBox="0 0 '+W+' '+H+'" width="100%" height="100%" style="touch-action:manipulation;display:block;font-family:Poppins,sans-serif"><defs><linearGradient id="idChartFade2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff8df"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient><filter id="idChartShadow2" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="4" stdDeviation="5" flood-opacity=".12"/></filter></defs><rect x="'+padL+'" y="'+padT+'" width="'+plotW+'" height="'+plotH+'" rx="16" fill="url(#idChartFade2)"/>'];
     for(var g=0; g<=4; g++){
       var gy=padT+plotH-(g/4)*plotH, gv=minV+(g/4)*range;
@@ -12991,7 +12891,7 @@ function drawPie(wrap, d, isDonut){
     var vals=s.values.map(function(v){ return Math.max(0, Number(v)||0); });
     var total=vals.reduce(function(a,b){return a+b;},0);
     if(!total){ wrap.innerHTML='<div style="padding:30px;color:var(--muted)">No data to chart.</div>'; return; }
-    var pal=['#C9A227','#8B2F3D','#2E86AB','#3FB07A','#8E5BC9','#D9455F','#0E9AA7','#B0793E'];
+    var pal=['#C9A227','#8B2F3D','#16785A','#2C4A6B','#6B4E8E','#B0793E','#4A7A8C','#8FA05C'];
     var W=760, H=390, cx=W/2, cy=H/2-10, r=Math.min(W,H)/2-60, innerR=isDonut? r*0.55 : 0;
     var angle=-Math.PI/2;
     var svg=['<svg viewBox="0 0 '+W+' '+H+'" width="100%" height="100%" style="touch-action:manipulation;display:block;font-family:Poppins,sans-serif">'];
@@ -13369,7 +13269,7 @@ function drawNativeAIChart(s,canvas){
  var w=Math.max(280,Math.floor(wrap.clientWidth||wrap.getBoundingClientRect().width||600));
  var h=Math.max(220,Math.floor(wrap.clientHeight||wrap.getBoundingClientRect().height||260));
  var type=s.type, pie=(type==='pie'||type==='donut'), line=(type==='line'||type==='area'), horiz=(type==='hbar');
- var colors=(typeof palette!=='undefined' && Array.isArray(palette) && palette.length)?palette:['#C9A227','#8B2F3D','#2E86AB','#3FB07A','#8E5BC9','#D9455F','#0E9AA7','#B0793E'];
+ var colors=(typeof palette!=='undefined' && Array.isArray(palette) && palette.length)?palette:['#C9A227','#8B2F3D','#16785A','#2C4A6B','#6B4E8E','#B0793E','#4A7A8C','#8FA05C'];
  var max=Math.max.apply(null,vals.map(function(v){return Math.abs(v)})); if(!isFinite(max)||max<=0)max=1;
  var escA=function(x){return String(x==null?'':x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');};
  var short=function(x,n){x=String(x==null?'':x);return x.length>n?x.slice(0,n-1)+'…':x;};
@@ -13508,7 +13408,7 @@ function openExpand(s){var ov=$('aiChartOverlay'),cv=$('aiOverlayCanvas');if(!ov
    or redrawAICard, so it can't destabilise the four cards that already work. */
 function drawCombinedChart(specs, host, type){
   type = (type==='bar' || type==='area') ? type : 'line';
-  var palette=['#C9A227','#8B2F3D','#2E86AB','#3FB07A','#8E5BC9','#D9455F','#0E9AA7','#B0793E'];
+  var palette=['#C9A227','#8B2F3D','#16785A','#2C4A6B','#6B4E8E','#B0793E','#4A7A8C','#8FA05C'];
   var usable = (specs||[]).filter(function(s){ return s && s.data && Array.isArray(s.data.labels) && s.data.labels.length>1; });
   if(usable.length<2){
     host.innerHTML='<div class="ai-empty" style="margin:8px 0 12px">Combine needs at least 2 charts with more than one group each — not enough comparable data here yet.</div>';
@@ -14174,7 +14074,7 @@ function renderFallback(){
  }
  max=max||1;
  var total=series[0]?series[0].values.reduce(function(a,b){return a+b},0):0;
- var colors=['#C9A227','#8B2F3D','#2E86AB','#3FB07A','#8E5BC9','#D95F8A'];
+ var colors=['#C9A227','#8B2F3D','#16785A','#2C4A6B','#6B4E8E','#4A7A8C'];
  var w=760,h=390,left=68,right=28,bottom=64,top=28,plotW=w-left-right,plotH=h-top-bottom;
  function compact(v){
    var raw=Number(v)||0,n=Math.abs(raw),sign=raw<0?'-':'';
