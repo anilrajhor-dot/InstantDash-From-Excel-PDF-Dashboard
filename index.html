@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.16.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.17.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -522,6 +522,8 @@ main{max-width:1360px;margin:0 auto;padding:24px}
 .v27-anomaly-info>b{font-size:12.5px}
 .v27-anomaly-ctx{font-size:11px;color:var(--muted);font-weight:600}
 .v27-anomaly-detail{font-size:11.5px;color:var(--muted);margin-top:2px}
+.v27-cmp-up{color:var(--accent);font-weight:700}
+.v27-cmp-down{color:var(--text);font-weight:700}
 @media(max-width:480px){
   .v27-swatch-grid{grid-template-columns:repeat(2,1fr)}
 }
@@ -1726,7 +1728,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v27.16.0">
+<meta name="instantdash-build" content="v27.17.0">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2600,7 +2602,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v27.16.0';
+      s.textContent='v27.17.0';
       b.appendChild(s);
     }
   }
@@ -2660,13 +2662,15 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v27.16.0</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v27.17.0</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.16.0</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.17.0</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="pptxExportBtn" type="button" aria-label="Export to PowerPoint">📊 Export PPT</button>
       <button class="id-health-btn no-print" id="pdfExportBtn" type="button" aria-label="Export PDF Report">📄 Export PDF</button>
+      <button class="id-health-btn no-print" id="compareFilesBtn" type="button" aria-label="Compare with another file">🔀 Compare Files</button>
+      <input type="file" id="compareFileInput" accept=".xlsx,.xls,.xlsm,.csv,text/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" style="display:none">
       <button class="id-health-btn no-print" id="topClearDataBtn" type="button" aria-label="Clear all loaded data" style="color:var(--warn)">🗑 Clear Data</button>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
       <button class="id-health-btn no-print" id="aiModeToggleBtn" type="button" aria-label="Real AI settings">🤖 Real AI: Off</button>
@@ -2721,6 +2725,7 @@ body{
       <button type="button" data-jump="v27SlicerPanel">🎛️ Slicers</button>
       <button type="button" data-jump="v27SavedViews">🔖 Saved Views</button>
       <button type="button" data-jump="v27Anomalies">⚠️ Anomalies</button>
+      <button type="button" data-jump="v27CompareSection">🔀 Compare</button>
       <button type="button" data-jump="v27AdvCharts">📶 Advanced Charts</button>
       <button type="button" data-jump="v25Snapshot">📊 Snapshot</button>
       <button type="button" data-jump="v25StatusStrip">🚦 Status</button>
@@ -3131,6 +3136,95 @@ body{
       setInterval(render, 700);
       if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', render);
       else render();
+    })();
+    </script>
+
+    <section id="v27CompareSection" class="exec-card no-print" hidden>
+      <div class="mac-head">
+        <div><div class="exec-label">🔀 Cross-File Comparison</div><div class="mac-title">Measures matched by name across both files</div></div>
+        <button type="button" id="v27CompareClear" class="v26-task-remove">Clear Comparison</button>
+      </div>
+      <div id="v27CompareBody"></div>
+    </section>
+    <script id="instantdash-v27-compare-wire">
+    (function(){
+      function esc27cf(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+      function fmtC(v){ return (typeof v==='number' && isFinite(v)) ? v.toLocaleString('en-IN', {maximumFractionDigits:2}) : '—'; }
+
+      function sumNumeric(rows, colName){
+        var vals = rows.map(function(r){ return r[colName]; }).filter(function(v){ return typeof v==='number' && isFinite(v); });
+        if(!vals.length) return null;
+        return vals.reduce(function(a,b){ return a+b; }, 0);
+      }
+
+      function render(){
+        var section = document.getElementById('v27CompareSection');
+        var body = document.getElementById('v27CompareBody');
+        if(!section || !body) return;
+        var cmp = window.__instantDashCompareFile;
+        var app = window.APP || {};
+        var hasPrimary = !!(app.rows && app.rows.length);
+        if(!cmp || !hasPrimary){ section.hidden = true; return; }
+        section.hidden = false;
+
+        var primaryMeasureNames = (typeof rankMeasures==='function') ? rankMeasures().map(function(m){return m.name;}) : [];
+        var cmpNumericCols = cmp.header.filter(function(h){
+          return cmp.rows.some(function(r){ return typeof r[h]==='number' && isFinite(r[h]); });
+        });
+
+        var matched = primaryMeasureNames.filter(function(n){ return cmpNumericCols.indexOf(n)!==-1; });
+        var unmatchedPrimary = primaryMeasureNames.filter(function(n){ return cmpNumericCols.indexOf(n)===-1; });
+
+        var intro = '<div class="v26-map-intro"><b>'+esc27cf(app.fileName||'Current file')+'</b> vs <b>'+esc27cf(cmp.fileName)+'</b> ('+cmp.rows.length+' rows). Only measures with the exact same column name in both files can be compared \u2014 nothing here is guessed or approximated.</div>';
+
+        if(!matched.length){
+          body.innerHTML = intro + '<div class="v26-map-intro" style="font-style:italic;margin-top:8px">No column names matched exactly between the two files, so nothing could be compared. Check that both files use the same measure names.</div>';
+          return;
+        }
+
+        var rowsHtml = matched.map(function(name){
+          var valA = sumNumeric(app.filtered||app.rows, name);
+          var valB = sumNumeric(cmp.rows, name);
+          var delta = (valA!=null && valB!=null) ? (valA-valB) : null;
+          var pct = (delta!=null && valB) ? (delta/Math.abs(valB)*100) : null;
+          var deltaClass = delta==null ? '' : (delta>=0 ? 'v27-cmp-up' : 'v27-cmp-down');
+          return '<tr><td>'+esc27cf(name)+'</td><td>'+fmtC(valA)+'</td><td>'+fmtC(valB)+'</td><td class="'+deltaClass+'">'+(delta!=null?(delta>=0?'+':'')+fmtC(delta):'—')+(pct!=null?' ('+(pct>=0?'+':'')+pct.toFixed(1)+'%)':'')+'</td></tr>';
+        }).join('');
+
+        var unmatchedNote = unmatchedPrimary.length ? '<div class="v26-map-intro" style="margin-top:10px">Not matched (present only in the current file): '+unmatchedPrimary.map(esc27cf).join(', ')+'.</div>' : '';
+
+        body.innerHTML = intro +
+          '<table class="v27-drill-table" style="margin-top:10px"><thead><tr><th>Measure</th><th>'+esc27cf(app.fileName||'Current')+'</th><th>'+esc27cf(cmp.fileName)+'</th><th>Difference</th></tr></thead><tbody>'+rowsHtml+'</tbody></table>' +
+          unmatchedNote;
+      }
+      window.__instantDashRenderComparison = render;
+
+      function wire(){
+        var btn = document.getElementById('compareFilesBtn');
+        var input = document.getElementById('compareFileInput');
+        if(btn && input && !btn.dataset.wiredCompare){
+          btn.dataset.wiredCompare = '1';
+          btn.addEventListener('click', function(){ input.click(); });
+          input.addEventListener('change', function(e){
+            var file = e.target.files && e.target.files[0];
+            if(file && typeof loadCompareFile==='function') loadCompareFile(file);
+            input.value = '';
+          });
+        }
+        var clearBtn = document.getElementById('v27CompareClear');
+        if(clearBtn && !clearBtn.dataset.wiredCompare){
+          clearBtn.dataset.wiredCompare = '1';
+          clearBtn.addEventListener('click', function(){
+            window.__instantDashCompareFile = null;
+            render();
+            if(typeof toast==='function') toast('Comparison cleared.');
+          });
+        }
+      }
+
+      setInterval(function(){ render(); wire(); }, 700);
+      if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', function(){ render(); wire(); });
+      else { render(); wire(); }
     })();
     </script>
 
@@ -5735,7 +5829,7 @@ body{
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v27.16.0',
+  VERSION: 'v27.17.0',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -7045,6 +7139,50 @@ async function exportToPDFReport(){
     console.error('PDF export failed', err);
     hideLoader();
     if(typeof toast==='function') toast('PDF export failed: ' + (err && err.message ? err.message : 'unknown error'));
+  }
+}
+
+/* v27.17.0 — Cross-file comparison. Parses a second file completely
+   independently of the primary dataset's APP.rows/APP.columns, using a
+   lightweight standalone builder (not profileColumns(), which is
+   tightly coupled to global state and would be unsafe to reuse here
+   without risking the primary dataset). detectHeaderRow() is reused
+   since it's confirmed to be a pure function. */
+function buildRowsFromAoaStandalone(aoa, headerIdx){
+  var header = (aoa[headerIdx] || []).map(function(h, i){ return (h===null||h===undefined||h==='') ? ('Column '+(i+1)) : String(h).trim(); });
+  var rows = [];
+  for(var r=headerIdx+1; r<aoa.length; r++){
+    var raw = aoa[r] || [];
+    if(!raw.some(function(c){ return c!==null && c!==undefined && c!==''; })) continue; // skip blank rows
+    var obj = {};
+    header.forEach(function(h, i){ obj[h] = raw[i]!==undefined ? raw[i] : null; });
+    rows.push(obj);
+  }
+  return { header: header, rows: rows };
+}
+
+async function loadCompareFile(file){
+  showLoader('Reading comparison file…', 'Parsing independently — your current dashboard is not affected.');
+  await nextFrame();
+  try{
+    var buf = await file.arrayBuffer();
+    var wb = XLSX.read(buf, { type:'array', cellDates:true });
+    var sheetName = (typeof chooseBestWorkbookSheet==='function') ? chooseBestWorkbookSheet(wb) : wb.SheetNames[0];
+    var ws = wb.Sheets[sheetName];
+    if(!ws || !ws['!ref']){ hideLoader(); if(typeof toast==='function') toast('That sheet appears to be empty.'); return; }
+    var aoa = XLSX.utils.sheet_to_json(ws, {header:1, raw:true, defval:null, blankrows:true});
+    while(aoa.length && !(aoa[aoa.length-1]||[]).some(function(c){ return c!==null && c!==undefined && c!==''; })) aoa.pop();
+    if(!aoa.length){ hideLoader(); if(typeof toast==='function') toast('No data found in that file.'); return; }
+    var headerIdx = (typeof detectHeaderRow==='function') ? detectHeaderRow(aoa) : 0;
+    var built = buildRowsFromAoaStandalone(aoa, headerIdx);
+    window.__instantDashCompareFile = { fileName: file.name, header: built.header, rows: built.rows };
+    hideLoader();
+    if(typeof toast==='function') toast('Comparison file loaded: ' + built.rows.length + ' rows.');
+    if(typeof window.__instantDashRenderComparison==='function') window.__instantDashRenderComparison();
+  }catch(err){
+    console.error('Compare file load failed', err);
+    hideLoader();
+    if(typeof toast==='function') toast('Could not read that file: ' + (err && err.message ? err.message : 'unknown error'));
   }
 }
 
