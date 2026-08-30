@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.5.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.6.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -1688,7 +1688,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v27.5.0">
+<meta name="instantdash-build" content="v27.6.0">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2562,7 +2562,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v27.5.0';
+      s.textContent='v27.6.0';
       b.appendChild(s);
     }
   }
@@ -2622,10 +2622,10 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v27.5.0</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v27.6.0</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.5.0</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.6.0</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="topClearDataBtn" type="button" aria-label="Clear all loaded data" style="color:var(--warn)">🗑 Clear Data</button>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -4889,7 +4889,7 @@ body{
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v27.5.0',
+  VERSION: 'v27.6.0',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -14837,6 +14837,18 @@ function answer(q){
   if(/reduce.*drop|drop.*out|dropout/.test(ql))return '<b>How can we reduce drop-outs?</b><br>Use the uploaded records to identify the groups or periods with the highest drop-out levels, compare them with successful groups and investigate the operational fields associated with the difference. Set a measurable reduction target and assign ownership.';
   if(/which.*district|district.*best|district.*attention/.test(ql))return district();
   if(/which.*region|region.*best|region.*worst|region.*overall/.test(ql))return bestWorst();
+  /* v27.6.0 — generic fallback: if the question mentions "which/best/
+     worst/top/bottom" together with the actual name of any real
+     grouping column in the loaded file (not just the hardcoded
+     "region"/"district"), treat it the same way. This makes every file's
+     own terminology work, not only two specific guessed words. */
+  if(/which|best|worst|top|bottom/.test(ql)){
+    var matchedGroupCol = groupColumns().find(function(gc){
+      var gcClean = clean(gc);
+      return gcClean && gcClean.length>1 && ql.indexOf(gcClean)!==-1;
+    });
+    if(matchedGroupCol) return bestWorst();
+  }
   if(/which.*kpi.*attention|kpi.*attention|needs attention|what is worse|what.*worst|performance gaps|biggest.*gap/.test(ql)){
     var att=mv[0];return att?'<b>Priority performance gap:</b> <b>'+esc(att.x.k)+'</b> moved '+fmt(att.a,att.x.k)+' → '+fmt(att.b,att.x.k)+' ('+(att.p>=0?'+':'')+att.p.toFixed(1)+'%). Investigate this movement against target and related operational drivers.':'No measurable performance gap was identified.';
   }
@@ -14962,6 +14974,93 @@ function show(q){
 
 window.__instantDashAskMeAnswer=show;
 
+/* v27.6.0 — Ask AI dynamic questions: generates genuinely data-aware
+   suggestions using the real loaded file's actual column names, rather
+   than hardcoded guesses like "region" or "expenses" that may not
+   exist in the current file at all. */
+(function(){
+  var lastDataVersion = null;
+
+  function pickTopDimension(){
+    var cols = (window.APP && window.APP.columns) || [];
+    var rows = (window.APP && window.APP.rows) || [];
+    if(!rows.length) return null;
+    var candidates = cols.filter(function(c){
+      return (c.type==='text' || c.role==='dimension') && c.unique>1 && c.unique < rows.length;
+    });
+    if(!candidates.length) return null;
+    /* Prefer a genuine category over a near-unique identifier: a
+       moderate number of repeats per value (rows/unique ratio) is a
+       stronger "groupable" signal than raw uniqueness alone. */
+    candidates.sort(function(a,b){
+      var scoreA = rows.length / Math.max(1,a.unique);
+      var scoreB = rows.length / Math.max(1,b.unique);
+      return scoreB - scoreA;
+    });
+    return candidates[0];
+  }
+
+  function pickTopMeasures(n){
+    try{
+      if(typeof rankMeasures==='function'){
+        return rankMeasures().slice(0, n).map(function(m){ return m.name || (m.col && m.col.name); }).filter(Boolean);
+      }
+    }catch(_){}
+    return [];
+  }
+
+  function esc48(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+  function render(){
+    var container = document.getElementById('ai48DynamicQuestions');
+    if(!container) return;
+    var app = window.APP || {};
+    var hasData = !!(app.rows && app.rows.length);
+    if(!hasData){
+      if(container.innerHTML) container.innerHTML='';
+      lastDataVersion = null;
+      return;
+    }
+    if(lastDataVersion === app.__dataVersion) return; // already rendered for this data
+    lastDataVersion = app.__dataVersion;
+
+    var questions = [];
+    var dim = pickTopDimension();
+    if(dim){
+      questions.push('Which '+dim.name+' is best overall?');
+      questions.push('Which '+dim.name+' needs attention?');
+    }
+    var topMeasures = pickTopMeasures(2);
+    topMeasures.forEach(function(mName){
+      questions.push('How can we improve '+mName+'?');
+      questions.push('Why did '+mName+' change?');
+    });
+
+    container.innerHTML = questions.map(function(q){
+      return '<button type="button" class="ai48-q">'+esc48(q)+'</button>';
+    }).join('');
+  }
+
+  var wiredDelegate = false;
+  function wireDelegate(){
+    var container = document.getElementById('ai48DynamicQuestions');
+    if(!container || wiredDelegate) return;
+    wiredDelegate = true;
+    container.addEventListener('click', function(e){
+      var btn = e.target.closest('.ai48-q');
+      if(!btn || !container.contains(btn)) return;
+      var input = document.getElementById('ai48Input');
+      var text = btn.textContent.trim();
+      if(input) input.value = text;
+      if(typeof window.__instantDashAskMeAnswer==='function') window.__instantDashAskMeAnswer(text);
+    });
+  }
+
+  setInterval(function(){ render(); wireDelegate(); }, 700);
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', function(){ render(); wireDelegate(); });
+  else { render(); wireDelegate(); }
+})();
+
 /* v26.0 — data isolation fix: this function was called from three
    places (new upload, department switch, Clear Data) but never actually
    defined anywhere, so window.__instantDashResetAskAIForNewFile was
@@ -15074,23 +15173,17 @@ function mountAskMe(){
   p.setAttribute('aria-label','Ask Executive AI');
   p.innerHTML='<div class="ai48-head"><div><div class="ai48-title">💬 Ask Executive AI</div><div class="ai48-hint">Ask anything about the current dashboard — including how to improve any parameter</div></div><span class="badge">LIVE DATA</span></div>'+
     '<div class="ai48-scroll-body">'+
+    '<div id="ai48DynamicQuestions" class="ai48-questions"></div>'+
     '<div class="ai48-questions">'+
     '<button type="button" class="ai48-q">What are the 3 most important issues?</button>'+ 
     '<button type="button" class="ai48-q">What is going well?</button>'+ 
     '<button type="button" class="ai48-q">What changed?</button>'+ 
     '<button type="button" class="ai48-q">Give me an executive summary</button>'+ 
-    '<button type="button" class="ai48-q">Which region is best overall?</button>'+ 
-    '<button type="button" class="ai48-q">Which region is worst overall?</button>'+ 
     '<button type="button" class="ai48-q">Which KPI needs attention?</button>'+ 
     '<button type="button" class="ai48-q">What is worse?</button>'+ 
     '<button type="button" class="ai48-q">How can we improve?</button>'+ 
     '<button type="button" class="ai48-q">Why was the target not achieved?</button>'+ 
     '<button type="button" class="ai48-q">What are the reasons for the variation?</button>'+ 
-    '<button type="button" class="ai48-q">How can we control expenses?</button>'+ 
-    '<button type="button" class="ai48-q">How can we increase transactions?</button>'+ 
-    '<button type="button" class="ai48-q">How can we reduce drop-outs?</button>'+ 
-    '<button type="button" class="ai48-q">Which district is best?</button>'+ 
-    '<button type="button" class="ai48-q">Which district needs attention?</button>'+ 
     '<button type="button" class="ai48-q">What are the biggest performance gaps?</button>'+ 
     '<button type="button" class="ai48-q">What should I tell my board or committee?</button>'+ 
     '<button type="button" class="ai48-q">What is the single biggest risk right now?</button>'+ 
@@ -15098,7 +15191,6 @@ function mountAskMe(){
     '<button type="button" class="ai48-q">How reliable is this data for decisions?</button>'+ 
     '<button type="button" class="ai48-q">What should I watch next period?</button>'+ 
     '<button type="button" class="ai48-q">Why did performance fall?</button>'+ 
-    '<button type="button" class="ai48-q">Which region needs attention?</button>'+ 
     '<button type="button" class="ai48-q">What should management do?</button>'+ 
     '<button type="button" class="ai48-q">Why did this KPI change?</button>'+ 
     '<button type="button" class="ai48-q">What is the biggest management concern?</button>'+ 
