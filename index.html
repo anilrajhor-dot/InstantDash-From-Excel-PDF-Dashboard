@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.11.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.12.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -169,6 +169,7 @@ if(typeof window.niceName !== 'function'){
 </script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
@@ -1713,7 +1714,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v27.11.0">
+<meta name="instantdash-build" content="v27.12.0">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2587,7 +2588,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v27.11.0';
+      s.textContent='v27.12.0';
       b.appendChild(s);
     }
   }
@@ -2647,11 +2648,12 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v27.11.0</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v27.12.0</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.11.0</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.12.0</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
+      <button class="id-health-btn no-print" id="pptxExportBtn" type="button" aria-label="Export to PowerPoint">📊 Export PPT</button>
       <button class="id-health-btn no-print" id="topClearDataBtn" type="button" aria-label="Clear all loaded data" style="color:var(--warn)">🗑 Clear Data</button>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
       <button class="id-health-btn no-print" id="aiModeToggleBtn" type="button" aria-label="Real AI settings">🤖 Real AI: Off</button>
@@ -3320,6 +3322,21 @@ body{
         }
       }
 
+      setInterval(wire, 700);
+      if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire);
+      else wire();
+    })();
+    </script>
+    <script id="instantdash-v27-pptx-wire">
+    (function(){
+      function wire(){
+        var btn = document.getElementById('pptxExportBtn');
+        if(!btn || btn.dataset.wiredPptx) return;
+        btn.dataset.wiredPptx = '1';
+        btn.addEventListener('click', function(){
+          if(typeof exportToPowerPoint==='function') exportToPowerPoint();
+        });
+      }
       setInterval(wire, 700);
       if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire);
       else wire();
@@ -5447,7 +5464,7 @@ body{
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v27.11.0',
+  VERSION: 'v27.12.0',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -6546,6 +6563,90 @@ async function commitDataGrid(grid, fileName, successMessage, loadingMessage){
     console.error(err);
     hideLoader();
     showFatal('Something went wrong rebuilding the dashboard: ' + (err && err.message ? err.message : 'unknown error'));
+  }
+}
+
+/* v27.12.0 — PowerPoint export. Reuses the same data sources already
+   proven correct elsewhere (central aggregation engine, rankMeasures,
+   real Chart.js instances) rather than recomputing anything independently. */
+async function exportToPowerPoint(){
+  if(typeof PptxGenJS === 'undefined'){
+    if(typeof toast==='function') toast('PowerPoint library still loading — try again in a moment.');
+    return;
+  }
+  var rows = APP.filtered || APP.rows || [];
+  if(!rows.length){
+    if(typeof toast==='function') toast('Load a file before exporting.');
+    return;
+  }
+  showLoader('Building your PowerPoint…', 'Assembling slides from the current dashboard.');
+  await nextFrame();
+
+  try{
+    var pptx = new PptxGenJS();
+    pptx.layout = 'LAYOUT_WIDE';
+    var INK = '0A0F1C', BRASS = 'C9A227', PARCHMENT = 'F3EEE1', MUTED = '5B6472';
+
+    // ---- Slide 1: Title ----
+    var s1 = pptx.addSlide();
+    s1.background = { color: INK };
+    s1.addText(APP.fileName || 'InstantDash Dashboard', { x:0.6, y:2.0, w:11.5, h:1.0, fontSize:32, bold:true, color:'FFFFFF', fontFace:'Arial' });
+    s1.addText('Executive Management Cockpit', { x:0.6, y:2.9, w:11.5, h:0.5, fontSize:16, color:BRASS, fontFace:'Arial' });
+    s1.addText(new Date().toLocaleDateString('en-IN', {day:'numeric', month:'long', year:'numeric'}) + '  ·  ' + rows.length.toLocaleString() + ' records analysed', { x:0.6, y:3.5, w:11.5, h:0.4, fontSize:12, color:PARCHMENT, fontFace:'Arial' });
+
+    // ---- Slide 2: KPI Summary ----
+    var s2 = pptx.addSlide();
+    s2.addText('Key Performance Indicators', { x:0.5, y:0.35, w:12, h:0.6, fontSize:24, bold:true, color:INK, fontFace:'Arial' });
+    var topMeasures = (typeof rankMeasures==='function') ? rankMeasures().slice(0,4) : [];
+    topMeasures.forEach(function(c, i){
+      var agg = (typeof window.__instantDashAggregate==='function') ? window.__instantDashAggregate(c.name, rows) : null;
+      var val = (agg && agg.count) ? fmtByField(agg.value, c.name) : '—';
+      var lbl = (agg && agg.mode==='avg') ? 'Average '+c.name : (agg && agg.mode==='balance') ? 'Latest '+c.name : 'Total '+c.name;
+      var colX = 0.5 + (i % 2) * 6.15, rowY = 1.15 + Math.floor(i/2) * 2.05;
+      s2.addShape(pptx.ShapeType.roundRect, { x:colX, y:rowY, w:5.8, h:1.85, fill:{color:'F4F6FA'}, line:{color:BRASS, width:1.5} });
+      s2.addText(String(val), { x:colX+0.25, y:rowY+0.2, w:5.3, h:0.7, fontSize:26, bold:true, color:INK, fontFace:'Arial' });
+      s2.addText(String(lbl), { x:colX+0.25, y:rowY+0.95, w:5.3, h:0.6, fontSize:12, color:MUTED, fontFace:'Arial' });
+    });
+
+    // ---- Slide 3: Executive Takeaway ----
+    var takeawayEl = document.getElementById('v26TakeawayBody');
+    var takeawayText = takeawayEl ? (takeawayEl.innerText || '').trim() : '';
+    if(takeawayText){
+      var s3 = pptx.addSlide();
+      s3.addText('Executive Takeaway', { x:0.5, y:0.35, w:12, h:0.6, fontSize:24, bold:true, color:INK, fontFace:'Arial' });
+      s3.addShape(pptx.ShapeType.rect, { x:0.5, y:1.15, w:0.08, h:4.5, fill:{color:BRASS} });
+      s3.addText(takeawayText, { x:0.85, y:1.15, w:11.3, h:4.5, fontSize:15, color:INK, fontFace:'Arial', valign:'top', lineSpacing:22 });
+    }
+
+    // ---- Slides: real charts, exported as images from the live Chart.js instances ----
+    var chartSpecs = (APP.charts || []).filter(function(c){ return c.instance && typeof c.instance.toBase64Image==='function'; }).slice(0,3);
+    chartSpecs.forEach(function(spec){
+      var s = pptx.addSlide();
+      var title = (spec.y || spec.value || spec.x || 'Chart') + (spec.x && spec.y ? ' by ' + spec.x : '');
+      s.addText(title, { x:0.5, y:0.35, w:12, h:0.5, fontSize:20, bold:true, color:INK, fontFace:'Arial' });
+      try{
+        var img = spec.instance.toBase64Image();
+        s.addImage({ data: img, x:0.8, y:1.0, w:11, h:5.2 });
+      }catch(_){}
+    });
+
+    // ---- Slide: Management Brief top findings ----
+    var briefEl = document.getElementById('v26MgmtBriefBody');
+    var briefText = briefEl ? (briefEl.innerText || '').trim() : '';
+    if(briefText){
+      var s4 = pptx.addSlide();
+      s4.addText('Management Brief', { x:0.5, y:0.35, w:12, h:0.6, fontSize:24, bold:true, color:INK, fontFace:'Arial' });
+      s4.addText(briefText.slice(0, 1800), { x:0.6, y:1.15, w:11.7, h:5.2, fontSize:12, color:INK, fontFace:'Arial', valign:'top', lineSpacing:16 });
+    }
+
+    var fileBase = (APP.fileName || 'InstantDash').replace(/\.[^.]+$/,'').replace(/[^a-z0-9]+/gi,'_');
+    await pptx.writeFile({ fileName: fileBase + '_Presentation.pptx' });
+    hideLoader();
+    if(typeof toast==='function') toast('PowerPoint downloaded.');
+  }catch(err){
+    console.error('PPTX export failed', err);
+    hideLoader();
+    if(typeof toast==='function') toast('PowerPoint export failed: ' + (err && err.message ? err.message : 'unknown error'));
   }
 }
 
