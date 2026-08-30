@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.12.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.13.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -170,6 +170,7 @@ if(typeof window.niceName !== 'function'){
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
@@ -1714,7 +1715,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v27.12.0">
+<meta name="instantdash-build" content="v27.13.0">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2588,7 +2589,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v27.12.0';
+      s.textContent='v27.13.0';
       b.appendChild(s);
     }
   }
@@ -2648,12 +2649,13 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v27.12.0</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v27.13.0</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.12.0</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.13.0</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="pptxExportBtn" type="button" aria-label="Export to PowerPoint">📊 Export PPT</button>
+      <button class="id-health-btn no-print" id="pdfExportBtn" type="button" aria-label="Export PDF Report">📄 Export PDF</button>
       <button class="id-health-btn no-print" id="topClearDataBtn" type="button" aria-label="Clear all loaded data" style="color:var(--warn)">🗑 Clear Data</button>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
       <button class="id-health-btn no-print" id="aiModeToggleBtn" type="button" aria-label="Real AI settings">🤖 Real AI: Off</button>
@@ -3335,6 +3337,21 @@ body{
         btn.dataset.wiredPptx = '1';
         btn.addEventListener('click', function(){
           if(typeof exportToPowerPoint==='function') exportToPowerPoint();
+        });
+      }
+      setInterval(wire, 700);
+      if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire);
+      else wire();
+    })();
+    </script>
+    <script id="instantdash-v27-pdf-wire">
+    (function(){
+      function wire(){
+        var btn = document.getElementById('pdfExportBtn');
+        if(!btn || btn.dataset.wiredPdf) return;
+        btn.dataset.wiredPdf = '1';
+        btn.addEventListener('click', function(){
+          if(typeof exportToPDFReport==='function') exportToPDFReport();
         });
       }
       setInterval(wire, 700);
@@ -5464,7 +5481,7 @@ body{
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v27.12.0',
+  VERSION: 'v27.13.0',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -6647,6 +6664,133 @@ async function exportToPowerPoint(){
     console.error('PPTX export failed', err);
     hideLoader();
     if(typeof toast==='function') toast('PowerPoint export failed: ' + (err && err.message ? err.message : 'unknown error'));
+  }
+}
+
+/* v27.13.0 — PDF report export. Same proven data sources as the
+   PowerPoint export, formatted as a proper multi-page document with
+   page numbers and a confidentiality footer. */
+async function exportToPDFReport(){
+  if(typeof window.jspdf === 'undefined' || typeof window.jspdf.jsPDF === 'undefined'){
+    if(typeof toast==='function') toast('PDF library still loading — try again in a moment.');
+    return;
+  }
+  var rows = APP.filtered || APP.rows || [];
+  if(!rows.length){
+    if(typeof toast==='function') toast('Load a file before exporting.');
+    return;
+  }
+  showLoader('Building your PDF report…', 'Formatting pages from the current dashboard.');
+  await nextFrame();
+
+  try{
+    var doc = new window.jspdf.jsPDF({ unit:'mm', format:'a4' });
+    var W = doc.internal.pageSize.getWidth(), H = doc.internal.pageSize.getHeight();
+    var MARGIN = 18, CONTENT_W = W - MARGIN*2;
+    var INK = [10,15,28], BRASS = [201,162,39], MUTED = [91,100,114];
+    var pageNum = 1;
+
+    function footer(){
+      doc.setFontSize(8.5);
+      doc.setTextColor(MUTED[0], MUTED[1], MUTED[2]);
+      doc.text('CONFIDENTIAL — Internal Use Only', MARGIN, H-10);
+      doc.text('Page ' + pageNum, W-MARGIN-15, H-10);
+      doc.setDrawColor(BRASS[0], BRASS[1], BRASS[2]);
+    }
+    function newPage(){
+      footer();
+      doc.addPage();
+      pageNum++;
+    }
+
+    // ---- Cover page ----
+    doc.setFillColor(INK[0], INK[1], INK[2]);
+    doc.rect(0, 0, W, H, 'F');
+    doc.setTextColor(255,255,255);
+    doc.setFontSize(26);
+    doc.setFont('helvetica', 'bold');
+    doc.text(String(APP.fileName || 'InstantDash Dashboard'), MARGIN, 90);
+    doc.setFontSize(14);
+    doc.setTextColor(BRASS[0], BRASS[1], BRASS[2]);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Executive Management Cockpit', MARGIN, 102);
+    doc.setFontSize(10.5);
+    doc.setTextColor(230,230,225);
+    doc.text(new Date().toLocaleDateString('en-IN', {day:'numeric', month:'long', year:'numeric'}) + '   ·   ' + rows.length.toLocaleString() + ' records analysed', MARGIN, 112);
+    footer();
+    doc.addPage();
+    pageNum++;
+
+    // ---- KPI summary page ----
+    doc.setTextColor(INK[0], INK[1], INK[2]);
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Key Performance Indicators', MARGIN, 26);
+    var topMeasures = (typeof rankMeasures==='function') ? rankMeasures().slice(0,6) : [];
+    var y = 42;
+    topMeasures.forEach(function(c){
+      var agg = (typeof window.__instantDashAggregate==='function') ? window.__instantDashAggregate(c.name, rows) : null;
+      var val = (agg && agg.count) ? fmtByField(agg.value, c.name) : '—';
+      var lbl = (agg && agg.mode==='avg') ? 'Average '+c.name : (agg && agg.mode==='balance') ? 'Latest '+c.name : 'Total '+c.name;
+      doc.setDrawColor(BRASS[0], BRASS[1], BRASS[2]);
+      doc.rect(MARGIN, y-6, 3, 14, 'F');
+      doc.setFontSize(15);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(INK[0], INK[1], INK[2]);
+      doc.text(String(val), MARGIN+8, y);
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(MUTED[0], MUTED[1], MUTED[2]);
+      doc.text(String(lbl), MARGIN+8, y+6);
+      y += 20;
+    });
+
+    // ---- Executive Takeaway ----
+    var takeawayEl = document.getElementById('v26TakeawayBody');
+    var takeawayText = takeawayEl ? (takeawayEl.innerText || '').trim() : '';
+    if(takeawayText){
+      newPage();
+      doc.setTextColor(INK[0], INK[1], INK[2]);
+      doc.setFontSize(18);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Executive Takeaway', MARGIN, 26);
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'normal');
+      var lines = doc.splitTextToSize(takeawayText, CONTENT_W);
+      doc.text(lines, MARGIN, 40);
+    }
+
+    // ---- Management Brief ----
+    var briefEl = document.getElementById('v26MgmtBriefBody');
+    var briefText = briefEl ? (briefEl.innerText || '').trim() : '';
+    if(briefText){
+      newPage();
+      doc.setTextColor(INK[0], INK[1], INK[2]);
+      doc.setFontSize(18);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Management Brief', MARGIN, 26);
+      doc.setFontSize(10.5);
+      doc.setFont('helvetica', 'normal');
+      var briefLines = doc.splitTextToSize(briefText, CONTENT_W);
+      var linesPerPage = 48, i = 0;
+      while(i < briefLines.length){
+        var chunk = briefLines.slice(i, i+linesPerPage);
+        doc.text(chunk, MARGIN, 40);
+        i += linesPerPage;
+        if(i < briefLines.length) newPage();
+      }
+    }
+
+    footer();
+
+    var fileBase = (APP.fileName || 'InstantDash').replace(/\.[^.]+$/,'').replace(/[^a-z0-9]+/gi,'_');
+    doc.save(fileBase + '_Report.pdf');
+    hideLoader();
+    if(typeof toast==='function') toast('PDF report downloaded.');
+  }catch(err){
+    console.error('PDF export failed', err);
+    hideLoader();
+    if(typeof toast==='function') toast('PDF export failed: ' + (err && err.message ? err.message : 'unknown error'));
   }
 }
 
