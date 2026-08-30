@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.7.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.8.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -487,6 +487,14 @@ main{max-width:1360px;margin:0 auto;padding:24px}
 .v27-swatch{display:flex;flex-direction:column;align-items:center;gap:5px}
 .v27-swatch input[type="color"]{width:100%;height:44px;border-radius:8px;border:1px solid var(--border);cursor:pointer;padding:2px;background:var(--card)}
 .v27-swatch span{font-size:9.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.v27-slicer-group{margin-bottom:14px}
+.v27-slicer-group:last-child{margin-bottom:0}
+.v27-slicer-label{font-size:11.5px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+.v27-slicer-clear{font-size:10.5px;font-weight:700;color:var(--warn);background:none;border:none;cursor:pointer;text-decoration:underline;text-transform:none;letter-spacing:0}
+.v27-slicer-chips{display:flex;flex-wrap:wrap;gap:7px}
+.v27-slicer-chip{padding:8px 14px;border-radius:999px;border:1px solid var(--border);background:var(--card-2);color:var(--text);font-size:12.5px;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .15s ease}
+.v27-slicer-chip:active{transform:scale(.96)}
+.v27-slicer-chip.active{background:var(--accent);border-color:var(--accent);color:#111;box-shadow:0 2px 8px rgba(201,162,39,.35)}
 @media(max-width:480px){
   .v27-swatch-grid{grid-template-columns:repeat(2,1fr)}
 }
@@ -1688,7 +1696,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v27.7.0">
+<meta name="instantdash-build" content="v27.8.0">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2562,7 +2570,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v27.7.0';
+      s.textContent='v27.8.0';
       b.appendChild(s);
     }
   }
@@ -2622,10 +2630,10 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v27.7.0</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v27.8.0</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.7.0</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.8.0</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="topClearDataBtn" type="button" aria-label="Clear all loaded data" style="color:var(--warn)">🗑 Clear Data</button>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -2678,6 +2686,7 @@ body{
 
     <nav id="v21QuickNav" class="v21-quicknav no-print" aria-label="Jump to section" hidden>
       <span class="v21-quicknav-label">Jump to</span>
+      <button type="button" data-jump="v27SlicerPanel">🎛️ Slicers</button>
       <button type="button" data-jump="v25Snapshot">📊 Snapshot</button>
       <button type="button" data-jump="v25StatusStrip">🚦 Status</button>
       <button type="button" data-jump="v24Understand">🧭 Understanding</button>
@@ -2784,6 +2793,107 @@ body{
       setInterval(function(){ render(); wire(); }, 700);
       if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', function(){ render(); wire(); });
       else { render(); wire(); }
+    })();
+    </script>
+
+    <section id="v27SlicerPanel" class="exec-card no-print" hidden>
+      <div class="mac-head">
+        <div><div class="exec-label">🎛️ Slicers</div><div class="mac-title">Tap a value to filter the entire dashboard</div></div>
+      </div>
+      <div id="v27SlicerBody"></div>
+    </section>
+    <script id="instantdash-v27-slicer-wire">
+    (function(){
+      var lastDataVersion = null;
+      var lastFilterSig = null;
+
+      function esc27s(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+      function pickSlicerDimensions(n){
+        var cols = (window.APP && window.APP.columns) || [];
+        var rows = (window.APP && window.APP.rows) || [];
+        if(!rows.length) return [];
+        var candidates = cols.filter(function(c){
+          return c.role==='dimension' && c.unique>1 && c.unique<=30;
+        });
+        candidates.sort(function(a,b){ return a.unique - b.unique; });
+        return candidates.slice(0, n);
+      }
+
+      function filterSig(){
+        var app = window.APP || {};
+        try{ return JSON.stringify(Object.keys(app.filters||{}).map(function(k){
+          var f = app.filters[k];
+          return f.kind==='cat' ? k+':'+Array.from(f.selected||[]).sort().join(',') : k+':date';
+        })); }catch(_){ return ''; }
+      }
+
+      function render(){
+        var container = document.getElementById('v27SlicerBody');
+        var section = document.getElementById('v27SlicerPanel');
+        if(!container || !section) return;
+        var app = window.APP || {};
+        var hasData = !!(app.rows && app.rows.length);
+        if(!hasData){
+          section.hidden = true;
+          lastDataVersion = null;
+          return;
+        }
+        var curFilterSig = filterSig();
+        if(lastDataVersion === app.__dataVersion && lastFilterSig === curFilterSig) return;
+        lastDataVersion = app.__dataVersion;
+        lastFilterSig = curFilterSig;
+
+        var dims = pickSlicerDimensions(2);
+        if(!dims.length){ section.hidden = true; return; }
+        section.hidden = false;
+
+        container.innerHTML = dims.map(function(dim){
+          var values = Array.from(new Set(app.rows.map(function(r){ return r[dim.name]; })
+            .filter(function(v){ return v!==null && v!==undefined && v!==''; })
+            .map(function(v){ return typeof v==='boolean' ? (v?'Yes':'No') : String(v); })))
+            .sort(function(a,b){ return a.localeCompare(b, undefined, {numeric:true}); });
+          var f = app.filters[dim.name];
+          var selected = (f && f.kind==='cat') ? f.selected : null;
+          var chips = values.map(function(v){
+            var isActive = selected ? selected.has(v) : false;
+            return '<button type="button" class="v27-slicer-chip'+(isActive?' active':'')+'" data-slicer-col="'+esc27s(dim.name)+'" data-slicer-val="'+esc27s(v)+'">'+esc27s(v)+'</button>';
+          }).join('');
+          var clearBtn = selected ? '<button type="button" class="v27-slicer-clear" data-slicer-clear="'+esc27s(dim.name)+'">Clear</button>' : '';
+          return '<div class="v27-slicer-group"><div class="v27-slicer-label">'+esc27s(dim.name)+clearBtn+'</div><div class="v27-slicer-chips">'+chips+'</div></div>';
+        }).join('');
+      }
+
+      var wiredDelegate = false;
+      function wireDelegate(){
+        var container = document.getElementById('v27SlicerBody');
+        if(!container || wiredDelegate) return;
+        wiredDelegate = true;
+        container.addEventListener('click', function(e){
+          var chip = e.target.closest('.v27-slicer-chip');
+          var clearBtn = e.target.closest('.v27-slicer-clear');
+          if(chip){
+            var col = chip.getAttribute('data-slicer-col');
+            var val = chip.getAttribute('data-slicer-val');
+            var f = window.APP.filters[col] || (window.APP.filters[col] = {kind:'cat', selected:new Set()});
+            if(f.selected.has(val)) f.selected.delete(val); else f.selected.add(val);
+            if(!f.selected.size) delete window.APP.filters[col];
+            if(typeof applyFiltersAndRedraw==='function') applyFiltersAndRedraw();
+            if(typeof buildFilterBar==='function') buildFilterBar();
+            render();
+          } else if(clearBtn){
+            var clearCol = clearBtn.getAttribute('data-slicer-clear');
+            delete window.APP.filters[clearCol];
+            if(typeof applyFiltersAndRedraw==='function') applyFiltersAndRedraw();
+            if(typeof buildFilterBar==='function') buildFilterBar();
+            render();
+          }
+        });
+      }
+
+      setInterval(function(){ render(); wireDelegate(); }, 700);
+      if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', function(){ render(); wireDelegate(); });
+      else { render(); wireDelegate(); }
     })();
     </script>
 
@@ -4908,7 +5018,7 @@ body{
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v27.7.0',
+  VERSION: 'v27.8.0',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
