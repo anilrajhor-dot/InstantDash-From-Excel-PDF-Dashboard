@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.15.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.16.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -516,6 +516,12 @@ main{max-width:1360px;margin:0 auto;padding:24px}
 .v27-view-info>b{font-size:12.5px}
 .v27-view-info>span{font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:220px}
 .v27-view-actions{display:flex;gap:8px;flex:0 0 auto}
+.v27-anomaly-row{display:flex;align-items:flex-start;gap:11px;padding:11px 13px;margin-bottom:8px;border-radius:10px;background:color-mix(in srgb,var(--warn) 6%,var(--card-2));border:1px solid color-mix(in srgb,var(--warn) 25%,var(--border))}
+.v27-anomaly-icon{font-size:16px;flex:0 0 auto;line-height:1.4}
+.v27-anomaly-info{display:flex;flex-direction:column;gap:2px;min-width:0}
+.v27-anomaly-info>b{font-size:12.5px}
+.v27-anomaly-ctx{font-size:11px;color:var(--muted);font-weight:600}
+.v27-anomaly-detail{font-size:11.5px;color:var(--muted);margin-top:2px}
 @media(max-width:480px){
   .v27-swatch-grid{grid-template-columns:repeat(2,1fr)}
 }
@@ -1720,7 +1726,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v27.15.0">
+<meta name="instantdash-build" content="v27.16.0">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2594,7 +2600,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v27.15.0';
+      s.textContent='v27.16.0';
       b.appendChild(s);
     }
   }
@@ -2654,10 +2660,10 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v27.15.0</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v27.16.0</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.15.0</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.16.0</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="pptxExportBtn" type="button" aria-label="Export to PowerPoint">📊 Export PPT</button>
       <button class="id-health-btn no-print" id="pdfExportBtn" type="button" aria-label="Export PDF Report">📄 Export PDF</button>
@@ -2714,6 +2720,7 @@ body{
       <span class="v21-quicknav-label">Jump to</span>
       <button type="button" data-jump="v27SlicerPanel">🎛️ Slicers</button>
       <button type="button" data-jump="v27SavedViews">🔖 Saved Views</button>
+      <button type="button" data-jump="v27Anomalies">⚠️ Anomalies</button>
       <button type="button" data-jump="v27AdvCharts">📶 Advanced Charts</button>
       <button type="button" data-jump="v25Snapshot">📊 Snapshot</button>
       <button type="button" data-jump="v25StatusStrip">🚦 Status</button>
@@ -3030,6 +3037,100 @@ body{
       setInterval(function(){ render(); wire(); }, 700);
       if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', function(){ render(); wire(); });
       else { render(); wire(); }
+    })();
+    </script>
+
+    <section id="v27Anomalies" class="exec-card no-print" hidden>
+      <div class="mac-head">
+        <div><div class="exec-label">⚠️ Data Anomalies</div><div class="mac-title">Values that look statistically unusual against the rest of their own column</div></div>
+      </div>
+      <div id="v27AnomaliesBody"></div>
+    </section>
+    <script id="instantdash-v27-anomalies-wire">
+    (function(){
+      function esc27an(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+      var lastDataVersion = null;
+
+      /* v27.16.0 — standard IQR (interquartile range) method: a value is
+         flagged if it falls outside Q1-1.5*IQR to Q3+1.5*IQR. Verified
+         in isolation beforehand — correctly flags a clear 10x outlier
+         while producing zero false positives on normal data. Chosen
+         over z-score/mean-based methods since IQR doesn't assume a
+         normal distribution and isn't itself distorted by the very
+         outlier it's trying to detect. */
+      function percentileOf(sortedVals, p){
+        var n = sortedVals.length;
+        var idx = p*(n-1);
+        var lo = Math.floor(idx), hi = Math.min(lo+1, n-1);
+        var frac = idx-lo;
+        return sortedVals[lo] + (sortedVals[hi]-sortedVals[lo])*frac;
+      }
+
+      function findOutliers(measureName, rows){
+        var withVals = rows.map(function(r, i){ return { row:r, idx:i, val:r[measureName] }; })
+          .filter(function(x){ return typeof x.val==='number' && isFinite(x.val); });
+        if(withVals.length < 5) return []; // too few points for IQR to be meaningful
+        var sorted = withVals.map(function(x){ return x.val; }).slice().sort(function(a,b){ return a-b; });
+        var q1 = percentileOf(sorted, 0.25), q3 = percentileOf(sorted, 0.75);
+        var iqr = q3-q1;
+        if(iqr===0) return []; // no spread — nothing meaningfully "outside"
+        var lower = q1 - 1.5*iqr, upper = q3 + 1.5*iqr;
+        return withVals.filter(function(x){ return x.val<lower || x.val>upper; }).map(function(x){
+          return { measure:measureName, value:x.val, row:x.row, direction: x.val>upper ? 'high' : 'low', bound: x.val>upper ? upper : lower };
+        });
+      }
+
+      function contextFor(row){
+        var cols = (window.APP && window.APP.columns) || [];
+        var dimCol = cols.find(function(c){ return c.role==='dimension' || c.role==='time'; });
+        if(!dimCol) return '';
+        var v = row[dimCol.name];
+        if(v instanceof Date) return v.toLocaleDateString('en-IN', {day:'2-digit',month:'short',year:'numeric'});
+        return v!=null ? String(v) : '';
+      }
+
+      function fmtV(v){ return (typeof v==='number' && isFinite(v)) ? v.toLocaleString('en-IN', {maximumFractionDigits:2}) : String(v); }
+
+      function render(){
+        var section = document.getElementById('v27Anomalies');
+        var body = document.getElementById('v27AnomaliesBody');
+        if(!section || !body) return;
+        var app = window.APP || {};
+        var hasData = !!(app.rows && app.rows.length);
+        if(!hasData){ section.hidden = true; lastDataVersion = null; return; }
+        if(lastDataVersion === app.__dataVersion) return;
+        lastDataVersion = app.__dataVersion;
+        section.hidden = false;
+
+        var rows = app.filtered || app.rows || [];
+        var measures = (typeof rankMeasures==='function') ? rankMeasures().slice(0,8) : [];
+        var allFlags = [];
+        measures.forEach(function(m){
+          findOutliers(m.name, rows).forEach(function(f){ allFlags.push(f); });
+        });
+
+        if(!allFlags.length){
+          body.innerHTML = '<div class="v26-map-intro" style="color:var(--ok);font-weight:700">✓ No statistical anomalies detected across '+measures.length+' measure'+(measures.length===1?'':'s')+' in the current selection.</div>';
+          return;
+        }
+
+        allFlags.sort(function(a,b){ return Math.abs(b.value-b.bound) - Math.abs(a.value-a.bound); });
+        body.innerHTML = '<div class="v26-map-intro">'+allFlags.length+' value'+(allFlags.length===1?'':'s')+' fall'+(allFlags.length===1?'s':'')+' well outside the normal range for '+(new Set(allFlags.map(function(f){return f.measure;})).size)+' measure(s). This flags statistical outliers only — not every flag is necessarily wrong, but each is worth a second look before presenting.</div>'+
+          allFlags.slice(0,15).map(function(f){
+            var ctx = contextFor(f.row);
+            return '<div class="v27-anomaly-row">'+
+              '<div class="v27-anomaly-icon">'+(f.direction==='high'?'🔺':'🔻')+'</div>'+
+              '<div class="v27-anomaly-info"><b>'+esc27an(f.measure)+'</b>'+(ctx?' <span class="v27-anomaly-ctx">('+esc27an(ctx)+')</span>':'')+
+                '<span class="v27-anomaly-detail">'+fmtV(f.value)+' — unusually '+f.direction+' vs. the normal range for this column (expected roughly up to '+fmtV(f.bound)+')</span></div>'+
+            '</div>';
+          }).join('') +
+          (allFlags.length>15 ? '<div class="v26-map-intro" style="margin-top:8px">Showing the 15 most extreme of '+allFlags.length+' flagged values.</div>' : '');
+      }
+
+      setInterval(render, 700);
+      if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', render);
+      else render();
     })();
     </script>
 
@@ -5634,7 +5735,7 @@ body{
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v27.15.0',
+  VERSION: 'v27.16.0',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
