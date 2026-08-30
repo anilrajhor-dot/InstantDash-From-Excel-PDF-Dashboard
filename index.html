@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.9.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.10.1","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -501,6 +501,14 @@ main{max-width:1360px;margin:0 auto;padding:24px}
 .v27-drill-table td{padding:8px 10px;border-bottom:1px solid var(--border);white-space:nowrap}
 .v27-drill-table th:last-child,.v27-drill-table td:last-child{text-align:right;font-variant-numeric:tabular-nums;font-weight:700}
 .v27-drill-table tr:last-child td{border-bottom:none}
+.v27-adv-tabs{display:flex;gap:8px;margin-bottom:14px}
+.v27-adv-tab{padding:8px 16px;border-radius:999px;border:1px solid var(--border);background:var(--card-2);color:var(--text);font-size:12.5px;font-weight:800;cursor:pointer}
+.v27-adv-tab.active{background:var(--accent);border-color:var(--accent);color:#111}
+.v27-adv-controls{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+.v27-adv-controls label{display:flex;flex-direction:column;gap:5px;font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;flex:1 1 160px}
+.v27-adv-controls select{padding:8px 10px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:12.5px;font-weight:600}
+.v27-adv-chart{overflow-x:auto;padding:8px 0}
+.v27-gauge-sub{text-align:center;font-size:12px;color:var(--muted);margin-top:4px}
 @media(max-width:480px){
   .v27-swatch-grid{grid-template-columns:repeat(2,1fr)}
 }
@@ -1705,7 +1713,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v27.9.0">
+<meta name="instantdash-build" content="v27.10.1">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2579,7 +2587,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v27.9.0';
+      s.textContent='v27.10.1';
       b.appendChild(s);
     }
   }
@@ -2639,10 +2647,10 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v27.9.0</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v27.10.1</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.9.0</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.10.1</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="topClearDataBtn" type="button" aria-label="Clear all loaded data" style="color:var(--warn)">🗑 Clear Data</button>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -2696,6 +2704,7 @@ body{
     <nav id="v21QuickNav" class="v21-quicknav no-print" aria-label="Jump to section" hidden>
       <span class="v21-quicknav-label">Jump to</span>
       <button type="button" data-jump="v27SlicerPanel">🎛️ Slicers</button>
+      <button type="button" data-jump="v27AdvCharts">📶 Advanced Charts</button>
       <button type="button" data-jump="v25Snapshot">📊 Snapshot</button>
       <button type="button" data-jump="v25StatusStrip">🚦 Status</button>
       <button type="button" data-jump="v24Understand">🧭 Understanding</button>
@@ -2903,6 +2912,187 @@ body{
       setInterval(function(){ render(); wireDelegate(); }, 700);
       if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', function(){ render(); wireDelegate(); });
       else { render(); wireDelegate(); }
+    })();
+    </script>
+
+    <section id="v27AdvCharts" class="exec-card no-print" hidden>
+      <div class="mac-head">
+        <div><div class="exec-label">📊 Advanced Charts</div><div class="mac-title">Waterfall and gauge visualizations</div></div>
+      </div>
+      <div class="v27-adv-tabs">
+        <button type="button" class="v27-adv-tab active" data-adv-tab="waterfall">📶 Waterfall</button>
+        <button type="button" class="v27-adv-tab" data-adv-tab="gauge">⏱️ Gauge</button>
+      </div>
+      <div id="v27AdvWaterfall" class="v27-adv-pane">
+        <div class="v27-adv-controls">
+          <label>Measure <select id="v27WfMeasure"></select></label>
+          <label>Break down by <select id="v27WfDim"></select></label>
+        </div>
+        <div id="v27WfChart" class="v27-adv-chart"></div>
+      </div>
+      <div id="v27AdvGauge" class="v27-adv-pane" hidden>
+        <div class="v27-adv-controls">
+          <label>Measure <select id="v27GaugeMeasure"></select></label>
+        </div>
+        <div id="v27GaugeChart" class="v27-adv-chart"></div>
+      </div>
+    </section>
+    <script id="instantdash-v27-advcharts-wire">
+    (function(){
+      function esc27a(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+      function fmtNum27(v){ return (typeof v==='number' && isFinite(v)) ? v.toLocaleString('en-IN', {maximumFractionDigits:1}) : '—'; }
+
+      var lastDataVersion = null;
+      var activeTab = 'waterfall';
+
+      function populateSelect(sel, options, preserveIfPossible){
+        var prevValue = preserveIfPossible ? sel.value : null;
+        sel.innerHTML = options.map(function(o){ return '<option value="'+esc27a(o)+'">'+esc27a(o)+'</option>'; }).join('');
+        if(prevValue && options.indexOf(prevValue)!==-1) sel.value = prevValue;
+      }
+
+      function renderWaterfall(){
+        var chartEl = document.getElementById('v27WfChart');
+        var measureSel = document.getElementById('v27WfMeasure');
+        var dimSel = document.getElementById('v27WfDim');
+        if(!chartEl || !measureSel || !dimSel) return;
+        var measureName = measureSel.value, dimName = dimSel.value;
+        if(!measureName || !dimName){ chartEl.innerHTML = '<div class="v26-map-intro" style="font-style:italic">Not enough measures/categories in this file.</div>'; return; }
+
+        var rows = (window.APP && window.APP.filtered) || [];
+        var groups = {};
+        rows.forEach(function(r){
+          var g = r[dimName];
+          var key = (g===null||g===undefined||g==='') ? null : String(g);
+          if(key===null) return;
+          var v = r[measureName];
+          if(typeof v!=='number' || !isFinite(v)) return;
+          groups[key] = (groups[key]||0) + v;
+        });
+        var entries = Object.keys(groups).map(function(k){ return {cat:k, value:groups[k]}; });
+        entries.sort(function(a,b){ return b.value - a.value; });
+        entries = entries.slice(0, 8); // keep readable
+
+        if(!entries.length){ chartEl.innerHTML = '<div class="v26-map-intro" style="font-style:italic">No numeric data available for this combination.</div>'; return; }
+
+        var cumulative = 0;
+        var bars = entries.map(function(e){
+          var start = cumulative;
+          cumulative += e.value;
+          return {cat:e.cat, start:start, end:cumulative, value:e.value};
+        });
+        var grandTotal = cumulative;
+        bars.push({cat:'Total', start:0, end:grandTotal, value:grandTotal, isTotal:true});
+
+        var allVals = bars.reduce(function(acc,b){ return acc.concat([b.start,b.end]); }, [0]);
+        var maxVal = Math.max.apply(null, allVals);
+        var minVal = Math.min.apply(null, allVals);
+        var range = (maxVal - minVal) || 1;
+
+        var chartH = 240, chartW = Math.max(360, bars.length*80), barW = 56, gap = 24, padTop = 16, padBottom = 36;
+        var plotH = chartH - padTop - padBottom;
+        function yOf(v){ return padTop + plotH - ((v - minVal)/range)*plotH; }
+
+        var svg = [];
+        bars.forEach(function(b, i){
+          var x = 16 + i*(barW+gap);
+          var y0 = yOf(b.start), y1 = yOf(b.end);
+          var top = Math.min(y0,y1), bottom = Math.max(y0,y1);
+          var color = b.isTotal ? 'var(--accent)' : (b.value>=0 ? 'var(--ok)' : 'var(--warn)');
+          svg.push('<rect x="'+x+'" y="'+top+'" width="'+barW+'" height="'+Math.max(3,bottom-top)+'" fill="'+color+'" rx="3"><title>'+esc27a(b.cat)+': '+fmtNum27(b.value)+'</title></rect>');
+          svg.push('<text x="'+(x+barW/2)+'" y="'+(top-6)+'" text-anchor="middle" font-size="10" font-weight="700" fill="var(--text)">'+fmtNum27(b.isTotal?b.end:b.value)+'</text>');
+          svg.push('<text x="'+(x+barW/2)+'" y="'+(chartH-14)+'" text-anchor="middle" font-size="10" fill="var(--muted)">'+esc27a(b.cat.length>10?b.cat.slice(0,9)+'…':b.cat)+'</text>');
+          if(i < bars.length-2){
+            var nx = 16 + (i+1)*(barW+gap);
+            svg.push('<line x1="'+(x+barW)+'" y1="'+y1+'" x2="'+nx+'" y2="'+y1+'" stroke="var(--border)" stroke-dasharray="3,3"/>');
+          }
+        });
+
+        chartEl.innerHTML = '<svg viewBox="0 0 '+chartW+' '+chartH+'" width="100%" height="'+chartH+'" style="overflow:visible">'+svg.join('')+'</svg>';
+      }
+
+      function renderGauge(){
+        var chartEl = document.getElementById('v27GaugeChart');
+        var measureSel = document.getElementById('v27GaugeMeasure');
+        if(!chartEl || !measureSel) return;
+        var measureName = measureSel.value;
+        if(!measureName){ chartEl.innerHTML = '<div class="v26-map-intro" style="font-style:italic">No measures available.</div>'; return; }
+
+        var rows = (window.APP && window.APP.filtered) || [];
+        var vals = rows.map(function(r){ return r[measureName]; }).filter(function(v){ return typeof v==='number' && isFinite(v); });
+        if(!vals.length){ chartEl.innerHTML = '<div class="v26-map-intro" style="font-style:italic">No numeric data for this measure.</div>'; return; }
+
+        var latest = vals[vals.length-1];
+        var peak = Math.max.apply(null, vals.map(Math.abs));
+        var pct = peak ? Math.max(0, Math.min(1, Math.abs(latest)/peak)) : 0;
+
+        var cx=200, cy=190, r=150;
+        function polarXY(angleDeg){
+          var rad = (angleDeg-180) * Math.PI/180;
+          return { x: cx + r*Math.cos(rad), y: cy + r*Math.sin(rad) };
+        }
+        var p0 = polarXY(0.001);
+        var pEnd = polarXY(Math.max(0.5, pct*180));
+        var large = (pct*180) > 180 ? 1 : 0;
+        var pFull = polarXY(179.999);
+
+        var svg = '<svg viewBox="0 0 400 220" width="100%" height="220">'+
+          '<path d="M'+p0.x+','+p0.y+' A'+r+','+r+' 0 0 1 '+pFull.x+','+pFull.y+'" fill="none" stroke="var(--border)" stroke-width="24" stroke-linecap="round"/>'+
+          '<path d="M'+p0.x+','+p0.y+' A'+r+','+r+' 0 '+large+' 1 '+pEnd.x+','+pEnd.y+'" fill="none" stroke="var(--accent)" stroke-width="24" stroke-linecap="round"/>'+
+          '<text x="200" y="150" text-anchor="middle" font-size="34" font-weight="800" fill="var(--text)">'+(pct*100).toFixed(0)+'%</text>'+
+          '<text x="200" y="175" text-anchor="middle" font-size="11" fill="var(--muted)">of peak achieved</text>'+
+          '</svg>'+
+          '<div class="v27-gauge-sub">Latest: <b>'+fmtNum27(latest)+'</b> · Peak in dataset: <b>'+fmtNum27(peak)+'</b></div>';
+        chartEl.innerHTML = svg;
+      }
+
+      function render(){
+        var section = document.getElementById('v27AdvCharts');
+        if(!section) return;
+        var app = window.APP || {};
+        var hasData = !!(app.rows && app.rows.length);
+        if(!hasData){ section.hidden = true; lastDataVersion = null; return; }
+
+        var measures = (typeof rankMeasures==='function') ? rankMeasures().map(function(m){return m.name;}) : [];
+        var dims = (typeof rankDimensions==='function') ? rankDimensions().map(function(d){return d.name;}) : [];
+        if(!measures.length){ section.hidden = true; return; }
+        section.hidden = false;
+
+        if(lastDataVersion !== app.__dataVersion){
+          lastDataVersion = app.__dataVersion;
+          populateSelect(document.getElementById('v27WfMeasure'), measures, true);
+          populateSelect(document.getElementById('v27WfDim'), dims.length ? dims : ['(no categories available)'], true);
+          populateSelect(document.getElementById('v27GaugeMeasure'), measures, true);
+        }
+
+        if(activeTab==='waterfall') renderWaterfall(); else renderGauge();
+      }
+
+      var wired = false;
+      function wire(){
+        if(wired) return;
+        var section = document.getElementById('v27AdvCharts');
+        if(!section) return;
+        wired = true;
+        section.querySelectorAll('[data-adv-tab]').forEach(function(tab){
+          tab.addEventListener('click', function(){
+            section.querySelectorAll('[data-adv-tab]').forEach(function(t){ t.classList.remove('active'); });
+            tab.classList.add('active');
+            activeTab = tab.getAttribute('data-adv-tab');
+            document.getElementById('v27AdvWaterfall').hidden = activeTab!=='waterfall';
+            document.getElementById('v27AdvGauge').hidden = activeTab!=='gauge';
+            render();
+          });
+        });
+        ['v27WfMeasure','v27WfDim','v27GaugeMeasure'].forEach(function(id){
+          var el = document.getElementById(id);
+          if(el) el.addEventListener('change', render);
+        });
+      }
+
+      setInterval(function(){ render(); wire(); }, 800);
+      if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', function(){ render(); wire(); });
+      else { render(); wire(); }
     })();
     </script>
 
@@ -4724,7 +4914,7 @@ body{
         <h2>Interactive Charts</h2>
         <span class="final-build-badge" style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:var(--accent);color:#111;font-size:10px;font-weight:800">v17.0</span><span class="hint" id="smartChartHint">LIVE DATA — 16 rows · 13 parameters available in every dropdown</span><button type="button" id="v27ChartColorsBtn" class="v26-compare-btn no-print" style="margin-left:auto">🎨 Chart Colors</button><div id="smartDataVerification" class="smart-data-verification"><b>Verified live data</b><span>13 chart parameters · 2 usable non-numeric fields</span></div>
       </div>
-      <section class="ai-dashboard-charts" id="aiDashboardCharts" aria-label="AI generated charts"><div class="ai-dashboard-head"><div><h3 style="margin:0;font-size:16px">AI-generated key charts</h3><p id="aiDashboardSub" style="margin:4px 0 12px;color:var(--muted);font-size:11px">AI automatically created 4 key charts from the loaded data. These charts are independent of the manual parameter selector below.</p></div></div><div class="ai-chart-grid" id="aiChartGrid"><article class="ai-chart-card"><div class="ai-chart-card-head"><div><h4>Average Feedback Score</h4><p class="ai-chart-sub">AI selected Line chart grouped by Quarter.</p></div><div class="ai-chart-actions"><label style="font-size:9px;color:var(--muted);font-weight:800">Chart <select class="ai-chart-type" aria-label="Change chart type for Average Feedback Score"><option value="bar">Bar</option><option value="hbar">Horizontal Bar</option><option value="line" selected="">Line</option><option value="area">Area</option><option value="stacked">Stacked Bar</option><option value="pie">Pie</option><option value="donut">Donut</option></select></label><button type="button" class="ai-chart-expand">⛶ Expand</button></div></div><div class="ai-chart-wrap"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 288" width="100%" height="100%" preserveAspectRatio="none" style="display:block;touch-action:manipulation;font-family:Poppins,Arial,sans-serif"><rect x="0" y="0" width="320" height="288" rx="12" fill="#fffdf8"></rect><line x1="46" y1="236" x2="302" y2="236" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="240" text-anchor="end" font-size="9" fill="#777066">0</text><line x1="46" y1="181.5" x2="302" y2="181.5" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="185.5" text-anchor="end" font-size="9" fill="#777066">4.08</text><line x1="46" y1="127" x2="302" y2="127" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="131" text-anchor="end" font-size="9" fill="#777066">8.15</text><line x1="46" y1="72.5" x2="302" y2="72.5" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="76.5" text-anchor="end" font-size="9" fill="#777066">12.23</text><line x1="46" y1="18" x2="302" y2="18" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="22" text-anchor="end" font-size="9" fill="#777066">16.3</text><polyline points="46,18 131.33333333333331,26.02453987730061 216.66666666666666,22.01226993865032 302,32.71165644171779" fill="none" stroke="#C9A227" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></polyline><circle cx="46" cy="18" r="4" fill="#C9A227" stroke="#fff" stroke-width="2"><title>Q1 · 16.3</title></circle><circle cx="131.33333333333331" cy="26.02453987730061" r="4" fill="#C9A227" stroke="#fff" stroke-width="2"><title>Q2 · 15.7</title></circle><circle cx="216.66666666666666" cy="22.01226993865032" r="4" fill="#C9A227" stroke="#fff" stroke-width="2"><title>Q3 · 16</title></circle><circle cx="302" cy="32.71165644171779" r="4" fill="#C9A227" stroke="#fff" stroke-width="2"><title>Q4 · 15.2</title></circle><text x="46" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q1</text><text x="131.33333333333331" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q2</text><text x="216.66666666666666" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q3</text><text x="302" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q4</text></svg></div><div class="ai-chart-touch-detail">Tap a bar or point to see the exact figure.</div><div class="ai-chart-foot">Each bar/point is calculated from 16 loaded rows.</div></article><article class="ai-chart-card"><div class="ai-chart-card-head"><div><h4>Attendance Rate %</h4><p class="ai-chart-sub">AI selected Line chart grouped by Quarter.</p></div><div class="ai-chart-actions"><label style="font-size:9px;color:var(--muted);font-weight:800">Chart <select class="ai-chart-type" aria-label="Change chart type for Attendance Rate %"><option value="bar">Bar</option><option value="hbar">Horizontal Bar</option><option value="line" selected="">Line</option><option value="area">Area</option><option value="stacked">Stacked Bar</option><option value="pie">Pie</option><option value="donut">Donut</option></select></label><button type="button" class="ai-chart-expand">⛶ Expand</button></div></div><div class="ai-chart-wrap"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 288" width="100%" height="100%" preserveAspectRatio="none" style="display:block;touch-action:manipulation;font-family:Poppins,Arial,sans-serif"><rect x="0" y="0" width="320" height="288" rx="12" fill="#fffdf8"></rect><line x1="46" y1="236" x2="302" y2="236" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="240" text-anchor="end" font-size="9" fill="#777066">0</text><line x1="46" y1="181.5" x2="302" y2="181.5" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="185.5" text-anchor="end" font-size="9" fill="#777066">95.42</text><line x1="46" y1="127" x2="302" y2="127" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="131" text-anchor="end" font-size="9" fill="#777066">190.85</text><line x1="46" y1="72.5" x2="302" y2="72.5" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="76.5" text-anchor="end" font-size="9" fill="#777066">286.27</text><line x1="46" y1="18" x2="302" y2="18" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="22" text-anchor="end" font-size="9" fill="#777066">381.7</text><polyline points="46,21.369662038249942 131.33333333333331,18.742467906733054 216.66666666666666,19.941839140686426 302,18" fill="none" stroke="#C9A227" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></polyline><circle cx="46" cy="21.369662038249942" r="4" fill="#C9A227" stroke="#fff" stroke-width="2"><title>Q1 · 375.8</title></circle><circle cx="131.33333333333331" cy="18.742467906733054" r="4" fill="#C9A227" stroke="#fff" stroke-width="2"><title>Q2 · 380.4</title></circle><circle cx="216.66666666666666" cy="19.941839140686426" r="4" fill="#C9A227" stroke="#fff" stroke-width="2"><title>Q3 · 378.3</title></circle><circle cx="302" cy="18" r="4" fill="#C9A227" stroke="#fff" stroke-width="2"><title>Q4 · 381.7</title></circle><text x="46" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q1</text><text x="131.33333333333331" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q2</text><text x="216.66666666666666" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q3</text><text x="302" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q4</text></svg></div><div class="ai-chart-touch-detail">Tap a bar or point to see the exact figure.</div><div class="ai-chart-foot">Each bar/point is calculated from 16 loaded rows.</div></article><article class="ai-chart-card"><div class="ai-chart-card-head"><div><h4>Pass Rate %</h4><p class="ai-chart-sub">AI selected Line chart grouped by Quarter.</p></div><div class="ai-chart-actions"><label style="font-size:9px;color:var(--muted);font-weight:800">Chart <select class="ai-chart-type" aria-label="Change chart type for Pass Rate %"><option value="bar">Bar</option><option value="hbar">Horizontal Bar</option><option value="line" selected="">Line</option><option value="area">Area</option><option value="stacked">Stacked Bar</option><option value="pie">Pie</option><option value="donut">Donut</option></select></label><button type="button" class="ai-chart-expand">⛶ Expand</button></div></div><div class="ai-chart-wrap"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 288" width="100%" height="100%" preserveAspectRatio="none" style="display:block;touch-action:manipulation;font-family:Poppins,Arial,sans-serif"><rect x="0" y="0" width="320" height="288" rx="12" fill="#fffdf8"></rect><line x1="46" y1="236" x2="302" y2="236" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="240" text-anchor="end" font-size="9" fill="#777066">0</text><line x1="46" y1="181.5" x2="302" y2="181.5" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="185.5" text-anchor="end" font-size="9" fill="#777066">90.85</text><line x1="46" y1="127" x2="302" y2="127" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="131" text-anchor="end" font-size="9" fill="#777066">181.7</text><line x1="46" y1="72.5" x2="302" y2="72.5" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="76.5" text-anchor="end" font-size="9" fill="#777066">272.55</text><line x1="46" y1="18" x2="302" y2="18" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="22" text-anchor="end" font-size="9" fill="#777066">363.4</text><polyline points="46,28.01816180517335 131.33333333333331,20.819482663731463 216.66666666666666,20.93946064942216 302,18" fill="none" stroke="#C9A227" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></polyline><circle cx="46" cy="28.01816180517335" r="4" fill="#C9A227" stroke="#fff" stroke-width="2"><title>Q1 · 346.7</title></circle><circle cx="131.33333333333331" cy="20.819482663731463" r="4" fill="#C9A227" stroke="#fff" stroke-width="2"><title>Q2 · 358.7</title></circle><circle cx="216.66666666666666" cy="20.93946064942216" r="4" fill="#C9A227" stroke="#fff" stroke-width="2"><title>Q3 · 358.5</title></circle><circle cx="302" cy="18" r="4" fill="#C9A227" stroke="#fff" stroke-width="2"><title>Q4 · 363.4</title></circle><text x="46" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q1</text><text x="131.33333333333331" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q2</text><text x="216.66666666666666" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q3</text><text x="302" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q4</text></svg></div><div class="ai-chart-touch-detail">Tap a bar or point to see the exact figure.</div><div class="ai-chart-foot">Each bar/point is calculated from 16 loaded rows.</div></article><article class="ai-chart-card"><div class="ai-chart-card-head"><div><h4>Branch Improvement Rate %</h4><p class="ai-chart-sub">AI selected Line chart grouped by Quarter.</p></div><div class="ai-chart-actions"><label style="font-size:9px;color:var(--muted);font-weight:800">Chart <select class="ai-chart-type" aria-label="Change chart type for Branch Improvement Rate %"><option value="bar">Bar</option><option value="hbar">Horizontal Bar</option><option value="line" selected="">Line</option><option value="area">Area</option><option value="stacked">Stacked Bar</option><option value="pie">Pie</option><option value="donut">Donut</option></select></label><button type="button" class="ai-chart-expand">⛶ Expand</button></div></div><div class="ai-chart-wrap"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 288" width="100%" height="100%" preserveAspectRatio="none" style="display:block;touch-action:manipulation;font-family:Poppins,Arial,sans-serif"><rect x="0" y="0" width="320" height="288" rx="12" fill="#fffdf8"></rect><line x1="46" y1="236" x2="302" y2="236" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="240" text-anchor="end" font-size="9" fill="#777066">0</text><line x1="46" y1="181.5" x2="302" y2="181.5" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="185.5" text-anchor="end" font-size="9" fill="#777066">75.75</text><line x1="46" y1="127" x2="302" y2="127" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="131" text-anchor="end" font-size="9" fill="#777066">151.5</text><line x1="46" y1="72.5" x2="302" y2="72.5" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="76.5" text-anchor="end" font-size="9" fill="#777066">227.25</text><line x1="46" y1="18" x2="302" y2="18" stroke="#e8dfd2" stroke-width="1"></line><text x="39" y="22" text-anchor="end" font-size="9" fill="#777066">303</text><polyline points="46,18.431683168316795 131.33333333333331,18 216.66666666666666,24.403300330032977 302,36.49042904290428" fill="none" stroke="#C9A227" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></polyline><circle cx="46" cy="18.431683168316795" r="4" fill="#C9A227" stroke="#fff" stroke-width="2"><title>Q1 · 302.4</title></circle><circle cx="131.33333333333331" cy="18" r="4" fill="#C9A227" stroke="#fff" stroke-width="2"><title>Q2 · 303</title></circle><circle cx="216.66666666666666" cy="24.403300330032977" r="4" fill="#C9A227" stroke="#fff" stroke-width="2"><title>Q3 · 294.1</title></circle><circle cx="302" cy="36.49042904290428" r="4" fill="#C9A227" stroke="#fff" stroke-width="2"><title>Q4 · 277.3</title></circle><text x="46" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q1</text><text x="131.33333333333331" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q2</text><text x="216.66666666666666" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q3</text><text x="302" y="261" text-anchor="middle" font-size="8.5" font-weight="700" fill="#777066">Q4</text></svg></div><div class="ai-chart-touch-detail">Tap a bar or point to see the exact figure.</div><div class="ai-chart-foot">Each bar/point is calculated from 16 loaded rows.</div></article></div></section>
+      <section class="ai-dashboard-charts" id="aiDashboardCharts" aria-label="AI generated charts"></section>
 
       <div class="smart-chart-shell" id="smartChartsRoot">
         <!-- v1.11.14 — chart intelligence: max 4 data types, latest-period composition, touch-safe details -->
@@ -5119,7 +5309,7 @@ body{
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v27.9.0',
+  VERSION: 'v27.10.1',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
