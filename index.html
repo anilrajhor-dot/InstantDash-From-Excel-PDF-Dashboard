@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.13.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.14.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -511,6 +511,11 @@ main{max-width:1360px;margin:0 auto;padding:24px}
 .v27-adv-controls select{padding:8px 10px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:12.5px;font-weight:600}
 .v27-adv-chart{overflow-x:auto;padding:8px 0}
 .v27-gauge-sub{text-align:center;font-size:12px;color:var(--muted);margin-top:4px}
+.v27-view-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 13px;margin-bottom:8px;border-radius:10px;background:var(--card-2);border:1px solid var(--border)}
+.v27-view-info{display:flex;flex-direction:column;gap:3px;min-width:0}
+.v27-view-info>b{font-size:12.5px}
+.v27-view-info>span{font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:220px}
+.v27-view-actions{display:flex;gap:8px;flex:0 0 auto}
 @media(max-width:480px){
   .v27-swatch-grid{grid-template-columns:repeat(2,1fr)}
 }
@@ -1715,7 +1720,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v27.13.0">
+<meta name="instantdash-build" content="v27.14.0">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2589,7 +2594,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v27.13.0';
+      s.textContent='v27.14.0';
       b.appendChild(s);
     }
   }
@@ -2649,10 +2654,10 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v27.13.0</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v27.14.0</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.13.0</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.14.0</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="pptxExportBtn" type="button" aria-label="Export to PowerPoint">📊 Export PPT</button>
       <button class="id-health-btn no-print" id="pdfExportBtn" type="button" aria-label="Export PDF Report">📄 Export PDF</button>
@@ -2708,6 +2713,7 @@ body{
     <nav id="v21QuickNav" class="v21-quicknav no-print" aria-label="Jump to section" hidden>
       <span class="v21-quicknav-label">Jump to</span>
       <button type="button" data-jump="v27SlicerPanel">🎛️ Slicers</button>
+      <button type="button" data-jump="v27SavedViews">🔖 Saved Views</button>
       <button type="button" data-jump="v27AdvCharts">📶 Advanced Charts</button>
       <button type="button" data-jump="v25Snapshot">📊 Snapshot</button>
       <button type="button" data-jump="v25StatusStrip">🚦 Status</button>
@@ -2916,6 +2922,114 @@ body{
       setInterval(function(){ render(); wireDelegate(); }, 700);
       if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', function(){ render(); wireDelegate(); });
       else { render(); wireDelegate(); }
+    })();
+    </script>
+
+    <section id="v27SavedViews" class="exec-card no-print" hidden>
+      <div class="mac-head">
+        <div><div class="exec-label">🔖 Saved Views</div><div class="mac-title">Save a Slicer combination and jump back to it instantly</div></div>
+        <button type="button" id="v27SaveViewBtn" class="v26-compare-btn">+ Save Current View</button>
+      </div>
+      <div id="v27SavedViewsBody"></div>
+    </section>
+    <script id="instantdash-v27-savedviews-wire">
+    (function(){
+      function esc27v(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+      window.__instantDashSavedViews = window.__instantDashSavedViews || [];
+
+      function snapshotFilters(){
+        var filters = (window.APP && window.APP.filters) || {};
+        var snap = {};
+        Object.keys(filters).forEach(function(name){
+          var f = filters[name];
+          if(f.kind==='cat') snap[name] = { kind:'cat', selected: Array.from(f.selected||[]) };
+          else if(f.kind==='date') snap[name] = { kind:'date', from: f.from ? f.from.toISOString() : null, to: f.to ? f.to.toISOString() : null };
+        });
+        return snap;
+      }
+
+      function describeSnapshot(snap){
+        var parts = Object.keys(snap).map(function(name){
+          var f = snap[name];
+          if(f.kind==='cat') return name+': '+f.selected.join(', ');
+          return name+': date range';
+        });
+        return parts.length ? parts.join(' · ') : 'No filters active (full dataset)';
+      }
+
+      function applySnapshot(snap){
+        var newFilters = {};
+        Object.keys(snap).forEach(function(name){
+          var f = snap[name];
+          if(f.kind==='cat') newFilters[name] = { kind:'cat', selected: new Set(f.selected) };
+          else newFilters[name] = { kind:'date', from: f.from ? new Date(f.from) : null, to: f.to ? new Date(f.to) : null };
+        });
+        window.APP.filters = newFilters;
+        if(typeof applyFiltersAndRedraw==='function') applyFiltersAndRedraw();
+        if(typeof buildFilterBar==='function') buildFilterBar();
+      }
+
+      function render(){
+        var section = document.getElementById('v27SavedViews');
+        var body = document.getElementById('v27SavedViewsBody');
+        if(!section || !body) return;
+        var app = window.APP || {};
+        var hasData = !!(app.rows && app.rows.length);
+        section.hidden = !hasData;
+        if(!hasData) return;
+
+        var views = window.__instantDashSavedViews;
+        if(!views.length){
+          body.innerHTML = '<div class="v26-map-intro" style="font-style:italic">No saved views yet. Set up your Slicers the way you want, then tap "+ Save Current View".</div>';
+          return;
+        }
+        body.innerHTML = views.map(function(v, i){
+          return '<div class="v27-view-row">'+
+            '<div class="v27-view-info"><b>'+esc27v(v.name)+'</b><span>'+esc27v(v.description)+'</span></div>'+
+            '<div class="v27-view-actions">'+
+              '<button type="button" class="v26-compare-btn" data-view-load="'+i+'">Load</button>'+
+              '<button type="button" class="v26-task-remove" data-view-remove="'+i+'">Remove</button>'+
+            '</div>'+
+          '</div>';
+        }).join('');
+      }
+
+      function wire(){
+        var saveBtn = document.getElementById('v27SaveViewBtn');
+        if(saveBtn && !saveBtn.dataset.wired2714){
+          saveBtn.dataset.wired2714 = '1';
+          saveBtn.addEventListener('click', function(){
+            var name = window.prompt('Name this view (e.g. "Q2 — Jaipur only"):');
+            if(!name || !name.trim()) return;
+            var snap = snapshotFilters();
+            window.__instantDashSavedViews.push({ name: name.trim(), filters: snap, description: describeSnapshot(snap) });
+            render();
+            if(typeof toast==='function') toast('View saved.');
+          });
+        }
+        var body = document.getElementById('v27SavedViewsBody');
+        if(body && !body.dataset.wired2714){
+          body.dataset.wired2714 = '1';
+          body.addEventListener('click', function(e){
+            var loadBtn = e.target.closest('[data-view-load]');
+            var removeBtn = e.target.closest('[data-view-remove]');
+            if(loadBtn){
+              var idx = Number(loadBtn.getAttribute('data-view-load'));
+              var v = window.__instantDashSavedViews[idx];
+              if(v){ applySnapshot(v.filters); if(typeof toast==='function') toast('Loaded "'+v.name+'".'); }
+            } else if(removeBtn){
+              var ridx = Number(removeBtn.getAttribute('data-view-remove'));
+              window.__instantDashSavedViews.splice(ridx, 1);
+              render();
+            }
+          });
+        }
+      }
+
+      setInterval(function(){ render(); wire(); }, 700);
+      if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', function(){ render(); wire(); });
+      else { render(); wire(); }
     })();
     </script>
 
@@ -5481,7 +5595,7 @@ body{
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v27.13.0',
+  VERSION: 'v27.14.0',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
