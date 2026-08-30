@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.6.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.7.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -1575,10 +1575,10 @@ html,body{overflow-anchor:none!important;}
    existing chart/insight system unchanged. */
 .dept-tabs-bar{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 10px;margin-top:-4px;-webkit-overflow-scrolling:touch}
 .dept-tabs-bar[hidden]{display:none!important}
-.v21-quicknav{display:flex;align-items:center;gap:8px;overflow-x:auto;padding:8px 2px 14px;-webkit-overflow-scrolling:touch;position:sticky;top:56px;z-index:39;background:var(--bg)}
+.v21-quicknav{display:flex;align-items:center;gap:8px;overflow-x:auto;padding:12px 14px;-webkit-overflow-scrolling:touch;background:var(--card);border-bottom:2px solid var(--accent);box-shadow:0 4px 16px rgba(10,15,28,.08);margin:0 0 16px}
 .v21-quicknav[hidden]{display:none!important}
-.v21-quicknav-label{font-size:10.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);flex:0 0 auto;padding-right:2px}
-.v21-quicknav button{flex:0 0 auto;padding:7px 13px;border-radius:999px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;transition:background .15s,transform .1s}
+.v21-quicknav-label{font-size:11.5px;font-weight:900;letter-spacing:.07em;text-transform:uppercase;color:var(--accent);flex:0 0 auto;padding-right:4px}
+.v21-quicknav button{flex:0 0 auto;padding:8px 15px;border-radius:999px;border:1px solid var(--border);background:var(--card-2);color:var(--text);font-size:12.5px;font-weight:800;cursor:pointer;white-space:nowrap;transition:background .15s,transform .1s}
 .v21-quicknav button:active{transform:scale(.96)}
 .v21-quicknav button:hover{background:color-mix(in srgb,var(--accent) 12%,var(--card))}
 .dept-tab{flex:0 0 auto;display:flex;align-items:center;gap:6px;padding:7px 12px;border-radius:999px;border:1px solid var(--border);background:var(--card);color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;transition:background .15s,color .15s,border-color .15s}
@@ -1688,7 +1688,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v27.6.0">
+<meta name="instantdash-build" content="v27.7.0">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2562,7 +2562,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v27.6.0';
+      s.textContent='v27.7.0';
       b.appendChild(s);
     }
   }
@@ -2622,10 +2622,10 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v27.6.0</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v27.7.0</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.6.0</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.7.0</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="topClearDataBtn" type="button" aria-label="Clear all loaded data" style="color:var(--warn)">🗑 Clear Data</button>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -2675,6 +2675,68 @@ body{
 
   <!-- ============ APP ============ -->
   <section id="app" data-v11306-auto-scrolled="1">
+
+    <nav id="v21QuickNav" class="v21-quicknav no-print" aria-label="Jump to section" hidden>
+      <span class="v21-quicknav-label">Jump to</span>
+      <button type="button" data-jump="v25Snapshot">📊 Snapshot</button>
+      <button type="button" data-jump="v25StatusStrip">🚦 Status</button>
+      <button type="button" data-jump="v24Understand">🧭 Understanding</button>
+      <button type="button" data-jump="idV1400">🎯 Takeaway</button>
+      <button type="button" data-jump="kpiSection">📌 KPIs</button>
+      <button type="button" data-jump="smartChartsSection">📊 Charts</button>
+      <button type="button" data-jump="managementInsightsSection">🔎 Insights</button>
+      <button type="button" data-jump="v26RelIntel">🔗 Relationships</button>
+      <button type="button" data-jump="v26DecisionMaker">⚖️ Decisions</button>
+      <button type="button" data-jump="v26ActionTracker">✅ Actions</button>
+      <button type="button" data-jump="v26CreditView">🏦 Credit View</button>
+      <button type="button" data-jump="v26KpiCompare">📊 Compare KPIs</button>
+      <button type="button" data-jump="v26MgmtBrief">📄 Brief</button>
+      <button type="button" data-jump="v22AIAssistant">🤖 AI Assistant</button>
+      <button type="button" data-jump="idV143Report">📋 Full Report</button>
+      <button type="button" data-jump="v25DetailedHeader">🗂️ Detailed Data</button>
+      <button type="button" data-jump-health="1">🩺 Health Check</button>
+    </nav>
+    <script id="instantdash-v21-quicknav-wire">
+    (function(){
+      function wire(){
+        var nav=document.getElementById('v21QuickNav');
+        if(!nav || nav.__id21Wired) return;
+        nav.__id21Wired=1;
+        nav.querySelectorAll('[data-jump]').forEach(function(btn){
+          btn.addEventListener('click', function(){
+            var target=document.getElementById(btn.getAttribute('data-jump'));
+            if(!target) return;
+            /* v27.5.0 — expand every collapsed <details> ancestor before
+               scrolling, so jumping to a section that's been collapsed
+               (like the detailed executive report) actually reveals its
+               content instead of landing on an empty summary label. */
+            var el = target;
+            while(el){
+              if(el.tagName === 'DETAILS' && !el.open) el.open = true;
+              el = el.parentElement;
+            }
+            setTimeout(function(){ target.scrollIntoView({behavior:'smooth', block:'start'}); }, 50);
+          });
+        });
+        var health=nav.querySelector('[data-jump-health]');
+        if(health) health.addEventListener('click', function(){
+          if(typeof window.__instantDashHealthOpen==='function') window.__instantDashHealthOpen();
+        });
+      }
+      /* Show the nav once real data is on screen (mirrors #app's own
+         visibility, checked on an interval since many different code paths
+         can trigger a successful load). Hides again on the empty state. */
+      function sync(){
+        var nav=document.getElementById('v21QuickNav');
+        var app=document.getElementById('app');
+        if(!nav || !app) return;
+        nav.hidden = !!app.hidden;
+      }
+      wire();
+      setInterval(function(){ wire(); sync(); }, 500);
+      if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', function(){ wire(); sync(); });
+    })();
+    </script>
 
 
     <section id="v27TransposeBanner" class="exec-card no-print" hidden style="border-left:4px solid var(--warn)">
@@ -3046,67 +3108,6 @@ body{
       <div id="v22AIAssistantOut" style="margin-top:10px"></div>
     </section>
 
-    <nav id="v21QuickNav" class="v21-quicknav no-print" aria-label="Jump to section" hidden>
-      <span class="v21-quicknav-label">Jump to</span>
-      <button type="button" data-jump="v25Snapshot">📊 Snapshot</button>
-      <button type="button" data-jump="v25StatusStrip">🚦 Status</button>
-      <button type="button" data-jump="v24Understand">🧭 Understanding</button>
-      <button type="button" data-jump="idV1400">🎯 Takeaway</button>
-      <button type="button" data-jump="kpiSection">📌 KPIs</button>
-      <button type="button" data-jump="smartChartsSection">📊 Charts</button>
-      <button type="button" data-jump="managementInsightsSection">🔎 Insights</button>
-      <button type="button" data-jump="v26RelIntel">🔗 Relationships</button>
-      <button type="button" data-jump="v26DecisionMaker">⚖️ Decisions</button>
-      <button type="button" data-jump="v26ActionTracker">✅ Actions</button>
-      <button type="button" data-jump="v26CreditView">🏦 Credit View</button>
-      <button type="button" data-jump="v26KpiCompare">📊 Compare KPIs</button>
-      <button type="button" data-jump="v26MgmtBrief">📄 Brief</button>
-      <button type="button" data-jump="v22AIAssistant">🤖 AI Assistant</button>
-      <button type="button" data-jump="idV143Report">📋 Full Report</button>
-      <button type="button" data-jump="v25DetailedHeader">🗂️ Detailed Data</button>
-      <button type="button" data-jump-health="1">🩺 Health Check</button>
-    </nav>
-    <script id="instantdash-v21-quicknav-wire">
-    (function(){
-      function wire(){
-        var nav=document.getElementById('v21QuickNav');
-        if(!nav || nav.__id21Wired) return;
-        nav.__id21Wired=1;
-        nav.querySelectorAll('[data-jump]').forEach(function(btn){
-          btn.addEventListener('click', function(){
-            var target=document.getElementById(btn.getAttribute('data-jump'));
-            if(!target) return;
-            /* v27.5.0 — expand every collapsed <details> ancestor before
-               scrolling, so jumping to a section that's been collapsed
-               (like the detailed executive report) actually reveals its
-               content instead of landing on an empty summary label. */
-            var el = target;
-            while(el){
-              if(el.tagName === 'DETAILS' && !el.open) el.open = true;
-              el = el.parentElement;
-            }
-            setTimeout(function(){ target.scrollIntoView({behavior:'smooth', block:'start'}); }, 50);
-          });
-        });
-        var health=nav.querySelector('[data-jump-health]');
-        if(health) health.addEventListener('click', function(){
-          if(typeof window.__instantDashHealthOpen==='function') window.__instantDashHealthOpen();
-        });
-      }
-      /* Show the nav once real data is on screen (mirrors #app's own
-         visibility, checked on an interval since many different code paths
-         can trigger a successful load). Hides again on the empty state. */
-      function sync(){
-        var nav=document.getElementById('v21QuickNav');
-        var app=document.getElementById('app');
-        if(!nav || !app) return;
-        nav.hidden = !!app.hidden;
-      }
-      wire();
-      setInterval(function(){ wire(); sync(); }, 500);
-      if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', function(){ wire(); sync(); });
-    })();
-    </script>
 
     <div id="alerts" class="section"></div>
 
@@ -3469,7 +3470,7 @@ body{
       <section id="v26MgmtBrief" class="exec-card no-print" hidden>
         <div class="mac-head">
           <div><div class="exec-label">📄 One-Page Management Brief</div><div class="mac-title">Consolidated findings, ready to copy or print</div></div>
-          <div class="mac-buttons"><button type="button" class="primary" id="v26BriefCopy">📋 Copy Brief</button><button type="button" id="v26BriefPrint">🖨️ Print</button></div>
+          <div class="mac-buttons"><button type="button" class="primary" id="v26BriefCopy">📋 Copy Brief</button><button type="button" id="v26BriefShare">📤 Share</button><button type="button" id="v26BriefPrint">🖨️ Print</button></div>
         </div>
         <div id="v26MgmtBriefBody"></div>
       </section>
@@ -3533,6 +3534,7 @@ body{
 
         function wireButtons(){
           var copyBtn = document.getElementById('v26BriefCopy');
+          var shareBtn = document.getElementById('v26BriefShare');
           var printBtn = document.getElementById('v26BriefPrint');
           if(copyBtn && !copyBtn.dataset.wired261){
             copyBtn.dataset.wired261 = '1';
@@ -3542,6 +3544,23 @@ body{
               if(navigator.clipboard && navigator.clipboard.writeText){
                 navigator.clipboard.writeText(text).then(function(){
                   if(typeof toast==='function') toast('Management Brief copied.');
+                }).catch(function(){ window.prompt('Copy this text:', text); });
+              } else {
+                window.prompt('Copy this text:', text);
+              }
+            });
+          }
+          if(shareBtn && !shareBtn.dataset.wired271){
+            shareBtn.dataset.wired271 = '1';
+            shareBtn.addEventListener('click', function(){
+              var body = document.getElementById('v26MgmtBriefBody');
+              var text = body ? (body.innerText || body.textContent || '').trim() : '';
+              var fileName = (window.APP && window.APP.fileName) || 'InstantDash';
+              if(navigator.share){
+                navigator.share({ title: 'Management Brief — '+fileName, text: text }).catch(function(){ /* user cancelled — no error needed */ });
+              } else if(navigator.clipboard && navigator.clipboard.writeText){
+                navigator.clipboard.writeText(text).then(function(){
+                  if(typeof toast==='function') toast('Sharing not supported here — copied instead.');
                 }).catch(function(){ window.prompt('Copy this text:', text); });
               } else {
                 window.prompt('Copy this text:', text);
@@ -4725,7 +4744,7 @@ body{
         '<div class="id-v1400-kicker">Executive Brief</div>'+
         '<div class="id-v1400-title">'+briefTitle+'</div>'+
         '<div class="id-v1400-action"><b>Recommended next step:</b> '+nextStep+'</div>'+
-        '<div class="id-v1400-actions"><button class="id-v1400-btn primary" type="button" data-v1400-action="copy">Copy Executive Brief</button><button class="id-v1400-btn" type="button" data-v1400-action="ask">Ask AI about this</button></div>'+
+        '<div class="id-v1400-actions"><button class="id-v1400-btn primary" type="button" data-v1400-action="copy">Copy Executive Brief</button><button class="id-v1400-btn" type="button" data-v1400-action="share">📤 Share</button><button class="id-v1400-btn" type="button" data-v1400-action="ask">Ask AI about this</button></div>'+
         '<div class="id-v1400-note">'+noteText+'</div>'+
       '</div>'+
       '<div class="id-v1400-grid" style="margin-top:14px">'+
@@ -4889,7 +4908,7 @@ body{
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v27.6.0',
+  VERSION: 'v27.7.0',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -15308,6 +15327,16 @@ window.addEventListener('load',function(){setTimeout(mountAskMe,250);});
           var mainCard = brief1400.querySelector('.id-v1400-card.main');
           var text = mainCard ? (mainCard.innerText || mainCard.textContent || '').replace(/\n{3,}/g,'\n\n').trim() : '';
           copyText(text);
+        } else if(action === 'share'){
+          var mainCardShare = brief1400.querySelector('.id-v1400-card.main');
+          var shareText = mainCardShare ? (mainCardShare.innerText || mainCardShare.textContent || '').replace(/\n{3,}/g,'\n\n').trim() : '';
+          var shareFileName = (window.APP && window.APP.fileName) || 'InstantDash';
+          if(navigator.share){
+            navigator.share({ title: 'Executive Brief — '+shareFileName, text: shareText }).catch(function(){ /* user cancelled */ });
+          } else {
+            copyText(shareText);
+            if(typeof toastMsg==='function') toastMsg('Sharing not supported here — copied instead.');
+          }
         } else if(action === 'ask'){
           var titleEl = brief1400.querySelector('.id-v1400-title');
           var question = titleEl ? 'Tell me more about: ' + (titleEl.innerText || titleEl.textContent || '').trim() : 'What should management do?';
