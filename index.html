@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.10.1","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.11.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -1713,7 +1713,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v27.10.1">
+<meta name="instantdash-build" content="v27.11.0">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2587,7 +2587,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v27.10.1';
+      s.textContent='v27.11.0';
       b.appendChild(s);
     }
   }
@@ -2647,10 +2647,10 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v27.10.1</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v27.11.0</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.10.1</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.11.0</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="topClearDataBtn" type="button" aria-label="Clear all loaded data" style="color:var(--warn)">🗑 Clear Data</button>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -2917,11 +2917,13 @@ body{
 
     <section id="v27AdvCharts" class="exec-card no-print" hidden>
       <div class="mac-head">
-        <div><div class="exec-label">📊 Advanced Charts</div><div class="mac-title">Waterfall and gauge visualizations</div></div>
+        <div><div class="exec-label">📊 Advanced Charts</div><div class="mac-title">Waterfall, treemap, gauge and combo visualizations</div></div>
       </div>
       <div class="v27-adv-tabs">
         <button type="button" class="v27-adv-tab active" data-adv-tab="waterfall">📶 Waterfall</button>
+        <button type="button" class="v27-adv-tab" data-adv-tab="treemap">🧩 Treemap</button>
         <button type="button" class="v27-adv-tab" data-adv-tab="gauge">⏱️ Gauge</button>
+        <button type="button" class="v27-adv-tab" data-adv-tab="combo">📊 Combo</button>
       </div>
       <div id="v27AdvWaterfall" class="v27-adv-pane">
         <div class="v27-adv-controls">
@@ -2930,11 +2932,25 @@ body{
         </div>
         <div id="v27WfChart" class="v27-adv-chart"></div>
       </div>
+      <div id="v27AdvTreemap" class="v27-adv-pane" hidden>
+        <div class="v27-adv-controls">
+          <label>Measure <select id="v27TmMeasure"></select></label>
+          <label>Break down by <select id="v27TmDim"></select></label>
+        </div>
+        <div id="v27TmChart" class="v27-adv-chart"></div>
+      </div>
       <div id="v27AdvGauge" class="v27-adv-pane" hidden>
         <div class="v27-adv-controls">
           <label>Measure <select id="v27GaugeMeasure"></select></label>
         </div>
         <div id="v27GaugeChart" class="v27-adv-chart"></div>
+      </div>
+      <div id="v27AdvCombo" class="v27-adv-pane" hidden>
+        <div class="v27-adv-controls">
+          <label>Bars <select id="v27ComboBar"></select></label>
+          <label>Line <select id="v27ComboLine"></select></label>
+        </div>
+        <div id="v27ComboChart" class="v27-adv-chart"></div>
       </div>
     </section>
     <script id="instantdash-v27-advcharts-wire">
@@ -3046,6 +3062,119 @@ body{
         chartEl.innerHTML = svg;
       }
 
+      /* v27.11.0 — alternating binary-split treemap: the same algorithm
+         verified in isolation beforehand (area-conservation confirmed
+         directly). Splits the group with the largest remaining share in
+         half by value each time, alternating horizontal/vertical, which
+         produces a genuine multi-row/column grid rather than a single
+         strip that would just look like a bar chart. */
+      function treemapSplit(items, x, y, w, h, horizontal){
+        if(!items.length) return [];
+        if(items.length===1) return [{name:items[0].cat, value:items[0].value, x:x, y:y, w:w, h:h}];
+        var total = items.reduce(function(s,i){ return s+i.value; }, 0);
+        var cum = 0, splitIdx = 1;
+        for(var i=0;i<items.length;i++){
+          cum += items[i].value;
+          if(cum >= total/2){ splitIdx = i+1; break; }
+        }
+        var g1 = items.slice(0, splitIdx), g2 = items.slice(splitIdx);
+        var sum1 = g1.reduce(function(s,i){ return s+i.value; }, 0);
+        var frac1 = total ? sum1/total : 0.5;
+        if(horizontal){
+          var w1 = w*frac1;
+          return treemapSplit(g1, x, y, w1, h, false).concat(treemapSplit(g2, x+w1, y, w-w1, h, false));
+        } else {
+          var h1 = h*frac1;
+          return treemapSplit(g1, x, y, w, h1, true).concat(treemapSplit(g2, x, y+h1, w, h-h1, true));
+        }
+      }
+
+      function renderTreemap(){
+        var chartEl = document.getElementById('v27TmChart');
+        var measureSel = document.getElementById('v27TmMeasure');
+        var dimSel = document.getElementById('v27TmDim');
+        if(!chartEl || !measureSel || !dimSel) return;
+        var measureName = measureSel.value, dimName = dimSel.value;
+        if(!measureName || !dimName){ chartEl.innerHTML = '<div class="v26-map-intro" style="font-style:italic">Not enough measures/categories in this file.</div>'; return; }
+
+        var rows = (window.APP && window.APP.filtered) || [];
+        var groups = {};
+        rows.forEach(function(r){
+          var g = r[dimName];
+          var key = (g===null||g===undefined||g==='') ? null : String(g);
+          if(key===null) return;
+          var v = r[measureName];
+          if(typeof v!=='number' || !isFinite(v) || v<=0) return;
+          groups[key] = (groups[key]||0) + v;
+        });
+        var items = Object.keys(groups).map(function(k){ return {cat:k, value:groups[k]}; });
+        items.sort(function(a,b){ return b.value - a.value; });
+        items = items.slice(0, 10);
+
+        if(!items.length){ chartEl.innerHTML = '<div class="v26-map-intro" style="font-style:italic">No positive numeric data available for this combination.</div>'; return; }
+
+        var W=400, H=260;
+        var rects = treemapSplit(items, 0, 0, W, H, true);
+        var palette = window.__instantDashChartColors || ['#C9A227','#8B2F3D','#16785A','#2C4A6B','#6B4E8E','#B0793E','#4A7A8C','#8FA05C'];
+        var svg = rects.map(function(r, i){
+          var color = palette[i % palette.length];
+          var parts = ['<rect x="'+r.x.toFixed(1)+'" y="'+r.y.toFixed(1)+'" width="'+Math.max(0,r.w-2).toFixed(1)+'" height="'+Math.max(0,r.h-2).toFixed(1)+'" fill="'+color+'" rx="4"><title>'+esc27a(r.name)+': '+fmtNum27(r.value)+'</title></rect>'];
+          if(r.w>55 && r.h>28){
+            parts.push('<text x="'+(r.x+8).toFixed(1)+'" y="'+(r.y+19).toFixed(1)+'" font-size="12" font-weight="700" fill="#fff">'+esc27a(r.name.length>14?r.name.slice(0,13)+'…':r.name)+'</text>');
+            if(r.h>44) parts.push('<text x="'+(r.x+8).toFixed(1)+'" y="'+(r.y+35).toFixed(1)+'" font-size="10.5" fill="#fff" opacity="0.85">'+fmtNum27(r.value)+'</text>');
+          }
+          return parts.join('');
+        }).join('');
+        chartEl.innerHTML = '<svg viewBox="0 0 '+W+' '+H+'" width="100%" height="'+H+'" style="overflow:visible">'+svg+'</svg>';
+      }
+
+      /* v27.11.0 — combo chart: bars for one measure, line for another,
+         each independently scaled to its own max (the exact dual-axis
+         math verified in isolation beforehand), since two measures on
+         genuinely different scales (e.g. an amount and a percentage)
+         need separate axes to both be readable together. */
+      function renderCombo(){
+        var chartEl = document.getElementById('v27ComboChart');
+        var barSel = document.getElementById('v27ComboBar');
+        var lineSel = document.getElementById('v27ComboLine');
+        if(!chartEl || !barSel || !lineSel) return;
+        var barName = barSel.value, lineName = lineSel.value;
+        if(!barName || !lineName){ chartEl.innerHTML = '<div class="v26-map-intro" style="font-style:italic">Need at least two measures in this file.</div>'; return; }
+
+        var rows = (window.APP && window.APP.filtered) || [];
+        var tCol = (typeof timeCols==='function') ? timeCols()[0] : null;
+        var points = rows.map(function(r, i){
+          return { label: tCol ? r[tCol.name] : ('#'+(i+1)), bar: r[barName], line: r[lineName] };
+        }).filter(function(p){ return typeof p.bar==='number' && isFinite(p.bar) && typeof p.line==='number' && isFinite(p.line); });
+        if(tCol) points.sort(function(a,b){ return (a.label instanceof Date ? a.label : 0) - (b.label instanceof Date ? b.label : 0); });
+        points = points.slice(-12); // most recent 12 for readability
+
+        if(!points.length){ chartEl.innerHTML = '<div class="v26-map-intro" style="font-style:italic">No rows have both values available together.</div>'; return; }
+
+        var W = Math.max(360, points.length*60), H = 260, padTop=16, padBottom=36, padLeft=6;
+        var plotH = H - padTop - padBottom;
+        var barMax = Math.max.apply(null, points.map(function(p){ return Math.abs(p.bar); })) || 1;
+        var lineMax = Math.max.apply(null, points.map(function(p){ return Math.abs(p.line); })) || 1;
+        var barW = 28, gap = (W-padLeft*2)/points.length;
+
+        var barsSvg = [], lineSvg = [], labelsSvg = [], dotsSvg = [];
+        var linePoints = [];
+        points.forEach(function(p, i){
+          var cx = padLeft + gap*i + gap/2;
+          var bh = (Math.abs(p.bar)/barMax)*plotH;
+          barsSvg.push('<rect x="'+(cx-barW/2).toFixed(1)+'" y="'+(padTop+plotH-bh).toFixed(1)+'" width="'+barW+'" height="'+bh.toFixed(1)+'" fill="var(--accent)" rx="3"><title>'+esc27a(barName)+': '+fmtNum27(p.bar)+'</title></rect>');
+          var ly = padTop + plotH - (Math.abs(p.line)/lineMax)*plotH;
+          linePoints.push(cx.toFixed(1)+','+ly.toFixed(1));
+          dotsSvg.push('<circle cx="'+cx.toFixed(1)+'" cy="'+ly.toFixed(1)+'" r="4" fill="var(--ok)" stroke="var(--card)" stroke-width="2"><title>'+esc27a(lineName)+': '+fmtNum27(p.line)+'</title></circle>');
+          var labelText = p.label instanceof Date ? p.label.toLocaleDateString('en-IN',{month:'short',year:'2-digit'}) : String(p.label);
+          labelsSvg.push('<text x="'+cx.toFixed(1)+'" y="'+(H-16)+'" text-anchor="middle" font-size="9.5" fill="var(--muted)">'+esc27a(labelText.length>8?labelText.slice(0,7)+'…':labelText)+'</text>');
+        });
+        lineSvg.push('<polyline points="'+linePoints.join(' ')+'" fill="none" stroke="var(--ok)" stroke-width="2.5"/>');
+
+        var legend = '<div style="display:flex;gap:16px;margin-bottom:6px;font-size:11px"><span><span style="display:inline-block;width:10px;height:10px;background:var(--accent);border-radius:2px;margin-right:5px"></span>'+esc27a(barName)+'</span><span><span style="display:inline-block;width:10px;height:10px;background:var(--ok);border-radius:50%;margin-right:5px"></span>'+esc27a(lineName)+'</span></div>';
+        chartEl.innerHTML = legend+'<svg viewBox="0 0 '+W+' '+H+'" width="100%" height="'+H+'" style="overflow:visible">'+barsSvg.join('')+lineSvg.join('')+dotsSvg.join('')+labelsSvg.join('')+'</svg>';
+      }
+
       function render(){
         var section = document.getElementById('v27AdvCharts');
         if(!section) return;
@@ -3063,9 +3192,16 @@ body{
           populateSelect(document.getElementById('v27WfMeasure'), measures, true);
           populateSelect(document.getElementById('v27WfDim'), dims.length ? dims : ['(no categories available)'], true);
           populateSelect(document.getElementById('v27GaugeMeasure'), measures, true);
+          populateSelect(document.getElementById('v27TmMeasure'), measures, true);
+          populateSelect(document.getElementById('v27TmDim'), dims.length ? dims : ['(no categories available)'], true);
+          populateSelect(document.getElementById('v27ComboBar'), measures, true);
+          populateSelect(document.getElementById('v27ComboLine'), measures.length>1 ? measures.slice(1).concat(measures.slice(0,1)) : measures, true);
         }
 
-        if(activeTab==='waterfall') renderWaterfall(); else renderGauge();
+        if(activeTab==='waterfall') renderWaterfall();
+        else if(activeTab==='treemap') renderTreemap();
+        else if(activeTab==='combo') renderCombo();
+        else renderGauge();
       }
 
       var wired = false;
@@ -3080,11 +3216,13 @@ body{
             tab.classList.add('active');
             activeTab = tab.getAttribute('data-adv-tab');
             document.getElementById('v27AdvWaterfall').hidden = activeTab!=='waterfall';
+            document.getElementById('v27AdvTreemap').hidden = activeTab!=='treemap';
             document.getElementById('v27AdvGauge').hidden = activeTab!=='gauge';
+            document.getElementById('v27AdvCombo').hidden = activeTab!=='combo';
             render();
           });
         });
-        ['v27WfMeasure','v27WfDim','v27GaugeMeasure'].forEach(function(id){
+        ['v27WfMeasure','v27WfDim','v27GaugeMeasure','v27TmMeasure','v27TmDim','v27ComboBar','v27ComboLine'].forEach(function(id){
           var el = document.getElementById(id);
           if(el) el.addEventListener('change', render);
         });
@@ -5309,7 +5447,7 @@ body{
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v27.10.1',
+  VERSION: 'v27.11.0',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
