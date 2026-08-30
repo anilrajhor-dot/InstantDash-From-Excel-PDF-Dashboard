@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.14.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.15.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -1720,7 +1720,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v27.14.0">
+<meta name="instantdash-build" content="v27.15.0">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2594,7 +2594,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v27.14.0';
+      s.textContent='v27.15.0';
       b.appendChild(s);
     }
   }
@@ -2654,10 +2654,10 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v27.14.0</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v27.15.0</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.14.0</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.15.0</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="pptxExportBtn" type="button" aria-label="Export to PowerPoint">📊 Export PPT</button>
       <button class="id-health-btn no-print" id="pdfExportBtn" type="button" aria-label="Export PDF Report">📄 Export PDF</button>
@@ -4677,6 +4677,12 @@ body{
           var nonCurrentBorrowCol = findCreditField([/non.?current borrowing/i,/long.?term borrowing/i], null, 'nonCurrentBorrow');
           var shareCapCol = findCreditField([/share capital/i], null, 'shareCap');
           var reservesCol = findCreditField([/reserves/i], null, 'reserves');
+          var grossNPACol = findCreditField([/gross\s*npa/i,/\bgnpa\b/i], [/ratio/i,/%|percent/i,/growth/i], 'grossNPA');
+          var grossAdvancesCol = findCreditField([/gross\s*advances/i,/total\s*advances/i,/gross\s*loans?\b/i], [/growth/i,/ratio/i,/%|percent/i], 'grossAdvances');
+          var npaProvisionsCol = findCreditField([/provision.*npa/i,/npa.*provision/i,/provision.*(bad|doubtful)/i,/provisions?\s*held/i], [/ratio/i,/coverage/i,/%|percent/i], 'npaProvisions');
+          var tier1CapitalCol = findCreditField([/tier.?\s?(i|1)\s*capital/i,/tier.?\s?(i|1)\b/i], [/ratio/i,/%|percent/i], 'tier1Capital');
+          var tier2CapitalCol = findCreditField([/tier.?\s?(ii|2)\s*capital/i,/tier.?\s?(ii|2)\b/i], [/ratio/i,/%|percent/i], 'tier2Capital');
+          var rwaCol = findCreditField([/risk.?weighted\s*assets?/i,/\brwa\b/i], [/ratio/i,/%|percent/i], 'rwa');
 
           var revenue = currentVal(revenueCol);
           var pat = currentVal(patCol);
@@ -4689,6 +4695,12 @@ body{
           var nonCurrentBorrow = currentVal(nonCurrentBorrowCol);
           var shareCap = currentVal(shareCapCol);
           var reserves = currentVal(reservesCol);
+          var grossNPA = currentVal(grossNPACol);
+          var grossAdvances = currentVal(grossAdvancesCol);
+          var npaProvisions = currentVal(npaProvisionsCol);
+          var tier1Capital = currentVal(tier1CapitalCol);
+          var tier2Capital = currentVal(tier2CapitalCol);
+          var rwa = currentVal(rwaCol);
 
           var patMargin = (pat!=null && revenue) ? (pat/revenue*100) : null;
           var pbtMargin = (pbt!=null && revenue) ? (pbt/revenue*100) : null;
@@ -4700,6 +4712,23 @@ body{
           var totalDebt = (currentBorrow!=null || nonCurrentBorrow!=null) ? ((currentBorrow||0)+(nonCurrentBorrow||0)) : null;
           var totalEquity = (shareCap!=null || reserves!=null) ? ((shareCap||0)+(reserves||0)) : null;
           var debtEquity = (totalDebt!=null && totalEquity) ? (totalDebt/totalEquity) : null;
+
+          /* v27.15.0 — regulatory ratios: Gross NPA% = Gross NPA / Gross
+             Advances. Net NPA% = (Gross NPA - Provisions) / (Gross
+             Advances - Provisions) — standard RBI formula. PCR = Total
+             Provisions Held / Gross NPA. Each requires its own exact
+             fields; none is computed from a substitute or estimate. */
+          var grossNPAPct = (grossNPA!=null && grossAdvances) ? (grossNPA/grossAdvances*100) : null;
+          var netNPAPct = (grossNPA!=null && npaProvisions!=null && grossAdvances!=null && (grossAdvances-npaProvisions)!==0)
+            ? ((grossNPA-npaProvisions)/(grossAdvances-npaProvisions)*100) : null;
+          var pcr = (npaProvisions!=null && grossNPA) ? (npaProvisions/grossNPA*100) : null;
+          /* CRAR = (Tier I + Tier II Capital) / RWA. Deliberately requires
+             an actual RWA field already present in the file — RWA itself
+             needs regulatory risk-weighting per asset category, which
+             cannot be safely derived from a raw ledger, so it is never
+             estimated here. */
+          var totalCapital = (tier1Capital!=null || tier2Capital!=null) ? ((tier1Capital||0)+(tier2Capital||0)) : null;
+          var crar = (totalCapital!=null && rwa) ? (totalCapital/rwa*100) : null;
 
           var latestInfo = findLatestRowIndex(app.filtered||app.rows||[], app.columns||[]);
           var html = '<div class="v26-cv-period-note">'+(latestInfo.periodLabel ? 'Figures shown are for <b>'+esc6g(latestInfo.periodLabel)+'</b>' : 'Figures shown are for the most recent row in the current data')+' (determined from '+esc6g(latestInfo.basis)+').</div>';
@@ -4735,11 +4764,21 @@ body{
             metric('Debt-Equity Ratio', debtEquity!=null?debtEquity.toFixed(2):null, 'x', debtEquity!=null?'Total borrowings \u00f7 (Share capital + Reserves).':'Requires borrowings, share capital and reserves fields.')
           );
 
+          html += section('Regulatory Ratios', '🏛️',
+            metric('Gross NPA %', grossNPAPct!=null?grossNPAPct.toFixed(2):null, '%', grossNPAPct!=null?'Gross NPA \u00f7 Gross Advances.':'Requires both a Gross NPA and a Gross Advances field.') +
+            metric('Net NPA %', netNPAPct!=null?netNPAPct.toFixed(2):null, '%', netNPAPct!=null?'(Gross NPA \u2212 Provisions) \u00f7 (Gross Advances \u2212 Provisions).':'Requires Gross NPA, Gross Advances and Provisions Held fields.') +
+            metric('Provisioning Coverage Ratio', pcr!=null?pcr.toFixed(1):null, '%', pcr!=null?'Provisions Held \u00f7 Gross NPA.':'Requires both a Provisions Held and a Gross NPA field.') +
+            metric('CRAR', crar!=null?crar.toFixed(2):null, '%', crar!=null?'(Tier I + Tier II Capital) \u00f7 Risk-Weighted Assets.':'Requires Tier I/II Capital and a Risk-Weighted Assets field \u2014 RWA itself is never estimated, since it requires regulatory risk-weighting by asset category that cannot be safely derived from a raw ledger.')
+          );
+
           var risks = [];
           if(debtEquity!=null && debtEquity>1.5) risks.push('Debt-equity ratio of '+debtEquity.toFixed(2)+'x is elevated \u2014 review debt servicing capacity.');
           if(wcCycle!=null && wcCycle>90) risks.push('Working capital cycle of '+wcCycle.toFixed(0)+' days is long \u2014 review collection and inventory turnover.');
           if(patMargin!=null && patMargin<5) risks.push('PAT margin of '+patMargin.toFixed(1)+'% is thin \u2014 limited buffer against cost or revenue shocks.');
           if(debtorDays!=null && debtorDays>60) risks.push('Debtor days of '+debtorDays.toFixed(0)+' is elevated \u2014 review collection efficiency and credit terms.');
+          if(grossNPAPct!=null && grossNPAPct>5) risks.push('Gross NPA of '+grossNPAPct.toFixed(2)+'% exceeds the commonly-used 5% caution threshold \u2014 review asset quality trend.');
+          if(pcr!=null && pcr<70) risks.push('Provisioning Coverage Ratio of '+pcr.toFixed(1)+'% is below the RBI-recommended 70% benchmark \u2014 review provisioning adequacy.');
+          if(crar!=null && crar<11.5) risks.push('CRAR of '+crar.toFixed(2)+'% is below the 11.5% regulatory minimum (as applicable) \u2014 this requires immediate management attention.');
           html += section('Key Risks', '\u26a0\ufe0f',
             risks.length ? '<ul class="v26-cv-risks">'+risks.map(function(r){ return '<li>'+esc6g(r)+'</li>'; }).join('')+'</ul>'
               : '<div class="v26-cv-note" style="padding:8px 0">No threshold-based risk flag triggered from the metrics currently available. This is not a full risk assessment \u2014 only what these specific ratios indicate.</div>'
@@ -5595,7 +5634,7 @@ body{
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v27.14.0',
+  VERSION: 'v27.15.0',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -9529,7 +9568,13 @@ var CREDIT_FIELD_DEFS = [
   {key:'currentBorrow', label:'Current Borrowings'},
   {key:'nonCurrentBorrow', label:'Non-current Borrowings'},
   {key:'shareCap', label:'Share Capital'},
-  {key:'reserves', label:'Reserves and Surplus'}
+  {key:'reserves', label:'Reserves and Surplus'},
+  {key:'grossNPA', label:'Gross NPA'},
+  {key:'grossAdvances', label:'Gross Advances'},
+  {key:'npaProvisions', label:'Provisions Held (for NPA)'},
+  {key:'tier1Capital', label:'Tier I Capital'},
+  {key:'tier2Capital', label:'Tier II Capital'},
+  {key:'rwa', label:'Risk-Weighted Assets (RWA)'}
 ];
 function findCreditField(patterns, excludePatterns, fieldKey){
   var cols = (window.APP && window.APP.columns) || [];
