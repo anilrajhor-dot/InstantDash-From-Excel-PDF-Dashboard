@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.21.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.22.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -1740,7 +1740,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v27.21.0">
+<meta name="instantdash-build" content="v27.22.0">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2614,7 +2614,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v27.21.0';
+      s.textContent='v27.22.0';
       b.appendChild(s);
     }
   }
@@ -2674,10 +2674,10 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v27.21.0</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v27.22.0</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.21.0</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.22.0</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="pptxExportBtn" type="button" aria-label="Export to PowerPoint">📊 Export PPT</button>
       <button class="id-health-btn no-print" id="pdfExportBtn" type="button" aria-label="Export PDF Report">📄 Export PDF</button>
@@ -2959,8 +2959,16 @@ body{
             ? (m.name+' for '+val+' is '+valText+'.')
             : (m.name+' across all '+col+' is '+valText+'.')) + comparisonText;
           var txt = (typeof instantDashEnrichSpeech==='function') ? instantDashEnrichSpeech(m.name, baseText) : baseText;
-          var synth = window.speechSynthesis;
-          if(synth){
+          /* v27.22.1 — use the app's own proven speech function rather
+             than a duplicated, simpler pattern. instantDashSpeak()
+             explicitly selects a real voice, clears the known iOS
+             "stuck paused" state, and has a watchdog for silent
+             WebKit failures — the exact class of issue this was
+             hitting. */
+          if(typeof instantDashSpeak==='function'){
+            instantDashSpeak(txt);
+          } else if(window.speechSynthesis){
+            var synth = window.speechSynthesis;
             if(synth.speaking||synth.pending) synth.cancel();
             synth.resume();
             var u = new SpeechSynthesisUtterance(txt);
@@ -2984,15 +2992,22 @@ body{
             var f = window.APP.filters[col] || (window.APP.filters[col] = {kind:'cat', selected:new Set()});
             if(f.selected.has(val)) f.selected.delete(val); else f.selected.add(val);
             if(!f.selected.size) delete window.APP.filters[col];
-            /* v27.21.0 — each step now isolated in its own try/catch. An
-               error anywhere in the dashboard rebuild used to silently
-               halt this whole handler before it ever reached the speak
-               call at the end — now every step gets its own chance to
-               run regardless of what happens in the others. */
+
+            /* v27.22.0 — speak as close to the raw tap as possible.
+               iOS Safari requires speechSynthesis.speak() to be called
+               very near the actual user gesture; a full dashboard
+               rebuild (every chart, table, insights) running first can
+               silently break that requirement even within the same
+               click handler. applyFilters() is the lightweight step
+               (recomputes APP.filtered only) — just enough to speak an
+               accurate figure — with the full, heavier redraw
+               happening immediately after. */
+            try{ if(typeof applyFilters==='function') applyFilters(); }catch(errF){ console.error('InstantDash slicer filter error', errF); }
+            speakSlicerResult(col, val);
+
             try{ if(typeof applyFiltersAndRedraw==='function') applyFiltersAndRedraw(); }catch(err1){ console.error('InstantDash slicer redraw error', err1); }
             try{ if(typeof buildFilterBar==='function') buildFilterBar(); }catch(err2){ console.error('InstantDash filter bar error', err2); }
             try{ render(); }catch(err3){ console.error('InstantDash slicer render error', err3); }
-            speakSlicerResult(col, val);
           } else if(clearBtn){
             var clearCol = clearBtn.getAttribute('data-slicer-clear');
             delete window.APP.filters[clearCol];
@@ -6030,7 +6045,7 @@ body{
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v27.21.0',
+  VERSION: 'v27.22.0',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
