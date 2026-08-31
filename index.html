@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.22.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.23.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -1740,7 +1740,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v27.22.0">
+<meta name="instantdash-build" content="v27.23.0">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2614,7 +2614,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v27.22.0';
+      s.textContent='v27.23.0';
       b.appendChild(s);
     }
   }
@@ -2674,10 +2674,10 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v27.22.0</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v27.23.0</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.22.0</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.23.0</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="pptxExportBtn" type="button" aria-label="Export to PowerPoint">📊 Export PPT</button>
       <button class="id-health-btn no-print" id="pdfExportBtn" type="button" aria-label="Export PDF Report">📄 Export PDF</button>
@@ -2993,7 +2993,7 @@ body{
             if(f.selected.has(val)) f.selected.delete(val); else f.selected.add(val);
             if(!f.selected.size) delete window.APP.filters[col];
 
-            /* v27.22.0 — speak as close to the raw tap as possible.
+            /* v27.23.0 — speak as close to the raw tap as possible.
                iOS Safari requires speechSynthesis.speak() to be called
                very near the actual user gesture; a full dashboard
                rebuild (every chart, table, insights) running first can
@@ -6045,7 +6045,7 @@ body{
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v27.22.0',
+  VERSION: 'v27.23.0',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -6151,15 +6151,24 @@ window.__instantDashUnderstand = (function(){
   var cache = null, cacheVersion = null;
   function classifyMeasureType(name){
     var n = String(name||'').toLowerCase();
-    if (/%|percent|\brate\b|\bratio\b|margin|yield|utili[sz]ation|occupancy|compliance|satisfaction|conversion|attendance|completion|pass(?:ing)?\s*rate|dropout/.test(n)) return 'percentage';
+    /* v27.23.0 — Schedule III / company-accounts ratio heads. DSCR, ROE,
+       ROCE, ROA and *turnover ratio* need to be caught explicitly: "turnover"
+       alone reads as a Revenue figure (Cost of materials, etc.), so only the
+       "...turnover ratio" phrasing is treated as percentage here — bare
+       "turnover"/"revenue from operations" still falls through to amount. */
+    if (/%|percent|\brate\b|\bratio\b|margin|yield|utili[sz]ation|occupancy|compliance|satisfaction|conversion|attendance|completion|pass(?:ing)?\s*rate|dropout|\bdscr\b|\broce\b|\broe\b|\broa\b|turnover\s*ratio/.test(n)) return 'percentage';
     if (/count|number|orders?|customers?|cases?|units?|visits?|transactions?|employees?|tasks?|applications?|volume|nominated|attended|assessed|passed/.test(n)) return 'count';
     if (/days?|hours?|duration|lead\s*time|turnaround|tat\b|age\b/.test(n)) return 'duration';
     return 'amount';
   }
   function classifyDirection(name){
     var n = String(name||'').toLowerCase();
-    if (/defect|reject|cancel|complaint|error|failure|npa\b|overdue|delay|downtime|attrition|dropout|churn|incident|readmission|abandon|denial|cost|expense|shrinkage|waste|leakage/.test(n)) return 'lower';
-    if (/revenue|sales|profit|income|margin|growth|attendance|satisfaction|completion|pass(?:ing)?|retention|availability|uptime|conversion|recovery|collection|efficiency|productivity/.test(n)) return 'higher';
+    /* v27.23.0 — balance-sheet direction: borrowings/debt and contingent
+       liabilities are "lower is better"; reserves, net worth, equity and
+       cash balances are "higher is better". Receivables/payables are left
+       neutral since a higher or lower figure isn't inherently good or bad. */
+    if (/defect|reject|cancel|complaint|error|failure|npa\b|overdue|delay|downtime|attrition|dropout|churn|incident|readmission|abandon|denial|cost|expense|shrinkage|waste|leakage|borrowing|\bdebt\b|contingent\s*liabilit/.test(n)) return 'lower';
+    if (/revenue|sales|profit|income|margin|growth|attendance|satisfaction|completion|pass(?:ing)?|retention|availability|uptime|conversion|recovery|collection|efficiency|productivity|reserve|surplus|net\s*worth|shareholders?.?\s*fund|equity|\broe\b|\broce\b/.test(n)) return 'higher';
     return 'neutral';
   }
   function findTargetActualPairs(measureNames){
@@ -6240,6 +6249,13 @@ window.__instantDashUnderstand = (function(){
     if (/\b(opening|closing)\s*(balance|stock|cash|inventory|bank)\b|\bbalance\b|\boutstanding\b|\bo\/s\b|\bbook\s*value\b|\bnav\b/.test(n)) return 'balance';
     if (mtype==='percentage') return 'avg';
     if (/\b(average|avg|mean|median|score|index)\b|\bper\s|\/\s*unit|\bunit\s*cost\b/.test(n)) return 'avg';
+    /* v27.23.0 — Schedule III balance-sheet heads (share capital, reserves &
+       surplus, trade receivables/payables, inventories, borrowings, fixed
+       assets, deferred tax, provisions, cash & cash equivalents, net worth,
+       etc.) are point-in-time snapshots like a balance, not a flow for the
+       period — summing "Trade Receivables" across a FY25/FY26 pair would
+       double-count, not add up. Take the latest value instead. */
+    if (/\bshare\s*capital\b|\breserves?(\s*(and|&)\s*surplus)?\b|\bsurplus\b|\btrade\s*receivables?\b|\btrade\s*payables?\b|\binventor(y|ies)\b|\bborrowings?\b|\bfixed\s*assets?\b|\btangible\s*assets?\b|\bintangible\s*assets?\b|\bdeferred\s*tax\b|\bprovisions?\b|\bcurrent\s*investments?\b|\bnon.?current\s*investments?\b|\bloans?\s*(and|&)\s*advances\b|\bcash\s*(and|&)\s*cash\s*equivalents?\b|\bother\s*current\s*(assets?|liabilit(y|ies))\b|\bnet\s*worth\b|\bshareholders?.?\s*funds?\b|\bcapital\s*work.?in.?progress\b|\btotal\s*(assets?|liabilit(y|ies)|equity)\b/.test(n)) return 'balance';
     return 'sum';
   }
   /* The single aggregation entry point. Every caller — KPI cards today,
@@ -13861,9 +13877,17 @@ function dimensions(d){
    scale and relationships, then selects a chart that fits the evidence.
    ------------------------------------------------------------------ */
 var semanticRules=[
- {kind:'percentage',terms:['%','percent','percentage','ratio','rate','margin','yield','share','mix','coverage','utilization','achievement','attainment','occupancy','satisfaction','conversion','compliance','penetration']},
+ /* v27.23.0 — added dscr/roce/roa so Schedule III ratio heads (Debt Service
+    Coverage Ratio, Return on Capital Employed, Return on Assets) score as
+    percentage the same way roe/margin/ratio already did. */
+ {kind:'percentage',terms:['%','percent','percentage','ratio','rate','margin','yield','share','mix','coverage','utilization','achievement','attainment','occupancy','satisfaction','conversion','compliance','penetration','dscr','roce','roa']},
  {kind:'count',terms:['count','number','noof','qty','quantity','units','volume','transactions','transactioncount','headcount','employees','customers','members','accounts','visits','cases','orders','patients','beneficiaries','complaints','incidents','applications','loans']},
- {kind:'amount',terms:['amount','value','sales','revenue','turnover','income','expense','expenses','cost','profit','pat','ebit','ebitda','commission','fee','fees','deposit','advance','loan','asset','liability','equity','cash','balance','capital','debt','recovery','target','budget','salary','spend','savings','investment','premium','receivable','payable','inventory']},
+ /* v27.23.0 — added the Schedule III P&L/balance-sheet heads that were
+    missing: borrowings, reserves & surplus, provisions, depreciation,
+    amortisation, tax, contingent liabilities, net worth, EPS. Without these
+    a Balance Sheet/P&L upload fell back to the generic zero-score default,
+    which happened to still classify as 'amount' but skipped family grouping. */
+ {kind:'amount',terms:['amount','value','sales','revenue','turnover','income','expense','expenses','cost','profit','pat','pbt','eps','ebit','ebitda','commission','fee','fees','deposit','advance','loan','asset','liability','equity','cash','balance','capital','debt','recovery','target','budget','salary','spend','savings','investment','premium','receivable','payable','inventory','borrowing','borrowings','reserve','reserves','surplus','provision','provisions','depreciation','amortisation','amortization','contingent','networth','tax']},
  {kind:'growth',terms:['growth','change','yoy','mom','qoq','cagr','increase','decrease','variation','variance','delta','movement']},
  {kind:'duration',terms:['days','day','hours','duration','time','tat','turnaround','holding','age','leadtime','resolutiontime','tenure','cycle']},
  {kind:'score',terms:['score','rating','index','grade','rank','quality','riskscore','creditscore']}
@@ -13947,15 +13971,19 @@ function recommendations(ms,ds,d){
  if(primary&&(!group||!cat.length))add('Measure distribution',[primary.name],'histogram','No strong grouping field was found, so the distribution of the main measure is the most informative view.',70,'');
  return rec.sort(function(a,b){return b.score-a.score}).slice(0,6);
 }
+/* v27.23.0 — Schedule III financial-statement heads added across the three
+   families that matter for company accounts (Balance Sheet, P&L, Ratios), so
+   a Balance Sheet + P&L + Ratios upload groups cleanly into KPI sections
+   instead of everything landing in one undifferentiated bucket. */
 var families=[
- {name:'Financial / Profitability',terms:['revenue','sales','profit','pat','ebit','ebitda','expense','cost','income','margin','roa','roe','budget','actual']},
+ {name:'Financial / Profitability',terms:['revenue','sales','profit','pat','pbt','ebit','ebitda','expense','cost','income','margin','roa','roe','roce','budget','actual','depreciation','amortisation','amortization','tax','financecost','eps']},
  {name:'Transactions / Activity',terms:['transaction','order','visitor','patient','customer','units','volume','count','activity','production','cases','incidents']},
  {name:'Targets / Achievement',terms:['target','actual','achievement','attainment','gap','variance']},
- {name:'Risk / Quality',terms:['risk','npa','default','recovery','defect','rejection','complaint','compliance','incident','resolution','sla','vulnerability']},
+ {name:'Risk / Quality',terms:['risk','npa','default','recovery','defect','rejection','complaint','compliance','incident','resolution','sla','vulnerability','contingent']},
  {name:'Operations / Efficiency',terms:['production','output','capacity','utilization','downtime','rework','leadtime','turnaround','attendance','overtime']},
  {name:'People / HR',terms:['employee','headcount','salary','training','attendance','rating','leave','recruitment']},
- {name:'Cash / Balance Sheet',terms:['cash','asset','liability','equity','capital','debt','deposit','advance','loan','receivable','payable','inventory','workingcapital']},
- {name:'Rates / Ratios',terms:['rate','ratio','margin','growth','yield','share','coverage','conversion','occupancy','satisfaction','percentage']}
+ {name:'Cash / Balance Sheet',terms:['cash','asset','liability','equity','capital','debt','deposit','advance','loan','receivable','payable','inventory','workingcapital','borrowing','borrowings','reserve','reserves','surplus','provision','provisions','sharecapital','networth','shareholdersfund']},
+ {name:'Rates / Ratios',terms:['rate','ratio','margin','growth','yield','share','coverage','conversion','occupancy','satisfaction','percentage','dscr','roce','roe','roa','turnoverratio']}
 ];
 function inferCategories(ms,d){
  return families.map(function(f){
