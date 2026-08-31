@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.24.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.25.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -1740,7 +1740,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v27.24.0">
+<meta name="instantdash-build" content="v27.25.0">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2614,7 +2614,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v27.24.0';
+      s.textContent='v27.25.0';
       b.appendChild(s);
     }
   }
@@ -2674,13 +2674,15 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v27.24.0</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v27.25.0</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
       <div id="idBrandingSlot" style="display:none;align-items:center;gap:8px;margin-top:6px;"></div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.24.0</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.25.0</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="pptxExportBtn" type="button" aria-label="Export to PowerPoint">📊 Export PPT</button>
+      <button class="id-health-btn no-print" id="uploadBuildPptBtn" type="button" aria-label="Upload a file and build a PowerPoint directly">📤📊 Upload &amp; Build PPT</button>
+      <input type="file" id="uploadBuildPptInput" accept=".xlsx,.xls,.xlsm,.csv,.txt,.pdf,text/csv,application/pdf,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" style="display:none">
       <button class="id-health-btn no-print" id="pdfExportBtn" type="button" aria-label="Export PDF Report">📄 Export PDF</button>
       <button class="id-health-btn no-print" id="brandingBtn" type="button" aria-label="Set dashboard branding">🏷️ Branding</button>
       <input type="file" id="brandingLogoInput" accept="image/*" style="display:none">
@@ -2996,7 +2998,7 @@ body{
             if(f.selected.has(val)) f.selected.delete(val); else f.selected.add(val);
             if(!f.selected.size) delete window.APP.filters[col];
 
-            /* v27.24.0 — speak as close to the raw tap as possible.
+            /* v27.25.0 — speak as close to the raw tap as possible.
                iOS Safari requires speechSynthesis.speak() to be called
                very near the actual user gesture; a full dashboard
                rebuild (every chart, table, insights) running first can
@@ -3859,25 +3861,79 @@ body{
     </script>
     <script id="instantdash-v27-pptx-wire">
     (function(){
+      /* v27.25.0 — pulled out of the button click handler so "Upload &
+         Build PPT" (a new one-step upload-to-deck shortcut) can trigger
+         the exact same prompt-and-export flow once its file has finished
+         loading, instead of duplicating this logic. */
+      function promptAndExportPPT(){
+        if(typeof exportToPowerPoint!=='function') return;
+        var totalCharts = (window.APP && Array.isArray(APP.charts)) ? APP.charts.filter(function(c){ return c && c.instance; }).length : 0;
+        var suggestion = Math.min(totalCharts || 3, 3);
+        var answer = window.prompt('How many chart slides should the PowerPoint include? (Title, KPI Summary and any Executive Takeaway / Management Brief slides are always included.)', String(suggestion));
+        if(answer === null) return;   // user cancelled
+        var n = parseInt(answer, 10);
+        if(!isFinite(n) || n < 0) n = suggestion;
+        n = Math.max(0, Math.min(10, n));
+        exportToPowerPoint(n);
+      }
+      window.__instantDashPromptAndExportPPT = promptAndExportPPT;
+
       function wire(){
         var btn = document.getElementById('pptxExportBtn');
         if(!btn || btn.dataset.wiredPptx) return;
         btn.dataset.wiredPptx = '1';
-        btn.addEventListener('click', function(){
-          if(typeof exportToPowerPoint!=='function') return;
-          /* v27.24.0 — slide-count control. Title + KPI Summary (+
-             Executive Takeaway / Management Brief when that data exists)
-             are always included; this only bounds how many chart slides
-             get added, so the deck length is something the user chooses
-             rather than a fixed "always 3" the code used to assume. */
-          var totalCharts = (window.APP && Array.isArray(APP.charts)) ? APP.charts.filter(function(c){ return c && c.instance; }).length : 0;
-          var suggestion = Math.min(totalCharts || 3, 3);
-          var answer = window.prompt('How many chart slides should the PowerPoint include? (Title, KPI Summary and any Executive Takeaway / Management Brief slides are always included.)', String(suggestion));
-          if(answer === null) return;   // user cancelled
-          var n = parseInt(answer, 10);
-          if(!isFinite(n) || n < 0) n = suggestion;
-          n = Math.max(0, Math.min(10, n));
-          exportToPowerPoint(n);
+        btn.addEventListener('click', promptAndExportPPT);
+      }
+      setInterval(wire, 700);
+      if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire);
+      else wire();
+    })();
+    </script>
+    <script id="instantdash-v27-upload-build-ppt">
+    /* v27.25.0 — "Upload & Build PPT": one tap picks a file, runs the exact
+       same handleFile() pipeline as a normal upload (identical parsing,
+       column detection, aggregation — no shortcuts or duplicate logic),
+       waits for the dashboard's charts to actually finish rendering, then
+       opens the same slide-count prompt as the regular Export PPT button. */
+    (function(){
+      function waitForChartsThenExport(){
+        var deadline = Date.now() + 20000;   // give large files up to 20s
+        var lastChartCount = -1, stableTicks = 0;
+        var poll = setInterval(function(){
+          var app = window.APP;
+          var hasRows = app && Array.isArray(app.rows) && app.rows.length > 0;
+          var chartCount = app && Array.isArray(app.charts) ? app.charts.filter(function(c){ return c && c.instance; }).length : 0;
+          var appVisible = document.getElementById('app') && !document.getElementById('app').hidden;
+          var timedOut = Date.now() > deadline;
+          if(chartCount === lastChartCount) stableTicks++; else { stableTicks = 0; lastChartCount = chartCount; }
+          // "Ready" = rows loaded, dashboard visible, and the chart count has
+          // held steady for a few ticks (charts render in a burst after load,
+          // so a single non-zero reading isn't proof they're all in yet).
+          var ready = hasRows && appVisible && stableTicks >= 2 && (chartCount > 0 || stableTicks >= 6);
+          if(ready || timedOut){
+            clearInterval(poll);
+            if(!hasRows){
+              if(typeof toast==='function') toast('Upload did not produce any data to build slides from.');
+              return;
+            }
+            if(typeof window.__instantDashPromptAndExportPPT === 'function') window.__instantDashPromptAndExportPPT();
+          }
+        }, 400);
+      }
+
+      function wire(){
+        var btn = document.getElementById('uploadBuildPptBtn');
+        var fileInput = document.getElementById('uploadBuildPptInput');
+        if(!btn || !fileInput || btn.dataset.wiredUploadPpt) return;
+        btn.dataset.wiredUploadPpt = '1';
+        btn.addEventListener('click', function(){ fileInput.click(); });
+        fileInput.addEventListener('change', function(){
+          var file = fileInput.files && fileInput.files[0];
+          fileInput.value = '';
+          if(!file) return;
+          if(typeof handleFile !== 'function') return;
+          handleFile(file);
+          waitForChartsThenExport();
         });
       }
       setInterval(wire, 700);
@@ -3886,7 +3942,7 @@ body{
     })();
     </script>
     <script id="instantdash-v27-branding">
-    /* v27.24.0 — client/company branding. Lets whoever is presenting the
+    /* v27.25.0 — client/company branding. Lets whoever is presenting the
        dashboard set the client company's name and logo (not Anil Sharma's
        own developer credit line, which stays as-is) so the same dashboard
        can be white-labelled per company when uploading different clients'
@@ -6143,7 +6199,7 @@ body{
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v27.24.0',
+  VERSION: 'v27.25.0',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -6249,7 +6305,7 @@ window.__instantDashUnderstand = (function(){
   var cache = null, cacheVersion = null;
   function classifyMeasureType(name){
     var n = String(name||'').toLowerCase();
-    /* v27.24.0 — Schedule III / company-accounts ratio heads. DSCR, ROE,
+    /* v27.25.0 — Schedule III / company-accounts ratio heads. DSCR, ROE,
        ROCE, ROA and *turnover ratio* need to be caught explicitly: "turnover"
        alone reads as a Revenue figure (Cost of materials, etc.), so only the
        "...turnover ratio" phrasing is treated as percentage here — bare
@@ -6261,7 +6317,7 @@ window.__instantDashUnderstand = (function(){
   }
   function classifyDirection(name){
     var n = String(name||'').toLowerCase();
-    /* v27.24.0 — balance-sheet direction: borrowings/debt and contingent
+    /* v27.25.0 — balance-sheet direction: borrowings/debt and contingent
        liabilities are "lower is better"; reserves, net worth, equity and
        cash balances are "higher is better". Receivables/payables are left
        neutral since a higher or lower figure isn't inherently good or bad. */
@@ -6347,7 +6403,7 @@ window.__instantDashUnderstand = (function(){
     if (/\b(opening|closing)\s*(balance|stock|cash|inventory|bank)\b|\bbalance\b|\boutstanding\b|\bo\/s\b|\bbook\s*value\b|\bnav\b/.test(n)) return 'balance';
     if (mtype==='percentage') return 'avg';
     if (/\b(average|avg|mean|median|score|index)\b|\bper\s|\/\s*unit|\bunit\s*cost\b/.test(n)) return 'avg';
-    /* v27.24.0 — Schedule III balance-sheet heads (share capital, reserves &
+    /* v27.25.0 — Schedule III balance-sheet heads (share capital, reserves &
        surplus, trade receivables/payables, inventories, borrowings, fixed
        assets, deferred tax, provisions, cash & cash equivalents, net worth,
        etc.) are point-in-time snapshots like a balance, not a flow for the
@@ -7542,7 +7598,7 @@ function detectPivotedShape(){
   if(cols.length < 3) return null;
   var dimCol = cols.find(function(c){ return (c.type==='text' || c.role==='dimension') && c.unique >= (APP.rows.length * 0.8); });
   if(!dimCol) return null;
-  /* v27.24.0 — the original pattern only matched bare period labels like
+  /* v27.25.0 — the original pattern only matched bare period labels like
      "FY 2025-26". Real Schedule III financial statements (Balance Sheet,
      P&L) use headers like "As at 31st March 2026", "As at 31.03.2026", or
      "FY 2025-26 (31 Mar 2026)" — none of which matched, so the Transpose
@@ -7577,7 +7633,7 @@ async function transposeCurrentData(){
   var metricNames = rows.map(function(r){ return String(r[shape.dimCol.name]); });
   var header = [shape.dimCol.name || 'Period'].concat(metricNames);
   var newGrid = [header];
-  /* v27.24.0 — a raw column header like "As at 31st March 2026" or
+  /* v27.25.0 — a raw column header like "As at 31st March 2026" or
      "FY 2025-26 (31 Mar 2026)" was pushed through verbatim as the new
      Period cell, which stays a text value forever — the same "Period
      typed as text, not date" gap that silently broke Key Movement until
@@ -8787,14 +8843,14 @@ function instantDashEnrichSpeech(measure, baseText){
   return baseText + extra;
 }
 function instantDashSpeechStatus(msg){
-  /* v27.24.0 — routine status (sending/speaking/finished) goes to console
+  /* v27.25.0 — routine status (sending/speaking/finished) goes to console
      only, so a working slicer stays silent on-screen as before. Genuine
      failures are surfaced separately via instantDashSpeechDiag below,
      which is the one that was actually needed for "not speaking". */
   try{ console.log('[InstantDash speech]', msg); }catch(_){ }
 }
 function instantDashSpeechDiag(msg, isError){
-  /* v27.24.0 — re-enabled, error-only, so a normal working slicer stays
+  /* v27.25.0 — re-enabled, error-only, so a normal working slicer stays
      quiet (instantDashSpeechStatus already toasts the good-path states)
      and only genuine failures interrupt with a second toast. */
   try{ if(isError && typeof toast==='function' && msg) toast(msg); }catch(_){ }
@@ -14013,12 +14069,12 @@ function dimensions(d){
    scale and relationships, then selects a chart that fits the evidence.
    ------------------------------------------------------------------ */
 var semanticRules=[
- /* v27.24.0 — added dscr/roce/roa so Schedule III ratio heads (Debt Service
+ /* v27.25.0 — added dscr/roce/roa so Schedule III ratio heads (Debt Service
     Coverage Ratio, Return on Capital Employed, Return on Assets) score as
     percentage the same way roe/margin/ratio already did. */
  {kind:'percentage',terms:['%','percent','percentage','ratio','rate','margin','yield','share','mix','coverage','utilization','achievement','attainment','occupancy','satisfaction','conversion','compliance','penetration','dscr','roce','roa']},
  {kind:'count',terms:['count','number','noof','qty','quantity','units','volume','transactions','transactioncount','headcount','employees','customers','members','accounts','visits','cases','orders','patients','beneficiaries','complaints','incidents','applications','loans']},
- /* v27.24.0 — added the Schedule III P&L/balance-sheet heads that were
+ /* v27.25.0 — added the Schedule III P&L/balance-sheet heads that were
     missing: borrowings, reserves & surplus, provisions, depreciation,
     amortisation, tax, contingent liabilities, net worth, EPS. Without these
     a Balance Sheet/P&L upload fell back to the generic zero-score default,
@@ -14107,7 +14163,7 @@ function recommendations(ms,ds,d){
  if(primary&&(!group||!cat.length))add('Measure distribution',[primary.name],'histogram','No strong grouping field was found, so the distribution of the main measure is the most informative view.',70,'');
  return rec.sort(function(a,b){return b.score-a.score}).slice(0,6);
 }
-/* v27.24.0 — Schedule III financial-statement heads added across the three
+/* v27.25.0 — Schedule III financial-statement heads added across the three
    families that matter for company accounts (Balance Sheet, P&L, Ratios), so
    a Balance Sheet + P&L + Ratios upload groups cleanly into KPI sections
    instead of everything landing in one undifferentiated bucket. */
