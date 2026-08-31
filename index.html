@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.20.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.21.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -1740,7 +1740,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v27.20.0">
+<meta name="instantdash-build" content="v27.21.0">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2614,7 +2614,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v27.20.0';
+      s.textContent='v27.21.0';
       b.appendChild(s);
     }
   }
@@ -2674,10 +2674,10 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v27.20.0</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v27.21.0</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.20.0</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.21.0</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="pptxExportBtn" type="button" aria-label="Export to PowerPoint">📊 Export PPT</button>
       <button class="id-health-btn no-print" id="pdfExportBtn" type="button" aria-label="Export PDF Report">📄 Export PDF</button>
@@ -2923,14 +2923,41 @@ body{
           var topMeasures = (typeof rankMeasures==='function') ? rankMeasures().slice(0,1) : [];
           if(!topMeasures.length) return;
           var m = topMeasures[0];
-          var rows = window.APP.filtered || window.APP.rows || [];
-          var agg = (typeof window.__instantDashAggregate==='function') ? window.__instantDashAggregate(m.name, rows) : null;
+          var filteredRows = window.APP.filtered || window.APP.rows || [];
+          var allRows = window.APP.rows || [];
+          var agg = (typeof window.__instantDashAggregate==='function') ? window.__instantDashAggregate(m.name, filteredRows) : null;
           if(!agg || !agg.count) return;
           var valText = (typeof fmtByField==='function') ? fmtByField(agg.value, m.name) : String(agg.value);
+
+          /* v27.21.1 — "reason for variation": compare the filtered slice
+             against the overall, unfiltered figure. For averaged
+             measures, above/below the overall average is meaningful.
+             For summed measures (the more common case), a filtered
+             subset's sum is always smaller than the whole by
+             definition — "below average" would be meaningless — so a
+             share-of-total framing is used instead. */
+          var comparisonText = '';
+          try{
+            var overallAgg = (typeof window.__instantDashAggregate==='function') ? window.__instantDashAggregate(m.name, allRows) : null;
+            if(overallAgg && overallAgg.count && overallAgg.value){
+              if(agg.mode==='avg'){
+                var diffPct = ((agg.value - overallAgg.value) / Math.abs(overallAgg.value)) * 100;
+                if(isFinite(diffPct) && Math.abs(diffPct)>=1){
+                  comparisonText = ' This is ' + Math.abs(diffPct).toFixed(0) + '% ' + (diffPct>=0?'above':'below') + ' the overall average.';
+                }
+              } else {
+                var sharePct = (agg.value / overallAgg.value) * 100;
+                if(isFinite(sharePct) && sharePct<99.5){
+                  comparisonText = ' This accounts for ' + sharePct.toFixed(0) + '% of the total across all ' + col + '.';
+                }
+              }
+            }
+          }catch(_cmp){ /* comparison is supplementary — the core figure still gets spoken without it */ }
+
           var isFiltered = Object.keys(window.APP.filters||{}).length>0;
-          var baseText = isFiltered
+          var baseText = (isFiltered
             ? (m.name+' for '+val+' is '+valText+'.')
-            : (m.name+' across all '+col+' is '+valText+'.');
+            : (m.name+' across all '+col+' is '+valText+'.')) + comparisonText;
           var txt = (typeof instantDashEnrichSpeech==='function') ? instantDashEnrichSpeech(m.name, baseText) : baseText;
           var synth = window.speechSynthesis;
           if(synth){
@@ -2957,16 +2984,21 @@ body{
             var f = window.APP.filters[col] || (window.APP.filters[col] = {kind:'cat', selected:new Set()});
             if(f.selected.has(val)) f.selected.delete(val); else f.selected.add(val);
             if(!f.selected.size) delete window.APP.filters[col];
-            if(typeof applyFiltersAndRedraw==='function') applyFiltersAndRedraw();
-            if(typeof buildFilterBar==='function') buildFilterBar();
-            render();
+            /* v27.21.0 — each step now isolated in its own try/catch. An
+               error anywhere in the dashboard rebuild used to silently
+               halt this whole handler before it ever reached the speak
+               call at the end — now every step gets its own chance to
+               run regardless of what happens in the others. */
+            try{ if(typeof applyFiltersAndRedraw==='function') applyFiltersAndRedraw(); }catch(err1){ console.error('InstantDash slicer redraw error', err1); }
+            try{ if(typeof buildFilterBar==='function') buildFilterBar(); }catch(err2){ console.error('InstantDash filter bar error', err2); }
+            try{ render(); }catch(err3){ console.error('InstantDash slicer render error', err3); }
             speakSlicerResult(col, val);
           } else if(clearBtn){
             var clearCol = clearBtn.getAttribute('data-slicer-clear');
             delete window.APP.filters[clearCol];
-            if(typeof applyFiltersAndRedraw==='function') applyFiltersAndRedraw();
-            if(typeof buildFilterBar==='function') buildFilterBar();
-            render();
+            try{ if(typeof applyFiltersAndRedraw==='function') applyFiltersAndRedraw(); }catch(err4){ console.error('InstantDash slicer clear redraw error', err4); }
+            try{ if(typeof buildFilterBar==='function') buildFilterBar(); }catch(err5){ console.error('InstantDash filter bar error', err5); }
+            try{ render(); }catch(err6){ console.error('InstantDash slicer clear render error', err6); }
           }
         });
       }
@@ -5998,7 +6030,7 @@ body{
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v27.20.0',
+  VERSION: 'v27.21.0',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
