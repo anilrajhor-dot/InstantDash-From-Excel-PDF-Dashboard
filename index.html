@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.17.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.18.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -1698,6 +1698,8 @@ html,body{overflow-anchor:none!important;}
 .ai-chart-card-head h4{margin:0;font-size:14px;line-height:1.3}
 .ai-chart-card-head p{margin:3px 0 0;color:var(--muted);font-size:10px;line-height:1.35}
 .ai-chart-expand{border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:9px;padding:7px 9px;font:800 10px Poppins,sans-serif;cursor:pointer;white-space:nowrap}.ai-chart-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end}.ai-chart-type{border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:9px;padding:7px 8px;font:700 10px Poppins,sans-serif;max-width:128px;min-height:32px}.ai-chart-type:focus{outline:2px solid var(--accent);outline-offset:1px}.ai-chart-mode-note{margin-top:6px;font-size:9px;color:var(--muted)}
+.ai-chart-color-label{display:flex;align-items:center;gap:4px}
+.ai-chart-color{width:26px;height:26px;border-radius:7px;border:1px solid var(--border);cursor:pointer;padding:1px;background:var(--card)}
 .ai-chart-wrap{height:260px;position:relative;border:1px solid var(--border);border-radius:12px;background:var(--card);padding:7px}
 .ai-chart-wrap canvas{width:100%!important;height:100%!important;display:block}
 .ai-chart-svg-host{position:absolute;inset:0;width:100%;height:100%;overflow:hidden}
@@ -1728,7 +1730,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v27.17.0">
+<meta name="instantdash-build" content="v27.18.0">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2602,7 +2604,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v27.17.0';
+      s.textContent='v27.18.0';
       b.appendChild(s);
     }
   }
@@ -2662,10 +2664,10 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v27.17.0</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v27.18.0</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.17.0</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.18.0</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="pptxExportBtn" type="button" aria-label="Export to PowerPoint">📊 Export PPT</button>
       <button class="id-health-btn no-print" id="pdfExportBtn" type="button" aria-label="Export PDF Report">📄 Export PDF</button>
@@ -5829,7 +5831,7 @@ body{
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v27.17.0',
+  VERSION: 'v27.18.0',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -14599,7 +14601,7 @@ function drawNativeAIChart(s,canvas){
  var w=Math.max(280,Math.floor(wrap.clientWidth||wrap.getBoundingClientRect().width||600));
  var h=Math.max(220,Math.floor(wrap.clientHeight||wrap.getBoundingClientRect().height||260));
  var type=s.type, pie=(type==='pie'||type==='donut'), line=(type==='line'||type==='area'), horiz=(type==='hbar');
- var colors=(typeof palette!=='undefined' && Array.isArray(palette) && palette.length)?palette:(window.__instantDashChartColors || ['#C9A227','#8B2F3D','#16785A','#2C4A6B','#6B4E8E','#B0793E','#4A7A8C','#8FA05C']);
+ var colors=(s.colorOverride && Array.isArray(s.colorOverride) && s.colorOverride.length) ? s.colorOverride : ((typeof palette!=='undefined' && Array.isArray(palette) && palette.length)?palette:(window.__instantDashChartColors || ['#C9A227','#8B2F3D','#16785A','#2C4A6B','#6B4E8E','#B0793E','#4A7A8C','#8FA05C']));
  var max=Math.max.apply(null,vals.map(function(v){return Math.abs(v)})); if(!isFinite(max)||max<=0)max=1;
  var escA=function(x){return String(x==null?'':x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');};
  var short=function(x,n){x=String(x==null?'':x);return x.length>n?x.slice(0,n-1)+'…':x;};
@@ -14717,11 +14719,21 @@ function render(){
  specs.forEach(function(s){
   var card=document.createElement('article');card.className='ai-chart-card';
   var soWhat=soWhatFor(s.measure);
-  card.innerHTML='<div class="ai-chart-card-head"><div><h4>'+esc(niceName(s.title))+'</h4><p class="ai-chart-sub">'+esc(s.subtitle)+'</p></div><div class="ai-chart-actions"><label style="font-size:9px;color:var(--muted);font-weight:800">Chart <select class="ai-chart-type" aria-label="Change chart type for '+esc(niceName(s.title))+'">'+chartTypeOptions(s.type)+'</select></label><button type="button" class="ai-chart-expand">⛶ Expand</button></div></div><div class="ai-chart-wrap"><canvas></canvas></div><div class="ai-chart-touch-detail">Tap a bar or point to see the exact figure.</div>'+(soWhat?'<div class="ai-chart-so-what">'+esc(soWhat)+'</div>':'')+'<div class="ai-chart-foot">'+esc(s.foot)+'</div>';
+  card.innerHTML='<div class="ai-chart-card-head"><div><h4>'+esc(niceName(s.title))+'</h4><p class="ai-chart-sub">'+esc(s.subtitle)+'</p></div><div class="ai-chart-actions"><label style="font-size:9px;color:var(--muted);font-weight:800">Chart <select class="ai-chart-type" aria-label="Change chart type for '+esc(niceName(s.title))+'">'+chartTypeOptions(s.type)+'</select></label><label class="ai-chart-color-label" style="font-size:9px;color:var(--muted);font-weight:800">🎨<input type="color" class="ai-chart-color" aria-label="Set color for '+esc(niceName(s.title))+'" value="'+((s.colorOverride&&s.colorOverride[0])||'#C9A227')+'"></label><button type="button" class="ai-chart-expand">⛶ Expand</button></div></div><div class="ai-chart-wrap"><canvas></canvas></div><div class="ai-chart-touch-detail">Tap a bar or point to see the exact figure.</div>'+(soWhat?'<div class="ai-chart-so-what">'+esc(soWhat)+'</div>':'')+'<div class="ai-chart-foot">'+esc(s.foot)+'</div>';
   grid.appendChild(card);redrawAICard(s,card);
   card.querySelector('.ai-chart-type').addEventListener('change',function(e){
     s.type=e.target.value;
     try{redrawAICard(s,card);}catch(err){var wrap=card.querySelector('.ai-chart-wrap');if(wrap)wrap.innerHTML='<div style="padding:24px;text-align:center;color:var(--muted)">This chart type could not be rendered for the selected data. Try Bar or Line.</div>';console.error('InstantDash chart type error',err);}
+  });
+  var colorInput=card.querySelector('.ai-chart-color');
+  if(colorInput)colorInput.addEventListener('input',function(e){
+    /* v27.18.0 — a single custom color, cycled with automatic tonal
+       variants for charts needing more than one color (pie/donut with
+       multiple slices), so one picked color still gives a full,
+       usable palette rather than every slice being identical. */
+    var base=e.target.value;
+    s.colorOverride=[base, base+'CC', base+'99', base+'66', base+'DD', base+'88', base+'55', base+'AA'];
+    try{redrawAICard(s,card);}catch(err){console.error('InstantDash per-chart color error',err);}
   });
   card.querySelector('.ai-chart-expand').addEventListener('click',function(){openExpand(s)});
   card.querySelector('.ai-chart-wrap').addEventListener('click',function(e){if(e.target.tagName==='CANVAS')openExpand(s)});
