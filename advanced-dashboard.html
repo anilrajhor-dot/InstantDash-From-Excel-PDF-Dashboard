@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.26.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.27.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -1740,7 +1740,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v27.26.0">
+<meta name="instantdash-build" content="v27.27.0">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2614,7 +2614,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v27.26.0';
+      s.textContent='v27.27.0';
       b.appendChild(s);
     }
   }
@@ -2674,11 +2674,11 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v27.26.0</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v27.27.0</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
       <div id="idBrandingSlot" style="display:none;align-items:center;gap:8px;margin-top:6px;"></div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.26.0</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.27.0</span></div>
   <a href="index.html" class="id-health-btn no-print" id="mainMenuBackBtn" style="text-decoration:none;display:inline-flex;align-items:center">← Main Menu</a>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="pptxExportBtn" type="button" aria-label="Export to PowerPoint">📊 Export PPT</button>
@@ -6208,7 +6208,7 @@ body{
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v27.26.0',
+  VERSION: 'v27.27.0',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -8026,6 +8026,14 @@ function showFatal(msg){
 
 // Column names that almost always mean "this is an identifier, not a measure"
 const ID_NAME_RE = /(^|[\s_\-.])(id|ids|uid|guid|uuid|code|codes|invoice|inv|ref|reference|sku|serial|barcode|phone|mobile|contact|email|mail|account|acct|pan|gst|aadhaar|zip|pincode|postcode|key|hash|url|link)([\s_\-.]|$)/i;
+/* v27.27.0 — "No"/"No." as a SUFFIX specifically (File No., Sl No,
+   Invoice No, Ref No) means a reference/tracking number, not a
+   measure. Deliberately anchored to the end of the name ($) so this
+   does NOT match "No. of Participants" or similar count-of measures,
+   where "No." appears at the start followed by more text — verified
+   directly that both cases are handled correctly before this was used
+   anywhere in classification. */
+const ID_SUFFIX_NO_RE = /(^|[\s_\-.])(no|number|sl\.?\s*no|sr\.?\s*no|serial\s*no)\.?\s*$/i;
 const DATE_NAME_RE = /(date|dt|day|month|year|period|time|timestamp|created|updated|joined|dob|birth|due|start|end|from|to)/i;
 const BOOL_TRUE = new Set(['true','yes','y','1','t']);
 const BOOL_FALSE = new Set(['false','no','n','0','f']);
@@ -8182,7 +8190,7 @@ function computeStats(col){
 function assignRole(col){
   if (col.manual) return;                      // never overwrite a user's choice
   const rows = APP.rows.length;
-  const nameLooksLikeId = ID_NAME_RE.test(col.name);
+  const nameLooksLikeId = ID_NAME_RE.test(col.name) || ID_SUFFIX_NO_RE.test(col.name);
 
   if (col.type === 'date'){ col.role = 'time'; return; }
 
