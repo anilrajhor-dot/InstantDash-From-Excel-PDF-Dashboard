@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.23.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.24.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -1752,7 +1752,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v27.23.0">
+<meta name="instantdash-build" content="v27.24.0">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2626,7 +2626,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v27.23.0';
+      s.textContent='v27.24.0';
       b.appendChild(s);
     }
   }
@@ -2686,10 +2686,10 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v27.23.0</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v27.24.0</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.23.0</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.24.0</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="pptxExportBtn" type="button" aria-label="Export to PowerPoint">📊 Export PPT</button>
       <button class="id-health-btn no-print" id="pdfExportBtn" type="button" aria-label="Export PDF Report">📄 Export PDF</button>
@@ -2762,25 +2762,40 @@ body{
   </section>
   <script id="instantdash-v27-modechoice-wire">
   (function(){
-    var ADVANCED_ONLY_IDS = ['v27SlicerPanel','v27SavedViews','v27Anomalies','v27CompareSection','v27AdvCharts','v26CreditView','v26KpiCompare','v26MgmtBrief','v26DecisionMaker','v26ActionTracker','v26RelIntel'];
-    var ADVANCED_ONLY_BUTTONS = ['compareFilesBtn','editDashboardBtn'];
+    /* v27.24.0 — allowlist, not a hide-list. The previous hide-list only
+       named 11 sections, but #app has ~46 direct-child sections
+       (confirmed by directly querying the DOM) — most were never in
+       that list and stayed fully visible in "Simple" mode. Keeping
+       only these explicitly listed as visible, and hiding every other
+       direct child of #app, guarantees completeness: nothing new added
+       later can silently leak through un-hidden the way most sections
+       did here. */
+    var SIMPLE_MODE_KEEP_IDS = ['kpiSection','smartChartsSection','alerts'];
 
     function applySimpleMode(on){
-      ADVANCED_ONLY_IDS.forEach(function(id){
-        var el = document.getElementById(id);
-        if(el) el.style.display = on ? 'none' : '';
-      });
-      ADVANCED_ONLY_BUTTONS.forEach(function(id){
-        var el = document.getElementById(id);
-        if(el) el.style.display = on ? 'none' : '';
+      var app = document.getElementById('app');
+      if(!app) return;
+      Array.prototype.forEach.call(app.children, function(el){
+        if(el.tagName==='SCRIPT' || el.tagName==='NAV') return; // never hide scripts or Quick Nav itself
+        var keep = SIMPLE_MODE_KEEP_IDS.indexOf(el.id)!==-1;
+        if(keep) return; // never touch kept sections either way
+        el.style.display = on ? 'none' : '';
       });
       var nav = document.getElementById('v21QuickNav');
       if(nav){
         nav.querySelectorAll('[data-jump]').forEach(function(btn){
           var target = btn.getAttribute('data-jump');
-          if(ADVANCED_ONLY_IDS.indexOf(target)!==-1) btn.style.display = on ? 'none' : '';
+          var keep = SIMPLE_MODE_KEEP_IDS.indexOf(target)!==-1;
+          if(!keep) btn.style.display = on ? 'none' : '';
         });
       }
+      var pptxBtn = document.getElementById('pptxExportBtn');
+      var pdfBtn = document.getElementById('pdfExportBtn');
+      var compareBtn = document.getElementById('compareFilesBtn');
+      var editBtn = document.getElementById('editDashboardBtn');
+      [pptxBtn, pdfBtn, compareBtn, editBtn].forEach(function(btn){
+        if(btn) btn.style.display = on ? 'none' : '';
+      });
     }
 
     function chooseMode(mode){
@@ -6134,7 +6149,7 @@ body{
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v27.23.0',
+  VERSION: 'v27.24.0',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
