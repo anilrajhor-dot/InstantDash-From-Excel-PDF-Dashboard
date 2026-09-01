@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.24.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.24.1","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -534,18 +534,6 @@ main{max-width:1360px;margin:0 auto;padding:24px}
 .v27-edit-add-label{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;margin:12px 0 8px}
 .v27-edit-add-btn{display:block;width:100%;text-align:left;padding:8px 11px;margin-bottom:6px;border-radius:8px;border:1px dashed var(--border);background:none;color:var(--text);font-size:12px;cursor:pointer}
 .v27-edit-add-btn:disabled{opacity:.4;cursor:not-allowed}
-#v27ModeChoice{min-height:88vh;display:flex;align-items:center;justify-content:center;padding:24px}
-#v27ModeChoice[hidden]{display:none!important}
-.v27-mode-wrap{max-width:640px;width:100%;text-align:center}
-.v27-mode-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:800;letter-spacing:.1em;color:var(--accent);text-transform:uppercase;margin-bottom:14px}
-.v27-mode-title{font-size:26px;font-weight:900;color:var(--text);margin:0 0 28px;letter-spacing:-.02em}
-.v27-mode-options{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-@media(max-width:560px){.v27-mode-options{grid-template-columns:1fr}}
-.v27-mode-card{background:var(--card);border:2px solid var(--border);border-radius:18px;padding:28px 22px;cursor:pointer;text-align:center;transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease}
-.v27-mode-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-h);border-color:var(--accent)}
-.v27-mode-icon{font-size:36px;margin-bottom:10px}
-.v27-mode-name{font-size:17px;font-weight:900;color:var(--text);margin-bottom:8px}
-.v27-mode-desc{font-size:12.5px;color:var(--muted);line-height:1.5}
 @media(max-width:480px){
   .v27-swatch-grid{grid-template-columns:repeat(2,1fr)}
 }
@@ -1752,7 +1740,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v27.24.0">
+<meta name="instantdash-build" content="v27.24.1">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2626,7 +2614,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v27.24.0';
+      s.textContent='v27.24.1';
       b.appendChild(s);
     }
   }
@@ -2686,10 +2674,10 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v27.24.0</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v27.24.1</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.24.0</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.24.1</span></div>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="pptxExportBtn" type="button" aria-label="Export to PowerPoint">📊 Export PPT</button>
       <button class="id-health-btn no-print" id="pdfExportBtn" type="button" aria-label="Export PDF Report">📄 Export PDF</button>
@@ -2741,98 +2729,6 @@ body{
       </div>
     </div>
   </section>
-
-  <section id="v27ModeChoice" class="no-print">
-    <div class="v27-mode-wrap">
-      <div class="v27-mode-eyebrow"><span class="pulse-dot"></span> CHOOSE YOUR VIEW</div>
-      <h2 class="v27-mode-title">How would you like to work today?</h2>
-      <div class="v27-mode-options">
-        <button type="button" class="v27-mode-card" id="v27ModeSimpleBtn">
-          <div class="v27-mode-icon">📊</div>
-          <div class="v27-mode-name">Simple Dashboard</div>
-          <div class="v27-mode-desc">Upload Excel, get a clean KPI &amp; chart dashboard. No advanced tools.</div>
-        </button>
-        <button type="button" class="v27-mode-card" id="v27ModeAdvancedBtn">
-          <div class="v27-mode-icon">⚙️</div>
-          <div class="v27-mode-name">Advanced Dashboard</div>
-          <div class="v27-mode-desc">Full toolset — Slicers, Credit View, Advanced Charts, Compare, Export and more.</div>
-        </button>
-      </div>
-    </div>
-  </section>
-  <script id="instantdash-v27-modechoice-wire">
-  (function(){
-    /* v27.24.0 — allowlist, not a hide-list. The previous hide-list only
-       named 11 sections, but #app has ~46 direct-child sections
-       (confirmed by directly querying the DOM) — most were never in
-       that list and stayed fully visible in "Simple" mode. Keeping
-       only these explicitly listed as visible, and hiding every other
-       direct child of #app, guarantees completeness: nothing new added
-       later can silently leak through un-hidden the way most sections
-       did here. */
-    var SIMPLE_MODE_KEEP_IDS = ['kpiSection','smartChartsSection','alerts'];
-
-    function applySimpleMode(on){
-      var app = document.getElementById('app');
-      if(!app) return;
-      Array.prototype.forEach.call(app.children, function(el){
-        if(el.tagName==='SCRIPT' || el.tagName==='NAV') return; // never hide scripts or Quick Nav itself
-        var keep = SIMPLE_MODE_KEEP_IDS.indexOf(el.id)!==-1;
-        if(keep) return; // never touch kept sections either way
-        el.style.display = on ? 'none' : '';
-      });
-      var nav = document.getElementById('v21QuickNav');
-      if(nav){
-        nav.querySelectorAll('[data-jump]').forEach(function(btn){
-          var target = btn.getAttribute('data-jump');
-          var keep = SIMPLE_MODE_KEEP_IDS.indexOf(target)!==-1;
-          if(!keep) btn.style.display = on ? 'none' : '';
-        });
-      }
-      var pptxBtn = document.getElementById('pptxExportBtn');
-      var pdfBtn = document.getElementById('pdfExportBtn');
-      var compareBtn = document.getElementById('compareFilesBtn');
-      var editBtn = document.getElementById('editDashboardBtn');
-      [pptxBtn, pdfBtn, compareBtn, editBtn].forEach(function(btn){
-        if(btn) btn.style.display = on ? 'none' : '';
-      });
-    }
-
-    function chooseMode(mode){
-      window.__instantDashMode = mode;
-      document.getElementById('v27ModeChoice').hidden = true;
-      document.getElementById('emptyState').hidden = false;
-      applySimpleMode(mode==='simple');
-    }
-
-    function enforceGate(){
-      var app = window.APP || {};
-      var hasData = !!(app.rows && app.rows.length);
-      var modeChosen = !!window.__instantDashMode;
-      var gate = document.getElementById('v27ModeChoice');
-      var empty = document.getElementById('emptyState');
-      if(!gate || !empty) return;
-      if(!modeChosen && !hasData){
-        gate.hidden = false;
-        empty.hidden = true;
-      }
-      if(window.__instantDashMode==='simple' && hasData){
-        applySimpleMode(true);
-      }
-    }
-
-    function wire(){
-      var simpleBtn = document.getElementById('v27ModeSimpleBtn');
-      var advBtn = document.getElementById('v27ModeAdvancedBtn');
-      if(simpleBtn && !simpleBtn.dataset.wired2723){ simpleBtn.dataset.wired2723='1'; simpleBtn.addEventListener('click', function(){ chooseMode('simple'); }); }
-      if(advBtn && !advBtn.dataset.wired2723){ advBtn.dataset.wired2723='1'; advBtn.addEventListener('click', function(){ chooseMode('advanced'); }); }
-    }
-
-    setInterval(function(){ enforceGate(); wire(); }, 400);
-    if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', function(){ enforceGate(); wire(); });
-    else { enforceGate(); wire(); }
-  })();
-  </script>
 
   <!-- ============ APP ============ -->
   <section id="app" data-v11306-auto-scrolled="1">
@@ -6149,7 +6045,7 @@ body{
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v27.24.0',
+  VERSION: 'v27.24.1',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
