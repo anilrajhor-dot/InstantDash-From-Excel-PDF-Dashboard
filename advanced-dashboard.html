@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.27.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.28.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -1740,7 +1740,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v27.27.0">
+<meta name="instantdash-build" content="v27.28.0">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2614,7 +2614,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v27.27.0';
+      s.textContent='v27.28.0';
       b.appendChild(s);
     }
   }
@@ -2674,11 +2674,11 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v27.27.0</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v27.28.0</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
       <div id="idBrandingSlot" style="display:none;align-items:center;gap:8px;margin-top:6px;"></div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.27.0</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.28.0</span></div>
   <a href="index.html" class="id-health-btn no-print" id="mainMenuBackBtn" style="text-decoration:none;display:inline-flex;align-items:center">← Main Menu</a>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="pptxExportBtn" type="button" aria-label="Export to PowerPoint">📊 Export PPT</button>
@@ -3375,6 +3375,21 @@ body{
       var lastDataVersion = null;
       var activeTab = 'waterfall';
 
+      function pickBestChartType(measures, dims){
+        var app = window.APP || {};
+        var rows = app.rows || [];
+        var hasTimeCol = (app.columns || []).some(function(c){ return c.role==='time'; });
+
+        if(!dims.length) return 'gauge'; // nothing to break down by — a single-measure trend view fits best
+
+        var dimCols = (app.columns || []).filter(function(c){ return dims.indexOf(c.name)!==-1; });
+        var minDimUnique = dimCols.length ? Math.min.apply(null, dimCols.map(function(c){ return c.unique||99; })) : 99;
+
+        if(minDimUnique > 8) return 'treemap'; // too many categories for a readable Waterfall
+        if(measures.length >= 2 && hasTimeCol) return 'combo'; // two measures worth comparing over time
+        return 'waterfall'; // a dimension with a manageable few categories — Waterfall's actual best case
+      }
+
       function populateSelect(sel, options, preserveIfPossible){
         var prevValue = preserveIfPossible ? sel.value : null;
         sel.innerHTML = options.map(function(o){ return '<option value="'+esc27a(o)+'">'+esc27a(o)+'</option>'; }).join('');
@@ -3610,6 +3625,19 @@ body{
           populateSelect(document.getElementById('v27TmDim'), dims.length ? dims : ['(no categories available)'], true);
           populateSelect(document.getElementById('v27ComboBar'), measures, true);
           populateSelect(document.getElementById('v27ComboLine'), measures.length>1 ? measures.slice(1).concat(measures.slice(0,1)) : measures, true);
+
+          /* v27.28.0 — pick the best chart type for THIS data, rather
+             than always defaulting to Waterfall regardless of whether
+             it's actually the right fit. */
+          var bestTab = pickBestChartType(measures, dims);
+          activeTab = bestTab;
+          section.querySelectorAll('[data-adv-tab]').forEach(function(t){
+            t.classList.toggle('active', t.getAttribute('data-adv-tab')===bestTab);
+          });
+          ['v27AdvWaterfall','v27AdvTreemap','v27AdvGauge','v27AdvCombo'].forEach(function(paneId){
+            var pane = document.getElementById(paneId);
+            if(pane) pane.hidden = (paneId !== 'v27Adv'+bestTab.charAt(0).toUpperCase()+bestTab.slice(1));
+          });
         }
 
         if(activeTab==='waterfall') renderWaterfall();
@@ -6208,7 +6236,7 @@ body{
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v27.27.0',
+  VERSION: 'v27.28.0',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
