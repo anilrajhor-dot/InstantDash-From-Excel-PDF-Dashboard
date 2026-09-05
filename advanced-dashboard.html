@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.47.1","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.48.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -1779,7 +1779,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v27.47.1">
+<meta name="instantdash-build" content="v27.48.0">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2653,7 +2653,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v27.47.1';
+      s.textContent='v27.48.0';
       b.appendChild(s);
     }
   }
@@ -2713,11 +2713,11 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v27.47.1</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v27.48.0</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
       <div id="idBrandingSlot" style="display:none;align-items:center;gap:8px;margin-top:6px;"></div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.47.1</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.48.0</span></div>
   <label class="no-print" style="display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--muted);margin-left:8px">Department:
     <select id="v27DepartmentSelect" style="padding:6px 8px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:11.5px;font-weight:700">
       <option value="">— Not set —</option>
@@ -7388,7 +7388,7 @@ body{
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v27.47.1',
+  VERSION: 'v27.48.0',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -9098,13 +9098,28 @@ async function rebuildFromAoa(){
   // Build rows in chunks so the spinner can update on very large files.
   const rows = [];
   const CHUNK = 20000;
+  /* v27.48.0 — "do"/"-do-"/".do." is a very common Indian government
+     and administrative-record convention meaning "same as the row
+     above" (ditto), used to avoid retyping a repeated value down a
+     column. Left as literal text, it silently breaks numeric-column
+     detection for otherwise-numeric columns (e.g. a budget figure
+     repeated across several rows of the same program). Forward-filled
+     here with the actual previous value for that specific column,
+     one tracker per column, reset fresh for this file. */
+  const DITTO_RE = /^[\s\-.]*do[\s\-.]*$/i;
+  const lastValueByCol = new Array(keep.length).fill(null);
   for (let start = 0; start < dataRows.length; start += CHUNK){
     const end = Math.min(start + CHUNK, dataRows.length);
     for (let i = start; i < end; i++){
       const src = dataRows[i], o = {};
       let any = false;
       for (let k = 0; k < keep.length; k++){
-        const v = src[keep[k]];
+        let v = src[keep[k]];
+        if (typeof v === 'string' && DITTO_RE.test(v.trim()) && lastValueByCol[k] !== null){
+          v = lastValueByCol[k]; // ditto — reuse the last real value for this column
+        } else if (!isBlank(v)){
+          lastValueByCol[k] = v; // remember for the next row's possible ditto
+        }
         o[names[k]] = isBlank(v) ? null : v;
         if (!isBlank(v)) any = true;
       }
