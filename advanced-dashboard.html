@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.48.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.49.1","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -1779,7 +1779,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v27.48.0">
+<meta name="instantdash-build" content="v27.49.1">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2653,7 +2653,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v27.48.0';
+      s.textContent='v27.49.1';
       b.appendChild(s);
     }
   }
@@ -2713,11 +2713,11 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v27.48.0</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v27.49.1</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
       <div id="idBrandingSlot" style="display:none;align-items:center;gap:8px;margin-top:6px;"></div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.48.0</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.49.1</span></div>
   <label class="no-print" style="display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--muted);margin-left:8px">Department:
     <select id="v27DepartmentSelect" style="padding:6px 8px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:11.5px;font-weight:700">
       <option value="">— Not set —</option>
@@ -7388,7 +7388,7 @@ body{
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v27.48.0',
+  VERSION: 'v27.49.1',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -11287,6 +11287,26 @@ function miGenericManagementRemark(name, direction, sem, favourable, change){
   const n=String(name||'').toLowerCase();
   const lower=/lower/i.test(direction||'');
 
+  /* v27.49.0 — training/capacity-building measures (assignment/training
+     days, participants, programs, sessions) are common across
+     government, NGO, education and HR trackers, and previously had no
+     dedicated category — every one of them fell through to the same
+     generic fallback below regardless of what the specific measure
+     was, which is exactly what made every finding's explanation read
+     identically. */
+  if(/assignment\s*days?/i.test(n)){
+    return ` <span class="mi-remark"><b>Management review:</b> review this specific resource person's deployment days alongside how many other NRPs/NCRPs were assigned to the same program, to confirm the change reflects workload distribution rather than a single individual's availability.</span>`;
+  }
+  if(/training\s*days?|no\.?\s*of\s*days?|man.?days?|person.?days?/i.test(n)){
+    return ` <span class="mi-remark"><b>Management review:</b> review the day-count alongside the number of programs, participants covered and resource persons deployed, to confirm the change reflects planned capacity rather than a one-off assignment.</span>`;
+  }
+  if(/participants?|trainees?|attendees?|beneficiaries?\s*trained|delegates?/i.test(n)){
+    return ` <span class="mi-remark"><b>Management review:</b> review participant volume alongside completion rate, feedback scores and per-participant cost to confirm the change in reach also reflects a change in training quality.</span>`;
+  }
+  if(/programs?|sessions?|workshops?|trainings?\s*(conducted|held|completed)|batches?/i.test(n)){
+    return ` <span class="mi-remark"><b>Management review:</b> review the count alongside average batch size, budget utilisation and completion status to confirm the change reflects genuine activity rather than reporting timing.</span>`;
+  }
+
   /* KPI-specific remarks take precedence over broad category remarks.
      They remain evidence-led and deliberately avoid claiming causation. */
   if(miDomain(name)==='esg'){
@@ -11433,6 +11453,10 @@ function miMovementText(name,ch,prev,cur,lr){
 }
 function miActionForKpi(name){
   const n=String(name||'').toLowerCase();
+  if(/assignment\s*days?/i.test(n)) return "Review this specific resource person's day allocation alongside other NRPs/NCRPs on the same program to confirm workload is being distributed as planned.";
+  if(/training\s*days?|no\.?\s*of\s*days?|man.?days?|person.?days?/i.test(n)) return 'Review the day-count alongside programs conducted, resource persons deployed and participants covered to confirm the change reflects planned capacity.';
+  if(/participants?|trainees?|attendees?|beneficiaries?\s*trained|delegates?/i.test(n)) return 'Review participant volume alongside completion rate, feedback scores and per-participant cost to confirm reach translated into training quality.';
+  if(/programs?|sessions?|workshops?|trainings?\s*(conducted|held|completed)|batches?/i.test(n)) return 'Review the count alongside average batch size, budget utilisation and completion status to confirm genuine activity rather than reporting timing.';
   if(/repeat\s*customers?|returning\s*customers?|retention/i.test(n)) return 'Review retention, acquisition and purchase frequency; confirm whether the improvement is broad-based.';
   if(/cancellation|cart\s*abandonment|readmission|safety\s*incidents?|repeat\s*purchase|complaint|defect|rejected|rejection|error|failure/i.test(n)) return 'Review the underlying cases, rate per activity and severity; confirm that measurement and activity levels are comparable.';
   if(/downtime/i.test(n)) return 'Review downtime against machine/operating hours, output and service impact; focus on downtime intensity rather than hours alone.';
@@ -11460,6 +11484,10 @@ function whyItMattersFor(name){
   if(/cancellation|cart\s*abandonment|complaint|defect|rejected|rejection|error|failure/i.test(n)) return 'Quality and failure-rate movements directly affect customer experience, rework cost and repeat business.';
   if(/repeat\s*customers?|returning\s*customers?|retention/i.test(n)) return 'Retention movements affect the cost of future revenue — retaining existing customers is materially cheaper than acquiring new ones.';
   if(/orders?|transactions?|volume|quantity|units?/i.test(n)) return 'Activity-volume movements are usually the first visible signal of a demand or capacity shift before it shows up in financial results.';
+  if(/assignment\s*days?/i.test(n)) return "This reflects one specific resource person's time commitment; a sustained change affects their individual availability for other assignments, separate from overall program capacity.";
+  if(/training\s*days?|no\.?\s*of\s*days?|man.?days?|person.?days?/i.test(n)) return 'Day-count movements reflect how much resource-person time and capacity-building effort was actually deployed against the approved plan.';
+  if(/participants?|trainees?|attendees?|beneficiaries?\s*trained|delegates?/i.test(n)) return 'Participant reach directly determines how many people the capacity-building effort actually benefited, independent of how many programs were run.';
+  if(/programs?|sessions?|workshops?|trainings?\s*(conducted|held|completed)|batches?/i.test(n)) return 'Program/session counts are the primary measure of delivery activity; a sustained movement affects budget utilisation and annual targets.';
   if(/attendance|training|staff|employee/i.test(n)) return 'Workforce engagement and capability movements affect service delivery, quality and future productivity.';
   return 'This movement is material enough to warrant management attention alongside the closest supporting KPI or operating driver.';
 }
