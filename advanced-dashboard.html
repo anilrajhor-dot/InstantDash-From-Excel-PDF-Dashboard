@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.44.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.45.1","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -1779,7 +1779,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v27.44.0">
+<meta name="instantdash-build" content="v27.45.1">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2653,7 +2653,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v27.44.0';
+      s.textContent='v27.45.1';
       b.appendChild(s);
     }
   }
@@ -2713,11 +2713,11 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v27.44.0</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v27.45.1</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
       <div id="idBrandingSlot" style="display:none;align-items:center;gap:8px;margin-top:6px;"></div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.44.0</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.45.1</span></div>
   <label class="no-print" style="display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--muted);margin-left:8px">Department:
     <select id="v27DepartmentSelect" style="padding:6px 8px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:11.5px;font-weight:700">
       <option value="">— Not set —</option>
@@ -4589,6 +4589,44 @@ body{
             window.__instantDashDepartment = deptSel.value;
           });
         }
+        autoSuggestDepartment();
+      }
+
+      /* v27.45.0 — suggest, never force: only runs once per new dataset,
+         and only when the person hasn't already chosen a department
+         (either just now, or via an earlier explicit choice this
+         session). Requires 2+ matching keywords before suggesting
+         anything, since a single incidental match ("Revenue" appearing
+         in a Sales file) isn't strong enough evidence on its own. */
+      var lastAutoSuggestVersion = null;
+      var DEPT_KEYWORDS = {
+        'Banking / Finance': [/\bnpa\b/i,/tier\s*(i|ii|1|2)/i,/\bcrar\b/i,/gross advances/i,/\bpat\b/i,/\bpbt\b/i,/debtors?/i,/creditors?/i],
+        'HR': [/headcount/i,/attrition/i,/\btenure\b/i,/employee/i,/\bsalary\b/i,/joinees?/i],
+        'Sales': [/units?\s*sold/i,/\border/i,/\bcustomer/i,/\bterritory\b/i,/\bregion\b/i,/\bquota\b/i],
+        'Manufacturing / Quality': [/defect/i,/downtime/i,/units?\s*produced/i,/\byield\b/i,/\bscrap\b/i,/production/i],
+        'Healthcare': [/\bpatient/i,/diagnosis/i,/admission/i,/discharge/i,/\bbed\b/i,/\bward\b/i],
+        'Education': [/\bstudent/i,/enrollment/i,/\bgrade\b/i,/attendance/i,/\bcourse\b/i,/\bsemester\b/i],
+      };
+      function autoSuggestDepartment(){
+        var app = window.APP || {};
+        var hasData = !!(app.rows && app.rows.length);
+        if(!hasData){ lastAutoSuggestVersion = null; return; }
+        if(lastAutoSuggestVersion === app.__dataVersion) return;
+        lastAutoSuggestVersion = app.__dataVersion;
+        if(window.__instantDashDepartment) return; // never override an explicit choice
+
+        var colNames = (app.columns||[]).map(function(c){ return c.name; });
+        var bestDept = null, bestScore = 0;
+        Object.keys(DEPT_KEYWORDS).forEach(function(dept){
+          var score = DEPT_KEYWORDS[dept].filter(function(re){ return colNames.some(function(n){ return re.test(n); }); }).length;
+          if(score > bestScore){ bestScore = score; bestDept = dept; }
+        });
+        if(bestDept && bestScore >= 2){
+          window.__instantDashDepartment = bestDept;
+          var deptSelEl = document.getElementById('v27DepartmentSelect');
+          if(deptSelEl) deptSelEl.value = bestDept;
+          if(typeof toast==='function') toast('Detected as '+bestDept+' data — change the Department selector above if that\'s not right.');
+        }
       }
       setInterval(wire, 700);
       if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire);
@@ -6327,6 +6365,18 @@ body{
           var tier2CapitalCol = findCreditField([/tier.?\s?(ii|2)\s*capital/i,/tier.?\s?(ii|2)\b/i], [/ratio/i,/%|percent/i], 'tier2Capital');
           var rwaCol = findCreditField([/risk.?weighted\s*assets?/i,/\brwa\b/i], [/ratio/i,/%|percent/i], 'rwa');
 
+          /* v27.45.0 — universal-app relevance check: this section is
+             deliberately built around banking/lending terminology (PAT,
+             debtors, NPA, Tier I capital...). Showing it as a wall of
+             "Not available" metrics for a hospital's patient data or a
+             factory's defect rates would be confusing clutter, not a
+             helpful feature. Require either explicit department
+             confirmation, or a meaningful number of these specific
+             fields actually being found. */
+          var detectedFieldCount = [revenueCol,patCol,pbtCol,debtorsCol,inventoryCol,creditorsCol,cogsCol,currentBorrowCol,nonCurrentBorrowCol,shareCapCol,reservesCol,grossNPACol,grossAdvancesCol,npaProvisionsCol,tier1CapitalCol,tier2CapitalCol,rwaCol].filter(Boolean).length;
+          var isBankingDept = window.__instantDashDepartment === 'Banking / Finance';
+          if(!isBankingDept && detectedFieldCount < 3){ section2.hidden = true; return; }
+
           var revenue = currentVal(revenueCol);
           var pat = currentVal(patCol);
           var pbt = currentVal(pbtCol);
@@ -7278,7 +7328,7 @@ body{
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v27.44.0',
+  VERSION: 'v27.45.1',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
