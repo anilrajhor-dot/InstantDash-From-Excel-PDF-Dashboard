@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.34.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.35.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -1751,7 +1751,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v27.34.0">
+<meta name="instantdash-build" content="v27.35.0">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2625,7 +2625,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v27.34.0';
+      s.textContent='v27.35.0';
       b.appendChild(s);
     }
   }
@@ -2685,11 +2685,11 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v27.34.0</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v27.35.0</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
       <div id="idBrandingSlot" style="display:none;align-items:center;gap:8px;margin-top:6px;"></div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.34.0</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.35.0</span></div>
   <a href="index.html" class="id-health-btn no-print" id="mainMenuBackBtn" style="text-decoration:none;display:inline-flex;align-items:center">← Main Menu</a>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="pptxExportBtn" type="button" aria-label="Export to PowerPoint">📊 Export PPT</button>
@@ -4155,30 +4155,83 @@ body{
       else wire();
     })();
     </script>
+    <div id="v27PptOptionsModal" class="v26-why-overlay" aria-hidden="true">
+      <div class="v26-why-card" role="dialog" aria-modal="true" aria-labelledby="v27PptOptionsTitle" style="max-width:min(560px,100%)">
+        <div class="v26-why-head">
+          <div><div class="v26-why-kicker">Export PowerPoint</div><h3 id="v27PptOptionsTitle">Choose what to include</h3></div>
+          <button type="button" class="v26-why-close" id="v27PptOptionsClose" aria-label="Close">✕</button>
+        </div>
+        <div class="v27-adv-controls" style="margin-bottom:14px">
+          <label>Chart slides <select id="v27PptChartCount"><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3" selected>3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="8">8</option><option value="10">10</option></select></label>
+        </div>
+        <div class="v26-map-intro">Title, KPI Summary and any Executive Takeaway / Management Brief slides are always included. Pick up to 8 KPIs for the summary slide:</div>
+        <div id="v27PptKpiList" class="v27-multi-list" style="margin-top:10px"></div>
+        <div class="v26-map-actions">
+          <button type="button" id="v27PptOptionsBuild" class="v26-compare-btn">Build PowerPoint</button>
+        </div>
+      </div>
+    </div>
     <script id="instantdash-v27-pptx-wire">
     (function(){
-      /* v27.25.0 — pulled out of the button click handler so "Upload &
-         Build PPT" (a new one-step upload-to-deck shortcut) can trigger
-         the exact same prompt-and-export flow once its file has finished
-         loading, instead of duplicating this logic. */
-      function promptAndExportPPT(){
-        if(typeof exportToPowerPoint!=='function') return;
-        var totalCharts = (window.APP && Array.isArray(APP.charts)) ? APP.charts.filter(function(c){ return c && c.instance; }).length : 0;
-        var suggestion = Math.min(totalCharts || 3, 3);
-        var answer = window.prompt('How many chart slides should the PowerPoint include? (Title, KPI Summary and any Executive Takeaway / Management Brief slides are always included.)', String(suggestion));
-        if(answer === null) return;   // user cancelled
-        var n = parseInt(answer, 10);
-        if(!isFinite(n) || n < 0) n = suggestion;
-        n = Math.max(0, Math.min(10, n));
-        exportToPowerPoint(n);
+      /* v27.35.0 — replaced the basic window.prompt() with a proper
+         modal covering both chart-slide count and KPI selection. The
+         checklist is pre-checked to match whatever's currently shown
+         as headline KPIs on the dashboard (window.__instantDashKpiSelection
+         if set, otherwise the automatic top-4 ranking), so the sensible
+         default needs no extra work, while still allowing this specific
+         export to differ from the dashboard itself. */
+      function currentDashboardKpis(){
+        var sel = window.__instantDashKpiSelection;
+        if(sel && sel.length) return sel.slice();
+        var auto = (typeof rankMeasures==='function') ? rankMeasures().slice(0,4).map(function(m){return m.name;}) : [];
+        return auto;
       }
-      window.__instantDashPromptAndExportPPT = promptAndExportPPT;
+
+      function openPptOptions(){
+        var modal = document.getElementById('v27PptOptionsModal');
+        var list = document.getElementById('v27PptKpiList');
+        if(!modal || !list) return;
+        var allMeasures = (typeof rankMeasures==='function') ? rankMeasures().map(function(m){return m.name;}) : [];
+        var current = currentDashboardKpis();
+        var totalCharts = (window.APP && Array.isArray(APP.charts)) ? APP.charts.filter(function(c){ return c && c.instance; }).length : 0;
+        var suggestion = String(Math.min(totalCharts || 3, 3));
+        var countSel = document.getElementById('v27PptChartCount');
+        if(countSel && Array.prototype.some.call(countSel.options, function(o){ return o.value===suggestion; })) countSel.value = suggestion;
+
+        list.innerHTML = allMeasures.slice(0,12).map(function(m){
+          var checked = current.indexOf(m)!==-1 ? ' checked' : '';
+          return '<label><input type="checkbox" value="'+m.replace(/"/g,'&quot;')+'"'+checked+'> '+m+'</label>';
+        }).join('') || '<div class="v26-map-intro" style="font-style:italic">No measures available in this file.</div>';
+
+        modal.classList.add('on');
+        modal.setAttribute('aria-hidden','false');
+      }
+      function closePptOptions(){
+        var modal = document.getElementById('v27PptOptionsModal');
+        if(modal){ modal.classList.remove('on'); modal.setAttribute('aria-hidden','true'); }
+      }
+      window.__instantDashPromptAndExportPPT = openPptOptions;
 
       function wire(){
         var btn = document.getElementById('pptxExportBtn');
-        if(!btn || btn.dataset.wiredPptx) return;
-        btn.dataset.wiredPptx = '1';
-        btn.addEventListener('click', promptAndExportPPT);
+        if(btn && !btn.dataset.wiredPptx){ btn.dataset.wiredPptx = '1'; btn.addEventListener('click', openPptOptions); }
+        var closeBtn = document.getElementById('v27PptOptionsClose');
+        if(closeBtn && !closeBtn.dataset.wiredPptOpt){ closeBtn.dataset.wiredPptOpt='1'; closeBtn.addEventListener('click', closePptOptions); }
+        var overlay = document.getElementById('v27PptOptionsModal');
+        if(overlay && !overlay.dataset.wiredPptOpt){
+          overlay.dataset.wiredPptOpt='1';
+          overlay.addEventListener('click', function(e){ if(e.target===overlay) closePptOptions(); });
+        }
+        var buildBtn = document.getElementById('v27PptOptionsBuild');
+        if(buildBtn && !buildBtn.dataset.wiredPptOpt){
+          buildBtn.dataset.wiredPptOpt='1';
+          buildBtn.addEventListener('click', function(){
+            var n = parseInt(document.getElementById('v27PptChartCount').value, 10) || 0;
+            var selected = Array.prototype.slice.call(document.querySelectorAll('#v27PptKpiList input:checked')).map(function(c){ return c.value; });
+            closePptOptions();
+            if(typeof exportToPowerPoint==='function') exportToPowerPoint(n, selected);
+          });
+        }
       }
       setInterval(wire, 700);
       if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire);
@@ -6496,7 +6549,7 @@ body{
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v27.34.0',
+  VERSION: 'v27.35.0',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -7617,7 +7670,7 @@ async function commitDataGrid(grid, fileName, successMessage, loadingMessage){
 /* v27.12.0 — PowerPoint export. Reuses the same data sources already
    proven correct elsewhere (central aggregation engine, rankMeasures,
    real Chart.js instances) rather than recomputing anything independently. */
-async function exportToPowerPoint(maxChartSlides){
+async function exportToPowerPoint(maxChartSlides, selectedKpis){
   maxChartSlides = (typeof maxChartSlides === 'number' && isFinite(maxChartSlides) && maxChartSlides >= 0) ? Math.round(maxChartSlides) : 3;
   if(typeof PptxGenJS === 'undefined'){
     if(typeof toast==='function') toast('PowerPoint library still loading — try again in a moment.');
@@ -7653,7 +7706,14 @@ async function exportToPowerPoint(maxChartSlides){
     // ---- Slide 2: KPI Summary ----
     var s2 = pptx.addSlide();
     s2.addText('Key Performance Indicators', { x:0.5, y:0.35, w:12, h:0.6, fontSize:24, bold:true, color:INK, fontFace:'Arial' });
-    var topMeasures = (typeof rankMeasures==='function') ? rankMeasures().slice(0,4) : [];
+    var allMeasures = (typeof rankMeasures==='function') ? rankMeasures() : [];
+    var topMeasures;
+    if(selectedKpis && selectedKpis.length){
+      var byName = {}; allMeasures.forEach(function(c){ byName[c.name]=c; });
+      topMeasures = selectedKpis.map(function(n){ return byName[n]; }).filter(Boolean).slice(0,8);
+    } else {
+      topMeasures = allMeasures.slice(0,4);
+    }
     topMeasures.forEach(function(c, i){
       var agg = (typeof window.__instantDashAggregate==='function') ? window.__instantDashAggregate(c.name, rows) : null;
       var val = (agg && agg.count) ? fmtByField(agg.value, c.name) : '—';
