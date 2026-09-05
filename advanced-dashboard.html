@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.35.1","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.39.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -535,6 +535,27 @@ main{max-width:1360px;margin:0 auto;padding:24px}
 .kpi-target-set{margin-top:9px;font-size:10.5px;font-weight:700;color:var(--accent);background:none;border:1px dashed var(--accent);border-radius:7px;padding:4px 9px;cursor:pointer}
 .kpi-note-add{margin-top:7px;margin-left:6px;font-size:10.5px;font-weight:700;color:var(--muted);background:none;border:1px dashed var(--border);border-radius:7px;padding:4px 9px;cursor:pointer}
 .kpi-note-badge{margin-top:7px;margin-left:6px;font-size:10.5px;font-weight:700;color:var(--text);background:var(--card-2);border:1px solid var(--border);border-radius:7px;padding:4px 9px;cursor:pointer}
+.kpi-benchmark-row{margin-top:7px;display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700}
+.kpi-benchmark-above{color:var(--ok)}
+.kpi-benchmark-below{color:var(--warn)}
+.v27-qoq-nodata{color:var(--muted);font-style:italic}
+.v27-bs-header{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:18px;flex-wrap:wrap}
+.v27-bs-title{font-size:19px;font-weight:900;color:var(--text)}
+.v27-bs-date{font-size:12px;color:var(--muted);margin-top:3px}
+.v27-bs-status{font-size:13px;font-weight:800;padding:7px 16px;border-radius:999px;white-space:nowrap}
+.v27-bs-status-good{background:color-mix(in srgb,var(--ok) 16%,var(--card));color:var(--ok)}
+.v27-bs-status-bad{background:color-mix(in srgb,var(--warn) 14%,var(--card));color:var(--warn)}
+.v27-bs-status-mixed{background:color-mix(in srgb,var(--accent) 16%,var(--card));color:var(--accent)}
+.v27-bs-kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+@media(max-width:640px){.v27-bs-kpi-row{grid-template-columns:repeat(2,1fr)}}
+.v27-bs-kpi{text-align:center;padding:14px 8px;border-radius:12px;background:var(--card-2);border:1px solid var(--border)}
+.v27-bs-kpi-val{font-size:22px;font-weight:900;color:var(--text);font-family:Georgia,serif}
+.v27-bs-kpi-lbl{font-size:10.5px;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.02em}
+.v27-bs-narrative{font-size:13.5px;line-height:1.6;color:var(--text);padding:14px 16px;background:var(--card-2);border-left:3px solid var(--accent);border-radius:0 8px 8px 0}
+.v27-mc-wrap{margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
+.v27-mc-label{display:block;font-size:11.5px;font-weight:800;color:var(--text);margin-bottom:8px}
+.v27-mc-hint{font-weight:500;color:var(--muted);text-transform:none}
+.v27-mc-textarea{width:100%;min-height:70px;border:1px solid var(--border);border-radius:10px;padding:10px 12px;font:600 13px Poppins,sans-serif;color:var(--text);background:var(--card);resize:vertical}
 .v27-edit-row{display:flex;align-items:center;gap:10px;padding:9px 11px;margin-bottom:7px;border-radius:9px;background:var(--card-2);border:1px solid var(--border)}
 .v27-edit-num{width:20px;height:20px;border-radius:50%;background:var(--accent);color:#111;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
 .v27-edit-name{flex:1 1 auto;font-size:12.5px;font-weight:700;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -1751,7 +1772,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v27.35.1">
+<meta name="instantdash-build" content="v27.39.0">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2625,7 +2646,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v27.35.1';
+      s.textContent='v27.39.0';
       b.appendChild(s);
     }
   }
@@ -2685,11 +2706,11 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v27.35.1</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v27.39.0</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
       <div id="idBrandingSlot" style="display:none;align-items:center;gap:8px;margin-top:6px;"></div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.35.1</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.39.0</span></div>
   <a href="index.html" class="id-health-btn no-print" id="mainMenuBackBtn" style="text-decoration:none;display:inline-flex;align-items:center">← Main Menu</a>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="pptxExportBtn" type="button" aria-label="Export to PowerPoint">📊 Export PPT</button>
@@ -3061,6 +3082,219 @@ body{
       setInterval(function(){ render(); wireDelegate(); }, 700);
       if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', function(){ render(); wireDelegate(); });
       else { render(); wireDelegate(); }
+    })();
+    </script>
+
+    <section id="v27BoardSnapshot" class="exec-card" hidden>
+      <div class="mac-head no-print">
+        <div><div class="exec-label">🎯 Board Snapshot</div><div class="mac-title">One page, ready to print or hand across a table</div></div>
+        <button type="button" id="v27PrintSnapshotBtn" class="v26-compare-btn">🖨️ Print Snapshot</button>
+        <button type="button" id="v27NarrateBtn" class="v26-compare-btn">🔊 Narrate Briefing</button>
+      </div>
+      <div id="v27BoardSnapshotBody"></div>
+      <div class="v27-mc-wrap no-print">
+        <label for="v27ManagementCommentary" class="v27-mc-label">Management Commentary <span class="v27-mc-hint">(your own take — shown alongside the automated narrative, not instead of it)</span></label>
+        <textarea id="v27ManagementCommentary" class="v27-mc-textarea" placeholder="e.g. The dip in completion this quarter reflects the branch relocation in Jaipur — expect this to normalise by next period."></textarea>
+      </div>
+    </section>
+    <script id="instantdash-v27-boardsnapshot-wire">
+    (function(){
+      function esc27bs(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+      var lastDataVersion = null;
+
+      function render(){
+        var section = document.getElementById('v27BoardSnapshot');
+        var body = document.getElementById('v27BoardSnapshotBody');
+        if(!section || !body) return;
+        var app = window.APP || {};
+        var hasData = !!(app.rows && app.rows.length);
+        if(!hasData){ section.hidden = true; lastDataVersion = null; return; }
+        if(lastDataVersion === app.__dataVersion) return;
+        lastDataVersion = app.__dataVersion;
+        section.hidden = false;
+
+        var rows = app.filtered || app.rows;
+        var measures = (typeof rankMeasures==='function') ? rankMeasures().slice(0,4) : [];
+        var kpiHtml = measures.map(function(c){
+          var agg = (typeof window.__instantDashAggregate==='function') ? window.__instantDashAggregate(c.name, rows) : null;
+          var val = (agg && agg.count) ? fmtByField(agg.value, c.name) : '—';
+          var lbl = (agg && agg.mode==='avg') ? 'Average '+c.name : (agg && agg.mode==='balance') ? 'Latest '+c.name : 'Total '+c.name;
+          return '<div class="v27-bs-kpi"><div class="v27-bs-kpi-val">'+esc27bs(val)+'</div><div class="v27-bs-kpi-lbl">'+esc27bs(lbl)+'</div></div>';
+        }).join('');
+
+        var takeawayEl = document.getElementById('v26TakeawayBody');
+        var narrative = takeawayEl ? (takeawayEl.innerText||'').trim() : '';
+        var status = window.__miStatus || 'Mixed';
+        var statusClass = /favour/i.test(status) ? 'v27-bs-status-good' : /advers|attention/i.test(status) ? 'v27-bs-status-bad' : 'v27-bs-status-mixed';
+        var commentary = (window.__instantDashManagementCommentary||'').trim();
+
+        body.innerHTML =
+          '<div class="v27-bs-header">'+
+            '<div><div class="v27-bs-title">'+esc27bs(app.fileName||'Dashboard')+'</div><div class="v27-bs-date">'+new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'})+' · '+rows.length.toLocaleString()+' records</div></div>'+
+            '<div class="v27-bs-status '+statusClass+'">'+esc27bs(status)+'</div>'+
+          '</div>'+
+          '<div class="v27-bs-kpi-row">'+kpiHtml+'</div>'+
+          (narrative ? '<div class="v27-bs-narrative">'+esc27bs(narrative)+'</div>' : '') +
+          (commentary ? '<div class="v27-bs-narrative" style="margin-top:10px;border-left-color:var(--ok)"><b>Management commentary:</b> '+esc27bs(commentary)+'</div>' : '');
+      }
+
+      function doNarrate(){
+        var app = window.APP || {};
+        var rows = app.filtered || app.rows || [];
+        var measures = (typeof rankMeasures==='function') ? rankMeasures().slice(0,3) : [];
+        var kpiParts = measures.map(function(c){
+          var agg = (typeof window.__instantDashAggregate==='function') ? window.__instantDashAggregate(c.name, rows) : null;
+          if(!agg || !agg.count) return null;
+          var val = fmtByField(agg.value, c.name);
+          var lbl = (agg.mode==='avg') ? 'average '+c.name : (agg.mode==='balance') ? 'latest '+c.name : 'total '+c.name;
+          return lbl+' is '+val;
+        }).filter(Boolean);
+
+        var takeawayEl = document.getElementById('v26TakeawayBody');
+        var narrative = takeawayEl ? (takeawayEl.innerText||'').trim() : '';
+
+        var mi = window.__miItems || {};
+        var attentionItems = (mi.attention||[]).slice(0,2).map(function(html){
+          var tmp = document.createElement('div');
+          tmp.innerHTML = html;
+          return (tmp.textContent||tmp.innerText||'').trim();
+        });
+
+        var parts = [];
+        parts.push('Board Snapshot briefing for '+(app.fileName||'this file')+'.');
+        if(kpiParts.length) parts.push(kpiParts.join('. ')+'.');
+        if(narrative) parts.push(narrative);
+        if(attentionItems.length) parts.push('Top items needing attention: '+attentionItems.join(' Next, ')+'.');
+
+        var text = parts.join(' ');
+        if(!text.trim()){
+          if(typeof toast==='function') toast('Nothing to narrate yet — load a file first.');
+          return;
+        }
+        if(typeof instantDashSpeak==='function') instantDashSpeak(text);
+      }
+
+      function doPrint(){
+        var body = document.getElementById('v27BoardSnapshotBody');
+        if(!body) return;
+        var win = window.open('', '_blank', 'width=900,height=700');
+        if(!win){ if(typeof toast==='function') toast('Please allow pop-ups to print the snapshot.'); return; }
+        win.document.write('<!doctype html><html><head><meta charset="utf-8"><title>Board Snapshot</title><style>'+
+          'body{font-family:Poppins,Arial,sans-serif;margin:32px;color:#0A0F1C}'+
+          '.v27-bs-header{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:22px;flex-wrap:wrap}'+
+          '.v27-bs-title{font-size:22px;font-weight:900}'+
+          '.v27-bs-date{font-size:13px;color:#5B6472;margin-top:4px}'+
+          '.v27-bs-status{font-size:14px;font-weight:800;padding:8px 18px;border-radius:999px}'+
+          '.v27-bs-status-good{background:#e6f4ee;color:#16785A}.v27-bs-status-bad{background:#fbeaea;color:#A13D3D}.v27-bs-status-mixed{background:#f7edd6;color:#C9A227}'+
+          '.v27-bs-kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:26px}'+
+          '.v27-bs-kpi{text-align:center;padding:18px 10px;border-radius:12px;background:#F4F6FA;border:1px solid #DDE1E8}'+
+          '.v27-bs-kpi-val{font-size:26px;font-weight:900;font-family:Georgia,serif}'+
+          '.v27-bs-kpi-lbl{font-size:11.5px;color:#5B6472;margin-top:5px;text-transform:uppercase}'+
+          '.v27-bs-narrative{font-size:15px;line-height:1.7;padding:18px 20px;background:#F4F6FA;border-left:4px solid #C9A227;border-radius:0 8px 8px 0}'+
+          '</style></head><body>'+body.innerHTML+'</body></html>');
+        win.document.close();
+        win.focus();
+        setTimeout(function(){ win.print(); }, 300);
+      }
+
+      function wire(){
+        var btn = document.getElementById('v27PrintSnapshotBtn');
+        if(btn && !btn.dataset.wiredBs){ btn.dataset.wiredBs='1'; btn.addEventListener('click', doPrint); }
+        var narrateBtn = document.getElementById('v27NarrateBtn');
+        if(narrateBtn && !narrateBtn.dataset.wiredBs){ narrateBtn.dataset.wiredBs='1'; narrateBtn.addEventListener('click', doNarrate); }
+        var commentaryEl = document.getElementById('v27ManagementCommentary');
+        if(commentaryEl && !commentaryEl.dataset.wiredBs){
+          commentaryEl.dataset.wiredBs='1';
+          if(window.__instantDashManagementCommentary) commentaryEl.value = window.__instantDashManagementCommentary;
+          commentaryEl.addEventListener('blur', function(){
+            window.__instantDashManagementCommentary = commentaryEl.value;
+            lastDataVersion = null; // force the snapshot to rebuild and show the saved commentary immediately
+            render();
+          });
+        }
+      }
+
+      setInterval(function(){ render(); wire(); }, 700);
+      if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', function(){ render(); wire(); });
+      else { render(); wire(); }
+    })();
+    </script>
+
+    <section id="v27QoQCompare" class="exec-card" hidden>
+      <div class="mac-head">
+        <div><div class="exec-label">📅 Quarter-over-Quarter</div><div class="mac-title">This quarter vs last quarter vs the same quarter last year</div></div>
+      </div>
+      <div id="v27QoQBody"></div>
+    </section>
+    <script id="instantdash-v27-qoq-wire">
+    (function(){
+      function esc27q(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+      function fmtQ27(v){ return (typeof v==='number' && isFinite(v)) ? v.toLocaleString('en-IN', {maximumFractionDigits:1}) : '—'; }
+      var lastDataVersion = null;
+
+      function quarterKey(dt){ return dt.getFullYear()+'-Q'+(Math.floor(dt.getMonth()/3)+1); }
+      function quarterLabel(key){ var parts = key.split('-Q'); return 'Q'+parts[1]+' '+parts[0]; }
+      function sameQuarterLastYear(key){ var parts = key.split('-Q'); return (parseInt(parts[0],10)-1)+'-Q'+parts[1]; }
+      function previousQuarterKey(key){
+        var parts = key.split('-Q'); var y = parseInt(parts[0],10), q = parseInt(parts[1],10);
+        q -= 1; if(q<1){ q=4; y-=1; }
+        return y+'-Q'+q;
+      }
+
+      function render(){
+        var section = document.getElementById('v27QoQCompare');
+        var body = document.getElementById('v27QoQBody');
+        if(!section || !body) return;
+        var app = window.APP || {};
+        var hasData = !!(app.rows && app.rows.length);
+        if(!hasData){ section.hidden = true; lastDataVersion = null; return; }
+        if(lastDataVersion === app.__dataVersion) return;
+        lastDataVersion = app.__dataVersion;
+
+        var tCol = (typeof timeCols==='function') ? timeCols()[0] : null;
+        if(!tCol){ section.hidden = true; return; }
+
+        var rows = app.rows; // whole dataset — quarters need every period, not just the currently filtered slice
+        var groups = {};
+        rows.forEach(function(r){
+          var d = r[tCol.name];
+          if(!(d instanceof Date) || isNaN(d)) return;
+          var k = quarterKey(d);
+          if(!groups[k]) groups[k] = [];
+          groups[k].push(r);
+        });
+        var sortedKeys = Object.keys(groups).sort();
+        if(sortedKeys.length < 2){ section.hidden = true; return; }
+        section.hidden = false;
+
+        var latestKey = sortedKeys[sortedKeys.length-1];
+        var prevKey = previousQuarterKey(latestKey);
+        var yoyKey = sameQuarterLastYear(latestKey);
+
+        var measures = (typeof rankMeasures==='function') ? rankMeasures().slice(0,5) : [];
+        var periods = [
+          { key: latestKey, label: quarterLabel(latestKey)+' (current)' },
+          { key: prevKey, label: groups[prevKey] ? quarterLabel(prevKey) : quarterLabel(prevKey)+' (no data)' },
+          { key: yoyKey, label: groups[yoyKey] ? quarterLabel(yoyKey)+' (YoY)' : quarterLabel(yoyKey)+' (no data)' },
+        ];
+
+        var rowsHtml = measures.map(function(m){
+          var cells = periods.map(function(p){
+            var periodRows = groups[p.key];
+            if(!periodRows || !periodRows.length) return '<td class="v27-qoq-nodata">—</td>';
+            var agg = (typeof window.__instantDashAggregate==='function') ? window.__instantDashAggregate(m.name, periodRows) : null;
+            return '<td>'+((agg&&agg.count)?fmtByField(agg.value, m.name):'—')+'</td>';
+          }).join('');
+          return '<tr><td><b>'+esc27q(m.name)+'</b></td>'+cells+'</tr>';
+        }).join('');
+
+        body.innerHTML = '<div class="v26-map-intro">Grouped by calendar quarter from '+esc27q(tCol.name)+'. Quarters with no rows in this file show as "no data" — never estimated.</div>'+
+          '<table class="v27-drill-table" style="margin-top:10px"><thead><tr><th>Measure</th>'+periods.map(function(p){ return '<th>'+esc27q(p.label)+'</th>'; }).join('')+'</tr></thead><tbody>'+rowsHtml+'</tbody></table>';
+      }
+
+      setInterval(render, 700);
+      if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', render);
+      else render();
     })();
     </script>
 
@@ -4007,6 +4241,25 @@ body{
               var msg = notes.map(function(n){ return '['+n.when+'] '+n.text; }).join('\n\n');
               window.alert('Notes for "'+vMeasure+'":\n\n'+msg);
             }
+          });
+        }
+        if(kpiRow && !kpiRow.dataset.wiredBenchmark2738){
+          kpiRow.dataset.wiredBenchmark2738 = '1';
+          kpiRow.addEventListener('click', function(e){
+            var editBtn = e.target.closest('[data-benchmark-edit]');
+            if(!editBtn) return;
+            e.stopImmediatePropagation();
+            e.preventDefault();
+            var measureName = editBtn.getAttribute('data-benchmark-edit');
+            var existing = (window.__instantDashKpiBenchmarks||{})[measureName];
+            var input = window.prompt('Enter a peer/industry benchmark value for "'+measureName+'":', existing!=null?String(existing):'');
+            if(input===null) return;
+            var num = parseFloat(input.replace(/[^0-9.\-]/g,''));
+            if(!isFinite(num)) return;
+            window.__instantDashKpiBenchmarks = window.__instantDashKpiBenchmarks || {};
+            window.__instantDashKpiBenchmarks[measureName] = num;
+            if(typeof buildKPIs==='function') buildKPIs();
+            if(typeof toast==='function') toast('Benchmark set for '+measureName+'.');
           });
         }
         if(kpiRow && !kpiRow.dataset.wiredDrill279){
@@ -6555,7 +6808,7 @@ body{
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v27.35.1',
+  VERSION: 'v27.39.0',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -9749,7 +10002,22 @@ function buildKPIs(){
         ? '<button type="button" class="kpi-note-badge no-print" data-note-view="'+esc(c.measureName)+'">📝 '+notes.length+' note'+(notes.length===1?'':'s')+'</button>'
         : '<button type="button" class="kpi-note-add no-print" data-note-add="'+esc(c.measureName)+'">📝 Add Note</button>';
     }
-    return `<div class="kpi${c.alt ? ' alt' : ''}${c.measureName ? ' kpi-drillable' : ''}"${c.measureName ? ` data-drill-measure="${esc(c.measureName)}"` : ''}><div class="val">${esc(c.val)}${c.trend||''}</div><div class="lbl">${esc(c.lbl)}</div>${c.sub ? `<div class="sub">${esc(c.sub)}</div>` : ''}${c.measureName ? '<div class="kpi-drill-hint">🔍 Tap to see records</div>' : ''}${targetHtml}${noteHtml}</div>`;
+    var benchmarkHtml = '';
+    if(c.measureName){
+      var benchmarks = window.__instantDashKpiBenchmarks || {};
+      var bench = benchmarks[c.measureName];
+      if(bench != null && c.numericValue != null && bench !== 0){
+        var diffPct = ((c.numericValue - bench) / Math.abs(bench)) * 100;
+        var diffClass = diffPct >= 0 ? 'kpi-benchmark-above' : 'kpi-benchmark-below';
+        benchmarkHtml = '<div class="kpi-benchmark-row" data-benchmark-measure="'+esc(c.measureName)+'">'+
+          '<span class="'+diffClass+'">'+(diffPct>=0?'▲ ':'▼ ')+Math.abs(diffPct).toFixed(0)+'% '+(diffPct>=0?'above':'below')+' peer ('+esc(fmtByField(bench, c.measureName))+')</span>'+
+          '<button type="button" class="kpi-target-edit" data-benchmark-edit="'+esc(c.measureName)+'" aria-label="Edit benchmark">✎</button>'+
+        '</div>';
+      } else {
+        benchmarkHtml = '<button type="button" class="kpi-target-set no-print" data-benchmark-edit="'+esc(c.measureName)+'">📊 Set Peer Benchmark</button>';
+      }
+    }
+    return `<div class="kpi${c.alt ? ' alt' : ''}${c.measureName ? ' kpi-drillable' : ''}"${c.measureName ? ` data-drill-measure="${esc(c.measureName)}"` : ''}><div class="val">${esc(c.val)}${c.trend||''}</div><div class="lbl">${esc(c.lbl)}</div>${c.sub ? `<div class="sub">${esc(c.sub)}</div>` : ''}${c.measureName ? '<div class="kpi-drill-hint">🔍 Tap to see records</div>' : ''}${targetHtml}${benchmarkHtml}${noteHtml}</div>`;
   }).join('');
 }
 
