@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.49.1","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.50.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -1779,7 +1779,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v27.49.1">
+<meta name="instantdash-build" content="v27.50.0">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2653,7 +2653,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v27.49.1';
+      s.textContent='v27.50.0';
       b.appendChild(s);
     }
   }
@@ -2713,11 +2713,11 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v27.49.1</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v27.50.0</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
       <div id="idBrandingSlot" style="display:none;align-items:center;gap:8px;margin-top:6px;"></div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.49.1</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.50.0</span></div>
   <label class="no-print" style="display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--muted);margin-left:8px">Department:
     <select id="v27DepartmentSelect" style="padding:6px 8px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:11.5px;font-weight:700">
       <option value="">— Not set —</option>
@@ -2958,7 +2958,7 @@ body{
         var rows = (window.APP && window.APP.rows) || [];
         if(!rows.length) return [];
         var candidates = cols.filter(function(c){
-          return c.role==='dimension' && c.unique>1 && c.unique<=30;
+          return (c.role==='dimension' || c.role==='highdim') && c.unique>1 && c.unique<=30;
         });
         candidates.sort(function(a,b){ return a.unique - b.unique; });
         return candidates.slice(0, n);
@@ -3916,21 +3916,23 @@ body{
           return;
         }
         var numVal = numAgg.value, denVal = denAgg.value;
-        var currentRatio = (numVal/denVal)*100;
+        var currentRatioPlain = numVal/denVal;
+        var currentRatio = currentRatioPlain*100;
 
         var numChangePct = parseFloat(document.getElementById('v27WiNumChange').value) || 0;
         var denChangePct = parseFloat(document.getElementById('v27WiDenChange').value) || 0;
         var newNum = numVal * (1 + numChangePct/100);
         var newDen = denVal * (1 + denChangePct/100);
-        var newRatio = newDen ? (newNum/newDen)*100 : null;
+        var newRatioPlain = newDen ? newNum/newDen : null;
+        var newRatio = newRatioPlain!=null ? newRatioPlain*100 : null;
         var delta = newRatio!=null ? newRatio - currentRatio : null;
 
         body.innerHTML =
-          '<div class="v27-wi-row"><div class="v27-wi-box"><div class="v27-wi-label">Current ratio</div><div class="v27-wi-val">'+currentRatio.toFixed(2)+'%</div><div class="v27-wi-sub">'+esc27w(numName)+' '+fmtW27(numVal)+' ÷ '+esc27w(denName)+' '+fmtW27(denVal)+'</div></div>'+
+          '<div class="v27-wi-row"><div class="v27-wi-box"><div class="v27-wi-label">Current ratio</div><div class="v27-wi-val">'+currentRatioPlain.toFixed(2)+'</div><div class="v27-wi-sub">('+currentRatio.toFixed(2)+'% · as a percentage, if that fits this pair) · '+esc27w(numName)+' '+fmtW27(numVal)+' ÷ '+esc27w(denName)+' '+fmtW27(denVal)+'</div></div>'+
           '<div class="v27-wi-arrow">→</div>'+
-          '<div class="v27-wi-box v27-wi-projected"><div class="v27-wi-label">Projected ratio</div><div class="v27-wi-val">'+(newRatio!=null?newRatio.toFixed(2)+'%':'—')+'</div><div class="v27-wi-sub">'+esc27w(numName)+' '+fmtW27(newNum)+' ÷ '+esc27w(denName)+' '+fmtW27(newDen)+'</div></div></div>'+
-          (delta!=null ? '<div class="v26-map-intro" style="margin-top:10px;font-weight:700;color:'+(delta>=0?'var(--warn)':'var(--ok)')+'">'+(delta>=0?'+':'')+delta.toFixed(2)+' percentage point'+(Math.abs(delta)===1?'':'s')+' change from the adjustments entered above.</div>' : '') +
-          '<div class="v26-map-intro" style="margin-top:6px">A projection only — assumes the stated % changes apply uniformly and does not account for any other factor.</div>';
+          '<div class="v27-wi-box v27-wi-projected"><div class="v27-wi-label">Projected ratio</div><div class="v27-wi-val">'+(newRatioPlain!=null?newRatioPlain.toFixed(2):'—')+'</div><div class="v27-wi-sub">'+(newRatio!=null?'('+newRatio.toFixed(2)+'% · as a percentage) · ':'')+esc27w(numName)+' '+fmtW27(newNum)+' ÷ '+esc27w(denName)+' '+fmtW27(newDen)+'</div></div></div>'+
+          (delta!=null ? '<div class="v26-map-intro" style="margin-top:10px;font-weight:700;color:'+(delta>=0?'var(--warn)':'var(--ok)')+'">'+(delta>=0?'+':'')+(newRatioPlain-currentRatioPlain).toFixed(2)+' change in the plain ratio ('+(delta>=0?'+':'')+delta.toFixed(2)+' percentage points, if read as a %) from the adjustments entered above.</div>' : '') +
+          '<div class="v26-map-intro" style="margin-top:6px">A projection only — assumes the stated % changes apply uniformly and does not account for any other factor. The plain ratio is usually the clearer reading unless this pair is genuinely a part-of-whole relationship (like NPA ÷ Advances).</div>';
       }
 
       function render(){
@@ -7388,7 +7390,7 @@ body{
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v27.49.1',
+  VERSION: 'v27.50.0',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
