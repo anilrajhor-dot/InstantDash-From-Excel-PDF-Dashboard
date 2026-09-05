@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.30.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.34.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -527,6 +527,14 @@ main{max-width:1360px;margin:0 auto;padding:24px}
 .v27-multi-toggle{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:var(--muted);margin:2px 0 10px;cursor:pointer}
 .v27-multi-list{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
 .v27-multi-list label{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;background:var(--card-2);border:1px solid var(--border);border-radius:8px;padding:6px 10px;cursor:pointer}
+.kpi-target-row{margin-top:9px;display:flex;align-items:center;gap:7px}
+.kpi-target-bar{flex:1 1 auto;height:6px;border-radius:999px;background:var(--border);overflow:hidden}
+.kpi-target-fill{height:100%;background:var(--accent);border-radius:999px;transition:width .3s ease}
+.kpi-target-pct{font-size:10.5px;color:var(--muted);font-weight:700;white-space:nowrap}
+.kpi-target-edit{background:none;border:none;color:var(--muted);cursor:pointer;font-size:11px;padding:2px 4px}
+.kpi-target-set{margin-top:9px;font-size:10.5px;font-weight:700;color:var(--accent);background:none;border:1px dashed var(--accent);border-radius:7px;padding:4px 9px;cursor:pointer}
+.kpi-note-add{margin-top:7px;margin-left:6px;font-size:10.5px;font-weight:700;color:var(--muted);background:none;border:1px dashed var(--border);border-radius:7px;padding:4px 9px;cursor:pointer}
+.kpi-note-badge{margin-top:7px;margin-left:6px;font-size:10.5px;font-weight:700;color:var(--text);background:var(--card-2);border:1px solid var(--border);border-radius:7px;padding:4px 9px;cursor:pointer}
 .v27-edit-row{display:flex;align-items:center;gap:10px;padding:9px 11px;margin-bottom:7px;border-radius:9px;background:var(--card-2);border:1px solid var(--border)}
 .v27-edit-num{width:20px;height:20px;border-radius:50%;background:var(--accent);color:#111;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
 .v27-edit-name{flex:1 1 auto;font-size:12.5px;font-weight:700;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -1743,7 +1751,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v27.30.0">
+<meta name="instantdash-build" content="v27.34.0">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2617,7 +2625,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v27.30.0';
+      s.textContent='v27.34.0';
       b.appendChild(s);
     }
   }
@@ -2677,11 +2685,11 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v27.30.0</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v27.34.0</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
       <div id="idBrandingSlot" style="display:none;align-items:center;gap:8px;margin-top:6px;"></div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.30.0</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.34.0</span></div>
   <a href="index.html" class="id-health-btn no-print" id="mainMenuBackBtn" style="text-decoration:none;display:inline-flex;align-items:center">← Main Menu</a>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="pptxExportBtn" type="button" aria-label="Export to PowerPoint">📊 Export PPT</button>
@@ -3356,6 +3364,7 @@ body{
         <button type="button" class="v27-adv-tab" data-adv-tab="treemap">🧩 Treemap</button>
         <button type="button" class="v27-adv-tab" data-adv-tab="gauge">⏱️ Gauge</button>
         <button type="button" class="v27-adv-tab" data-adv-tab="combo">📊 Combo</button>
+        <button type="button" class="v27-adv-tab" data-adv-tab="trend">📈 Trend</button>
       </div>
       <div id="v27AdvWaterfall" class="v27-adv-pane">
         <div class="v27-adv-controls">
@@ -3385,6 +3394,13 @@ body{
           <label>Line <select id="v27ComboLine"></select></label>
         </div>
         <div id="v27ComboChart" class="v27-adv-chart"></div>
+      </div>
+      <div id="v27AdvTrend" class="v27-adv-pane" hidden>
+        <div class="v27-adv-controls">
+          <label>Measure <select id="v27TrendMeasure"></select></label>
+          <label>Forecast periods <select id="v27TrendPeriods"><option value="3">3</option><option value="6">6</option><option value="12">12</option></select></label>
+        </div>
+        <div id="v27TrendChart" class="v27-adv-chart"></div>
       </div>
     </section>
     <script id="instantdash-v27-advcharts-wire">
@@ -3528,7 +3544,8 @@ body{
           var y0 = yOf(b.start), y1 = yOf(b.end);
           var top = Math.min(y0,y1), bottom = Math.max(y0,y1);
           var color = b.isTotal ? 'var(--accent)' : (b.value>=0 ? 'var(--ok)' : 'var(--warn)');
-          svg.push('<rect x="'+x+'" y="'+top+'" width="'+barW+'" height="'+Math.max(3,bottom-top)+'" fill="'+color+'" rx="3"><title>'+esc27a(b.cat)+': '+fmtNum27(b.value)+'</title></rect>');
+          var drillAttrs = b.isTotal ? '' : ' class="v27-drillable-bar" data-drill-measure="'+esc27a(measureName)+'" data-drill-col="'+esc27a(dimName)+'" data-drill-val="'+esc27a(b.cat)+'" style="cursor:pointer"';
+          svg.push('<rect x="'+x+'" y="'+top+'" width="'+barW+'" height="'+Math.max(3,bottom-top)+'" fill="'+color+'" rx="3"'+drillAttrs+'><title>'+esc27a(b.cat)+': '+fmtNum27(b.value)+(b.isTotal?'':' (tap to see records)')+'</title></rect>');
           svg.push('<text x="'+(x+barW/2)+'" y="'+(top-6)+'" text-anchor="middle" font-size="10" font-weight="700" fill="var(--text)">'+fmtNum27(b.isTotal?b.end:b.value)+'</text>');
           svg.push('<text x="'+(x+barW/2)+'" y="'+(chartH-14)+'" text-anchor="middle" font-size="10" fill="var(--muted)">'+esc27a(b.cat.length>10?b.cat.slice(0,9)+'…':b.cat)+'</text>');
           if(i < bars.length-2){
@@ -3631,7 +3648,7 @@ body{
         var palette = window.__instantDashChartColors || ['#C9A227','#8B2F3D','#16785A','#2C4A6B','#6B4E8E','#B0793E','#4A7A8C','#8FA05C'];
         var svg = rects.map(function(r, i){
           var color = palette[i % palette.length];
-          var parts = ['<rect x="'+r.x.toFixed(1)+'" y="'+r.y.toFixed(1)+'" width="'+Math.max(0,r.w-2).toFixed(1)+'" height="'+Math.max(0,r.h-2).toFixed(1)+'" fill="'+color+'" rx="4"><title>'+esc27a(r.name)+': '+fmtNum27(r.value)+'</title></rect>'];
+          var parts = ['<rect x="'+r.x.toFixed(1)+'" y="'+r.y.toFixed(1)+'" width="'+Math.max(0,r.w-2).toFixed(1)+'" height="'+Math.max(0,r.h-2).toFixed(1)+'" fill="'+color+'" rx="4" class="v27-drillable-bar" data-drill-measure="'+esc27a(measureName)+'" data-drill-col="'+esc27a(dimName)+'" data-drill-val="'+esc27a(r.name)+'" style="cursor:pointer"><title>'+esc27a(r.name)+': '+fmtNum27(r.value)+' (tap to see records)</title></rect>'];
           if(r.w>55 && r.h>28){
             parts.push('<text x="'+(r.x+8).toFixed(1)+'" y="'+(r.y+19).toFixed(1)+'" font-size="12" font-weight="700" fill="#fff">'+esc27a(r.name.length>14?r.name.slice(0,13)+'…':r.name)+'</text>');
             if(r.h>44) parts.push('<text x="'+(r.x+8).toFixed(1)+'" y="'+(r.y+35).toFixed(1)+'" font-size="10.5" fill="#fff" opacity="0.85">'+fmtNum27(r.value)+'</text>');
@@ -3688,6 +3705,79 @@ body{
         chartEl.innerHTML = legend+'<svg viewBox="0 0 '+W+' '+H+'" width="100%" height="'+H+'" style="overflow:visible">'+barsSvg.join('')+lineSvg.join('')+dotsSvg.join('')+labelsSvg.join('')+'</svg>';
       }
 
+      /* v27.31.0 — Trend/Forecast: ordinary least-squares linear
+         regression, the exact math verified in isolation beforehand.
+         Forecast points are visually distinct (dashed line, hollow
+         dots, "Projected" label) from actual historical data — a
+         forecast that looked identical to real reported figures would
+         risk being mistaken for one, which matters a great deal in a
+         banking context. */
+      function linregFit(xs, ys){
+        var n = xs.length;
+        var sumX=0,sumY=0,sumXY=0,sumXX=0;
+        for(var i=0;i<n;i++){ sumX+=xs[i]; sumY+=ys[i]; sumXY+=xs[i]*ys[i]; sumXX+=xs[i]*xs[i]; }
+        var denom = (n*sumXX - sumX*sumX);
+        if(!denom) return null;
+        var m = (n*sumXY - sumX*sumY)/denom;
+        var b = (sumY - m*sumX)/n;
+        return {m:m, b:b};
+      }
+
+      function renderTrend(){
+        var chartEl = document.getElementById('v27TrendChart');
+        var measureSel = document.getElementById('v27TrendMeasure');
+        var periodsSel = document.getElementById('v27TrendPeriods');
+        if(!chartEl || !measureSel || !periodsSel) return;
+        var measureName = measureSel.value;
+        var forecastN = parseInt(periodsSel.value, 10) || 3;
+        if(!measureName){ chartEl.innerHTML = '<div class="v26-map-intro" style="font-style:italic">No measures available.</div>'; return; }
+
+        var rows = (window.APP && window.APP.filtered) || [];
+        var tCol = (typeof timeCols==='function') ? timeCols()[0] : null;
+        var points = rows.map(function(r,i){ return { label: tCol ? r[tCol.name] : i, val: r[measureName] }; })
+          .filter(function(p){ return typeof p.val==='number' && isFinite(p.val); });
+        if(tCol) points.sort(function(a,b){ return (a.label instanceof Date ? a.label : 0) - (b.label instanceof Date ? b.label : 0); });
+
+        if(points.length < 3){ chartEl.innerHTML = '<div class="v26-map-intro" style="font-style:italic">Need at least 3 data points with a time column to forecast a trend.</div>'; return; }
+
+        var xs = points.map(function(p,i){ return i; });
+        var ys = points.map(function(p){ return p.val; });
+        var fit = linregFit(xs, ys);
+        if(!fit){ chartEl.innerHTML = '<div class="v26-map-intro" style="font-style:italic">Could not fit a trend line to this data.</div>'; return; }
+
+        var forecastPoints = [];
+        for(var k=1;k<=forecastN;k++){
+          forecastPoints.push({ x: xs.length-1+k, val: fit.m*(xs.length-1+k)+fit.b, projected:true });
+        }
+
+        var allVals = ys.concat(forecastPoints.map(function(p){return p.val;}));
+        var maxVal = Math.max.apply(null, allVals), minVal = Math.min.apply(null, allVals);
+        var range = (maxVal-minVal) || 1;
+        var totalPoints = points.length + forecastN;
+        var W = Math.max(400, totalPoints*46), H = 240, padTop=20, padBottom=36, padLR=10;
+        var plotH = H-padTop-padBottom, plotW = W-padLR*2;
+        function xPos(i){ return padLR + (i/(totalPoints-1))*plotW; }
+        function yPos(v){ return padTop + plotH - ((v-minVal)/range)*plotH; }
+
+        var actualPts = points.map(function(p,i){ return xPos(i)+','+yPos(p.val); });
+        var lastActualX = xPos(points.length-1), lastActualY = yPos(ys[ys.length-1]);
+        var forecastPts = [lastActualX+','+lastActualY].concat(forecastPoints.map(function(p){ return xPos(p.x)+','+yPos(p.val); }));
+
+        var svg = [];
+        svg.push('<polyline points="'+actualPts.join(' ')+'" fill="none" stroke="var(--accent)" stroke-width="2.5"/>');
+        svg.push('<polyline points="'+forecastPts.join(' ')+'" fill="none" stroke="var(--muted)" stroke-width="2" stroke-dasharray="6,5"/>');
+        points.forEach(function(p,i){
+          svg.push('<circle cx="'+xPos(i)+'" cy="'+yPos(p.val)+'" r="4" fill="var(--accent)"><title>Actual: '+fmtNum27(p.val)+'</title></circle>');
+        });
+        forecastPoints.forEach(function(p){
+          svg.push('<circle cx="'+xPos(p.x)+'" cy="'+yPos(p.val)+'" r="4" fill="var(--card)" stroke="var(--muted)" stroke-width="2"><title>Projected: '+fmtNum27(p.val)+'</title></circle>');
+        });
+
+        var legend = '<div style="display:flex;gap:16px;margin-bottom:6px;font-size:11px"><span><span style="display:inline-block;width:16px;height:2px;background:var(--accent);margin-right:5px;vertical-align:middle"></span>Actual</span><span><span style="display:inline-block;width:16px;height:2px;background:var(--muted);border-top:2px dashed var(--muted);margin-right:5px;vertical-align:middle"></span>Projected (linear trend)</span></div>';
+        chartEl.innerHTML = legend+'<svg viewBox="0 0 '+W+' '+H+'" width="100%" height="'+H+'" style="overflow:visible">'+svg.join('')+'</svg>'+
+          '<div class="v26-map-intro" style="margin-top:6px">Projection assumes the current linear trend continues — not a guarantee, and does not account for seasonality or external factors.</div>';
+      }
+
       function render(){
         var section = document.getElementById('v27AdvCharts');
         if(!section) return;
@@ -3716,6 +3806,7 @@ body{
               return '<label><input type="checkbox" value="'+m.replace(/"/g,'&quot;')+'"'+(i<2?' checked':'')+'> '+m+'</label>';
             }).join('');
           }
+          populateSelect(document.getElementById('v27TrendMeasure'), measures, true);
 
           /* v27.28.0 — pick the best chart type for THIS data, rather
              than always defaulting to Waterfall regardless of whether
@@ -3725,7 +3816,7 @@ body{
           section.querySelectorAll('[data-adv-tab]').forEach(function(t){
             t.classList.toggle('active', t.getAttribute('data-adv-tab')===bestTab);
           });
-          ['v27AdvWaterfall','v27AdvTreemap','v27AdvGauge','v27AdvCombo'].forEach(function(paneId){
+          ['v27AdvWaterfall','v27AdvTreemap','v27AdvGauge','v27AdvCombo','v27AdvTrend'].forEach(function(paneId){
             var pane = document.getElementById(paneId);
             if(pane) pane.hidden = (paneId !== 'v27Adv'+bestTab.charAt(0).toUpperCase()+bestTab.slice(1));
           });
@@ -3734,6 +3825,7 @@ body{
         if(activeTab==='waterfall') renderWaterfall();
         else if(activeTab==='treemap') renderTreemap();
         else if(activeTab==='combo') renderCombo();
+        else if(activeTab==='trend') renderTrend();
         else renderGauge();
       }
 
@@ -3743,6 +3835,16 @@ body{
         var section = document.getElementById('v27AdvCharts');
         if(!section) return;
         wired = true;
+        section.addEventListener('click', function(e){
+          var bar = e.target.closest('.v27-drillable-bar');
+          if(!bar) return;
+          var measureName = bar.getAttribute('data-drill-measure');
+          var col = bar.getAttribute('data-drill-col');
+          var val = bar.getAttribute('data-drill-val');
+          if(measureName && col && typeof window.openDrill==='function'){
+            window.openDrill(measureName, {col:col, val:val});
+          }
+        });
         section.querySelectorAll('[data-adv-tab]').forEach(function(tab){
           tab.addEventListener('click', function(){
             section.querySelectorAll('[data-adv-tab]').forEach(function(t){ t.classList.remove('active'); });
@@ -3752,10 +3854,11 @@ body{
             document.getElementById('v27AdvTreemap').hidden = activeTab!=='treemap';
             document.getElementById('v27AdvGauge').hidden = activeTab!=='gauge';
             document.getElementById('v27AdvCombo').hidden = activeTab!=='combo';
+            document.getElementById('v27AdvTrend').hidden = activeTab!=='trend';
             render();
           });
         });
-        ['v27WfMeasure','v27WfDim','v27GaugeMeasure','v27TmMeasure','v27TmDim','v27ComboBar','v27ComboLine'].forEach(function(id){
+        ['v27WfMeasure','v27WfDim','v27GaugeMeasure','v27TmMeasure','v27TmDim','v27ComboBar','v27ComboLine','v27TrendMeasure','v27TrendPeriods'].forEach(function(id){
           var el = document.getElementById(id);
           if(el) el.addEventListener('change', render);
         });
@@ -3811,7 +3914,7 @@ body{
         return context.slice(0, 2);
       }
 
-      function openDrill(measureName){
+      function openDrill(measureName, dimFilter){
         var modal = document.getElementById('v27DrillModal');
         var title = document.getElementById('v27DrillTitle');
         var sub = document.getElementById('v27DrillSub');
@@ -3819,14 +3922,17 @@ body{
         if(!modal || !title || !sub || !wrap) return;
 
         var rows = (window.APP && window.APP.filtered) || [];
+        if(dimFilter && dimFilter.col){
+          rows = rows.filter(function(r){ return String(r[dimFilter.col])===String(dimFilter.val); });
+        }
         var contextCols = pickContextColumns(measureName);
         var sorted = rows.slice().filter(function(r){
           var v = r[measureName];
           return typeof v==='number' && isFinite(v);
         }).sort(function(a,b){ return (b[measureName]||0) - (a[measureName]||0); });
 
-        title.textContent = measureName;
-        sub.textContent = sorted.length + ' record' + (sorted.length===1?'':'s') + ' with a value for this measure, highest first' + (rows.length!==((window.APP&&window.APP.rows)||[]).length ? ' — reflecting your current Slicer/filter selection.' : '.');
+        title.textContent = measureName + (dimFilter ? ' — '+dimFilter.val : '');
+        sub.textContent = sorted.length + ' record' + (sorted.length===1?'':'s') + ' with a value for this measure, highest first' + (dimFilter ? ' — filtered to '+esc27d(dimFilter.col)+' = '+esc27d(dimFilter.val)+'.' : (rows.length!==((window.APP&&window.APP.rows)||[]).length ? ' — reflecting your current Slicer/filter selection.' : '.'));
 
         if(!sorted.length){
           wrap.innerHTML = '<div class="v26-map-intro" style="font-style:italic">No records with a numeric value for this measure in the current selection.</div>';
@@ -3848,9 +3954,55 @@ body{
         var modal = document.getElementById('v27DrillModal');
         if(modal){ modal.classList.remove('on'); modal.setAttribute('aria-hidden','true'); }
       }
+      window.openDrill = openDrill; // exposed for Advanced Charts (Waterfall/Treemap drill-through), a separate IIFE
 
       function wire(){
         var kpiRow = document.getElementById('kpiRow');
+        if(kpiRow && !kpiRow.dataset.wiredTarget2732){
+          kpiRow.dataset.wiredTarget2732 = '1';
+          kpiRow.addEventListener('click', function(e){
+            var editBtn = e.target.closest('[data-target-edit]');
+            if(!editBtn) return;
+            e.stopImmediatePropagation(); // same element as the drill-down listener below — must stop it from also firing
+            e.preventDefault();
+            var measureName = editBtn.getAttribute('data-target-edit');
+            var existing = (window.__instantDashKpiTargets||{})[measureName];
+            var input = window.prompt('Set a target value for "'+measureName+'":', existing!=null?String(existing):'');
+            if(input===null) return; // cancelled
+            var num = parseFloat(input.replace(/[^0-9.\-]/g,''));
+            if(!isFinite(num)) return;
+            window.__instantDashKpiTargets = window.__instantDashKpiTargets || {};
+            window.__instantDashKpiTargets[measureName] = num;
+            if(typeof buildKPIs==='function') buildKPIs();
+            if(typeof toast==='function') toast('Target set for '+measureName+'.');
+          });
+        }
+        if(kpiRow && !kpiRow.dataset.wiredNote2734){
+          kpiRow.dataset.wiredNote2734 = '1';
+          kpiRow.addEventListener('click', function(e){
+            var addBtn = e.target.closest('[data-note-add]');
+            var viewBtn = e.target.closest('[data-note-view]');
+            if(addBtn){
+              e.stopImmediatePropagation();
+              e.preventDefault();
+              var measureName = addBtn.getAttribute('data-note-add');
+              var text = window.prompt('Add a note for "'+measureName+'":');
+              if(!text || !text.trim()) return;
+              window.__instantDashKpiNotes = window.__instantDashKpiNotes || {};
+              window.__instantDashKpiNotes[measureName] = window.__instantDashKpiNotes[measureName] || [];
+              window.__instantDashKpiNotes[measureName].push({ text: text.trim(), when: new Date().toLocaleString('en-IN', {day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) });
+              if(typeof buildKPIs==='function') buildKPIs();
+              if(typeof toast==='function') toast('Note added.');
+            } else if(viewBtn){
+              e.stopImmediatePropagation();
+              e.preventDefault();
+              var vMeasure = viewBtn.getAttribute('data-note-view');
+              var notes = (window.__instantDashKpiNotes||{})[vMeasure] || [];
+              var msg = notes.map(function(n){ return '['+n.when+'] '+n.text; }).join('\n\n');
+              window.alert('Notes for "'+vMeasure+'":\n\n'+msg);
+            }
+          });
+        }
         if(kpiRow && !kpiRow.dataset.wiredDrill279){
           kpiRow.dataset.wiredDrill279 = '1';
           kpiRow.addEventListener('click', function(e){
@@ -6344,7 +6496,7 @@ body{
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v27.30.0',
+  VERSION: 'v27.34.0',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
@@ -9472,7 +9624,7 @@ function buildKPIs(){
       const avgOfSum = agg.count ? agg.value/agg.count : 0;
       sub = 'Average ' + fmtByField(avgOfSum, c.name);
     }
-    cards.push({val, lbl, sub, alt: i === 1, trend: kpiTrendBadge(c.name), measureName: c.name});
+    cards.push({val, lbl, sub, alt: i === 1, trend: kpiTrendBadge(c.name), measureName: c.name, numericValue: (agg && agg.count) ? agg.value : null});
   });
 
   const topDim = rankDimensions()[0];
@@ -9506,9 +9658,33 @@ function buildKPIs(){
     dcEl.hidden = !(all && all.length);
   }
 
-  $('kpiRow').innerHTML = cards.slice(0, 6).map(c =>
-    `<div class="kpi${c.alt ? ' alt' : ''}${c.measureName ? ' kpi-drillable' : ''}"${c.measureName ? ` data-drill-measure="${esc(c.measureName)}"` : ''}><div class="val">${esc(c.val)}${c.trend||''}</div><div class="lbl">${esc(c.lbl)}</div>${c.sub ? `<div class="sub">${esc(c.sub)}</div>` : ''}${c.measureName ? '<div class="kpi-drill-hint">🔍 Tap to see records</div>' : ''}</div>`
-  ).join('');
+  $('kpiRow').innerHTML = cards.slice(0, 6).map(c => {
+    var targetHtml = '';
+    if(c.measureName){
+      var targets = window.__instantDashKpiTargets || {};
+      var target = targets[c.measureName];
+      if(target != null && c.numericValue != null && target !== 0){
+        var pct = Math.max(0, Math.min(150, (c.numericValue/target)*100));
+        var barPct = Math.min(100, pct);
+        targetHtml = '<div class="kpi-target-row" data-target-measure="'+esc(c.measureName)+'">'+
+          '<div class="kpi-target-bar"><div class="kpi-target-fill" style="width:'+barPct.toFixed(0)+'%"></div></div>'+
+          '<span class="kpi-target-pct">'+pct.toFixed(0)+'% of target ('+esc(fmtByField(target, c.measureName))+')</span>'+
+          '<button type="button" class="kpi-target-edit" data-target-edit="'+esc(c.measureName)+'" aria-label="Edit target">✎</button>'+
+        '</div>';
+      } else {
+        targetHtml = '<button type="button" class="kpi-target-set no-print" data-target-edit="'+esc(c.measureName)+'">🎯 Set Target</button>';
+      }
+    }
+    var noteHtml = '';
+    if(c.measureName){
+      var allNotes = window.__instantDashKpiNotes || {};
+      var notes = allNotes[c.measureName] || [];
+      noteHtml = notes.length
+        ? '<button type="button" class="kpi-note-badge no-print" data-note-view="'+esc(c.measureName)+'">📝 '+notes.length+' note'+(notes.length===1?'':'s')+'</button>'
+        : '<button type="button" class="kpi-note-add no-print" data-note-add="'+esc(c.measureName)+'">📝 Add Note</button>';
+    }
+    return `<div class="kpi${c.alt ? ' alt' : ''}${c.measureName ? ' kpi-drillable' : ''}"${c.measureName ? ` data-drill-measure="${esc(c.measureName)}"` : ''}><div class="val">${esc(c.val)}${c.trend||''}</div><div class="lbl">${esc(c.lbl)}</div>${c.sub ? `<div class="sub">${esc(c.sub)}</div>` : ''}${c.measureName ? '<div class="kpi-drill-hint">🔍 Tap to see records</div>' : ''}${targetHtml}${noteHtml}</div>`;
+  }).join('');
 }
 
 /* =====================================================================
