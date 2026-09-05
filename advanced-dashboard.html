@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.39.2","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.44.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -538,6 +538,13 @@ main{max-width:1360px;margin:0 auto;padding:24px}
 .kpi-benchmark-row{margin-top:7px;display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700}
 .kpi-benchmark-above{color:var(--ok)}
 .kpi-benchmark-below{color:var(--warn)}
+.v27-wi-row{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.v27-wi-box{flex:1 1 220px;padding:16px;border-radius:12px;background:var(--card-2);border:1px solid var(--border)}
+.v27-wi-projected{border-color:var(--accent)}
+.v27-wi-label{font-size:10.5px;font-weight:800;color:var(--muted);text-transform:uppercase;margin-bottom:6px}
+.v27-wi-val{font-size:24px;font-weight:900;color:var(--text);font-family:Georgia,serif}
+.v27-wi-sub{font-size:11px;color:var(--muted);margin-top:5px}
+.v27-wi-arrow{font-size:22px;color:var(--accent);flex:0 0 auto}
 .v27-qoq-nodata{color:var(--muted);font-style:italic}
 .v27-bs-header{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:18px;flex-wrap:wrap}
 .v27-bs-title{font-size:19px;font-weight:900;color:var(--text)}
@@ -1772,7 +1779,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v27.39.2">
+<meta name="instantdash-build" content="v27.44.0">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2646,7 +2653,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v27.39.2';
+      s.textContent='v27.44.0';
       b.appendChild(s);
     }
   }
@@ -2706,11 +2713,24 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v27.39.2</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v27.44.0</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
       <div id="idBrandingSlot" style="display:none;align-items:center;gap:8px;margin-top:6px;"></div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.39.2</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.44.0</span></div>
+  <label class="no-print" style="display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--muted);margin-left:8px">Department:
+    <select id="v27DepartmentSelect" style="padding:6px 8px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:11.5px;font-weight:700">
+      <option value="">— Not set —</option>
+      <option value="Banking / Finance">Banking / Finance</option>
+      <option value="Sales">Sales</option>
+      <option value="HR">HR</option>
+      <option value="Operations">Operations</option>
+      <option value="Manufacturing / Quality">Manufacturing / Quality</option>
+      <option value="Healthcare">Healthcare</option>
+      <option value="Education">Education</option>
+      <option value="Other">Other</option>
+    </select>
+  </label>
   <a href="index.html" class="id-health-btn no-print" id="mainMenuBackBtn" style="text-decoration:none;display:inline-flex;align-items:center">← Main Menu</a>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="pptxExportBtn" type="button" aria-label="Export to PowerPoint">📊 Export PPT</button>
@@ -2721,6 +2741,9 @@ body{
       <input type="file" id="brandingLogoInput" accept="image/*" style="display:none">
       <button class="id-health-btn no-print" id="compareFilesBtn" type="button" aria-label="Compare with another file">🔀 Compare Files</button>
       <button class="id-health-btn no-print" id="editDashboardBtn" type="button" aria-label="Edit dashboard">✏️ Edit Dashboard</button>
+      <button class="id-health-btn no-print" id="exportSessionBtn" type="button" aria-label="Export session">💾 Export Session</button>
+      <button class="id-health-btn no-print" id="importSessionBtn" type="button" aria-label="Import session">📂 Import Session</button>
+      <input type="file" id="importSessionInput" accept="application/json,.json" style="display:none">
       <input type="file" id="compareFileInput" accept=".xlsx,.xls,.xlsm,.csv,text/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" style="display:none">
       <button class="id-health-btn no-print" id="topClearDataBtn" type="button" aria-label="Clear all loaded data" style="color:var(--warn)">🗑 Clear Data</button>
       <button class="id-health-btn no-print" id="healthCheckBtn" type="button" aria-label="Open InstantDash Health Check" onclick="window.__instantDashHealthOpen &amp;&amp; window.__instantDashHealthOpen();return false;" data-health-wired="1">🩺 Health Check</button>
@@ -3411,6 +3434,92 @@ body{
     })();
     </script>
 
+    <section id="v27Templates" class="exec-card no-print" hidden>
+      <div class="mac-head">
+        <div><div class="exec-label">📋 Report Templates</div><div class="mac-title">Save this KPI setup, reuse it on a different file next period</div></div>
+        <button type="button" id="v27SaveTemplateBtn" class="v26-compare-btn">+ Save as Template</button>
+      </div>
+      <div id="v27TemplatesBody"></div>
+    </section>
+    <script id="instantdash-v27-templates-wire">
+    (function(){
+      function esc27t(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+      window.__instantDashTemplates = window.__instantDashTemplates || [];
+
+      function currentKpiSelection(){
+        var sel = window.__instantDashKpiSelection;
+        if(sel && sel.length) return sel.slice();
+        return (typeof rankMeasures==='function') ? rankMeasures().slice(0,4).map(function(m){return m.name;}) : [];
+      }
+
+      function render(){
+        var section = document.getElementById('v27Templates');
+        var body = document.getElementById('v27TemplatesBody');
+        if(!section || !body) return;
+        var hasData = !!(window.APP && window.APP.rows && window.APP.rows.length);
+        section.hidden = !hasData;
+        if(!hasData) return;
+
+        var templates = window.__instantDashTemplates;
+        if(!templates.length){
+          body.innerHTML = '<div class="v26-map-intro" style="font-style:italic">No templates saved yet. Set up your KPIs the way you want for a recurring report, then tap "+ Save as Template".</div>';
+          return;
+        }
+        body.innerHTML = templates.map(function(t, i){
+          return '<div class="v27-view-row">'+
+            '<div class="v27-view-info"><b>'+esc27t(t.name)+'</b><span>'+t.kpis.map(esc27t).join(', ')+'</span></div>'+
+            '<div class="v27-view-actions">'+
+              '<button type="button" class="v26-compare-btn" data-template-apply="'+i+'">Apply</button>'+
+              '<button type="button" class="v26-task-remove" data-template-remove="'+i+'">Remove</button>'+
+            '</div>'+
+          '</div>';
+        }).join('');
+      }
+
+      function wire(){
+        var saveBtn = document.getElementById('v27SaveTemplateBtn');
+        if(saveBtn && !saveBtn.dataset.wired2740){
+          saveBtn.dataset.wired2740 = '1';
+          saveBtn.addEventListener('click', function(){
+            var name = window.prompt('Name this template (e.g. "Monthly Branch Report"):');
+            if(!name || !name.trim()) return;
+            window.__instantDashTemplates.push({ name: name.trim(), kpis: currentKpiSelection() });
+            render();
+            if(typeof toast==='function') toast('Template saved.');
+          });
+        }
+        var body = document.getElementById('v27TemplatesBody');
+        if(body && !body.dataset.wired2740){
+          body.dataset.wired2740 = '1';
+          body.addEventListener('click', function(e){
+            var applyBtn = e.target.closest('[data-template-apply]');
+            var removeBtn = e.target.closest('[data-template-remove]');
+            if(applyBtn){
+              var idx = Number(applyBtn.getAttribute('data-template-apply'));
+              var t = window.__instantDashTemplates[idx];
+              if(!t) return;
+              var allMeasures = (typeof rankMeasures==='function') ? rankMeasures().map(function(m){return m.name;}) : [];
+              var matched = t.kpis.filter(function(n){ return allMeasures.indexOf(n)!==-1; });
+              var missing = t.kpis.filter(function(n){ return allMeasures.indexOf(n)===-1; });
+              window.__instantDashKpiSelection = matched.length ? matched : null;
+              if(typeof buildKPIs==='function') buildKPIs();
+              if(typeof toast==='function') toast('Applied "'+t.name+'"'+(missing.length ? ' ('+missing.length+' KPI'+(missing.length===1?'':'s')+' not found in this file)' : '.'));
+            } else if(removeBtn){
+              var ridx = Number(removeBtn.getAttribute('data-template-remove'));
+              window.__instantDashTemplates.splice(ridx, 1);
+              render();
+            }
+          });
+        }
+      }
+
+      setInterval(function(){ render(); wire(); }, 700);
+      if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', function(){ render(); wire(); });
+      else { render(); wire(); }
+    })();
+    </script>
+
     <section id="v27Anomalies" class="exec-card no-print" hidden>
       <div class="mac-head">
         <div><div class="exec-label">⚠️ Data Anomalies</div><div class="mac-title">Values that look statistically unusual against the rest of their own column</div></div>
@@ -3505,6 +3614,151 @@ body{
     })();
     </script>
 
+    <section id="v27CustomRules" class="exec-card no-print" hidden>
+      <div class="mac-head">
+        <div><div class="exec-label">⚙️ Custom Alerts</div><div class="mac-title">Your own rules, checked against every record — not statistics, your judgment</div></div>
+      </div>
+      <div class="v27-adv-controls">
+        <label>Measure <select id="v27RuleMeasure"></select></label>
+        <label>Condition <select id="v27RuleOperator">
+          <option value="gt">greater than</option>
+          <option value="lt">less than</option>
+          <option value="gte">at least</option>
+          <option value="lte">at most</option>
+          <option value="eq">equal to</option>
+        </select></label>
+        <label>Value <input type="number" id="v27RuleValue" style="padding:8px 10px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:12.5px;font-weight:600" step="any"></label>
+      </div>
+      <button type="button" id="v27AddRuleBtn" class="v26-compare-btn" style="margin-bottom:14px">+ Add Rule</button>
+      <div id="v27RulesList"></div>
+      <div id="v27RulesResults" style="margin-top:14px"></div>
+    </section>
+    <script id="instantdash-v27-customrules-wire">
+    (function(){
+      function esc27r(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+      function fmtR27(v){ return (typeof v==='number' && isFinite(v)) ? v.toLocaleString('en-IN', {maximumFractionDigits:2}) : String(v); }
+
+      window.__instantDashCustomRules = window.__instantDashCustomRules || [];
+      var lastDataVersion = null;
+
+      var OP_LABELS = { gt:'greater than', lt:'less than', gte:'at least', lte:'at most', eq:'equal to' };
+      function evalOp(op, actual, target){
+        if(op==='gt') return actual > target;
+        if(op==='lt') return actual < target;
+        if(op==='gte') return actual >= target;
+        if(op==='lte') return actual <= target;
+        if(op==='eq') return actual === target;
+        return false;
+      }
+
+      function contextFor(row){
+        var cols = (window.APP && window.APP.columns) || [];
+        var dimCol = cols.find(function(c){ return c.role==='dimension' || c.role==='time'; });
+        if(!dimCol) return '';
+        var v = row[dimCol.name];
+        if(v instanceof Date) return v.toLocaleDateString('en-IN', {day:'2-digit',month:'short',year:'numeric'});
+        return v!=null ? String(v) : '';
+      }
+
+      function renderRulesList(){
+        var list = document.getElementById('v27RulesList');
+        if(!list) return;
+        var rules = window.__instantDashCustomRules;
+        list.innerHTML = rules.length ? rules.map(function(r, i){
+          return '<div class="v27-view-row"><div class="v27-view-info"><b>'+esc27r(r.measure)+' '+OP_LABELS[r.op]+' '+fmtR27(r.value)+'</b></div>'+
+            '<div class="v27-view-actions"><button type="button" class="v26-task-remove" data-rule-remove="'+i+'">Remove</button></div></div>';
+        }).join('') : '<div class="v26-map-intro" style="font-style:italic">No rules yet. Add one above — e.g. "NPA Ratio greater than 5".</div>';
+      }
+
+      function renderResults(){
+        var results = document.getElementById('v27RulesResults');
+        if(!results) return;
+        var rules = window.__instantDashCustomRules;
+        if(!rules.length){ results.innerHTML = ''; return; }
+        var rows = (window.APP && window.APP.filtered) || [];
+        var allFlags = [];
+        rules.forEach(function(rule){
+          rows.forEach(function(r){
+            var v = r[rule.measure];
+            if(typeof v!=='number' || !isFinite(v)) return;
+            if(evalOp(rule.op, v, rule.value)){
+              allFlags.push({ rule:rule, row:r, value:v });
+            }
+          });
+        });
+        if(!allFlags.length){
+          results.innerHTML = '<div class="v26-map-intro" style="color:var(--ok);font-weight:700">✓ No records currently match any custom rule.</div>';
+          return;
+        }
+        results.innerHTML = '<div class="v26-map-intro">'+allFlags.length+' record'+(allFlags.length===1?'':'s')+' match'+(allFlags.length===1?'es':'')+' a custom rule.</div>'+
+          allFlags.slice(0,20).map(function(f){
+            var ctx = contextFor(f.row);
+            return '<div class="v27-anomaly-row"><div class="v27-anomaly-icon">⚙️</div>'+
+              '<div class="v27-anomaly-info"><b>'+esc27r(f.rule.measure)+'</b>'+(ctx?' <span class="v27-anomaly-ctx">('+esc27r(ctx)+')</span>':'')+
+              '<span class="v27-anomaly-detail">'+fmtR27(f.value)+' is '+OP_LABELS[f.rule.op]+' '+fmtR27(f.rule.value)+'</span></div></div>';
+          }).join('') +
+          (allFlags.length>20 ? '<div class="v26-map-intro" style="margin-top:8px">Showing the first 20 of '+allFlags.length+' matches.</div>' : '');
+      }
+
+      function render(){
+        var section = document.getElementById('v27CustomRules');
+        if(!section) return;
+        var app = window.APP || {};
+        var hasData = !!(app.rows && app.rows.length);
+        if(!hasData){ section.hidden = true; lastDataVersion = null; return; }
+        section.hidden = false;
+
+        var measures = (typeof rankMeasures==='function') ? rankMeasures().map(function(m){return m.name;}) : [];
+        if(lastDataVersion !== app.__dataVersion){
+          lastDataVersion = app.__dataVersion;
+          var sel = document.getElementById('v27RuleMeasure');
+          if(sel){
+            var prev = sel.value;
+            sel.innerHTML = measures.map(function(m){ return '<option value="'+esc27r(m)+'">'+esc27r(m)+'</option>'; }).join('');
+            if(measures.indexOf(prev)!==-1) sel.value = prev;
+          }
+        }
+        renderRulesList();
+        renderResults();
+      }
+
+      function wire(){
+        var addBtn = document.getElementById('v27AddRuleBtn');
+        if(addBtn && !addBtn.dataset.wired2741){
+          addBtn.dataset.wired2741 = '1';
+          addBtn.addEventListener('click', function(){
+            var measure = document.getElementById('v27RuleMeasure').value;
+            var op = document.getElementById('v27RuleOperator').value;
+            var valInput = document.getElementById('v27RuleValue');
+            var value = parseFloat(valInput.value);
+            if(!measure || !isFinite(value)){ if(typeof toast==='function') toast('Pick a measure and enter a value.'); return; }
+            window.__instantDashCustomRules.push({ measure:measure, op:op, value:value });
+            valInput.value = '';
+            renderRulesList();
+            renderResults();
+            if(typeof toast==='function') toast('Rule added.');
+          });
+        }
+        var list = document.getElementById('v27RulesList');
+        if(list && !list.dataset.wired2741){
+          list.dataset.wired2741 = '1';
+          list.addEventListener('click', function(e){
+            var rmBtn = e.target.closest('[data-rule-remove]');
+            if(!rmBtn) return;
+            var idx = Number(rmBtn.getAttribute('data-rule-remove'));
+            window.__instantDashCustomRules.splice(idx, 1);
+            renderRulesList();
+            renderResults();
+          });
+        }
+      }
+
+      setInterval(function(){ render(); wire(); }, 700);
+      if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', function(){ render(); wire(); });
+      else { render(); wire(); }
+    })();
+    </script>
+
     <section id="v27CompareSection" class="exec-card no-print" hidden>
       <div class="mac-head">
         <div><div class="exec-label">🔀 Cross-File Comparison</div><div class="mac-title">Measures matched by name across both files</div></div>
@@ -3586,6 +3840,99 @@ body{
             if(typeof toast==='function') toast('Comparison cleared.');
           });
         }
+      }
+
+      setInterval(function(){ render(); wire(); }, 700);
+      if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', function(){ render(); wire(); });
+      else { render(); wire(); }
+    })();
+    </script>
+
+    <section id="v27WhatIf" class="exec-card no-print" hidden>
+      <div class="mac-head">
+        <div><div class="exec-label">🔮 What-If Modeling</div><div class="mac-title">Adjust one or two inputs, see the ratio move — works for any pair of measures</div></div>
+      </div>
+      <div class="v27-adv-controls">
+        <label>Numerator <select id="v27WiNumerator"></select></label>
+        <label>Denominator <select id="v27WiDenominator"></select></label>
+      </div>
+      <div class="v27-adv-controls">
+        <label>Numerator change % <input type="number" id="v27WiNumChange" value="0" style="padding:8px 10px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:12.5px;font-weight:600" step="any"></label>
+        <label>Denominator change % <input type="number" id="v27WiDenChange" value="0" style="padding:8px 10px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:12.5px;font-weight:600" step="any"></label>
+      </div>
+      <div id="v27WhatIfBody"></div>
+    </section>
+    <script id="instantdash-v27-whatif-wire">
+    (function(){
+      function esc27w(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+      function fmtW27(v){ return (typeof v==='number' && isFinite(v)) ? v.toLocaleString('en-IN', {maximumFractionDigits:2}) : '—'; }
+      var lastDataVersion = null;
+
+      function compute(){
+        var body = document.getElementById('v27WhatIfBody');
+        var numSel = document.getElementById('v27WiNumerator');
+        var denSel = document.getElementById('v27WiDenominator');
+        if(!body || !numSel || !denSel) return;
+        var numName = numSel.value, denName = denSel.value;
+        if(!numName || !denName || numName===denName){
+          body.innerHTML = '<div class="v26-map-intro" style="font-style:italic">Pick two different measures to build a ratio.</div>';
+          return;
+        }
+        var rows = (window.APP && window.APP.filtered) || window.APP.rows || [];
+        var numAgg = (typeof window.__instantDashAggregate==='function') ? window.__instantDashAggregate(numName, rows) : null;
+        var denAgg = (typeof window.__instantDashAggregate==='function') ? window.__instantDashAggregate(denName, rows) : null;
+        if(!numAgg || !numAgg.count || !denAgg || !denAgg.count || !denAgg.value){
+          body.innerHTML = '<div class="v26-map-intro" style="font-style:italic">Could not compute a ratio for this combination.</div>';
+          return;
+        }
+        var numVal = numAgg.value, denVal = denAgg.value;
+        var currentRatio = (numVal/denVal)*100;
+
+        var numChangePct = parseFloat(document.getElementById('v27WiNumChange').value) || 0;
+        var denChangePct = parseFloat(document.getElementById('v27WiDenChange').value) || 0;
+        var newNum = numVal * (1 + numChangePct/100);
+        var newDen = denVal * (1 + denChangePct/100);
+        var newRatio = newDen ? (newNum/newDen)*100 : null;
+        var delta = newRatio!=null ? newRatio - currentRatio : null;
+
+        body.innerHTML =
+          '<div class="v27-wi-row"><div class="v27-wi-box"><div class="v27-wi-label">Current ratio</div><div class="v27-wi-val">'+currentRatio.toFixed(2)+'%</div><div class="v27-wi-sub">'+esc27w(numName)+' '+fmtW27(numVal)+' ÷ '+esc27w(denName)+' '+fmtW27(denVal)+'</div></div>'+
+          '<div class="v27-wi-arrow">→</div>'+
+          '<div class="v27-wi-box v27-wi-projected"><div class="v27-wi-label">Projected ratio</div><div class="v27-wi-val">'+(newRatio!=null?newRatio.toFixed(2)+'%':'—')+'</div><div class="v27-wi-sub">'+esc27w(numName)+' '+fmtW27(newNum)+' ÷ '+esc27w(denName)+' '+fmtW27(newDen)+'</div></div></div>'+
+          (delta!=null ? '<div class="v26-map-intro" style="margin-top:10px;font-weight:700;color:'+(delta>=0?'var(--warn)':'var(--ok)')+'">'+(delta>=0?'+':'')+delta.toFixed(2)+' percentage point'+(Math.abs(delta)===1?'':'s')+' change from the adjustments entered above.</div>' : '') +
+          '<div class="v26-map-intro" style="margin-top:6px">A projection only — assumes the stated % changes apply uniformly and does not account for any other factor.</div>';
+      }
+
+      function render(){
+        var section = document.getElementById('v27WhatIf');
+        if(!section) return;
+        var app = window.APP || {};
+        var hasData = !!(app.rows && app.rows.length);
+        if(!hasData){ section.hidden = true; lastDataVersion = null; return; }
+        var measures = (typeof rankMeasures==='function') ? rankMeasures().map(function(m){return m.name;}) : [];
+        if(measures.length < 2){ section.hidden = true; return; }
+        section.hidden = false;
+
+        if(lastDataVersion !== app.__dataVersion){
+          lastDataVersion = app.__dataVersion;
+          ['v27WiNumerator','v27WiDenominator'].forEach(function(id, idx){
+            var sel = document.getElementById(id);
+            if(sel){
+              var prev = sel.value;
+              sel.innerHTML = measures.map(function(m){ return '<option value="'+esc27w(m)+'">'+esc27w(m)+'</option>'; }).join('');
+              if(measures.indexOf(prev)!==-1) sel.value = prev;
+              else if(idx===1 && measures.length>1) sel.value = measures[1];
+            }
+          });
+        }
+        compute();
+      }
+
+      function wire(){
+        ['v27WiNumerator','v27WiDenominator','v27WiNumChange','v27WiDenChange'].forEach(function(id){
+          var el = document.getElementById(id);
+          if(el && !el.dataset.wired2742){ el.dataset.wired2742='1'; el.addEventListener('input', compute); el.addEventListener('change', compute); }
+        });
       }
 
       setInterval(function(){ render(); wire(); }, 700);
@@ -4128,6 +4475,124 @@ body{
       setInterval(function(){ render(); wire(); }, 800);
       if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', function(){ render(); wire(); });
       else { render(); wire(); }
+    })();
+    </script>
+
+    <script id="instantdash-v27-session-portability">
+    (function(){
+      function serializeFilters(filters){
+        var out = {};
+        Object.keys(filters||{}).forEach(function(k){
+          var f = filters[k];
+          if(f.kind==='cat') out[k] = { kind:'cat', selected: Array.from(f.selected||[]) };
+          else if(f.kind==='date') out[k] = { kind:'date', from: f.from ? f.from.toISOString() : null, to: f.to ? f.to.toISOString() : null };
+        });
+        return out;
+      }
+      function deserializeFilters(obj){
+        var out = {};
+        Object.keys(obj||{}).forEach(function(k){
+          var f = obj[k];
+          if(f.kind==='cat') out[k] = { kind:'cat', selected: new Set(f.selected) };
+          else out[k] = { kind:'date', from: f.from?new Date(f.from):null, to: f.to?new Date(f.to):null };
+        });
+        return out;
+      }
+
+      function doExportSession(){
+        if(!window.APP || !window.APP.rows || !window.APP.rows.length){
+          if(typeof toast==='function') toast('Load a file before exporting a session.');
+          return;
+        }
+        var session = {
+          instantDashSession: true,
+          version: 1,
+          exportedAt: new Date().toISOString(),
+          fileName: window.APP.fileName || null,
+          department: window.__instantDashDepartment || '',
+          filters: serializeFilters(window.APP.filters),
+          kpiSelection: window.__instantDashKpiSelection || null,
+          kpiTargets: window.__instantDashKpiTargets || {},
+          kpiBenchmarks: window.__instantDashKpiBenchmarks || {},
+          kpiNotes: window.__instantDashKpiNotes || {},
+          managementCommentary: window.__instantDashManagementCommentary || '',
+          customRules: window.__instantDashCustomRules || [],
+          templates: window.__instantDashTemplates || [],
+          savedViews: (window.__instantDashSavedViews || []).map(function(v){ return { name:v.name, description:v.description, filters: v.filters }; }),
+        };
+        var blob = new Blob([JSON.stringify(session, null, 2)], { type:'application/json' });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = (window.APP.fileName||'InstantDash').replace(/\.[^.]+$/,'').replace(/[^a-z0-9]+/gi,'_') + '_session.json';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+        if(typeof toast==='function') toast('Session exported.');
+      }
+
+      function doImportSession(file){
+        if(!window.APP || !window.APP.rows || !window.APP.rows.length){
+          if(typeof toast==='function') toast('Load a data file first, then import a session to apply it.');
+          return;
+        }
+        var reader = new FileReader();
+        reader.onload = function(e){
+          var session;
+          try{ session = JSON.parse(e.target.result); }
+          catch(err){ if(typeof toast==='function') toast('That file is not a valid session export.'); return; }
+          if(!session || !session.instantDashSession){ if(typeof toast==='function') toast('That file is not a recognised InstantDash session.'); return; }
+
+          window.APP.filters = deserializeFilters(session.filters);
+          if(session.kpiSelection) window.__instantDashKpiSelection = session.kpiSelection;
+          window.__instantDashKpiTargets = session.kpiTargets || {};
+          window.__instantDashKpiBenchmarks = session.kpiBenchmarks || {};
+          window.__instantDashKpiNotes = session.kpiNotes || {};
+          window.__instantDashManagementCommentary = session.managementCommentary || '';
+          window.__instantDashCustomRules = session.customRules || [];
+          window.__instantDashTemplates = session.templates || [];
+          window.__instantDashDepartment = session.department || '';
+          var deptSelEl = document.getElementById('v27DepartmentSelect');
+          if(deptSelEl) deptSelEl.value = window.__instantDashDepartment;
+          window.__instantDashSavedViews = (session.savedViews||[]).map(function(v){
+            return { name:v.name, description:v.description, filters: v.filters };
+          });
+
+          if(typeof applyFiltersAndRedraw==='function') applyFiltersAndRedraw();
+          if(typeof buildFilterBar==='function') buildFilterBar();
+          if(typeof buildKPIs==='function') buildKPIs();
+          if(typeof toast==='function') toast('Session imported'+(session.fileName?' (originally from '+session.fileName+')':'')+'.');
+        };
+        reader.readAsText(file);
+      }
+
+      function wire(){
+        var exportBtn = document.getElementById('exportSessionBtn');
+        if(exportBtn && !exportBtn.dataset.wired2743){ exportBtn.dataset.wired2743='1'; exportBtn.addEventListener('click', doExportSession); }
+        var importBtn = document.getElementById('importSessionBtn');
+        var importInput = document.getElementById('importSessionInput');
+        if(importBtn && importInput && !importBtn.dataset.wired2743){
+          importBtn.dataset.wired2743='1';
+          importBtn.addEventListener('click', function(){ importInput.click(); });
+          importInput.addEventListener('change', function(){
+            var file = importInput.files && importInput.files[0];
+            importInput.value = '';
+            if(file) doImportSession(file);
+          });
+        }
+        var deptSel = document.getElementById('v27DepartmentSelect');
+        if(deptSel && !deptSel.dataset.wired2744){
+          deptSel.dataset.wired2744 = '1';
+          if(window.__instantDashDepartment) deptSel.value = window.__instantDashDepartment;
+          deptSel.addEventListener('change', function(){
+            window.__instantDashDepartment = deptSel.value;
+          });
+        }
+      }
+      setInterval(wire, 700);
+      if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', wire);
+      else wire();
     })();
     </script>
 
@@ -6813,7 +7278,7 @@ body{
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v27.39.2',
+  VERSION: 'v27.44.0',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
