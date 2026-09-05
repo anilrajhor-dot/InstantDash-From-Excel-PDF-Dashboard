@@ -2,7 +2,7 @@
 <html lang="en" class="theme-dark" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InstantDash — Excel to Dashboard</title>
-<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.29.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
+<script id="instantdash-shared-state">window.__INSTANTDASH_SHARED_STATE__={"version":"v27.30.0","fileName":"InstantDash Dashboard","rows":[],"columns":[],"rawColumnNames":[],"activeSheet":""};</script>
 <script id="instantdash-v26-error-catcher">
 /* v26.0.12 — installed as early as possible, before any other script
    runs, so it can catch errors from every subsequent script tag on the
@@ -524,6 +524,9 @@ main{max-width:1360px;margin:0 auto;padding:24px}
 .v27-anomaly-detail{font-size:11.5px;color:var(--muted);margin-top:2px}
 .v27-cmp-up{color:var(--accent);font-weight:700}
 .v27-cmp-down{color:var(--text);font-weight:700}
+.v27-multi-toggle{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:var(--muted);margin:2px 0 10px;cursor:pointer}
+.v27-multi-list{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.v27-multi-list label{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;background:var(--card-2);border:1px solid var(--border);border-radius:8px;padding:6px 10px;cursor:pointer}
 .v27-edit-row{display:flex;align-items:center;gap:10px;padding:9px 11px;margin-bottom:7px;border-radius:9px;background:var(--card-2);border:1px solid var(--border)}
 .v27-edit-num{width:20px;height:20px;border-radius:50%;background:var(--accent);color:#111;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
 .v27-edit-name{flex:1 1 auto;font-size:12.5px;font-weight:700;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -1740,7 +1743,7 @@ html,body{overflow-anchor:none!important;}
 </style>
 
 
-<meta name="instantdash-build" content="v27.29.0">
+<meta name="instantdash-build" content="v27.30.0">
 <!-- InstantDash v1.11.19: REAL PARAMETER CHART ENGINE. This build is intentionally distinct from v1.11.16/v1.11.17. -->
 <style>.smart-data-verification{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0;font-size:.86rem;color:var(--muted)}.smart-data-verification b{color:var(--text)}.smart-data-verification span{opacity:.85}</style>
 <style id="instantdash-v11211-health-first">
@@ -2614,7 +2617,7 @@ body{
     if(b && !document.getElementById('idV171Master')){
       var s=document.createElement('span');
       s.id='idV171Master'; s.className='id-v171-master';
-      s.textContent='v27.29.0';
+      s.textContent='v27.30.0';
       b.appendChild(s);
     }
   }
@@ -2674,11 +2677,11 @@ body{
     <div class="v26-brand-text">
       <h1 id="appName">InstantDash</h1>
       <div class="v26-cockpit-subtitle">Executive Management Cockpit</div>
-      <span class="sub">Excel / CSV / PDF → Dashboard · v27.29.0</span>
+      <span class="sub">Excel / CSV / PDF → Dashboard · v27.30.0</span>
       <div class="v26-cockpit-tagline">AI-powered performance intelligence from your data</div>
       <div id="idBrandingSlot" style="display:none;align-items:center;gap:8px;margin-top:6px;"></div>
     </div>
-  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.29.0</span></div>
+  <span id="idV163Source" class="id-v163-source"><span class="id-v163-source-dot"></span><span title="No file loaded">Data: No file loaded</span></span><span id="idV171Master" class="id-v171-master">v27.30.0</span></div>
   <a href="index.html" class="id-health-btn no-print" id="mainMenuBackBtn" style="text-decoration:none;display:inline-flex;align-items:center">← Main Menu</a>
   <span id="share"><button class="v154-share-tab no-print" id="topShareBtn" type="button" aria-label="Share InstantDash">📤 Share</button></span>
       <button class="id-health-btn no-print" id="pptxExportBtn" type="button" aria-label="Export to PowerPoint">📊 Export PPT</button>
@@ -3007,7 +3010,15 @@ body{
                v27.26.0 never showing either) tells us definitively
                whether the problem is the click detection itself or
                something further down the chain. */
-            try{ if(typeof toast==='function') toast('👆 Chip tapped: '+chip.textContent.trim()); }catch(_t){}
+            try{
+              var diag = document.getElementById('v27TapDiag');
+              if(diag){
+                diag.textContent = '👆 Tap detected: '+chip.textContent.trim();
+                diag.style.opacity = '1';
+                clearTimeout(diag._hideTimer);
+                diag._hideTimer = setTimeout(function(){ diag.style.opacity = '0'; }, 3000);
+              }
+            }catch(_t){}
             var col = chip.getAttribute('data-slicer-col');
             var val = chip.getAttribute('data-slicer-val');
             var f = window.APP.filters[col] || (window.APP.filters[col] = {kind:'cat', selected:new Set()});
@@ -3351,6 +3362,8 @@ body{
           <label>Measure <select id="v27WfMeasure"></select></label>
           <label>Break down by <select id="v27WfDim"></select></label>
         </div>
+        <label class="v27-multi-toggle"><input type="checkbox" id="v27WfMultiToggle"> Compare multiple measures instead</label>
+        <div id="v27WfMultiList" class="v27-multi-list" hidden></div>
         <div id="v27WfChart" class="v27-adv-chart"></div>
       </div>
       <div id="v27AdvTreemap" class="v27-adv-pane" hidden>
@@ -3403,7 +3416,71 @@ body{
         if(prevValue && options.indexOf(prevValue)!==-1) sel.value = prevValue;
       }
 
+      function renderGroupedBars(selectedMeasures){
+        var chartEl = document.getElementById('v27WfChart');
+        var dimSel = document.getElementById('v27WfDim');
+        if(!chartEl || !dimSel) return;
+        var dimName = dimSel.value;
+        if(!dimName || !selectedMeasures.length){ chartEl.innerHTML = '<div class="v26-map-intro" style="font-style:italic">Pick at least one measure and a category to break down by.</div>'; return; }
+
+        var rows = (window.APP && window.APP.filtered) || [];
+        var groups = {};
+        rows.forEach(function(r){
+          var g = r[dimName];
+          var key = (g===null||g===undefined||g==='') ? null : String(g);
+          if(key===null) return;
+          if(!groups[key]) groups[key] = {};
+          selectedMeasures.forEach(function(m){
+            var v = r[m];
+            if(typeof v==='number' && isFinite(v)) groups[key][m] = (groups[key][m]||0) + v;
+          });
+        });
+        var cats = Object.keys(groups);
+        // Sort categories by their first selected measure's value, descending
+        cats.sort(function(a,b){ return (groups[b][selectedMeasures[0]]||0) - (groups[a][selectedMeasures[0]]||0); });
+        cats = cats.slice(0, 8);
+
+        if(!cats.length){ chartEl.innerHTML = '<div class="v26-map-intro" style="font-style:italic">No numeric data available for this combination.</div>'; return; }
+
+        var maxVal = 0;
+        cats.forEach(function(cat){ selectedMeasures.forEach(function(m){ maxVal = Math.max(maxVal, Math.abs(groups[cat][m]||0)); }); });
+        if(!maxVal) maxVal = 1;
+
+        var palette = window.__instantDashChartColors || ['#C9A227','#8B2F3D','#16785A','#2C4A6B','#6B4E8E','#B0793E','#4A7A8C','#8FA05C'];
+        var chartH = 240, padTop = 16, padBottom = 36, groupGap = 24;
+        var barW = 24, barGap = 4;
+        var groupW = selectedMeasures.length*barW + (selectedMeasures.length-1)*barGap;
+        var chartW = Math.max(360, cats.length*(groupW+groupGap)+groupGap);
+        var plotH = chartH-padTop-padBottom;
+
+        var svg = [];
+        cats.forEach(function(cat, ci){
+          var groupX = groupGap + ci*(groupW+groupGap);
+          selectedMeasures.forEach(function(m, mi){
+            var val = groups[cat][m]||0;
+            var barH = (Math.abs(val)/maxVal)*plotH;
+            var x = groupX + mi*(barW+barGap);
+            var color = palette[mi % palette.length];
+            svg.push('<rect x="'+x+'" y="'+(padTop+plotH-barH)+'" width="'+barW+'" height="'+Math.max(2,barH)+'" fill="'+color+'" rx="3"><title>'+m+' — '+cat+': '+val.toLocaleString('en-IN')+'</title></rect>');
+          });
+          var labelX = groupX + groupW/2;
+          svg.push('<text x="'+labelX+'" y="'+(chartH-14)+'" text-anchor="middle" font-size="10" fill="var(--muted)">'+(cat.length>10?cat.slice(0,9)+'…':cat)+'</text>');
+        });
+
+        var legend = '<div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:6px;font-size:11px">'+selectedMeasures.map(function(m,i){
+          return '<span><span style="display:inline-block;width:10px;height:10px;background:'+palette[i%palette.length]+';border-radius:2px;margin-right:5px"></span>'+m+'</span>';
+        }).join('')+'</div>';
+
+        chartEl.innerHTML = legend+'<svg viewBox="0 0 '+chartW+' '+chartH+'" width="100%" height="'+chartH+'" style="overflow:visible">'+svg.join('')+'</svg>';
+      }
+
       function renderWaterfall(){
+        var multiToggle = document.getElementById('v27WfMultiToggle');
+        if(multiToggle && multiToggle.checked){
+          var checked = Array.prototype.slice.call(document.querySelectorAll('#v27WfMultiList input[type=checkbox]:checked')).map(function(c){ return c.value; });
+          renderGroupedBars(checked);
+          return;
+        }
         var chartEl = document.getElementById('v27WfChart');
         var measureSel = document.getElementById('v27WfMeasure');
         var dimSel = document.getElementById('v27WfDim');
@@ -3633,6 +3710,13 @@ body{
           populateSelect(document.getElementById('v27ComboBar'), measures, true);
           populateSelect(document.getElementById('v27ComboLine'), measures.length>1 ? measures.slice(1).concat(measures.slice(0,1)) : measures, true);
 
+          var multiList = document.getElementById('v27WfMultiList');
+          if(multiList){
+            multiList.innerHTML = measures.slice(0,8).map(function(m, i){
+              return '<label><input type="checkbox" value="'+m.replace(/"/g,'&quot;')+'"'+(i<2?' checked':'')+'> '+m+'</label>';
+            }).join('');
+          }
+
           /* v27.28.0 — pick the best chart type for THIS data, rather
              than always defaulting to Waterfall regardless of whether
              it's actually the right fit. */
@@ -3675,6 +3759,22 @@ body{
           var el = document.getElementById(id);
           if(el) el.addEventListener('change', render);
         });
+        var multiToggle = document.getElementById('v27WfMultiToggle');
+        if(multiToggle && !multiToggle.dataset.wiredMulti){
+          multiToggle.dataset.wiredMulti = '1';
+          multiToggle.addEventListener('change', function(){
+            var multiList = document.getElementById('v27WfMultiList');
+            var measureSel = document.getElementById('v27WfMeasure');
+            if(multiList) multiList.hidden = !multiToggle.checked;
+            if(measureSel) measureSel.parentElement.style.display = multiToggle.checked ? 'none' : '';
+            render();
+          });
+        }
+        var multiList = document.getElementById('v27WfMultiList');
+        if(multiList && !multiList.dataset.wiredMulti){
+          multiList.dataset.wiredMulti = '1';
+          multiList.addEventListener('change', render);
+        }
       }
 
       setInterval(function(){ render(); wire(); }, 800);
@@ -6227,6 +6327,7 @@ body{
 </div>
 
 <div id="toast" class="">Data loaded — check data health before reviewing charts</div>
+<div id="v27TapDiag" style="position:fixed;top:12px;left:50%;transform:translateX(-50%);background:#16785A;color:#fff;padding:10px 18px;border-radius:10px;font-size:13px;font-weight:800;z-index:9999999;opacity:0;pointer-events:none;transition:opacity .15s ease"></div>
 
 <script>
 /* =====================================================================
@@ -6243,7 +6344,7 @@ body{
 const CONFIG = {
   BUILD_VERSION: '1.13.53',
   APP_NAME: 'InstantDash',
-  VERSION: 'v27.29.0',
+  VERSION: 'v27.30.0',
 
   // How many charts to auto-generate
   MIN_CHARTS: 4,
