@@ -3935,10 +3935,15 @@ body{
         var baseLabel = isNamedCurrentRatio ? 'Current Ratio' : 'Ratio';
         var projectedLabel = isNamedCurrentRatio ? 'Projected Current Ratio' : 'Projected ratio';
 
+        var meaningText = isNamedCurrentRatio
+          ? ('This means there is '+currentRatioPlain.toFixed(2)+' in current assets for every 1 in current liabilities. As a rough rule of thumb, 1.5–2.0 is often considered comfortable short-term liquidity, though the right benchmark depends on the sector and business.')
+          : ('This means: on average, there are '+currentRatioPlain.toFixed(2)+' '+esc27w(numName)+' for every 1 '+esc27w(denName)+'.');
+
         body.innerHTML =
           '<div class="v27-wi-row"><div class="v27-wi-box"><div class="v27-wi-label">'+baseLabel+'</div><div class="v27-wi-val">'+currentRatioPlain.toFixed(2)+'</div><div class="v27-wi-sub">('+currentRatio.toFixed(2)+'% · as a percentage, if that fits this pair) · '+esc27w(numName)+' '+fmtW27(numVal)+' ÷ '+esc27w(denName)+' '+fmtW27(denVal)+'</div></div>'+
           '<div class="v27-wi-arrow">→</div>'+
           '<div class="v27-wi-box v27-wi-projected"><div class="v27-wi-label">'+projectedLabel+'</div><div class="v27-wi-val">'+(newRatioPlain!=null?newRatioPlain.toFixed(2):'—')+'</div><div class="v27-wi-sub">'+(newRatio!=null?'('+newRatio.toFixed(2)+'% · as a percentage) · ':'')+esc27w(numName)+' '+fmtW27(newNum)+' ÷ '+esc27w(denName)+' '+fmtW27(newDen)+'</div></div></div>'+
+          '<div class="v26-map-intro" style="margin-top:10px;font-style:italic">'+meaningText+'</div>'+
           (delta!=null ? '<div class="v26-map-intro" style="margin-top:10px;font-weight:700;color:'+(delta>=0?'var(--warn)':'var(--ok)')+'">'+(delta>=0?'+':'')+(newRatioPlain-currentRatioPlain).toFixed(2)+' change in the plain ratio ('+(delta>=0?'+':'')+delta.toFixed(2)+' percentage points, if read as a %) from the adjustments entered above.</div>' : '') +
           '<div class="v26-map-intro" style="margin-top:6px">A projection only — assumes the stated % changes apply uniformly and does not account for any other factor. The plain ratio is usually the clearer reading unless this pair is genuinely a part-of-whole relationship (like NPA ÷ Advances).</div>';
       }
@@ -11141,6 +11146,26 @@ function miLatestPeriodRows(rows,dateCol){
   MI_PERIOD_CACHE.set(cacheKey,result);
   return result;
 }
+/* Turns a period key from miLatestPeriodRows (e.g. "2026-07", "2026-Q3",
+   "2026", "2026-07-15") into a reader-friendly label (e.g. "July 2026",
+   "Q3 2026", "2026", "15 Jul 2026"), so movement sentences can name the
+   actual months being compared instead of just the raw numbers. */
+function miPeriodLabel(key,gran){
+  if(!key) return '';
+  const MONTHS_FULL=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const MONTHS_SHORT=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  if(gran==='year') return key;
+  if(gran==='quarter'){
+    const m=key.match(/^(\d+)-Q(\d)$/);
+    return m ? ('Q'+m[2]+' '+m[1]) : key;
+  }
+  if(gran==='day'){
+    const m=key.match(/^(\d+)-(\d\d)-(\d\d)$/);
+    return m ? (Number(m[3])+' '+MONTHS_SHORT[Number(m[2])-1]+' '+m[1]) : key;
+  }
+  const m=key.match(/^(\d+)-(\d\d)$/);
+  return m ? (MONTHS_FULL[Number(m[2])-1]+' '+m[1]) : key;
+}
 /* v1.11.14 — deterministic KPI aggregation.
    Additive measures are summed; rates, percentages, ratios, averages and
    per-unit measures are averaged across the selected period rows. This keeps
@@ -11455,7 +11480,11 @@ function miGenericManagementRemark(name, direction, sem, favourable, change){
 function miMovementText(name,ch,prev,cur,lr){
   const direction=miDirection(name);
   const sem=miSemantic(name);
-  const sentence=`<b>${miEsc(name)}</b> ${ch.abs>=0?'increased':'decreased'} from ${fmtFull(prev)} to ${fmtFull(cur)} (${miPct(ch.pct)}).`;
+  const prevLabel=lr?miPeriodLabel(lr.previousKey,lr.granularity):'';
+  const curLabel=lr?miPeriodLabel(lr.periodKey,lr.granularity):'';
+  const fromPhrase=prevLabel?(fmtFull(prev)+' in '+prevLabel):fmtFull(prev);
+  const toPhrase=curLabel?(fmtFull(cur)+' in '+curLabel):fmtFull(cur);
+  const sentence=`<b>${miEsc(name)}</b> ${ch.abs>=0?'increased':'decreased'} from ${fromPhrase} to ${toPhrase} (${miPct(ch.pct)}).`;
   const relatedRemark=miRelatedManagementRemark(name,lr);
   const genericRemark=miGenericManagementRemark(name,direction,sem,/lower/i.test(direction)?ch.abs<0:ch.abs>0,ch);
   const remark=relatedRemark||genericRemark;
@@ -12095,7 +12124,11 @@ function buildManagementInsights(){
       if(prev===0)return;
       const ch=miChange(prev,cur); if(Math.abs(ch.pct||0)<0.10)return;
       const name=c.name;
-      const sentence=`<b>${miEsc(name)}</b> ${ch.abs>=0?'increased':'decreased'} from ${fmtFull(prev)} to ${fmtFull(cur)} (${miPct(ch.pct)}).`;
+      const prevLabel=miPeriodLabel(lr.previousKey,lr.granularity);
+      const curLabel=miPeriodLabel(lr.periodKey,lr.granularity);
+      const fromPhrase=prevLabel?(fmtFull(prev)+' in '+prevLabel):fmtFull(prev);
+      const toPhrase=curLabel?(fmtFull(cur)+' in '+curLabel):fmtFull(cur);
+      const sentence=`<b>${miEsc(name)}</b> ${ch.abs>=0?'increased':'decreased'} from ${fromPhrase} to ${toPhrase} (${miPct(ch.pct)}).`;
       if(miSemantic(name)==='contextual'){
         items.contextual.push(sentence+' This is a contextual movement; assess it against capacity, target, case mix, operating range or the actual business outcome before calling it favourable or adverse. <span class="mi-remark"><b>Management review:</b> validate against the closest supporting KPI, target or operating driver.</span>');
       }else if(/planned|planning/i.test(name)){
