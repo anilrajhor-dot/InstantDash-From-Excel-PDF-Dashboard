@@ -11097,7 +11097,8 @@ function miLatestPeriodRows(rows,dateCol){
   const valid=rows.map(r=>r[dateCol.name]).filter(d=>d instanceof Date&&!isNaN(d.getTime()));
   if(valid.length<2)return null;
   const gran=pickGranularity(dateCol)||'month';
-  const cacheKey=miPeriodSignature(rows,dateCol,gran);
+  const todayKey=new Date().toISOString().slice(0,10);
+  const cacheKey=miPeriodSignature(rows,dateCol,gran)+'|'+todayKey;
   if(MI_PERIOD_CACHE.has(cacheKey)) return MI_PERIOD_CACHE.get(cacheKey);
   const keyOf=(d)=>{
     const y=d.getFullYear(), m=d.getMonth(), day=d.getDate();
@@ -11113,6 +11114,16 @@ function miLatestPeriodRows(rows,dateCol){
     if(gran==='year') return new Date(y,0,1);
     return new Date(y,m,1);
   };
+  /* The first moment AFTER this period ends — used to check whether the
+     period has fully passed yet, so an in-progress month/quarter/year is
+     never compared as if it were complete. */
+  const endOf=(start)=>{
+    const y=start.getFullYear(), m=start.getMonth(), day=start.getDate();
+    if(gran==='day') return new Date(y,m,day+1);
+    if(gran==='quarter') return new Date(y,m+3,1);
+    if(gran==='year') return new Date(y+1,0,1);
+    return new Date(y,m+1,1);
+  };
   const periods=new Map();
   for(const r of rows){
     const d=r[dateCol.name];
@@ -11121,7 +11132,9 @@ function miLatestPeriodRows(rows,dateCol){
     if(!periods.has(k)) periods.set(k,{key:k,start:startOf(d),rows:[]});
     periods.get(k).rows.push(r);
   }
-  const ordered=[...periods.values()].sort((a,b)=>a.start-b.start);
+  const now=new Date();
+  const ordered=[...periods.values()].sort((a,b)=>a.start-b.start)
+    .filter(p=>endOf(p.start)<=now); // drop the current, still-in-progress period and any future one
   if(ordered.length<2){ MI_PERIOD_CACHE.set(cacheKey,null); return null; }
   const previous=ordered[ordered.length-2], current=ordered[ordered.length-1];
   const result={latest:current.start,prev:previous.start,current:current.rows,previous:previous.rows,granularity:gran,periodKey:current.key,previousKey:previous.key};
