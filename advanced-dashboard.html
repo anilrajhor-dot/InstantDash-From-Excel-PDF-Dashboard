@@ -5875,7 +5875,6 @@ body{
           }
           var cards = movements.map(function(mv){
             var title = titleFrom6b(mv.plain);
-            var whatChanged = mv.plain.replace(/^([^:]+):\s*/,'');
             var related = relatedMeasures(title, rows, allMeasures);
             var relatedHtml;
             if(related.length){
@@ -5889,15 +5888,12 @@ body{
             var sampleCaveat = rows.length < 20
               ? 'Based on only '+rows.length.toLocaleString()+' records — treat any correlation shown as indicative only, not statistically conclusive.'
               : 'Based on '+rows.length.toLocaleString()+' records.';
-            var action = (typeof miActionForKpi==='function') ? miActionForKpi(title) : 'Review this measure against target, benchmark and related KPIs.';
             var question = suggestQuestion(title, mv.isAttention);
             return '<div class="v26-rel-card '+(mv.isAttention?'attention':'good')+'">'+
               '<div class="v26-rel-title">'+(mv.isAttention?'🔴':'🟢')+' '+esc6b(title)+'</div>'+
-              '<div class="v26-rel-field"><b>What changed</b><p>'+esc6b(whatChanged)+'</p></div>'+
               '<div class="v26-rel-field"><b>Data-supported relationships</b>'+relatedHtml+'</div>'+
               '<div class="v26-rel-field"><b>Assumptions &amp; limitations</b><p>'+esc6b(sampleCaveat)+' Relationship observed; causation requires management validation.</p></div>'+
               '<div class="v26-rel-field"><b>Management question</b><p>'+esc6b(question)+'</p></div>'+
-              '<div class="v26-rel-field"><b>Suggested action</b><p>'+esc6b(action)+'</p></div>'+
             '</div>';
           });
           body.innerHTML = cards.join('');
@@ -5963,7 +5959,6 @@ body{
                 '<div class="v26-brief-finding-title">'+(mv.isAttention?'🔴':'🟢')+' '+esc6c(title)+'</div>'+
                 '<div class="v26-brief-row"><b>What changed:</b> '+esc6c(whatChanged)+'</div>'+
                 '<div class="v26-brief-row"><b>Why it matters:</b> '+esc6c(whyMatters)+'</div>'+
-                '<div class="v26-brief-row"><b>Supporting evidence:</b> Comparable period identified in the currently loaded dataset. Relationship observed; causation requires management validation.</div>'+
                 '<div class="v26-brief-row"><b>Calculation:</b> '+esc6c(calc)+'</div>'+
                 '<div class="v26-brief-row"><b>Recommended action:</b> '+esc6c(action)+'</div>'+
               '</div>'+
@@ -6166,17 +6161,13 @@ body{
 
           var cards = movements.map(function(mv){
             var title = titleFrom6e(mv.plain);
-            var whatChanged = mv.plain.replace(/^([^:]+):\s*/,'');
             var decision = (typeof decisionRequiredFor==='function') ? decisionRequiredFor(title, mv.isAttention) : 'Review this movement and decide on next steps.';
             var impact = (typeof impactFor==='function') ? impactFor(title, '') : '';
-            var action = (typeof miActionForKpi==='function') ? miActionForKpi(title) : 'Review against target, benchmark and related KPIs.';
             var risk = (typeof riskIfIgnoredFor==='function') ? riskIfIgnoredFor(title, mv.isAttention) : '';
             return '<div class="v26-dm-card '+(mv.isAttention?'attention':'good')+'">'+
               '<div class="v26-dm-title">'+(mv.isAttention?'🔴':'🟢')+' '+esc6e(title)+'</div>'+
               '<div class="v26-dm-field v26-dm-decision"><b>⚖️ Decision Required</b><p>'+esc6e(decision)+'</p></div>'+
-              '<div class="v26-dm-field"><b>📊 Evidence</b><p>'+esc6e(whatChanged)+'</p></div>'+
               '<div class="v26-dm-field"><b>💥 Impact</b><p>'+esc6e(impact)+'</p></div>'+
-              '<div class="v26-dm-field"><b>✅ Recommended Action</b><p>'+esc6e(action)+'</p></div>'+
               '<div class="v26-dm-field v26-dm-risk"><b>⚠️ Risk if Ignored</b><p>'+esc6e(risk)+'</p></div>'+
             '</div>';
           });
