@@ -8916,6 +8916,7 @@ async function loadSheet(sheetName, autoHeader, loadToken){
 
     if(loadToken !== APP.__loadToken) return;
     APP.aoa = aoa;
+    APP.__cleaningRules = { renames:{}, excludeBlankColumns:[], forceNumericColumns:[], dedupeKeyColumns:null };
     if (autoHeader){
       APP.headerRow = (ws['!instantdash_pdf_meta'] ? 0 : detectHeaderRow(aoa));
       $('headerRow').value = APP.headerRow + 1;
@@ -9083,11 +9084,13 @@ async function rebuildFromAoa(){
   // Work out which columns have any content at all, and name them.
   const keep = [], names = [];
   const duplicateHeaderGroups = new Map(); // originalHeaderText -> [{colNum, finalName}]
+  const cleaningRules = APP.__cleaningRules || { renames:{}, excludeBlankColumns:[], forceNumericColumns:[], dedupeKeyColumns:null };
   for (let c = 0; c < width; c++){
     let has = !isBlank(headerCells[c]);
     if (!has) for (let i = 0; i < Math.min(dataRows.length, 300); i++){ if (!isBlank(dataRows[i][c])) { has = true; break; } }
     if (!has) continue;                                    // fully blank column → drop
     let nm = isBlank(headerCells[c]) ? 'Column ' + (c + 1) : String(headerCells[c]).trim().replace(/\s+/g,' ');
+    if (cleaningRules.renames && cleaningRules.renames[c]) nm = cleaningRules.renames[c]; // user-applied rename (Data Cleanup)
     const originalNm = nm;
     if (names.includes(nm)) {
       // A repeated header is usually a paired/repeated block in the sheet
@@ -9174,9 +9177,37 @@ async function rebuildFromAoa(){
   }
 
   const cleaned = detectAndExcludeSummaryRows(rows, names, srcIndex);
-  APP.rows = cleaned.rows;
+  let finalRows = cleaned.rows, finalSrcIndex = cleaned.srcIndex;
+
+  // Data Cleanup rule: drop rows that are blank in a column the user chose
+  // to treat as required (e.g. "Completed/Proposed" must be filled in).
+  if (cleaningRules.excludeBlankColumns && cleaningRules.excludeBlankColumns.length){
+    const keepIdx = [];
+    finalRows.forEach((r, i) => {
+      const bad = cleaningRules.excludeBlankColumns.some(colName => isBlank(r[colName]));
+      if (!bad) keepIdx.push(i);
+    });
+    finalRows = keepIdx.map(i => cleaned.rows[i]);
+    finalSrcIndex = keepIdx.map(i => cleaned.srcIndex[i]);
+  }
+
+  // Data Cleanup rule: remove rows that duplicate on a chosen set of key
+  // columns (e.g. Program code), keeping the first occurrence of each key.
+  if (cleaningRules.dedupeKeyColumns && cleaningRules.dedupeKeyColumns.length){
+    const seen = new Set(), keepIdx = [];
+    finalRows.forEach((r, i) => {
+      const key = cleaningRules.dedupeKeyColumns.map(colName => String(r[colName])).join('␟');
+      if (!seen.has(key)){ seen.add(key); keepIdx.push(i); }
+    });
+    const beforeCount = finalRows.length;
+    finalRows = keepIdx.map(i => finalRows[i]);
+    finalSrcIndex = keepIdx.map(i => finalSrcIndex[i]);
+    APP.__lastDedupeRemoved = beforeCount - finalRows.length;
+  }
+
+  APP.rows = finalRows;
   APP.__dataVersion = (APP.__dataVersion || 0) + 1;
-  APP.srcIndex = cleaned.srcIndex;
+  APP.srcIndex = finalSrcIndex;
   APP.excludedSummaryRows = cleaned.excluded;
   APP.rawColumnNames = names;
 
@@ -9184,6 +9215,19 @@ async function rebuildFromAoa(){
   await nextFrame();
   profileColumns(names);       // fills APP.columns
   coerceValues();              // converts text numbers/dates in place
+
+  // Data Cleanup rule: for a column the user confirmed should be purely
+  // numeric, blank out any value that still isn't a number after normal
+  // coercion (instead of letting mixed text silently break totals/averages).
+  if (cleaningRules.forceNumericColumns && cleaningRules.forceNumericColumns.length){
+    cleaningRules.forceNumericColumns.forEach(colName => {
+      APP.rows.forEach(r => {
+        const v = r[colName];
+        if (v !== null && v !== undefined && typeof v !== 'number') r[colName] = null;
+      });
+    });
+    profileColumns(names); // re-profile so type/role reflect the now-clean column
+  }
 
   // v13.44 FINAL — PDF semantic column bridge. The PDF parser supplies the
   // authoritative period names it recovered from the table header. Re-assert
@@ -14494,6 +14538,16 @@ function wireRest(){
 .id-health-ai-issue div{font-size:13px;line-height:1.45;margin-top:4px;color:#555;}
 .id-health-ai-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:12px;}
 .id-health-ai-actions button{border:1px solid #d6c79e;border-radius:12px;padding:10px 13px;background:#fff;font-weight:800;}
+.id-cleanup-row{margin-top:10px;padding-top:10px;border-top:1px dashed #eadfc6;}
+.id-cleanup-btn{border:1px solid #d6c79e;border-radius:10px;padding:8px 12px;background:#fff;font-weight:700;font-size:13px;cursor:pointer;}
+.id-cleanup-btn.active{background:#eefaf0;border-color:#a8d9b3;color:#1e6b32;}
+.id-cleanup-btn:disabled{opacity:.6;cursor:default;}
+.id-cleanup-hint{font-size:13px;color:#555;margin-bottom:6px;}
+.id-cleanup-rename-group{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;}
+.id-cleanup-rename{display:flex;flex-direction:column;font-size:12px;color:#666;gap:3px;}
+.id-cleanup-rename input{border:1px solid #ddd;border-radius:8px;padding:6px 8px;font-size:13px;min-width:160px;}
+.id-cleanup-checklist{display:flex;flex-wrap:wrap;gap:8px 14px;margin-bottom:10px;}
+.id-cleanup-check{font-size:13px;display:flex;align-items:center;gap:6px;}
 .id-health-ai-actions button:first-child{background:#111;color:#fff;border-color:#111;}
 .id-health-ai-note{margin-top:10px;font-size:11px;line-height:1.4;color:#666;}
 @media(max-width:600px){.id-health-ai{padding:13px;}}
@@ -14783,7 +14837,7 @@ function wireRest(){
   function buildAIPlan(checks){
     var d=dataArrays(), rows=d.rows, cols=d.cols;
     var issues=[];
-    var addIssue=function(priority,field,problem,action){issues.push({priority:priority,field:field,problem:problem,action:action});};
+    var addIssue=function(priority,field,problem,action,meta){issues.push({priority:priority,field:field,problem:problem,action:action,meta:meta||null});};
     if(!rows.length || !cols.length){
       addIssue('HIGH','Dataset','No usable rows/columns are currently loaded.','Upload or select a valid dataset, then run Health Check again.');
       return issues;
@@ -14792,16 +14846,16 @@ function wireRest(){
     missingCols.forEach(function(c){
       var pct=Number(c.missingPct); if(!isFinite(pct)) pct=rows.length?Number(c.missing||0)/rows.length*100:0;
       var p=pct>=20?'HIGH':(pct>=10?'MEDIUM':'LOW');
-      addIssue(p,c.name,'Missing '+Number(c.missing||0).toLocaleString()+' of '+rows.length.toLocaleString()+' filtered values ('+pct.toFixed(1)+'%).','Check the source system first. Determine whether blank means unknown, not applicable, or genuinely zero; restore source values where required. Do not fill blanks automatically with zero.');
+      addIssue(p,c.name,'Missing '+Number(c.missing||0).toLocaleString()+' of '+rows.length.toLocaleString()+' filtered values ('+pct.toFixed(1)+'%).','Check the source system first. Determine whether blank means unknown, not applicable, or genuinely zero; restore source values where required. Do not fill blanks automatically with zero.',{kind:'blank',col:c.name});
     });
     var dupes=duplicateRowCount(rows,cols);
-    if(dupes) addIssue('HIGH','Duplicate rows',dupes.toLocaleString()+' fully duplicate filtered row'+(dupes===1?'':'s')+' detected.','Verify whether these are repeated transactions or accidental duplicates. Remove only confirmed duplicates in the source data and preserve legitimate repeated transactions.');
+    if(dupes) addIssue('HIGH','Duplicate rows',dupes.toLocaleString()+' fully duplicate filtered row'+(dupes===1?'':'s')+' detected.','Verify whether these are repeated transactions or accidental duplicates. Remove only confirmed duplicates in the source data and preserve legitimate repeated transactions.',{kind:'dupeRows',cols:cols.map(function(c){return c.name;})});
     (window.APP && window.APP.__duplicateHeaders || []).forEach(function(group){
       var colList=group.columns.map(function(g){return 'column '+g.colNum+' ("'+g.finalName+'")';}).join(', ');
-      addIssue('MEDIUM',group.name,'The header "'+group.name+'" appears in '+group.columns.length+' separate columns in the source file: '+colList+'. They have been kept as separate measures and auto-labelled to stay unique, but a shared name makes them easy to confuse in charts, dropdowns and management insights.','If these are genuinely different measures (e.g. one column per resource person), rename each header in the source file to something distinct (e.g. "Assignment Days — RP1", "Assignment Days — RP2"). If they are accidental duplicates of the same data, remove the extra column.');
+      addIssue('MEDIUM',group.name,'The header "'+group.name+'" appears in '+group.columns.length+' separate columns in the source file: '+colList+'. They have been kept as separate measures and auto-labelled to stay unique, but a shared name makes them easy to confuse in charts, dropdowns and management insights.','If these are genuinely different measures (e.g. one column per resource person), rename each header in the source file to something distinct (e.g. "Assignment Days — RP1", "Assignment Days — RP2"). If they are accidental duplicates of the same data, remove the extra column.',{kind:'dupeHeader',group:group});
     });
     cols.filter(function(c){return c.mixed;}).forEach(function(c){
-      addIssue('HIGH',c.name,'Values use mixed numeric/text data types.','Standardise the field to one valid data type. Convert legitimate numeric text to numbers and investigate non-numeric entries before recalculating totals or averages.');
+      addIssue('HIGH',c.name,'Values use mixed numeric/text data types.','Standardise the field to one valid data type. Convert legitimate numeric text to numbers and investigate non-numeric entries before recalculating totals or averages.',{kind:'mixed',col:c.name});
     });
     cols.filter(function(c){return c.unique===1 && Number(c.missing||0)<rows.length;}).forEach(function(c){
       addIssue('LOW',c.name,'The same value appears in every row.','Confirm that the field is intentionally constant. If variation was expected, check the source extract or mapping.');
@@ -14844,6 +14898,79 @@ function wireRest(){
     return false;
   };
 
+  function renderCleanupControl(x, idx){
+    if(!x.meta) return '';
+    var m=x.meta;
+    if(m.kind==='blank'){
+      var active = !!(window.APP && APP.__cleaningRules && APP.__cleaningRules.excludeBlankColumns && APP.__cleaningRules.excludeBlankColumns.indexOf(m.col) !== -1);
+      return '<div class="id-cleanup-row"><button type="button" class="id-cleanup-btn'+(active?' active':'')+'" data-cleanup="excludeBlank" data-col="'+esc(m.col)+'">'+(active?'✓ Excluding blank rows from analysis — click to undo':'Exclude blank rows from analysis')+'</button></div>';
+    }
+    if(m.kind==='mixed'){
+      var doneN = !!(window.APP && APP.__cleaningRules && APP.__cleaningRules.forceNumericColumns && APP.__cleaningRules.forceNumericColumns.indexOf(m.col) !== -1);
+      return '<div class="id-cleanup-row"><button type="button" class="id-cleanup-btn'+(doneN?' active':'')+'" data-cleanup="forceNumeric" data-col="'+esc(m.col)+'" '+(doneN?'disabled':'')+'>'+(doneN?'✓ Converted to number':'Convert to number (blank out non-numeric)')+'</button></div>';
+    }
+    if(m.kind==='dupeHeader'){
+      var inputs=m.group.columns.map(function(g){
+        return '<label class="id-cleanup-rename"><span>Column '+g.colNum+'</span><input type="text" data-rename-col="'+g.colNum+'" value="'+esc(g.finalName)+'"></label>';
+      }).join('');
+      return '<div class="id-cleanup-row id-cleanup-rename-group">'+inputs+'<button type="button" class="id-cleanup-btn" data-cleanup="renameHeaders">Apply names</button></div>';
+    }
+    if(m.kind==='dupeRows'){
+      var boxes=m.cols.map(function(name){
+        return '<label class="id-cleanup-check"><input type="checkbox" data-dedupe-col="'+esc(name)+'"> '+esc(name)+'</label>';
+      }).join('');
+      return '<div class="id-cleanup-row id-cleanup-dedupe"><div class="id-cleanup-hint">Choose the column(s) that define a duplicate (e.g. Program code), then remove:</div><div class="id-cleanup-checklist">'+boxes+'</div><button type="button" class="id-cleanup-btn" data-cleanup="dedupeRows">Remove duplicates</button></div>';
+    }
+    return '';
+  }
+
+  function wireCleanupControls(){
+    var content=byId('healthAIContent');
+    if(!content || content.dataset.cleanupWired) return;
+    content.dataset.cleanupWired='1';
+    content.addEventListener('click', async function(e){
+      var btn=e.target.closest('[data-cleanup]');
+      if(!btn || btn.disabled) return;
+      APP.__cleaningRules = APP.__cleaningRules || { renames:{}, excludeBlankColumns:[], forceNumericColumns:[], dedupeKeyColumns:null };
+      var kind=btn.dataset.cleanup, applied=true;
+      if(kind==='excludeBlank'){
+        var col=btn.dataset.col, list=APP.__cleaningRules.excludeBlankColumns;
+        var i=list.indexOf(col);
+        if(i===-1) list.push(col); else list.splice(i,1);
+      } else if(kind==='forceNumeric'){
+        var col2=btn.dataset.col;
+        if(APP.__cleaningRules.forceNumericColumns.indexOf(col2)===-1) APP.__cleaningRules.forceNumericColumns.push(col2);
+      } else if(kind==='renameHeaders'){
+        var group=btn.closest('.id-cleanup-rename-group');
+        var inputs=group ? group.querySelectorAll('[data-rename-col]') : [];
+        var any=false;
+        inputs.forEach(function(inp){
+          var colNum=parseInt(inp.dataset.renameCol,10);
+          var newName=inp.value.trim();
+          if(newName){ APP.__cleaningRules.renames[colNum-1]=newName; any=true; }
+        });
+        if(!any) applied=false;
+      } else if(kind==='dedupeRows'){
+        var row=btn.closest('.id-cleanup-dedupe');
+        var checked=row ? Array.prototype.slice.call(row.querySelectorAll('[data-dedupe-col]:checked')).map(function(cb){return cb.dataset.dedupeCol;}) : [];
+        if(!checked.length){ if(typeof toast==='function') toast('Choose at least one column first.'); return; }
+        APP.__cleaningRules.dedupeKeyColumns=checked;
+      }
+      if(!applied) return;
+      var originalText=btn.textContent;
+      btn.disabled=true; btn.textContent='Applying…';
+      try{
+        await rebuildFromAoa();
+        if(typeof toast==='function') toast('Data cleanup applied.');
+      }catch(err){
+        console.error(err);
+        if(typeof toast==='function') toast('Could not apply the fix — see console for details.');
+      }
+      try{ render(); }catch(_){ }
+      try{ renderAI(); }catch(_){ }
+    });
+  }
+
   function renderAI(){
     var box=byId('healthAIBox'), content=byId('healthAIContent'); if(!box||!content)return;
     var checks; try{checks=calculate();}catch(e){checks=[];}
@@ -14851,9 +14978,12 @@ function wireRest(){
     var dataIssues=issues.filter(function(x){return x.priority!=='INFO';});
     var html='<div class="id-health-ai-section"><h4>'+ (dataIssues.length?'⚠ Issues requiring review':'✓ No material data-quality issue detected') +'</h4>';
     if(!issues.length) html+='<div class="id-health-ai-issue"><div>Your current dataset is not showing a rectification issue.</div></div>';
-    else issues.forEach(function(x){html+='<div class="id-health-ai-issue"><b>'+esc(x.priority)+' · '+esc(x.field)+'</b><div><strong>Finding:</strong> '+esc(x.problem)+'</div><div><strong>Action:</strong> '+esc(x.action)+'</div></div>';});
+    else issues.forEach(function(x,idx){
+      html+='<div class="id-health-ai-issue"><b>'+esc(x.priority)+' · '+esc(x.field)+'</b><div><strong>Finding:</strong> '+esc(x.problem)+'</div><div><strong>Action:</strong> '+esc(x.action)+'</div>'+renderCleanupControl(x,idx)+'</div>';
+    });
     html+='</div>'; content.innerHTML=html;
     box.dataset.brief=buildAIBrief(checks,issues); box.hidden=false;
+    wireCleanupControls();
   }
 
   function render(){
