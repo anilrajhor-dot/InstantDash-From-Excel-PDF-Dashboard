@@ -9082,7 +9082,22 @@ async function rebuildFromAoa(){
     if (!has) for (let i = 0; i < Math.min(dataRows.length, 300); i++){ if (!isBlank(dataRows[i][c])) { has = true; break; } }
     if (!has) continue;                                    // fully blank column → drop
     let nm = isBlank(headerCells[c]) ? 'Column ' + (c + 1) : String(headerCells[c]).trim().replace(/\s+/g,' ');
-    if (names.includes(nm)) nm = nm + ' (' + (c + 1) + ')';  // de-duplicate repeated headers
+    if (names.includes(nm)) {
+      // A repeated header is usually a paired/repeated block in the sheet
+      // (e.g. "Name ... 1" / "Assignment Days" next to "Name ... 2" /
+      // "Assignment Days"). Prefer picking up that same number from the
+      // adjacent column over a meaningless raw column index, so the two
+      // stay recognisably paired to the reader instead of looking like
+      // an arbitrary duplicate (e.g. "Assignment Days (2)" instead of
+      // "Assignment Days (19)").
+      const prevHeader = c > 0 && !isBlank(headerCells[c-1]) ? String(headerCells[c-1]).trim() : '';
+      const numMatch = prevHeader.match(/(\d+)\s*$/);
+      const occurrence = names.filter(function(n){ return n === nm || n.indexOf(nm + ' (') === 0; }).length + 1;
+      let suffix = numMatch ? numMatch[1] : String(occurrence);
+      let candidate = nm + ' (' + suffix + ')';
+      if (names.includes(candidate)) candidate = nm + ' (' + (c + 1) + ')'; // guaranteed-unique fallback
+      nm = candidate;
+    }  // de-duplicate repeated headers
     keep.push(c); names.push(nm);
   }
 
