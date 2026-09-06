@@ -9082,11 +9082,13 @@ async function rebuildFromAoa(){
 
   // Work out which columns have any content at all, and name them.
   const keep = [], names = [];
+  const duplicateHeaderGroups = new Map(); // originalHeaderText -> [{colNum, finalName}]
   for (let c = 0; c < width; c++){
     let has = !isBlank(headerCells[c]);
     if (!has) for (let i = 0; i < Math.min(dataRows.length, 300); i++){ if (!isBlank(dataRows[i][c])) { has = true; break; } }
     if (!has) continue;                                    // fully blank column → drop
     let nm = isBlank(headerCells[c]) ? 'Column ' + (c + 1) : String(headerCells[c]).trim().replace(/\s+/g,' ');
+    const originalNm = nm;
     if (names.includes(nm)) {
       // A repeated header is usually a paired/repeated block in the sheet
       // (e.g. "Name ... 1" / "Assignment Days" next to "Name ... 2" /
@@ -9102,9 +9104,20 @@ async function rebuildFromAoa(){
       let candidate = nm + ' (' + suffix + ')';
       if (names.includes(candidate)) candidate = nm + ' (' + (c + 1) + ')'; // guaranteed-unique fallback
       nm = candidate;
+      if (!duplicateHeaderGroups.has(originalNm)) duplicateHeaderGroups.set(originalNm, [{colNum: null, finalName: originalNm}]);
+      duplicateHeaderGroups.get(originalNm).push({colNum: c + 1, finalName: nm});
     }  // de-duplicate repeated headers
     keep.push(c); names.push(nm);
   }
+  // Fill in the column number for the first occurrence of each duplicated header
+  // (recorded lazily above since we don't know it's a duplicate until the 2nd one appears).
+  duplicateHeaderGroups.forEach(function(group, originalNm){
+    const firstIdx = names.indexOf(originalNm);
+    if (firstIdx !== -1 && group[0].colNum === null) group[0].colNum = keep[firstIdx] + 1;
+  });
+  APP.__duplicateHeaders = [...duplicateHeaderGroups.entries()].map(function([originalNm, group]){
+    return { name: originalNm, columns: group };
+  });
 
   if (!names.length){ hideLoader(); return showFatal('No usable columns were found in this sheet.'); }
 
@@ -14783,6 +14796,10 @@ function wireRest(){
     });
     var dupes=duplicateRowCount(rows,cols);
     if(dupes) addIssue('HIGH','Duplicate rows',dupes.toLocaleString()+' fully duplicate filtered row'+(dupes===1?'':'s')+' detected.','Verify whether these are repeated transactions or accidental duplicates. Remove only confirmed duplicates in the source data and preserve legitimate repeated transactions.');
+    (window.APP && window.APP.__duplicateHeaders || []).forEach(function(group){
+      var colList=group.columns.map(function(g){return 'column '+g.colNum+' ("'+g.finalName+'")';}).join(', ');
+      addIssue('MEDIUM',group.name,'The header "'+group.name+'" appears in '+group.columns.length+' separate columns in the source file: '+colList+'. They have been kept as separate measures and auto-labelled to stay unique, but a shared name makes them easy to confuse in charts, dropdowns and management insights.','If these are genuinely different measures (e.g. one column per resource person), rename each header in the source file to something distinct (e.g. "Assignment Days — RP1", "Assignment Days — RP2"). If they are accidental duplicates of the same data, remove the extra column.');
+    });
     cols.filter(function(c){return c.mixed;}).forEach(function(c){
       addIssue('HIGH',c.name,'Values use mixed numeric/text data types.','Standardise the field to one valid data type. Convert legitimate numeric text to numbers and investigate non-numeric entries before recalculating totals or averages.');
     });
