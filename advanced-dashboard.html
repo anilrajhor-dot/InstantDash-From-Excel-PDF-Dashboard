@@ -2892,6 +2892,32 @@ body{
     })();
     </script>
 
+    <button type="button" id="v27BackToTop" aria-label="Back to top">⬆ Back to top</button>
+    <style>
+      #v27BackToTop{position:fixed;left:16px;bottom:max(18px,calc(18px + env(safe-area-inset-bottom)));z-index:9998;border:1px solid var(--accent);background:var(--card);color:var(--text);border-radius:999px;padding:12px 16px;font:850 12px/1 system-ui,-apple-system,sans-serif;box-shadow:0 10px 30px rgba(0,0,0,.20);cursor:pointer;display:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+      #v27BackToTop.show{display:block}
+      @media(max-width:520px){ #v27BackToTop{left:12px;bottom:max(12px,calc(12px + env(safe-area-inset-bottom)));padding:12px 15px} }
+    </style>
+    <script id="instantdash-v27-back-to-top">
+    (function(){
+      var btn=document.getElementById('v27BackToTop');
+      if(!btn) return;
+      function onScroll(){
+        if(window.scrollY > 500) btn.classList.add('show'); else btn.classList.remove('show');
+      }
+      btn.addEventListener('click', function(){
+        // Scroll back to the "Jump to" quick-nav bar (just above it) rather
+        // than the very top of the page, so the next destination is one tap
+        // away instead of the person having to scroll past the banner again.
+        var nav=document.getElementById('v21QuickNav');
+        if(nav && !nav.hidden){ nav.scrollIntoView({behavior:'smooth', block:'start'}); }
+        else { window.scrollTo({top:0, behavior:'smooth'}); }
+      });
+      window.addEventListener('scroll', onScroll, {passive:true});
+      onScroll();
+    })();
+    </script>
+
 
     <section id="v27TransposeBanner" class="exec-card no-print" hidden style="border-left:4px solid var(--warn)">
       <div class="mac-head">
