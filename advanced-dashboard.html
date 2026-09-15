@@ -2742,6 +2742,7 @@ body{
         <option value="Healthcare">Healthcare</option>
         <option value="Pharmaceuticals">Pharmaceuticals</option>
         <option value="Manufacturing / Quality">Manufacturing / Quality</option>
+        <option value="EHS / Safety">EHS / Safety</option>
         <option value="Retail / E-commerce">Retail / E-commerce</option>
         <option value="Education">Education</option>
         <option value="Real Estate / Construction">Real Estate / Construction</option>
@@ -4698,6 +4699,7 @@ body{
         'Sales': [/units?\s*sold/i,/\border/i,/\bcustomer/i,/\bterritory\b/i,/\bregion\b/i,/\bquota\b/i],
         'Marketing': [/\bcampaign/i,/\bimpressions?\b/i,/click.?through/i,/\bctr\b/i,/\blead(s)?\b/i,/conversion\s*rate/i],
         'Manufacturing / Quality': [/defect/i,/downtime/i,/units?\s*produced/i,/\byield\b/i,/\bscrap\b/i,/production/i],
+        'EHS / Safety': [/\bifr\b/i,/\btrir\b/i,/near\s*miss/i,/\bpse\b/i,/safe\s*man\s*hours?/i,/safe\s*man\s*days?/i,/lost\s*time\s*injury/i,/\bltifr\b/i],
         'Healthcare': [/\bpatient/i,/diagnosis/i,/admission/i,/discharge/i,/\bbed\b/i,/\bward\b/i],
         'Education': [/\bstudent/i,/enrollment/i,/\bgrade\b/i,/attendance/i,/\bcourse\b/i,/\bsemester\b/i],
         'Insurance': [/\bpremium/i,/\bclaim/i,/policyholder/i,/\bpolicy\b/i,/underwrit/i,/sum\s*assured/i],
@@ -6580,6 +6582,177 @@ body{
         else render();
       })();
       </script>
+
+      <section id="v28EhsView" class="exec-card no-print" hidden>
+        <div class="mac-head">
+          <div><div class="exec-label">🦺 EHS / Safety View</div><div class="mac-title">Exposure, incident rates and process safety, from your uploaded data</div></div>
+          <div class="mac-hint">Each metric only appears where the uploaded data contains the field it needs. Nothing here is estimated or assumed. Choose "EHS / Safety" in the Department selector above to always show this view.</div>
+        </div>
+        <div id="v28EhsViewBody"></div>
+      </section>
+      <script id="instantdash-v28-ehsview-wire">
+      (function(){
+        function esc8h(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+        function fmtNum8h(n){ return (n==null||!isFinite(n)) ? '\u2014' : n.toLocaleString('en-IN',{maximumFractionDigits:2}); }
+
+        /* Field lookup mirrors findCreditField's pattern-matching and
+           manual-override support, but under its own fieldKey namespace
+           (ehs*) so it never collides with the Credit View's column map. */
+        function findEhsField(patterns, excludePatterns, fieldKey){
+          return (typeof findCreditField==='function') ? findCreditField(patterns, excludePatterns, fieldKey) : null;
+        }
+        function findEhsDimension(patterns){
+          var cols = (window.APP && window.APP.columns) || [];
+          for(var i=0;i<cols.length;i++){
+            var c = cols[i];
+            if(c.role!=='dimension' && c.type!=='text') continue;
+            if(patterns.some(function(p){ return p.test(c.name); })) return c;
+          }
+          return null;
+        }
+        function rowsNow(){ var app = window.APP || {}; return app.filtered || app.rows || []; }
+        function sumCol(col){
+          if(!col) return null;
+          var rows = rowsNow(), total = 0, any = false;
+          for(var i=0;i<rows.length;i++){ var v = rows[i][col.name]; if(typeof v==='number' && isFinite(v)){ total += v; any = true; } }
+          return any ? total : null;
+        }
+        function avgCol(col){
+          if(!col) return null;
+          var rows = rowsNow(), total = 0, n = 0;
+          for(var i=0;i<rows.length;i++){ var v = rows[i][col.name]; if(typeof v==='number' && isFinite(v)){ total += v; n++; } }
+          return n ? total/n : null;
+        }
+        function distinctCount(col){
+          if(!col) return null;
+          var rows = rowsNow(), seen = {}, n = 0;
+          for(var i=0;i<rows.length;i++){ var v = rows[i][col.name]; if(v==null || v==='') continue; var k = String(v); if(!seen[k]){ seen[k]=1; n++; } }
+          return n || null;
+        }
+
+        function section8h(title, icon, bodyHtml){
+          return '<div class="v26-cv-section"><div class="v26-cv-section-title">'+icon+' '+esc8h(title)+'</div>'+bodyHtml+'</div>';
+        }
+        function metric8h(label, value, unit, note, ragClass){
+          if(value==null) return '<div class="v26-cv-metric unavailable"><div class="v26-cv-label">'+esc8h(label)+'</div><div class="v26-cv-value">Not available</div><div class="v26-cv-note">'+esc8h(note||'Required field not found in the current dataset.')+'</div></div>';
+          var rag = ragClass ? ' <span class="v28-ehs-rag v28-ehs-rag-'+ragClass+'">'+(ragClass==='green'?'GREEN':ragClass==='red'?'RED':'AMBER')+'</span>' : '';
+          return '<div class="v26-cv-metric"><div class="v26-cv-label">'+esc8h(label)+rag+'</div><div class="v26-cv-value">'+esc8h(String(value))+(unit?' <span class="v26-cv-unit">'+esc8h(unit)+'</span>':'')+'</div>'+(note?'<div class="v26-cv-note">'+esc8h(note)+'</div>':'')+'</div>';
+        }
+        function ragFor(value, target, higherIsBad){
+          if(value==null || target==null) return null;
+          higherIsBad = higherIsBad!==false;
+          var ratio = higherIsBad ? value/target : target/value;
+          if(ratio<=1) return 'green';
+          if(ratio<=1.5) return 'amber';
+          return 'red';
+        }
+
+        function render(){
+          var section2 = document.getElementById('v28EhsView');
+          var body = document.getElementById('v28EhsViewBody');
+          if(!section2||!body) return;
+          var app = window.APP || {};
+          var hasData = !!(app.rows && app.rows.length);
+          section2.hidden = !hasData;
+          if(!hasData) return;
+
+          var projectCol = findEhsDimension([/project/i,/\bsite\b/i,/location/i]);
+          var manhoursCol = findEhsField([/safe\s*man\s*hours?/i,/\bman.?hours?\b/i], [/target/i], 'ehsManhours');
+          var mandaysCol = findEhsField([/safe\s*man\s*days?/i,/\bman.?days?\b/i], [/target/i], 'ehsMandays');
+          var headcountCol = findEhsField([/headcount/i,/workforce/i,/\bmanpower\b/i], [/target/i], 'ehsHeadcount');
+          var ifrCol = findEhsField([/\bifr\b/i], [/target/i], 'ehsIfr');
+          var trirCol = findEhsField([/\btrir\b/i], [/target/i], 'ehsTrir');
+          var ifrTargetCol = findEhsField([/ifr.*target/i,/target.*ifr/i], null, 'ehsIfrTarget');
+          var trirTargetCol = findEhsField([/trir.*target/i,/target.*trir/i], null, 'ehsTrirTarget');
+          var nearMissCol = findEhsField([/near\s*miss/i], [/target/i], 'ehsNearMiss');
+          var pseCol = findEhsField([/\bpse\b/i,/process\s*safety\s*event/i], [/target/i], 'ehsPse');
+
+          var detectedFieldCount = [manhoursCol,mandaysCol,headcountCol,ifrCol,trirCol,nearMissCol,pseCol].filter(Boolean).length;
+          var isEhsDept = window.__instantDashDepartment === 'EHS / Safety';
+          if(!isEhsDept && detectedFieldCount < 3){ section2.hidden = true; return; }
+
+          var totalProjects = distinctCount(projectCol) || (app.filtered||app.rows||[]).length;
+          var safeManHours = sumCol(manhoursCol);
+          var safeManDays = sumCol(mandaysCol);
+          var totalHeadcount = sumCol(headcountCol);
+          var ifrAvg = avgCol(ifrCol);
+          var trirAvg = avgCol(trirCol);
+          var ifrTarget = avgCol(ifrTargetCol) != null ? avgCol(ifrTargetCol) : 0.20;
+          var trirTarget = avgCol(trirTargetCol) != null ? avgCol(trirTargetCol) : 0.20;
+          var nearMissSum = sumCol(nearMissCol);
+          var pseSum = sumCol(pseCol);
+
+          var html = section8h('Executive Summary', '\ud83d\udccb',
+            metric8h('Total Projects', projectCol ? totalProjects : ((app.filtered||app.rows||[]).length), '', projectCol ? 'Distinct values in "'+projectCol.name+'".' : 'No project/site column identified \u2014 showing row count.') +
+            metric8h('Safe Man Hours', safeManHours!=null?fmtNum8h(safeManHours):null, 'cumulative', safeManHours!=null?('Sum of '+manhoursCol.name+' across the current filter.'):'Requires a Safe Man Hours / Man-Hours field.') +
+            metric8h('Safe Man Days', safeManDays!=null?fmtNum8h(safeManDays):null, 'cumulative', safeManDays!=null?('Sum of '+mandaysCol.name+' across the current filter.'):'Requires a Safe Man Days / Man-Days field.') +
+            metric8h('Total Headcount', totalHeadcount!=null?fmtNum8h(totalHeadcount):null, '', totalHeadcount!=null?('Sum of '+headcountCol.name+' across the current filter.'):'Requires a Headcount / Workforce field.')
+          );
+
+          html += section8h('Injury & Frequency Rates', '\u26a0\ufe0f',
+            metric8h('IFR (Actual Avg)', ifrAvg!=null?ifrAvg.toFixed(2):null, '', ifrAvg!=null?('Average of '+ifrCol.name+'. Target avg '+ifrTarget.toFixed(2)+'.'):'Requires an IFR field.', ragFor(ifrAvg, ifrTarget, true)) +
+            metric8h('TRIR (Actual Avg)', trirAvg!=null?trirAvg.toFixed(2):null, '', trirAvg!=null?('Average of '+trirCol.name+'. Target avg '+trirTarget.toFixed(2)+'.'):'Requires a TRIR field.', ragFor(trirAvg, trirTarget, true))
+          );
+
+          html += section8h('Leading & Lagging Indicators', '\ud83d\udd0d',
+            metric8h('Near Miss (Sum)', nearMissSum!=null?fmtNum8h(nearMissSum):null, '', nearMissSum!=null?('Sum of '+nearMissCol.name+' across the current filter. A leading indicator \u2014 more reporting is generally healthy.'):'Requires a Near Miss field.') +
+            metric8h('PSE (Sum)', pseSum!=null?fmtNum8h(pseSum):null, '', pseSum!=null?('Sum of '+pseCol.name+' (Process Safety Events) across the current filter.'):'Requires a PSE / Process Safety Event field.', pseSum!=null ? (pseSum>0?'red':'green') : null)
+          );
+
+          if(projectCol && (ifrCol || trirCol)){
+            var rows = rowsNow();
+            var byProject = {};
+            rows.forEach(function(r){
+              var p = r[projectCol.name]; if(p==null || p==='') return;
+              var k = String(p);
+              if(!byProject[k]) byProject[k] = {ifrSum:0, ifrN:0, trirSum:0, trirN:0};
+              if(ifrCol){ var iv = r[ifrCol.name]; if(typeof iv==='number' && isFinite(iv)){ byProject[k].ifrSum+=iv; byProject[k].ifrN++; } }
+              if(trirCol){ var tv = r[trirCol.name]; if(typeof tv==='number' && isFinite(tv)){ byProject[k].trirSum+=tv; byProject[k].trirN++; } }
+            });
+            var projNames = Object.keys(byProject).sort();
+            if(projNames.length){
+              var rowsHtml = projNames.map(function(name){
+                var d = byProject[name];
+                var pIfr = d.ifrN ? d.ifrSum/d.ifrN : null;
+                var pTrir = d.trirN ? d.trirSum/d.trirN : null;
+                var pIfrRag = ragFor(pIfr, ifrTarget, true);
+                var pTrirRag = ragFor(pTrir, trirTarget, true);
+                return '<tr><td>'+esc8h(name)+'</td>'+
+                  '<td>'+(pIfr!=null?pIfr.toFixed(2):'\u2014')+(pIfrRag?' <span class="v28-ehs-rag v28-ehs-rag-'+pIfrRag+'">'+(pIfrRag==='green'?'GREEN':pIfrRag==='red'?'RED':'AMBER')+'</span>':'')+'</td>'+
+                  '<td>'+(pTrir!=null?pTrir.toFixed(2):'\u2014')+(pTrirRag?' <span class="v28-ehs-rag v28-ehs-rag-'+pTrirRag+'">'+(pTrirRag==='green'?'GREEN':pTrirRag==='red'?'RED':'AMBER')+'</span>':'')+'</td></tr>';
+              }).join('');
+              html += section8h('KPI RAG Status \u2014 by Project', '\ud83d\udea6',
+                '<div class="v28-ehs-rag-table-wrap"><table class="v28-ehs-rag-table"><thead><tr><th>Project</th><th>IFR (avg)</th><th>TRIR (avg)</th></tr></thead><tbody>'+rowsHtml+'</tbody></table></div>'
+              );
+            }
+          }
+
+          var risks = [];
+          if(ifrAvg!=null && ifrTarget!=null && ifrAvg>ifrTarget) risks.push('IFR of '+ifrAvg.toFixed(2)+' exceeds the target average of '+ifrTarget.toFixed(2)+' \u2014 review exposure hours and corrective actions.');
+          if(trirAvg!=null && trirTarget!=null && trirAvg>trirTarget) risks.push('TRIR of '+trirAvg.toFixed(2)+' exceeds the target average of '+trirTarget.toFixed(2)+' \u2014 review recordable-incident trend.');
+          if(pseSum!=null && pseSum>0) risks.push(pseSum+' Process Safety Event(s) recorded in the current filter \u2014 these warrant individual review regardless of frequency-rate trend.');
+          html += section8h('Key Risks', '\ud83d\udd34',
+            risks.length ? '<ul class="v26-cv-risks">'+risks.map(function(r){ return '<li>'+esc8h(r)+'</li>'; }).join('')+'</ul>'
+              : '<div class="v26-cv-note" style="padding:8px 0">No threshold-based risk flag triggered from the metrics currently available.</div>'
+          );
+
+          body.innerHTML = html;
+        }
+        setInterval(render, 700);
+        if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', render);
+        else render();
+      })();
+      </script>
+      <style>
+        .v28-ehs-rag{display:inline-block;font-size:9.5px;font-weight:800;letter-spacing:.03em;padding:2px 6px;border-radius:5px;vertical-align:middle;margin-left:6px}
+        .v28-ehs-rag-green{background:rgba(78,205,196,.18);color:#1f9d8f}
+        .v28-ehs-rag-amber{background:rgba(255,217,61,.22);color:#8a6d00}
+        .v28-ehs-rag-red{background:rgba(255,107,107,.2);color:#c23b3b}
+        .v28-ehs-rag-table-wrap{overflow-x:auto}
+        .v28-ehs-rag-table{width:100%;border-collapse:collapse;font-size:12.5px}
+        .v28-ehs-rag-table th{text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);padding:6px 10px;border-bottom:1px solid var(--border)}
+        .v28-ehs-rag-table td{padding:7px 10px;border-bottom:1px solid var(--border)}
+      </style>
 
       <div id="v27ChartColorsPanel" class="v26-why-overlay" aria-hidden="true">
         <div class="v26-why-card" role="dialog" aria-modal="true" aria-labelledby="v27ColorsTitle">
