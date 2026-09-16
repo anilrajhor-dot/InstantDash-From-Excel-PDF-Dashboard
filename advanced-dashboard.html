@@ -2828,6 +2828,7 @@ body{
     <nav id="v21QuickNav" class="v21-quicknav no-print" aria-label="Jump to section" hidden>
       <span class="v21-quicknav-label">Jump to</span>
       <button type="button" data-jump="qualityList">🧹 Data Quality</button>
+      <button type="button" data-jump="v28CleaningAuditSection">🧼 Cleaning &amp; Audit</button>
       <button type="button" data-jump-health="1">🩺 Health Check</button>
       <button type="button" data-jump="v27SlicerPanel">🎛️ Slicers</button>
       <button type="button" data-jump="v27SavedViews">🔖 Saved Views</button>
@@ -7527,6 +7528,113 @@ body{
         <div class="panel-body"><div class="quality-list" id="qualityList"><div class="q-item"><span class="ico">📎</span><span><b>Year</b> has the same value in every row (2025) — it can't be charted.</span></div></div></div>
       </details>
     </div>
+
+    <div class="section" id="v28CleaningAuditSection" hidden>
+      <details class="panel" id="v28CleaningPanel" open="">
+        <summary>🧼 Data Cleaning &amp; Quality Audit <span class="badge" id="v28ScoreBadge">Score —</span></summary>
+        <div class="panel-body">
+          <p class="hint" style="color:var(--muted);font-size:12.5px;margin:0 0 12px">
+            Works on the same file you already uploaded — the original data stays untouched. Every proposed correction, rule-based or AI-suggested, goes into the review queue below and only changes your data when you explicitly accept it.
+          </p>
+
+          <div class="v28-toolbar no-print">
+            <span id="v28DatasetModeBadge" class="badge">Dashboard source: Original</span>
+            <button type="button" class="btn sm primary" id="v28GenerateBtn">✅ Generate Dashboard from Cleaned Data</button>
+            <button type="button" class="btn sm" id="v28ViewOriginalBtn">↩️ View Original Dashboard</button>
+            <button type="button" class="btn sm" id="v28RestoreBtn">🔄 Restore Original Data</button>
+          </div>
+
+          <div class="v28-profiles no-print">
+            <label>Cleaning profile: <select id="v28ProfileSelect"></select></label>
+            <button type="button" class="btn sm" id="v28ApplyProfileBtn">Apply</button>
+            <button type="button" class="btn sm" id="v28SaveProfileBtn">💾 Save current as profile…</button>
+          </div>
+
+          <h4 style="margin:18px 0 6px">Quality findings <span id="v28FindingsCount" class="badge"></span></h4>
+          <div class="quality-list" id="v28FindingsList"></div>
+
+          <h4 style="margin:18px 0 6px">Cleaning operations</h4>
+          <div class="v28-bulk-row no-print">
+            <div class="v28-bulk-group">
+              <label>Standardise case</label>
+              <select id="v28CaseCol"></select>
+              <select id="v28CaseMode"><option value="title">Title Case</option><option value="upper">UPPER CASE</option><option value="lower">lower case</option></select>
+              <button type="button" class="btn sm" id="v28ApplyCaseBtn">Preview</button>
+            </div>
+            <div class="v28-bulk-group">
+              <label>Find &amp; replace</label>
+              <select id="v28FindCol"></select>
+              <input type="text" id="v28FindText" placeholder="Find">
+              <input type="text" id="v28ReplaceText" placeholder="Replace with">
+              <button type="button" class="btn sm" id="v28FindReplaceBtn">Preview</button>
+            </div>
+            <div class="v28-bulk-group">
+              <label>Remove duplicate rows (define duplicate by)</label>
+              <select id="v28DedupeCols" multiple size="4"></select>
+              <button type="button" class="btn sm" id="v28DedupeBtn">Remove duplicates</button>
+            </div>
+            <div class="v28-bulk-group">
+              <label>Convert column type</label>
+              <select id="v28TypeCol"></select>
+              <select id="v28TypeNew"><option value="number">Number</option><option value="date">Date</option><option value="text">Text</option><option value="boolean">Boolean</option></select>
+              <button type="button" class="btn sm" id="v28TypeBtn">Convert</button>
+            </div>
+          </div>
+
+          <h4 style="margin:18px 0 6px">🤖 AI-assisted review <span class="hint" style="font-weight:400;color:var(--muted)">Optional · uses your Real AI key · sends only column-level summaries, never raw rows</span></h4>
+          <div class="no-print">
+            <div class="v28-ai-exclude-wrap">
+              <div class="hint" style="color:var(--muted);font-size:11.5px;margin-bottom:6px">Exclude these columns from anything sent to Real AI:</div>
+              <div id="v28AiExcludeList" class="v28-ai-exclude-list"></div>
+            </div>
+            <button type="button" class="btn sm" id="v28AiReviewBtn">Ask Real AI to review data quality</button>
+          </div>
+          <div id="v28AiOut"></div>
+
+          <h4 style="margin:18px 0 6px">Review queue <span id="v28QueueCount" class="badge"></span></h4>
+          <div class="no-print" style="margin-bottom:8px">
+            <button type="button" class="btn sm" id="v28AcceptAllBtn">Accept all</button>
+            <button type="button" class="btn sm" id="v28RejectAllBtn">Reject all</button>
+          </div>
+          <div class="tbl-wrap" style="max-height:320px;border-radius:10px">
+            <table id="v28QueueTable"><thead><tr><th>Row</th><th>Column</th><th>Original</th><th>Proposed</th><th>Reason</th><th>Source</th><th></th></tr></thead><tbody></tbody></table>
+          </div>
+
+          <h4 style="margin:18px 0 6px">Audit trail <span id="v28AuditCount" class="badge"></span></h4>
+          <input type="text" id="v28AuditSearch" placeholder="Search audit log…" class="no-print" style="margin-bottom:8px;padding:6px 10px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:12px;width:240px">
+          <div class="tbl-wrap" style="max-height:320px;border-radius:10px">
+            <table id="v28AuditTable"><thead><tr><th>Time</th><th>Row</th><th>Column</th><th>Original</th><th>Revised</th><th>Operation</th><th>Source</th><th>Status</th></tr></thead><tbody></tbody></table>
+          </div>
+
+          <div class="v28-export-row no-print">
+            <button type="button" class="btn sm" id="v28ExportExcelBtn">📥 Export Cleaned Excel</button>
+            <button type="button" class="btn sm" id="v28ExportCsvBtn">📥 Export Cleaned CSV</button>
+            <button type="button" class="btn sm" id="v28ExportReportBtn">📄 Export Audit Report</button>
+            <button type="button" class="btn sm" id="v28ExportLogBtn">📥 Export Change Log</button>
+          </div>
+        </div>
+      </details>
+    </div>
+    <style>
+      .v28-toolbar,.v28-profiles{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:12px;font-size:12.5px}
+      .v28-bulk-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:8px}
+      .v28-bulk-group{display:flex;flex-direction:column;gap:6px;background:var(--card-2);border:1px solid var(--border);border-radius:10px;padding:10px}
+      .v28-bulk-group label{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
+      .v28-bulk-group select,.v28-bulk-group input{padding:6px 8px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:12px}
+      .v28-export-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+      .v28-ai-exclude-wrap{margin-bottom:10px}
+      .v28-ai-exclude-list{display:flex;flex-wrap:wrap;gap:10px;max-height:110px;overflow-y:auto;padding:8px;border:1px solid var(--border);border-radius:8px;background:var(--card-2)}
+      .v28-ai-exclude-item{font-size:11.5px;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+      .v28-ai-note{font-size:12.5px;color:var(--muted);margin:10px 0}
+      .v28-ai-card{border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:10px;background:var(--card-2);padding:10px 12px;margin-bottom:8px;font-size:12.5px}
+      .v28-ai-diff{margin:5px 0}
+      .v28-ai-old{color:var(--warn,#c23b3b);text-decoration:line-through}
+      .v28-ai-new{color:#1f9d8f;font-weight:700}
+      .v28-ai-reason{color:var(--muted);font-size:11.5px;margin-bottom:6px}
+      #v28QueueTable,#v28AuditTable{width:100%;border-collapse:collapse;font-size:12px}
+      #v28QueueTable th,#v28AuditTable th{text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.03em;color:var(--muted);padding:6px 8px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--card)}
+      #v28QueueTable td,#v28AuditTable td{padding:6px 8px;border-bottom:1px solid var(--border);white-space:nowrap;max-width:220px;overflow:hidden;text-overflow:ellipsis}
+    </style>
 
     <div class="section">
       <div class="section-head"><h2>Pivot table</h2><span class="hint">Cross-tab any two columns.</span></div>
@@ -18696,6 +18804,519 @@ window.addEventListener('load',function(){setTimeout(mountAskMe,250);});
   document.addEventListener('DOMContentLoaded',wire);
   window.addEventListener('load',function(){setTimeout(wire,100);setTimeout(wire,500);});
   setInterval(wire,500);
+})();
+</script>
+<script id="instantdash-v28-cleaning-audit">
+(function(){
+  function esc28(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  var __v28Seq = 0;
+
+  /* ---- snapshot management --------------------------------------- */
+  function ensureSnapshots(){
+    var app = window.APP;
+    if(!app || !app.rows || !app.rows.length) return false;
+    if(app.__v28DataVersion !== app.__dataVersion){
+      app.__originalRows = app.rows.map(function(r){ return Object.assign({}, r); });
+      app.__workingRows   = app.rows.map(function(r){ return Object.assign({}, r); });
+      app.__auditLog       = [];
+      app.__reviewQueue    = [];
+      app.__cleaningModeActive = 'original';
+      app.__v28DataVersion = app.__dataVersion;
+      app.__v28SelectsBuiltFor = null;
+    }
+    return true;
+  }
+
+  /* ---- quality findings, extended --------------------------------- */
+  function buildV28Findings(){
+    var app = window.APP, rows = app.__workingRows || [], cols = app.columns || [];
+    var names = cols.map(function(c){ return c.name; });
+    var issues = [];
+
+    cols.forEach(function(c){
+      var missing = 0, n = rows.length;
+      rows.forEach(function(r){ var v = r[c.name]; if(v===null||v===undefined||v==='') missing++; });
+      if(missing>0){
+        var pct = n ? (missing/n*100) : 0;
+        issues.push({sev: pct>=15?2:1, ico: pct>=15?'⚠️':'ℹ️', type:'missing', col:c.name,
+          html: '<b>'+esc28(c.name)+'</b> is missing '+missing.toLocaleString()+' values ('+pct.toFixed(1)+'% of rows).'});
+      }
+    });
+
+    var seen={}, dupeIdx=[];
+    rows.forEach(function(r,i){
+      var key = names.map(function(nm){ var v=r[nm]; return v instanceof Date ? v.getTime() : (v===null?'':v); }).join('\u0001');
+      if(seen[key]!==undefined) dupeIdx.push(i); else seen[key]=i;
+    });
+    if(dupeIdx.length) issues.push({sev:2, ico:'⚠️', type:'dupeRows', html:'<b>'+dupeIdx.length.toLocaleString()+' duplicate rows</b> remain in the working dataset.'});
+
+    var blankRows=0;
+    rows.forEach(function(r){ if(names.every(function(nm){ var v=r[nm]; return v===null||v===undefined||v===''; })) blankRows++; });
+    if(blankRows) issues.push({sev:2, ico:'🗒️', type:'blankRows', html:'<b>'+blankRows.toLocaleString()+' completely blank rows</b> found in the working dataset.'});
+
+    cols.forEach(function(c){
+      if(c.mixed) issues.push({sev:2, ico:'🔀', type:'mixed', col:c.name, html:'<b>'+esc28(c.name)+'</b> mixes numbers and text.'});
+    });
+
+    cols.forEach(function(c){
+      if(!/email/i.test(c.name)) return;
+      var bad=0, sample=null;
+      rows.forEach(function(r){ var v=r[c.name]; if(v==null||v==='') return; if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v))){ bad++; if(!sample) sample=v; } });
+      if(bad) issues.push({sev:2, ico:'✉️', type:'email', col:c.name, html:'<b>'+esc28(c.name)+'</b> has '+bad+' value(s) that don\u2019t look like a valid email'+(sample?(' (e.g. "'+esc28(sample)+'")'):'')+'.'});
+    });
+
+    cols.forEach(function(c){
+      if(!/phone|mobile|contact\s*no|contact\s*number/i.test(c.name)) return;
+      var bad=0, sample=null;
+      rows.forEach(function(r){ var v=r[c.name]; if(v==null||v==='') return; var digits=String(v).replace(/\D/g,''); if(digits.length<7||digits.length>13){ bad++; if(!sample) sample=v; } });
+      if(bad) issues.push({sev:1, ico:'📞', type:'phone', col:c.name, html:'<b>'+esc28(c.name)+'</b> has '+bad+' value(s) with an unusual digit count for a phone number'+(sample?(' (e.g. "'+esc28(sample)+'")'):'')+'.'});
+    });
+
+    cols.filter(function(c){ return (c.role==='dimension'||c.role==='highdim') && c.type==='text'; }).forEach(function(c){
+      var groups={};
+      rows.forEach(function(r){ var v=r[c.name]; if(v==null||v==='') return; var norm=String(v).trim().toLowerCase().replace(/\s+/g,' '); if(!groups[norm]) groups[norm]={}; groups[norm][v]=(groups[norm][v]||0)+1; });
+      var clusters=[];
+      Object.keys(groups).forEach(function(norm){
+        var variants=Object.keys(groups[norm]);
+        if(variants.length>1) clusters.push({norm:norm, variants:variants, counts:groups[norm]});
+      });
+      if(clusters.length){
+        var ex = clusters.slice(0,3).map(function(cl){ return cl.variants.join(' / '); }).join('; ');
+        issues.push({sev:1, ico:'🔤', type:'spelling', col:c.name, clusters:clusters, html:'<b>'+esc28(c.name)+'</b> has '+clusters.length+' group(s) of likely spelling/case variants (e.g. '+esc28(ex)+').'});
+      }
+    });
+
+    issues.sort(function(a,b){ return b.sev-a.sev; });
+    return {issues:issues, dupeIdx:dupeIdx, blankRows:blankRows};
+  }
+  function computeV28Score(findingsData){
+    var penalty=0;
+    findingsData.issues.forEach(function(i){ penalty += (i.sev===2?4:1.5); });
+    return Math.max(0, Math.round(100-penalty));
+  }
+
+  /* ---- correction queue ------------------------------------------- */
+  function mkCorrection(rowIndex, col, original, proposed, reason, source){
+    __v28Seq++;
+    return {id:'v28c'+__v28Seq, rowIndex:rowIndex, col:col, original:original, proposed:proposed, reason:reason, source:source, status:'pending'};
+  }
+  function queueList(list){
+    if(!list || !list.length){ toast('No changes to propose for this operation.'); return; }
+    var app = window.APP;
+    app.__reviewQueue = (app.__reviewQueue||[]).concat(list);
+    toast(list.length+' proposed change(s) added to the review queue below.');
+    renderV28();
+  }
+  function proposeFixesForIssue(issue){
+    var app=window.APP, rows=app.__workingRows, list=[];
+    if(issue.type==='spelling' && issue.clusters){
+      issue.clusters.forEach(function(cl){
+        var canonical = Object.keys(cl.counts).sort(function(a,b){ return cl.counts[b]-cl.counts[a]; })[0];
+        rows.forEach(function(r,i){
+          var v=r[issue.col];
+          if(v!=null && v!==canonical && cl.variants.indexOf(v)!==-1){
+            list.push(mkCorrection(i, issue.col, v, canonical, 'Standardise spelling/case to the most common form "'+canonical+'".', 'rule:spelling'));
+          }
+        });
+      });
+    } else if(issue.type==='mixed'){
+      rows.forEach(function(r,i){
+        var v=r[issue.col];
+        if(v!=null && typeof v!=='number' && String(v).trim()!==''){
+          var n=Number(String(v).replace(/,/g,'').trim());
+          if(!isFinite(n)) list.push(mkCorrection(i, issue.col, v, null, 'Non-numeric value in a mostly-numeric column — proposed: blank out for manual review (nothing is auto-guessed).', 'rule:mixed'));
+        }
+      });
+    }
+    return list;
+  }
+  function previewCaseStandardise(colName, mode){
+    var rows=window.APP.__workingRows, list=[];
+    rows.forEach(function(r,i){
+      var v=r[colName]; if(v==null||v==='') return;
+      var s=String(v);
+      var out = mode==='upper' ? s.toUpperCase() : mode==='lower' ? s.toLowerCase() : s.replace(/\w\S*/g, function(t){ return t.charAt(0).toUpperCase()+t.slice(1).toLowerCase(); });
+      if(out!==s) list.push(mkCorrection(i, colName, v, out, 'Standardise case ('+mode+').', 'rule:case'));
+    });
+    return list;
+  }
+  function previewFindReplace(colName, find, replace){
+    if(!colName || !find) return [];
+    var rows=window.APP.__workingRows, list=[];
+    rows.forEach(function(r,i){
+      var v=r[colName]; if(v==null) return;
+      var s=String(v); if(s.indexOf(find)===-1) return;
+      var out=s.split(find).join(replace);
+      if(out!==s) list.push(mkCorrection(i, colName, v, out, 'Find "'+find+'" \u2192 replace with "'+replace+'".', 'rule:findReplace'));
+    });
+    return list;
+  }
+  function logAudit(rec){
+    var app=window.APP;
+    app.__auditLog = app.__auditLog || [];
+    rec.ts = new Date().toISOString();
+    rec.file = app.fileName || '';
+    rec.sheet = app.activeSheet || '';
+    app.__auditLog.push(rec);
+  }
+  function acceptCorrection(id){
+    var app=window.APP, q=app.__reviewQueue||[];
+    var idx=q.findIndex(function(c){ return c.id===id; });
+    if(idx===-1) return;
+    var c=q[idx];
+    app.__workingRows[c.rowIndex][c.col]=c.proposed;
+    logAudit({rowIndex:c.rowIndex, col:c.col, original:c.original, revised:c.proposed, operation:c.reason, source:c.source, status:'applied'});
+    q.splice(idx,1);
+    renderV28();
+  }
+  function rejectCorrection(id){
+    var app=window.APP, q=app.__reviewQueue||[];
+    var idx=q.findIndex(function(c){ return c.id===id; });
+    if(idx===-1) return;
+    var c=q[idx];
+    logAudit({rowIndex:c.rowIndex, col:c.col, original:c.original, revised:c.proposed, operation:c.reason, source:c.source, status:'rejected'});
+    q.splice(idx,1);
+    renderV28();
+  }
+  function acceptAllQueue(){
+    var app=window.APP, q=(app.__reviewQueue||[]).slice();
+    if(!q.length){ toast('Nothing pending.'); return; }
+    q.forEach(function(c){ app.__workingRows[c.rowIndex][c.col]=c.proposed; logAudit({rowIndex:c.rowIndex,col:c.col,original:c.original,revised:c.proposed,operation:c.reason,source:c.source,status:'applied'}); });
+    app.__reviewQueue=[];
+    toast(q.length+' correction(s) applied to the working dataset.');
+    renderV28();
+  }
+  function rejectAllQueue(){
+    var app=window.APP, q=(app.__reviewQueue||[]).slice();
+    if(!q.length){ toast('Nothing pending.'); return; }
+    q.forEach(function(c){ logAudit({rowIndex:c.rowIndex,col:c.col,original:c.original,revised:c.proposed,operation:c.reason,source:c.source,status:'rejected'}); });
+    app.__reviewQueue=[];
+    renderV28();
+  }
+
+  /* ---- bulk ops applied directly to the working dataset ------------ */
+  function applyDedupeNow(keyCols){
+    if(!keyCols || !keyCols.length){ toast('Pick at least one column to define a duplicate.'); return; }
+    var app=window.APP, rows=app.__workingRows;
+    var seen={}, keepIdx=[];
+    rows.forEach(function(r,i){
+      var key=keyCols.map(function(c){ var v=r[c]; return v instanceof Date ? v.getTime() : (v===null?'':v); }).join('\u0001');
+      if(seen[key]===undefined){ seen[key]=1; keepIdx.push(i); }
+    });
+    var removed = rows.length-keepIdx.length;
+    if(!removed){ toast('No duplicate rows found for the selected column(s).'); return; }
+    app.__workingRows = keepIdx.map(function(i){ return rows[i]; });
+    logAudit({rowIndex:null, col:keyCols.join(', '), original:rows.length+' rows', revised:app.__workingRows.length+' rows', operation:'Remove duplicate rows', source:'rule:dedupe', status:'applied'});
+    toast(removed+' duplicate row(s) removed from the working dataset.');
+    renderV28();
+  }
+  function applyTypeConvertWorking(colName, newType){
+    if(!colName) return;
+    var rows=window.APP.__workingRows, changed=0;
+    rows.forEach(function(r){
+      var v=r[colName]; if(v==null) return;
+      var out=v;
+      if(newType==='number'){ out=(typeof v==='number')?v:Number(String(v).replace(/,/g,'').trim()); if(!isFinite(out)) out=null; }
+      else if(newType==='date'){ out=(v instanceof Date)?v:new Date(v); if(isNaN(out)) out=null; }
+      else if(newType==='text'){ out=(v instanceof Date)?(typeof fmtDate==='function'?fmtDate(v):String(v)):String(v); }
+      else if(newType==='boolean'){ var s=String(v).trim().toLowerCase(); out=['true','yes','y','1'].indexOf(s)!==-1?true:(['false','no','n','0'].indexOf(s)!==-1?false:v); }
+      if(out!==v){ r[colName]=out; changed++; }
+    });
+    logAudit({rowIndex:null, col:colName, original:'(mixed types)', revised:'converted to '+newType, operation:'Convert column type', source:'rule:typeConvert', status:'applied'});
+    toast(changed+' value(s) in "'+colName+'" converted to '+newType+' in the working dataset.');
+    renderV28();
+  }
+
+  /* ---- AI-assisted review ------------------------------------------ */
+  function aiProviderLabel(){ var ai=window.__instantDashAI; return (ai && ai.provider==='gemini') ? 'Gemini' : 'Claude'; }
+  function buildV28AiSummary(excludeCols){
+    var app=window.APP;
+    var cols=(app.columns||[]).filter(function(c){ return excludeCols.indexOf(c.name)===-1; });
+    var findings=buildV28Findings().issues.filter(function(i){ return !i.col || excludeCols.indexOf(i.col)===-1; });
+    var lines=[];
+    lines.push('Dataset: '+(app.fileName||'unnamed')+', '+(app.__workingRows||[]).length+' rows, '+cols.length+' columns considered (sensitive columns excluded by the user).');
+    lines.push('Columns: '+cols.map(function(c){ return c.name+' ('+c.type+', role:'+c.role+', missing:'+c.missingPct.toFixed(1)+'%, unique:'+c.unique+')'; }).join('; '));
+    lines.push('Detected issues:');
+    findings.forEach(function(i){ lines.push('- ['+i.type+'] '+i.html.replace(/<[^>]+>/g,'')); });
+    return lines.join('\n');
+  }
+  async function askRealAiReview(){
+    var out=$('v28AiOut');
+    var ai=window.__instantDashAI;
+    if(!ai || !ai.enabled || !ai.key){ out.innerHTML='<div class="v28-ai-note">Turn on 🤖 Real AI (top of the page) and add your API key first.</div>'; return; }
+    var excludeCols = Array.prototype.map.call(document.querySelectorAll('#v28AiExcludeList input:checked'), function(cb){ return cb.value; });
+    out.innerHTML='<div class="v28-ai-note">🤖 Reviewing data quality\u2026</div>';
+    try{
+      var summary = buildV28AiSummary(excludeCols);
+      var prompt = 'You are a data quality reviewer for a spreadsheet dashboard tool. Based ONLY on this column-level summary '
+        + '(no raw records were sent to you — do not assume you have seen actual rows), suggest specific standardisation fixes. '
+        + 'Reply with STRICT JSON ONLY, an array of objects shaped like '
+        + '{"column":"...","issueType":"...","originalSample":"...","proposedValue":"...","reason":"...","confidence":"high|medium|low"}. '
+        + 'Only reference columns and issues actually mentioned below — never invent a column name. If nothing useful can be suggested, reply with [].\n\n'+summary;
+      var text = await window.__instantDashCallClaude(prompt, 900);
+      var jsonMatch = text.match(/\[[\s\S]*\]/);
+      var suggestions = jsonMatch ? JSON.parse(jsonMatch[0]) : null;
+      if(!suggestions || !suggestions.length){
+        out.innerHTML='<div class="v28-ai-note">🤖 '+aiProviderLabel()+' did not find structured suggestions:</div><div style="white-space:pre-wrap;font-size:12.5px;line-height:1.6">'+esc28(text)+'</div>';
+        return;
+      }
+      window.__v28AiSuggestions = suggestions;
+      out.innerHTML = '<div class="v28-ai-note">🤖 '+aiProviderLabel()+' found '+suggestions.length+' suggestion(s). Nothing is applied until you approve one:</div>' +
+        suggestions.map(function(s, idx){
+          return '<div class="v28-ai-card"><b>'+esc28(s.column||'')+'</b> \u2014 '+esc28(s.issueType||'')+
+            '<div class="v28-ai-diff"><span class="v28-ai-old">'+esc28(String(s.originalSample||''))+'</span> \u2192 <span class="v28-ai-new">'+esc28(String(s.proposedValue||''))+'</span></div>'+
+            '<div class="v28-ai-reason">'+esc28(s.reason||'')+' ('+esc28(s.confidence||'n/a')+' confidence)</div>'+
+            '<button type="button" class="btn sm" data-v28-ai-approve="'+idx+'">Approve \u2192 add to review queue</button></div>';
+        }).join('');
+    }catch(err){
+      out.innerHTML='<div class="v28-ai-note">Could not get AI suggestions: '+esc28(err && err.message ? err.message : String(err))+'</div>';
+    }
+  }
+  function approveAiSuggestion(idx){
+    var s=(window.__v28AiSuggestions||[])[idx];
+    if(!s || !s.column) return;
+    var rows=window.APP.__workingRows, list=[];
+    rows.forEach(function(r,i){
+      var v=r[s.column];
+      if(v!=null && String(v)===String(s.originalSample)){
+        list.push(mkCorrection(i, s.column, v, s.proposedValue, (s.reason||'AI-suggested standardisation')+' [AI confidence: '+(s.confidence||'n/a')+']', 'AI:'+aiProviderLabel()));
+      }
+    });
+    if(!list.length){ toast('No cells in the working dataset currently match that exact sample value \u2014 nothing queued.'); return; }
+    queueList(list);
+  }
+
+  /* ---- reusable cleaning profiles ----------------------------------- */
+  var V28_BUILTIN_PROFILES = [
+    {name:'Banking & Financial Data', sensitivePatterns:[/account/i,/loan.*(no|number)/i,/ifsc/i,/\bpan\b/i,/aadhaar/i,/customer.*id/i]},
+    {name:'SHG / Microenterprise Records', sensitivePatterns:[/aadhaar/i,/shg.*id/i,/member.*id/i,/account/i]},
+    {name:'Sales & Purchase Registers', sensitivePatterns:[/gstin/i,/\bpan\b/i]},
+    {name:'Customer & Employee Records', sensitivePatterns:[/email/i,/phone|mobile/i,/salary/i,/aadhaar/i,/\bpan\b/i,/employee.*id/i]},
+    {name:'Inventory & Stock Data', sensitivePatterns:[]},
+    {name:'General Business Dataset', sensitivePatterns:[/email/i,/phone|mobile/i,/\bid\b/i,/account/i]}
+  ];
+  function loadCustomProfiles(){ try{ return JSON.parse(localStorage.getItem('instantdash_cleaning_profiles')||'[]'); }catch(_){ return []; } }
+  function saveCustomProfile(name){
+    var list=loadCustomProfiles();
+    var excludeCols = Array.prototype.map.call(document.querySelectorAll('#v28AiExcludeList input:checked'), function(cb){ return cb.value; });
+    list.push({name:name, excludeCols:excludeCols});
+    try{ localStorage.setItem('instantdash_cleaning_profiles', JSON.stringify(list)); }catch(_){ }
+    return list;
+  }
+  function applyProfile(profile){
+    if(!profile) return;
+    var app=window.APP, cols=app.columns||[];
+    var toCheck = profile.excludeCols ? profile.excludeCols.slice() : [];
+    if(!profile.excludeCols && profile.sensitivePatterns){
+      cols.forEach(function(c){ if(profile.sensitivePatterns.some(function(p){ return p.test(c.name); })) toCheck.push(c.name); });
+    }
+    document.querySelectorAll('#v28AiExcludeList input').forEach(function(cb){ cb.checked = toCheck.indexOf(cb.value)!==-1; });
+    toast('Applied "'+profile.name+'" \u2014 sensitive columns pre-checked for AI exclusion. Review before cleaning.');
+  }
+
+  /* ---- exports -------------------------------------------------------- */
+  function v28SafeCsvVal(v){
+    if(v===null||v===undefined) return '';
+    var s = v instanceof Date ? (typeof fmtDate==='function'?fmtDate(v):v.toISOString()) : String(v);
+    if(/^[=+\-@]/.test(s)) s = "'" + s;
+    return /[",\n]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s;
+  }
+  function exportCleanedCsvV28(){
+    var app=window.APP, rows=app.__workingRows||[], cols=(app.columns||[]).map(function(c){ return c.name; });
+    var lines=[cols.map(v28SafeCsvVal).join(',')];
+    rows.forEach(function(r){ lines.push(cols.map(function(c){ return v28SafeCsvVal(r[c]); }).join(',')); });
+    var blob=new Blob(['\ufeff'+lines.join('\n')], {type:'text/csv;charset=utf-8'});
+    var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=(app.fileName||'data').replace(/\.[^.]+$/,'')+'-cleaned.csv'; a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); },2000);
+    toast(rows.length.toLocaleString()+' cleaned rows exported.');
+  }
+  function exportCleanedExcelV28(){
+    var app=window.APP, rows=app.__workingRows||[], cols=(app.columns||[]).map(function(c){ return c.name; });
+    if(typeof XLSX==='undefined'){ toast('Excel export library not available.'); return; }
+    var out = rows.map(function(r){ var o={}; cols.forEach(function(c){ var v=r[c]; o[c]=(v instanceof Date)?(typeof fmtDate==='function'?fmtDate(v):v):v; }); return o; });
+    var ws = XLSX.utils.json_to_sheet(out, {header:cols});
+    var wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, (app.activeSheet||'Cleaned').toString().slice(0,31));
+    XLSX.writeFile(wb, (app.fileName||'data').replace(/\.[^.]+$/,'')+'-cleaned.xlsx');
+    toast(rows.length.toLocaleString()+' cleaned rows exported to Excel.');
+  }
+  function exportChangeLogV28(){
+    var log=window.APP.__auditLog||[];
+    var cols=['ts','file','sheet','rowIndex','col','original','revised','operation','source','status'];
+    var lines=[cols.join(',')];
+    log.forEach(function(r){ lines.push(cols.map(function(c){ return v28SafeCsvVal(r[c]); }).join(',')); });
+    var blob=new Blob(['\ufeff'+lines.join('\n')], {type:'text/csv;charset=utf-8'});
+    var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=(window.APP.fileName||'data').replace(/\.[^.]+$/,'')+'-change-log.csv'; a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); },2000);
+    toast(log.length+' audit entries exported.');
+  }
+  function exportAuditReportV28(){
+    var app=window.APP, findingsData=buildV28Findings(), score=computeV28Score(findingsData);
+    var log=app.__auditLog||[];
+    var applied=log.filter(function(r){ return r.status==='applied'; }).length;
+    var rejected=log.filter(function(r){ return r.status==='rejected'; }).length;
+    var html = '<!doctype html><html><head><meta charset="utf-8"><title>Data Quality Audit Report \u2014 '+esc28(app.fileName||'')+'</title>'+
+      '<style>body{font-family:Arial,sans-serif;padding:24px;color:#161B33}h1{font-size:20px}h2{font-size:15px;margin-top:24px}table{border-collapse:collapse;width:100%;font-size:12px}td,th{border:1px solid #ccc;padding:5px 8px;text-align:left}</style></head><body>'+
+      '<h1>Data Quality Audit Report</h1><p>File: <b>'+esc28(app.fileName||'')+'</b> \u00b7 Generated: '+new Date().toLocaleString()+'</p>'+
+      '<h2>Executive Summary</h2><ul><li>Data quality score: <b>'+score+'/100</b></li><li>Findings detected: '+findingsData.issues.length+'</li><li>Corrections applied: '+applied+'</li><li>Corrections rejected: '+rejected+'</li><li>Corrections still pending: '+((app.__reviewQueue||[]).length)+'</li></ul>'+
+      '<h2>Detected Issues</h2><ul>'+findingsData.issues.map(function(i){ return '<li>'+i.html+'</li>'; }).join('')+'</ul>'+
+      '<h2>Change Log</h2><table><tr><th>Time</th><th>Row</th><th>Column</th><th>Original</th><th>Revised</th><th>Operation</th><th>Source</th><th>Status</th></tr>'+
+      log.map(function(r){ return '<tr><td>'+esc28(new Date(r.ts).toLocaleString())+'</td><td>'+(r.rowIndex!=null?r.rowIndex+1:'\u2014')+'</td><td>'+esc28(r.col||'')+'</td><td>'+esc28(String(r.original==null?'':r.original))+'</td><td>'+esc28(String(r.revised==null?'':r.revised))+'</td><td>'+esc28(r.operation||'')+'</td><td>'+esc28(r.source||'')+'</td><td>'+esc28(r.status||'')+'</td></tr>'; }).join('')+
+      '</table></body></html>';
+    var blob=new Blob([html], {type:'text/html;charset=utf-8'});
+    var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=(app.fileName||'data').replace(/\.[^.]+$/,'')+'-audit-report.html'; a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); },2000);
+    toast('Audit report downloaded \u2014 open it in a browser and print to PDF if you need one.');
+  }
+
+  /* ---- render + wire --------------------------------------------------- */
+  function setOptsV28(id, names){ var sel=$(id); if(!sel) return; sel.innerHTML = names.map(function(n){ return '<option value="'+esc28(n)+'">'+esc28(n)+'</option>'; }).join(''); }
+
+  function renderV28(){
+    var sec=$('v28CleaningAuditSection');
+    if(!ensureSnapshots()){ if(sec) sec.hidden=true; return; }
+    if(sec) sec.hidden=false;
+    var app=window.APP;
+    var findingsData = buildV28Findings();
+    var score = computeV28Score(findingsData);
+    var scoreBadge=$('v28ScoreBadge');
+    if(scoreBadge){ scoreBadge.textContent='Score '+score+'/100'; scoreBadge.className='badge'+(score<70?' warn':''); }
+
+    var fl=$('v28FindingsList');
+    if(fl){
+      window.__v28CurrentFindings = findingsData.issues;
+      fl.innerHTML = findingsData.issues.length ? findingsData.issues.map(function(i,idx){
+        var fixBtn = (i.type==='spelling'||i.type==='mixed') ? ' <button type="button" class="btn sm" data-v28-fix="'+idx+'">Propose fix</button>' : '';
+        return '<div class="q-item"><span class="ico">'+i.ico+'</span><span>'+i.html+fixBtn+'</span></div>';
+      }).join('') : '<div class="q-item"><span class="ico">\u2705</span><span>No findings in the working dataset.</span></div>';
+    }
+    var fc=$('v28FindingsCount'); if(fc) fc.textContent = findingsData.issues.length + ' finding'+(findingsData.issues.length===1?'':'s');
+
+    if(app.__v28SelectsBuiltFor !== app.__dataVersion){
+      var textCols = (app.columns||[]).filter(function(c){ return c.type==='text'; }).map(function(c){ return c.name; });
+      var allCols = (app.columns||[]).map(function(c){ return c.name; });
+      setOptsV28('v28CaseCol', textCols);
+      setOptsV28('v28FindCol', textCols.length?textCols:allCols);
+      setOptsV28('v28DedupeCols', allCols);
+      setOptsV28('v28TypeCol', allCols);
+      var aiList=$('v28AiExcludeList');
+      if(aiList) aiList.innerHTML = allCols.map(function(n){ return '<label class="v28-ai-exclude-item"><input type="checkbox" value="'+esc28(n)+'"> '+esc28(n)+'</label>'; }).join('');
+      var profSel=$('v28ProfileSelect');
+      if(profSel){
+        var custom=loadCustomProfiles();
+        profSel.innerHTML = '<optgroup label="Built-in">'+V28_BUILTIN_PROFILES.map(function(p,i){ return '<option value="b'+i+'">'+esc28(p.name)+'</option>'; }).join('')+'</optgroup>'+
+          (custom.length ? ('<optgroup label="Custom">'+custom.map(function(p,i){ return '<option value="c'+i+'">'+esc28(p.name)+'</option>'; }).join('')+'</optgroup>') : '');
+      }
+      app.__v28SelectsBuiltFor = app.__dataVersion;
+    }
+
+    var q=app.__reviewQueue||[];
+    var qt=$('v28QueueTable');
+    if(qt){
+      var tb = q.length ? q.map(function(c){
+        return '<tr><td>'+(c.rowIndex+1)+'</td><td>'+esc28(c.col)+'</td><td>'+esc28(String(c.original==null?'':c.original))+'</td><td>'+esc28(String(c.proposed==null?'':c.proposed))+'</td><td>'+esc28(c.reason)+'</td><td>'+esc28(c.source)+'</td>'+
+          '<td><button type="button" class="btn sm" data-v28-accept="'+c.id+'">Accept</button> <button type="button" class="btn sm" data-v28-reject="'+c.id+'">Reject</button></td></tr>';
+      }).join('') : '<tr><td colspan="7" style="color:var(--muted)">No pending corrections.</td></tr>';
+      var qtb=qt.querySelector('tbody'); if(qtb) qtb.innerHTML=tb;
+    }
+    var qc=$('v28QueueCount'); if(qc) qc.textContent = q.length+' pending';
+
+    var log=app.__auditLog||[];
+    var searchEl=$('v28AuditSearch');
+    var searchVal = (searchEl && searchEl.value || '').toLowerCase();
+    var filteredLog = searchVal ? log.filter(function(r){ return JSON.stringify(r).toLowerCase().indexOf(searchVal)!==-1; }) : log;
+    var at=$('v28AuditTable');
+    if(at){
+      var rowsHtml = filteredLog.slice().reverse().slice(0,500).map(function(r){
+        return '<tr><td>'+esc28(new Date(r.ts).toLocaleString())+'</td><td>'+(r.rowIndex!=null?r.rowIndex+1:'\u2014')+'</td><td>'+esc28(r.col||'')+'</td><td>'+esc28(String(r.original==null?'':r.original))+'</td><td>'+esc28(String(r.revised==null?'':r.revised))+'</td><td>'+esc28(r.operation||'')+'</td><td>'+esc28(r.source||'')+'</td><td>'+esc28(r.status||'')+'</td></tr>';
+      }).join('');
+      var atb=at.querySelector('tbody'); if(atb) atb.innerHTML = rowsHtml || '<tr><td colspan="8" style="color:var(--muted)">No audit entries yet.</td></tr>';
+    }
+    var ac=$('v28AuditCount'); if(ac) ac.textContent = log.length + ' entries';
+
+    var modeBadge=$('v28DatasetModeBadge');
+    if(modeBadge) modeBadge.textContent = 'Dashboard source: ' + (app.__cleaningModeActive==='cleaned' ? 'Cleaned working data' : 'Original data');
+  }
+
+  function refreshColumnStats(){
+    var app=window.APP;
+    (app.columns||[]).forEach(function(c){ if(typeof computeStats==='function') computeStats(c); });
+    (app.columns||[]).forEach(function(c){ if(typeof assignRole==='function'){ var keep=c.manual; c.manual=false; assignRole(c); c.manual=keep; } });
+  }
+
+  function wireV28(){
+    var container=$('v28CleaningAuditSection');
+    if(!container || container.dataset.wiredV28) return;
+    container.dataset.wiredV28='1';
+
+    container.addEventListener('click', function(e){
+      var t=e.target;
+      var fixBtn=t.closest && t.closest('[data-v28-fix]');
+      var accBtn=t.closest && t.closest('[data-v28-accept]');
+      var rejBtn=t.closest && t.closest('[data-v28-reject]');
+      var aiBtn=t.closest && t.closest('[data-v28-ai-approve]');
+      if(fixBtn){ var idx=+fixBtn.getAttribute('data-v28-fix'); var issue=(window.__v28CurrentFindings||[])[idx]; if(issue) queueList(proposeFixesForIssue(issue)); }
+      else if(accBtn){ acceptCorrection(accBtn.getAttribute('data-v28-accept')); }
+      else if(rejBtn){ rejectCorrection(rejBtn.getAttribute('data-v28-reject')); }
+      else if(aiBtn){ approveAiSuggestion(+aiBtn.getAttribute('data-v28-ai-approve')); }
+    });
+
+    function byId(id, fn){ var b=$(id); if(b) b.addEventListener('click', fn); }
+    byId('v28AcceptAllBtn', acceptAllQueue);
+    byId('v28RejectAllBtn', rejectAllQueue);
+    byId('v28AiReviewBtn', askRealAiReview);
+    byId('v28ApplyCaseBtn', function(){ var col=$('v28CaseCol').value, mode=$('v28CaseMode').value; queueList(previewCaseStandardise(col,mode)); });
+    byId('v28FindReplaceBtn', function(){ var col=$('v28FindCol').value, f=$('v28FindText').value, r=$('v28ReplaceText').value; queueList(previewFindReplace(col,f,r)); });
+    byId('v28DedupeBtn', function(){ var sel=$('v28DedupeCols'); var cols=Array.prototype.map.call(sel.selectedOptions,function(o){ return o.value; }); applyDedupeNow(cols); });
+    byId('v28TypeBtn', function(){ applyTypeConvertWorking($('v28TypeCol').value, $('v28TypeNew').value); });
+    byId('v28ApplyProfileBtn', function(){
+      var v=$('v28ProfileSelect').value; if(!v) return;
+      if(v[0]==='b') applyProfile(V28_BUILTIN_PROFILES[+v.slice(1)]);
+      else { var custom=loadCustomProfiles(); applyProfile(custom[+v.slice(1)]); }
+    });
+    byId('v28SaveProfileBtn', function(){
+      var name=window.prompt('Name this profile:');
+      if(name && name.trim()){ saveCustomProfile(name.trim()); window.APP.__v28SelectsBuiltFor=null; renderV28(); toast('Profile saved.'); }
+    });
+    byId('v28GenerateBtn', function(){
+      var app=window.APP;
+      app.rows = app.__workingRows.map(function(r){ return Object.assign({}, r); });
+      refreshColumnStats();
+      app.__cleaningModeActive='cleaned';
+      if(typeof buildEverything==='function') buildEverything();
+      logAudit({rowIndex:null, col:'', original:'', revised:'', operation:'Generated dashboard from cleaned data ('+app.__workingRows.length+' rows)', source:'system', status:'applied'});
+      renderV28();
+      toast('Dashboard rebuilt from the cleaned working dataset.');
+    });
+    byId('v28ViewOriginalBtn', function(){
+      var app=window.APP;
+      app.rows = app.__originalRows.map(function(r){ return Object.assign({}, r); });
+      refreshColumnStats();
+      app.__cleaningModeActive='original';
+      if(typeof buildEverything==='function') buildEverything();
+      renderV28();
+      toast('Dashboard switched back to the original, unmodified data.');
+    });
+    byId('v28RestoreBtn', function(){
+      if(!window.confirm('Discard all cleaning progress (pending queue and working-data changes) and restore the original data? This cannot be undone.')) return;
+      var app=window.APP;
+      app.__workingRows = app.__originalRows.map(function(r){ return Object.assign({}, r); });
+      app.__reviewQueue=[];
+      logAudit({rowIndex:null, col:'', original:'', revised:'', operation:'Restored working dataset to original', source:'system', status:'applied'});
+      renderV28();
+      toast('Working dataset restored to original.');
+    });
+    byId('v28ExportExcelBtn', exportCleanedExcelV28);
+    byId('v28ExportCsvBtn', exportCleanedCsvV28);
+    byId('v28ExportReportBtn', exportAuditReportV28);
+    byId('v28ExportLogBtn', exportChangeLogV28);
+    var searchBox=$('v28AuditSearch'); if(searchBox) searchBox.addEventListener('input', renderV28);
+  }
+
+  function boot(){ wireV28(); renderV28(); }
+  setInterval(function(){ wireV28(); renderV28(); }, 700);
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
 })();
 </script>
 </body></html>
